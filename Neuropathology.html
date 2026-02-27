@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Neuropathology · Mechanisms & Etiologies</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Textbook Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f9ff; font-family: 'Open Sans', sans-serif; }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i { font-size: 2rem; color: #ffd966; }
+        .top-bar h1 { font-family: 'Merriweather', serif; font-weight: 700; font-size: 1.8rem; }
+        .top-bar .author {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position: fixed;
+            top: 5rem;
+            left: -350px;
+            width: 320px;
+            height: calc(100vh - 5rem);
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 1.5rem 0.5rem 1.5rem 1.5rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            z-index: 90;
+        }
+        .toc-sidebar.open { left: 0; }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #ffd966;
+            text-transform: uppercase;
+        }
+        .toc-section { margin-bottom: 1.5rem; }
+        .toc-section h3 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1b4c72;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+        .chapter-list { list-style: none; }
+        .chapter-item { margin-bottom: 0.3rem; }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.8rem 0.6rem 1rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 30px 0 0 30px;
+            transition: 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .chapter-item a i { width: 24px; font-size: 1rem; color: #2c7cb0; }
+        .chapter-item a:hover {
+            background: #e9f0f7;
+            border-left-color: #1f6e9c;
+        }
+        .reader-panel {
+            margin-left: 0;
+            padding: 2rem 2.5rem;
+            transition: margin-left 0.3s ease;
+            background: white;
+            min-height: calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left: 320px; }
+        .chapter-content { max-width: 1000px; margin: 0 auto; }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #ffd966;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chapter-title i { font-size: 2.5rem; color: #2c7cb0; }
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 20px -10px rgba(10,41,66,0.1);
+            border: 1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #ffd966;
+            padding-left: 20px;
+        }
+        .subsection-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #154f78;
+            margin: 1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .body-text strong { color: #0a2942; }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #f39c12;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #27ae60;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points ul { list-style: none; }
+        .key-points li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i { color: #8e44ad; }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .premium-table th { background: #0a2942; color: white; padding: 1rem; text-align: left; }
+        .premium-table td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom: none; }
+        .diagram-placeholder {
+            background: #f9fcff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #b9d5f0;
+            text-align: center;
+            color: #2c7cb0;
+        }
+        .diagram-placeholder i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 1000px) {
+            .toc-sidebar { width: 280px; }
+            .reader-panel.shifted { margin-left: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-brain"></i>
+        <h1>Comprehensive Neuropathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PART I – BASIC REACTIONS</h3>
+            <ul class="chapter-list">
+                <li><a href="#neuronal-injury"><i class="fas fa-microscope"></i> 1. Neuronal Injury & Death</a></li>
+                <li><a href="#glial-reactions"><i class="fas fa-shapes"></i> 2. Glial Reactions (Astrocytes, Microglia)</a></li>
+                <li><a href="#edema-herniation"><i class="fas fa-water"></i> 3. Cerebral Edema & Herniation</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART II – VASCULAR DISORDERS</h3>
+            <ul class="chapter-list">
+                <li><a href="#ischemia"><i class="fas fa-heart"></i> 4. Cerebral Ischemia & Infarction</a></li>
+                <li><a href="#hemorrhage"><i class="fas fa-droplet"></i> 5. Intracranial Hemorrhage</a></li>
+                <li><a href="#vascular-malformations"><i class="fas fa-code-branch"></i> 6. Vascular Malformations</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART III – TRAUMA</h3>
+            <ul class="chapter-list">
+                <li><a href="#head-injury"><i class="fas fa-car-crash"></i> 7. Head Injury (Contusions, DAI)</a></li>
+                <li><a href="#spinal-trauma"><i class="fas fa-spine"></i> 8. Spinal Cord Trauma</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART IV – INFECTIONS</h3>
+            <ul class="chapter-list">
+                <li><a href="#meningitis"><i class="fas fa-biohazard"></i> 9. Meningitis (Bacterial, Viral, Fungal)</a></li>
+                <li><a href="#encephalitis"><i class="fas fa-virus"></i> 10. Encephalitis (HSV, Arboviruses)</a></li>
+                <li><a href="#abscess"><i class="fas fa-disease"></i> 11. Brain Abscess</a></li>
+                <li><a href="#tb"><i class="fas fa-bacteria"></i> 12. Tuberculosis & Tuberculoma</a></li>
+                <li><a href="#prion"><i class="fas fa-dna"></i> 13. Prion Diseases (CJD, vCJD)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART V – DEMYELINATING DISEASES</h3>
+            <ul class="chapter-list">
+                <li><a href="#ms"><i class="fas fa-droplet"></i> 14. Multiple Sclerosis</a></li>
+                <li><a href="#pml"><i class="fas fa-virus"></i> 15. Progressive Multifocal Leukoencephalopathy</a></li>
+                <li><a href="#adrenoleukodystrophy"><i class="fas fa-dna"></i> 16. Adrenoleukodystrophy</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART VI – NEURODEGENERATIVE DISEASES</h3>
+            <ul class="chapter-list">
+                <li><a href="#alzheimer"><i class="fas fa-brain"></i> 17. Alzheimer’s Disease</a></li>
+                <li><a href="#parkinson"><i class="fas fa-bolt"></i> 18. Parkinson’s Disease</a></li>
+                <li><a href="#huntington"><i class="fas fa-dna"></i> 19. Huntington’s Disease</a></li>
+                <li><a href="#als"><i class="fas fa-dumbbell"></i> 20. Amyotrophic Lateral Sclerosis</a></li>
+                <li><a href="#ftld"><i class="fas fa-brain"></i> 21. Frontotemporal Lobar Degeneration</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART VII – TUMORS</h3>
+            <ul class="chapter-list">
+                <li><a href="#gliomas"><i class="fas fa-tumor"></i> 22. Gliomas (Astrocytoma, GBM)</a></li>
+                <li><a href="#meningioma"><i class="fas fa-circle"></i> 23. Meningioma</a></li>
+                <li><a href="#medulloblastoma"><i class="fas fa-star"></i> 24. Medulloblastoma</a></li>
+                <li><a href="#schwannoma"><i class="fas fa-nerve"></i> 25. Schwannoma & Neurofibroma</a></li>
+                <li><a href="#metastases"><i class="fas fa-arrow-right"></i> 26. Metastatic Tumors</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART VIII – DEVELOPMENTAL DISORDERS</h3>
+            <ul class="chapter-list">
+                <li><a href="#ntd"><i class="fas fa-child"></i> 27. Neural Tube Defects</a></li>
+                <li><a href="#phakomatoses"><i class="fas fa-dna"></i> 28. Phakomatoses (NF1, NF2, TSC)</a></li>
+                <li><a href="#perinatal"><i class="fas fa-baby"></i> 29. Perinatal Brain Injury</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART IX – PERIPHERAL NERVE & MUSCLE</h3>
+            <ul class="chapter-list">
+                <li><a href="#neuropathies"><i class="fas fa-nerve"></i> 30. Peripheral Neuropathies</a></li>
+                <li><a href="#nmj"><i class="fas fa-plug"></i> 31. Neuromuscular Junction (MG, LEMS)</a></li>
+                <li><a href="#myopathies"><i class="fas fa-dumbbell"></i> 32. Myopathies (Duchenne, Becker)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART X – EPILEPSY & CSF DISORDERS</h3>
+            <ul class="chapter-list">
+                <li><a href="#epilepsy"><i class="fas fa-bolt"></i> 33. Epilepsy (Pathology & Mechanisms)</a></li>
+                <li><a href="#hydrocephalus"><i class="fas fa-water"></i> 34. Hydrocephalus</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== PART I: BASIC REACTIONS ==================== -->
+        <section id="neuronal-injury" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-microscope"></i> 1. Neuronal Injury & Death</div>
+            <div class="section-card">
+                <div class="section-heading">What Happens When Neurons Are Injured?</div>
+                <div class="body-text">
+                    <p>Neurons are highly sensitive to injury. They respond in characteristic ways depending on the type, severity, and duration of insult .</p>
+                </div>
+                <div class="subsection-heading">Acute Neuronal Injury (Red Neuron)</div>
+                <div class="body-text">
+                    <p>After acute hypoxia/ischemia, neurons undergo <strong>eosinophilic change</strong> (red neuron). The cytoplasm shrinks, nucleus becomes pyknotic, and the neuron stains bright red with eosin. This is irreversible and seen within 6–12 hours of severe ischemia .</p>
+                </div>
+                <div class="subsection-heading">Chronic Neuronal Injury</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>Central chromatolysis:</strong> Occurs after axonal injury. The cell body swells, Nissl substance (rough ER) disperses, and nucleus moves to periphery. It reflects increased protein synthesis for regeneration .</li>
+                        <li><strong>Neurofibrillary tangles:</strong> Aggregates of hyperphosphorylated tau protein in Alzheimer’s disease.</li>
+                        <li><strong>Lewy bodies:</strong> Eosinophilic cytoplasmic inclusions of α‑synuclein in Parkinson’s disease.</li>
+                        <li><strong>Pick bodies:</strong> Round, tau‑positive inclusions in Pick’s disease (frontotemporal dementia).</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">Neuronal Death Mechanisms</div>
+                <ul>
+                    <li><strong>Necrosis:</strong> Passive, ATP‑independent; cell swells, membrane ruptures, inflammation follows (e.g., infarction).</li>
+                    <li><strong>Apoptosis:</strong> Programmed cell death; cell shrinks, chromatin condenses, caspases activated; no inflammation (e.g., neurodegenerative diseases).</li>
+                    <li><strong>Autophagy:</strong> Self‑digestion of organelles; can be protective or pathological.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p>Ischemic stroke causes necrosis in the core, apoptosis in the penumbra. Therapeutic hypothermia reduces apoptosis.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="glial-reactions" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shapes"></i> 2. Glial Reactions (Astrocytes, Microglia)</div>
+            <div class="section-card">
+                <div class="subsection-heading">Astrocytic Reactions</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>Astrogliosis (reactive gliosis):</strong> Astrocytes proliferate and hypertrophy, extending processes and increasing GFAP expression. This occurs in response to any CNS insult (trauma, ischemia, infection) .</li>
+                        <li><strong>Rosenthal fibers:</strong> Thick, eosinophilic inclusions in astrocytes, seen in chronic gliosis (e.g., pilocytic astrocytoma).</li>
+                        <li><strong>Corpora amylacea:</strong> Polyglucosan bodies in astrocytic processes; age‑related, incidental.</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">Microglial Reactions</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>Microglial nodules:</strong> Clusters of activated microglia; seen in viral encephalitis.</li>
+                        <li><strong>Neuronophagia:</strong> Microglia engulfing dead neurons.</li>
+                        <li><strong>Rod cells:</strong> Elongated microglia in general paresis (neurosyphilis).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="edema-herniation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 3. Cerebral Edema & Herniation</div>
+            <div class="section-card">
+                <div class="subsection-heading">Types of Edema</div>
+                <ul>
+                    <li><strong>Vasogenic edema:</strong> BBB breakdown → fluid extravasates into extracellular space (white matter). Causes: tumor, abscess, trauma.</li>
+                    <li><strong>Cytotoxic edema:</strong> Cellular swelling due to Na⁺/K⁺ pump failure (ischemia). Gray and white matter.</li>
+                    <li><strong>Interstitial edema:</strong> Transependymal flow in hydrocephalus.</li>
+                </ul>
+                <div class="subsection-heading">Herniation Syndromes</div>
+                <ul>
+                    <li><strong>Subfalcine (cingulate):</strong> Cingulate gyrus under falx → may compress ACA.</li>
+                    <li><strong>Transtentorial (uncal):</strong> Uncus herniates over tentorium → compresses CN III (ipsilateral dilated pupil) and contralateral hemiparesis (Kernohan’s phenomenon).</li>
+                    <li><strong>Cerebellar tonsillar:</strong> Tonsils through foramen magnum → compresses medulla → respiratory arrest.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p>Rapid herniation is a neurosurgical emergency; mannitol, hyperventilation, and surgical decompression are used.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PART II: VASCULAR DISORDERS ==================== -->
+        <section id="ischemia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 4. Cerebral Ischemia & Infarction</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Ischemia</strong> results from reduced blood flow. Global ischemia (cardiac arrest) vs. focal ischemia (arterial occlusion).</p>
+                </div>
+                <div class="subsection-heading">Global Ischemia</div>
+                <ul>
+                    <li><strong>Selective vulnerability:</strong> Certain neurons (hippocampal CA1, Purkinje cells, cortical layers 3,5,6) are most susceptible.</li>
+                    <li><strong>Morphology:</strong> Red neurons in affected areas.</li>
+                    <li><strong>Outcome:</strong> If brief, may be reversible; prolonged → infarction.</li>
+                </ul>
+                <div class="subsection-heading">Focal Ischemia (Infarction)</div>
+                <ul>
+                    <li><strong>Thrombotic:</strong> Atherosclerosis, small vessel disease (lacunar infarcts).</li>
+                    <li><strong>Embolic:</strong> From heart (AF, valve vegetations) or arteries → often wedge‑shaped, hemorrhagic transformation.</li>
+                    <li><strong>Watershed infarcts:</strong> Border zones between major arteries; after hypotension.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p>Sudden neurologic deficit; tPA within 3‑4.5h can salvage penumbra.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hemorrhage" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 5. Intracranial Hemorrhage</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Intracerebral hemorrhage:</strong> Hypertensive (basal ganglia, thalamus, pons, cerebellum), amyloid angiopathy (lobar), vascular malformations.</li>
+                    <li><strong>Subarachnoid hemorrhage:</strong> Ruptured saccular aneurysm (circle of Willis) → thunderclap headache.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vascular-malformations" class="chapter-content">
+            <div class="chapter-title">6. Vascular Malformations</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Arteriovenous malformation (AVM):</strong> Abnormal connection arteries→veins; high bleed risk.</li>
+                    <li><strong>Cavernous malformation:</strong> Sinusoidal spaces; seizures, hemorrhage.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PART III: TRAUMA ==================== -->
+        <section id="head-injury" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-car-crash"></i> 7. Head Injury (Contusions, DAI)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Contusion:</strong> Coup (at impact) and contrecoup (opposite). Common in frontal/temporal poles.</li>
+                    <li><strong>Diffuse axonal injury (DAI):</strong> Shearing forces → axonal retraction balls, petechial hemorrhages in corpus callosum, brainstem; causes prolonged coma.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="spinal-trauma" class="chapter-content"><div class="chapter-title">8. Spinal Cord Trauma</div><div class="section-card">Central cord syndrome, anterior cord syndrome, etc. Secondary injury mechanisms: ischemia, excitotoxicity, inflammation.</div></section>
+
+        <!-- ==================== PART IV: INFECTIONS ==================== -->
+        <section id="meningitis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-biohazard"></i> 9. Meningitis (Bacterial, Viral, Fungal)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Inflammation of leptomeninges.</p>
+                    <ul>
+                        <li><strong>Bacterial:</strong> Exudate in subarachnoid space; neutrophils; organisms: <em>N. meningitidis, S. pneumoniae, H. influenzae</em>.</li>
+                        <li><strong>Viral:</strong> Lymphocytic infiltrate; usually milder (enteroviruses).</li>
+                        <li><strong>Tuberculous:</strong> Basilar exudates, cranial nerve palsies; caseous granulomas.</li>
+                        <li><strong>Fungal:</strong> <em>Cryptococcus</em> (immunocompromised); India ink positive.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="encephalitis" class="chapter-content">
+            <div class="chapter-title">10. Encephalitis (HSV, Arboviruses)</div>
+            <div class="section-card">
+                <p><strong>HSV encephalitis:</strong> Temporal lobe involvement, hemorrhagic necrosis, Cowdry A inclusions. Treated with acyclovir.</p>
+            </div>
+        </section>
+
+        <section id="abscess" class="chapter-content"><div class="chapter-title">11. Brain Abscess</div><div class="section-card">Encapsulated collection of pus; often from contiguous spread (sinusitis) or hematogenous. Ring‑enhancing lesion.</div></section>
+
+        <section id="tb" class="chapter-content"><div class="chapter-title">12. Tuberculosis & Tuberculoma</div><div class="section-card">Caseating granulomas; basilar meningitis common.</div></section>
+
+        <section id="prion" class="chapter-content">
+            <div class="chapter-title">13. Prion Diseases (CJD, vCJD)</div>
+            <div class="section-card">
+                <p>Misfolded prion protein (PrP<sup>Sc</sup>) causes spongiform change, neuronal loss, gliosis, no inflammation. Sporadic (CJD), genetic (FFI), acquired (kuru, vCJD).</p>
+            </div>
+        </section>
+
+        <!-- ==================== PART V: DEMYELINATING ==================== -->
+        <section id="ms" class="chapter-content">
+            <div class="chapter-title">14. Multiple Sclerosis</div>
+            <div class="section-card">
+                <p>Autoimmune demyelination with relative axonal sparing. Perivenular inflammatory demyelination (plaques). Oligoclonal bands in CSF. Relapsing‑remitting most common.</p>
+            </div>
+        </section>
+
+        <section id="pml" class="chapter-content"><div class="chapter-title">15. Progressive Multifocal Leukoencephalopathy</div><div class="section-card">JC virus (polyomavirus) in immunocompromised; lytic infection of oligodendrocytes → multifocal demyelination.</div></section>
+
+        <section id="adrenoleukodystrophy" class="chapter-content"><div class="chapter-title">16. Adrenoleukodystrophy</div><div class="section-card">X‑linked; defective peroxisomal β‑oxidation → accumulation of very‑long‑chain fatty acids → inflammatory demyelination and adrenal insufficiency.</div></section>
+
+        <!-- ==================== PART VI: NEURODEGENERATIVE ==================== -->
+        <section id="alzheimer" class="chapter-content">
+            <div class="chapter-title">17. Alzheimer’s Disease</div>
+            <div class="section-card">
+                <p><strong>Pathology:</strong> Cortical atrophy, especially hippocampus; senile plaques (Aβ amyloid), neurofibrillary tangles (hyperphosphorylated tau).</p>
+                <p><strong>Genetics:</strong> Early‑onset (APP, PSEN1, PSEN2); late‑onset (APOE ε4 risk).</p>
+                <p><strong>Mechanism:</strong> Aβ accumulation triggers tau hyperphosphorylation, synaptic loss, neuronal death.</p>
+            </div>
+        </section>
+
+        <section id="parkinson" class="chapter-content">
+            <div class="chapter-title">18. Parkinson’s Disease</div>
+            <div class="section-card">
+                <p>Loss of dopaminergic neurons in substantia nigra pars compacta; Lewy bodies (α‑synuclein). Motor features: bradykinesia, resting tremor, rigidity.</p>
+            </div>
+        </section>
+
+        <section id="huntington" class="chapter-content">
+            <div class="chapter-title">19. Huntington’s Disease</div>
+            <div class="section-card">
+                <p>Autosomal dominant CAG repeat (chromosome 4); huntingtin protein. Atrophy of caudate and putamen; chorea, dementia.</p>
+            </div>
+        </section>
+
+        <section id="als" class="chapter-content"><div class="chapter-title">20. Amyotrophic Lateral Sclerosis</div><div class="section-card">Loss of upper and lower motor neurons; corticospinal tract degeneration; Bunina bodies. Progressive weakness, fasciculations.</div></section>
+
+        <section id="ftld" class="chapter-content"><div class="chapter-title">21. Frontotemporal Lobar Degeneration</div><div class="section-card">Pick bodies (tau), TDP‑43 inclusions, FUS pathology. Behavioral and language variants.</div></section>
+
+        <!-- ==================== PART VII: TUMORS ==================== -->
+        <section id="gliomas" class="chapter-content">
+            <div class="chapter-title">22. Gliomas (Astrocytoma, GBM)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Diffuse astrocytoma (WHO grade 2):</strong> IDH mutation, often.</li>
+                    <li><strong>Glioblastoma (GBM, grade 4):</strong> Pseudopalisading necrosis, microvascular proliferation; IDH‑wildtype most common.</li>
+                    <li><strong>Oligodendroglioma:</strong> “Fried‑egg” cells, 1p/19q codeletion; better prognosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="meningioma" class="chapter-content"><div class="chapter-title">23. Meningioma</div><div class="section-card">Benign, from arachnoid cap cells; psammoma bodies; compresses brain, invasion rare.</div></section>
+
+        <section id="medulloblastoma" class="chapter-content"><div class="chapter-title">24. Medulloblastoma</div><div class="section-card">Cerebellar primitive neuroectodermal tumor; Homer‑Wright rosettes; highly malignant.</div></section>
+
+        <section id="schwannoma" class="chapter-content"><div class="chapter-title">25. Schwannoma & Neurofibroma</div><div class="section-card">Schwannoma (CN VIII) – Antoni A/B; neurofibroma – NF1, can undergo malignant transformation.</div></section>
+
+        <section id="metastases" class="chapter-content"><div class="chapter-title">26. Metastatic Tumors</div><div class="section-card">Most common intracranial tumors in adults; lung, breast, melanoma, renal. Often multiple, at gray‑white junction.</div></section>
+
+        <!-- ==================== PART VIII: DEVELOPMENTAL ==================== -->
+        <section id="ntd" class="chapter-content"><div class="chapter-title">27. Neural Tube Defects</div><div class="section-card">Anencephaly, spina bifida occulta, meningocele, myelomeningocele. Folate deficiency is risk factor.</div></section>
+
+        <section id="phakomatoses" class="chapter-content">
+            <div class="chapter-title">28. Phakomatoses (NF1, NF2, TSC)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>NF1:</strong> Neurofibromas, café‑au‑lait spots, Lisch nodules, optic glioma.</li>
+                    <li><strong>NF2:</strong> Bilateral acoustic schwannomas, meningiomas.</li>
+                    <li><strong>Tuberous sclerosis:</strong> Cortical tubers, subependymal nodules (giant cell astrocytoma), cardiac rhabdomyoma.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="perinatal" class="chapter-content"><div class="chapter-title">29. Perinatal Brain Injury</div><div class="section-card">Hypoxic‑ischemic encephalopathy, periventricular leukomalacia (prematurity), germinal matrix hemorrhage.</div></section>
+
+        <!-- ==================== PART IX: PERIPHERAL NERVE & MUSCLE ==================== -->
+        <section id="neuropathies" class="chapter-content">
+            <div class="chapter-title">30. Peripheral Neuropathies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Axonal:</strong> “Dying back” – metabolic (diabetes), toxic (alcohol).</li>
+                    <li><strong>Demyelinating:</strong> Segmental – Guillain‑Barré, CIDP, CMT.</li>
+                    <li><strong>Mononeuropathy:</strong> Carpal tunnel (median), peroneal palsy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="nmj" class="chapter-content">
+            <div class="chapter-title">31. Neuromuscular Junction (MG, LEMS)</div>
+            <div class="section-card">
+                <p><strong>Myasthenia gravis:</strong> Antibodies against ACh receptors; fatigable weakness; anti‑AChR Ab.</p>
+                <p><strong>Lambert‑Eaton:</strong> Antibodies against presynaptic voltage‑gated Ca²⁺ channels; associated with SCLC; strength improves with repetition.</p>
+            </div>
+        </section>
+
+        <section id="myopathies" class="chapter-content">
+            <div class="chapter-title">32. Myopathies (Duchenne, Becker)</div>
+            <div class="section-card">
+                <p><strong>Duchenne:</strong> X‑linked; dystrophin absent; progressive weakness, pseudohypertrophy.</p>
+                <p><strong>Becker:</strong> Reduced dystrophin; milder course.</p>
+            </div>
+        </section>
+
+        <!-- ==================== PART X: EPILEPSY & CSF DISORDERS ==================== -->
+        <section id="epilepsy" class="chapter-content">
+            <div class="chapter-title">33. Epilepsy (Pathology & Mechanisms)</div>
+            <div class="section-card">
+                <p><strong>Mesial temporal sclerosis:</strong> Hippocampal neuronal loss, gliosis → temporal lobe epilepsy.</p>
+                <p><strong>Cortical dysplasia:</strong> Malformed cortex → refractory epilepsy.</p>
+            </div>
+        </section>
+
+        <section id="hydrocephalus" class="chapter-content">
+            <div class="chapter-title">34. Hydrocephalus</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Communicating:</strong> Impaired CSF absorption (e.g., SAH, meningitis).</li>
+                    <li><strong>Non‑communicating:</strong> Obstruction within ventricles (e.g., aqueductal stenosis, tumor).</li>
+                    <li><strong>Normal pressure hydrocephalus:</strong> Triad: gait apraxia, incontinence, dementia; enlarged ventricles, normal opening pressure.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Compiled from authoritative sources · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

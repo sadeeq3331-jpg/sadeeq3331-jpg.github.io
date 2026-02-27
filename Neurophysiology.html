@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Neurophysiology · Teacher‑Style Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Textbook Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f9ff; font-family: 'Open Sans', sans-serif; }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i { font-size: 2rem; color: #ffd966; }
+        .top-bar h1 { font-family: 'Merriweather', serif; font-weight: 700; font-size: 1.8rem; }
+        .top-bar .author {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position: fixed;
+            top: 5rem;
+            left: -350px;
+            width: 320px;
+            height: calc(100vh - 5rem);
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 1.5rem 0.5rem 1.5rem 1.5rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            z-index: 90;
+        }
+        .toc-sidebar.open { left: 0; }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #ffd966;
+            text-transform: uppercase;
+        }
+        .toc-section { margin-bottom: 1.5rem; }
+        .toc-section h3 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1b4c72;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+        .chapter-list { list-style: none; }
+        .chapter-item { margin-bottom: 0.3rem; }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.8rem 0.6rem 1rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 30px 0 0 30px;
+            transition: 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .chapter-item a i { width: 24px; font-size: 1rem; color: #2c7cb0; }
+        .chapter-item a:hover {
+            background: #e9f0f7;
+            border-left-color: #1f6e9c;
+        }
+        .reader-panel {
+            margin-left: 0;
+            padding: 2rem 2.5rem;
+            transition: margin-left 0.3s ease;
+            background: white;
+            min-height: calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left: 320px; }
+        .chapter-content { max-width: 1000px; margin: 0 auto; }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #ffd966;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chapter-title i { font-size: 2.5rem; color: #2c7cb0; }
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 20px -10px rgba(10,41,66,0.1);
+            border: 1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #ffd966;
+            padding-left: 20px;
+        }
+        .subsection-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #154f78;
+            margin: 1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .body-text strong { color: #0a2942; }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #f39c12;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #27ae60;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points ul { list-style: none; }
+        .key-points li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i { color: #8e44ad; }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .premium-table th { background: #0a2942; color: white; padding: 1rem; text-align: left; }
+        .premium-table td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom: none; }
+        .diagram-placeholder {
+            background: #f9fcff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #b9d5f0;
+            text-align: center;
+            color: #2c7cb0;
+        }
+        .diagram-placeholder i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 1000px) {
+            .toc-sidebar { width: 280px; }
+            .reader-panel.shifted { margin-left: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-brain"></i>
+        <h1>Comprehensive Neurophysiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PART I – NEURAL MECHANISMS</h3>
+            <ul class="chapter-list">
+                <li><a href="#neurons"><i class="fas fa-microscope"></i> 1. Neurons – Structure & Function</a></li>
+                <li><a href="#glia"><i class="fas fa-shapes"></i> 2. Neuron‑Glial Cell Cooperation</a></li>
+                <li><a href="#ionic-gradients"><i class="fas fa-bolt"></i> 3. Ionic Gradients & Membrane Potential</a></li>
+                <li><a href="#voltage-gated"><i class="fas fa-wave-square"></i> 4. Voltage‑Gated Channels & Action Potentials</a></li>
+                <li><a href="#propagation"><i class="fas fa-arrow-right"></i> 5. Action Potential Propagation</a></li>
+                <li><a href="#channels"><i class="fas fa-door-open"></i> 6. Ion Channel Diversity & Channelopathies</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART II – SYNAPTIC TRANSMISSION</h3>
+            <ul class="chapter-list">
+                <li><a href="#synapse"><i class="fas fa-plug"></i> 7. Synaptic Transmission – Overview</a></li>
+                <li><a href="#neurotransmitters"><i class="fas fa-flask"></i> 8. Neurotransmitters & Receptors</a></li>
+                <li><a href="#ionotropic"><i class="fas fa-bolt"></i> 9. Ionotropic Receptors (Fast Transmission)</a></li>
+                <li><a href="#metabotropic"><i class="fas fa-dna"></i> 10. Metabotropic Receptors & Second Messengers</a></li>
+                <li><a href="#release"><i class="fas fa-arrow-down"></i> 11. Neurotransmitter Release & Vesicle Cycling</a></li>
+                <li><a href="#plasticity"><i class="fas fa-chart-line"></i> 12. Synaptic Plasticity (LTP, LTD)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART III – SENSORY SYSTEMS</h3>
+            <ul class="chapter-list">
+                <li><a href="#sensory"><i class="fas fa-eye"></i> 13. General Principles of Sensory Transduction</a></li>
+                <li><a href="#somatosensory"><i class="fas fa-hand"></i> 14. Somatosensory System</a></li>
+                <li><a href="#pain"><i class="fas fa-burn"></i> 15. Pain & Nociception</a></li>
+                <li><a href="#vision"><i class="fas fa-eye"></i> 16. Vision – Photoreceptors & Retina</a></li>
+                <li><a href="#audition"><i class="fas fa-ear-listen"></i> 17. Audition – Cochlea & Hair Cells</a></li>
+                <li><a href="#vestibular"><i class="fas fa-balance-scale"></i> 18. Vestibular System</a></li>
+                <li><a href="#olfaction"><i class="fas fa-nose"></i> 19. Olfaction & Taste</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART IV – MOTOR FUNCTIONS</h3>
+            <ul class="chapter-list">
+                <li><a href="#motor"><i class="fas fa-dumbbell"></i> 20. Motor Unit & Muscle Contraction</a></li>
+                <li><a href="#spinal"><i class="fas fa-spine"></i> 21. Spinal Reflexes</a></li>
+                <li><a href="#brainstem"><i class="fas fa-brain"></i> 22. Brainstem Control of Posture</a></li>
+                <li><a href="#cortex"><i class="fas fa-brain"></i> 23. Motor Cortex & Corticospinal Tract</a></li>
+                <li><a href="#basal-ganglia"><i class="fas fa-circle"></i> 24. Basal Ganglia</a></li>
+                <li><a href="#cerebellum"><i class="fas fa-snowman"></i> 25. Cerebellum</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART V – HIGHER FUNCTIONS</h3>
+            <ul class="chapter-list">
+                <li><a href="#autonomic"><i class="fas fa-heart"></i> 26. Autonomic Nervous System</a></li>
+                <li><a href="#sleep"><i class="fas fa-moon"></i> 27. Sleep & EEG Rhythms</a></li>
+                <li><a href="#memory"><i class="fas fa-book"></i> 28. Learning & Memory (Engrams)</a></li>
+                <li><a href="#language"><i class="fas fa-language"></i> 29. Language & Cognition</a></li>
+                <li><a href="#consciousness"><i class="fas fa-eye"></i> 30. Consciousness & Brain Death</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== PART I: NEURAL MECHANISMS ==================== -->
+        <section id="neurons" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-microscope"></i> 1. Neurons – Structure & Function</div>
+            <div class="section-card">
+                <div class="section-heading">What Is a Neuron?</div>
+                <div class="body-text">
+                    <p>Neurons are the fundamental units of the nervous system—specialized cells designed to receive, process, and transmit electrical and chemical signals. They are highly polarized, meaning different parts of the cell have distinct functions and structures [citation:8].</p>
+                </div>
+                <div class="subsection-heading">Structural Regions</div>
+                <ul>
+                    <li><strong>Soma (cell body):</strong> Contains the nucleus and most of the protein‑synthesis machinery (rough ER, ribosomes). It is the metabolic center of the neuron.</li>
+                    <li><strong>Dendrites:</strong> Branched extensions that receive synaptic inputs from other neurons. Many dendrites contain ribosomes and can synthesize some proteins locally.</li>
+                    <li><strong>Axon:</strong> A single, long process that conducts action potentials away from the soma. It lacks ribosomes and relies on axonal transport for proteins and organelles [citation:8].</li>
+                    <li><strong>Axon terminals:</strong> Specialized endings that release neurotransmitters onto target cells.</li>
+                </ul>
+                <div class="diagram-placeholder"><i class="fas fa-project-diagram"></i> Diagram of a neuron with labeled parts</div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Axonal Transport – The Neuron’s Highway</div>
+                <div class="body-text">
+                    <p>Because the axon cannot synthesize proteins, it depends on transport from the soma. Axonal transport moves organelles, vesicles, and proteins along microtubules [citation:8].</p>
+                    <ul>
+                        <li><strong>Fast anterograde transport:</strong> Moves vesicles and mitochondria from soma to terminals at ~400 mm/day, driven by <strong>kinesin</strong>.</li>
+                        <li><strong>Fast retrograde transport:</strong> Returns old membrane components, neurotrophic factors, and pathogens (e.g., tetanus toxin) to the soma, driven by <strong>dynein</strong>.</li>
+                        <li><strong>Slow transport:</strong> Moves cytoskeletal proteins (actin, tubulin) at 0.2–8 mm/day.</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <strong>Clinical Pearl:</strong> Herpes simplex and rabies virus use retrograde transport to invade the CNS. Charcot‑Marie‑Tooth disease can result from mutations in kinesin genes.
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Neuronal Classification</div>
+                <div class="body-text">
+                    <p>Neurons can be classified by:</p>
+                    <ul>
+                        <li><strong>Morphology:</strong> Unipolar, bipolar, pseudounipolar, multipolar.</li>
+                        <li><strong>Connectivity:</strong> Sensory, motor, interneurons.</li>
+                        <li><strong>Neurotransmitter:</strong> Glutamatergic, GABAergic, cholinergic, dopaminergic, etc.</li>
+                        <li><strong>Transcriptomic signature:</strong> Modern single‑cell RNA sequencing reveals dozens of molecularly distinct subtypes [citation:8].</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="glia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shapes"></i> 2. Neuron‑Glial Cell Cooperation</div>
+            <div class="section-card">
+                <div class="section-heading">Astrocytes</div>
+                <div class="body-text">
+                    <p>Astrocytes are star‑shaped glial cells that play a crucial role in homeostasis and synaptic function [citation:8].</p>
+                    <ul>
+                        <li><strong>Structural support:</strong> Form the blood‑brain barrier with endothelial cells.</li>
+                        <li><strong>Ion homeostasis:</strong> Take up excess K⁺ from extracellular space.</li>
+                        <li><strong>Neurotransmitter clearance:</strong> Remove glutamate (via EAAT transporters) and GABA.</li>
+                        <li><strong>Metabolic support:</strong> Supply lactate to neurons (lactate shuttle).</li>
+                        <li><strong>Synaptic modulation:</strong> Release gliotransmitters that influence synaptic transmission.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Oligodendrocytes & Myelin</div>
+                <div class="body-text">
+                    <p>Oligodendrocytes (CNS) and Schwann cells (PNS) form myelin sheaths around axons [citation:8].</p>
+                    <ul>
+                        <li><strong>Myelin structure:</strong> A lipid‑rich multilamellar wrap that increases membrane resistance and decreases capacitance.</li>
+                        <li><strong>Saltatory conduction:</strong> Action potentials jump between nodes of Ranvier, greatly increasing conduction velocity.</li>
+                        <li><strong>Myelin plasticity:</strong> Learning experiences can alter myelination, affecting circuit function [citation:8].</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <strong>Demyelinating diseases:</strong> Multiple sclerosis (autoimmune attack on CNS myelin) and Guillain‑Barré syndrome (PNS) disrupt conduction, causing weakness, numbness, and visual disturbances.
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Microglia</div>
+                <div class="body-text">
+                    <p>Microglia are the resident immune cells of the CNS. They constantly survey the environment, prune synapses during development, and respond to injury [citation:8].</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ionic-gradients" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 3. Ionic Gradients & Membrane Potential</div>
+            <div class="section-card">
+                <div class="section-heading">The Resting Membrane Potential</div>
+                <div class="body-text">
+                    <p>All cells have a voltage difference across their plasma membrane, typically –60 to –70 mV (inside negative) for neurons. This arises from [citation:8]:</p>
+                    <ul>
+                        <li><strong>Ion concentration gradients:</strong> Maintained by active pumps (Na⁺/K⁺ ATPase: 3 Na⁺ out, 2 K⁺ in).</li>
+                        <li><strong>Selective permeability:</strong> At rest, membrane is most permeable to K⁺ (leak channels).</li>
+                    </ul>
+                </div>
+                <div class="definition-box">
+                    <strong>Nernst equation:</strong> Calculates the equilibrium potential for an ion:
+                    <p style="font-family: monospace; margin-top: 0.5rem;">E<sub>ion</sub> = (RT/zF) ln ([ion]<sub>out</sub> / [ion]<sub>in</sub>)</p>
+                    <p>At 37°C, for K⁺, E<sub>K</sub> ≈ –90 mV; for Na⁺, E<sub>Na</sub> ≈ +60 mV.</p>
+                </div>
+                <div class="body-text">
+                    <p>The actual resting potential is close to E<sub>K</sub> because of high K⁺ permeability, but Na⁺ leak shifts it slightly positive. The Goldman‑Hodgkin‑Katz equation accounts for multiple permeant ions.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Electrochemical Gradient</div>
+                <div class="body-text">
+                    <p>The driving force on an ion is the difference between the membrane potential (V<sub>m</sub>) and the ion’s equilibrium potential (E<sub>ion</sub>). When V<sub>m</sub> ≠ E<sub>ion</sub>, a current flows if channels are open [citation:8].</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="voltage-gated" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wave-square"></i> 4. Voltage‑Gated Channels & Action Potentials</div>
+            <div class="section-card">
+                <div class="section-heading">The Action Potential – Hodgkin‑Huxley Model</div>
+                <div class="body-text">
+                    <p>The action potential (AP) is a rapid, all‑or‑none change in membrane potential that propagates along axons. It results from the coordinated opening and closing of voltage‑gated Na⁺ and K⁺ channels [citation:5][citation:8].</p>
+                </div>
+                <div class="subsection-heading">Phases</div>
+                <ol>
+                    <li><strong>Resting:</strong> V<sub>m</sub> ≈ –70 mV; Na⁺ channels closed, K⁺ channels closed.</li>
+                    <li><strong>Depolarization:</strong> Stimulus opens voltage‑gated Na⁺ channels; Na⁺ influx drives V<sub>m</sub> toward E<sub>Na</sub> (≈ +30 mV).</li>
+                    <li><strong>Repolarization:</strong> Na⁺ channels inactivate; voltage‑gated K⁺ channels open; K⁺ efflux restores negative potential.</li>
+                    <li><strong>Hyperpolarization/afterpotential:</strong> K⁺ channels close slowly, sometimes causing a brief undershoot.</li>
+                </ol>
+                <div class="diagram-placeholder"><i class="fas fa-chart-line"></i> Action potential waveform with labeled phases</div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Voltage‑Gated Sodium Channels</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>Structure:</strong> α subunit forms the pore; β subunits modulate function. Contains voltage sensor (S4 segment) and inactivation gate (III‑IV linker) [citation:8].</li>
+                        <li><strong>States:</strong> Closed (resting) → open (depolarized) → inactivated (refractory).</li>
+                        <li><strong>Refractory periods:</strong> Absolute (Na⁺ channels inactivated) and relative (some Na⁺ channels recovered, but K⁺ conductance high).</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <strong>Channelopathies:</strong> Mutations in Na⁺ channel genes (e.g., SCN1A) cause epilepsy syndromes (Dravet syndrome), paramyotonia congenita, and long QT syndrome [citation:5].
+                </div>
+            </div>
+        </section>
+
+        <section id="propagation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrow-right"></i> 5. Action Potential Propagation</div>
+            <div class="section-card">
+                <div class="section-heading">Continuous vs. Saltatory Conduction</div>
+                <div class="body-text">
+                    <p>In unmyelinated axons, APs propagate continuously—each segment depolarizes the next. In myelinated axons, APs regenerate only at nodes of Ranvier, where Na⁺ channels are concentrated. This <strong>saltatory conduction</strong> is faster and more energy‑efficient [citation:8].</p>
+                </div>
+                <div class="premium-table">
+                    <table>
+                        <thead><tr><th>Fiber Type</th><th>Diameter</th><th>Myelin</th><th>Conduction Velocity</th><th>Examples</th></tr></thead>
+                        <tbody>
+                            <tr><td>Aα</td><td>13–20 μm</td><td>Yes</td><td>80–120 m/s</td><td>Motor, proprioception</td></tr>
+                            <tr><td>Aδ</td><td>1–5 μm</td><td>Thin</td><td>5–30 m/s</td><td>Pain, temperature</td></tr>
+                            <tr><td>C</td><td>0.2–1.5 μm</td><td>No</td><td>0.5–2 m/s</td><td>Slow pain, autonomic</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="channels" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-door-open"></i> 6. Ion Channel Diversity & Channelopathies</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Beyond Na⁺ and K⁺ channels, neurons express a vast array of ion channels with distinct properties [citation:5][citation:8]:</p>
+                    <ul>
+                        <li><strong>Voltage‑gated calcium channels:</strong> Cav1–3 families; mediate neurotransmitter release, gene expression.</li>
+                        <li><strong>Voltage‑gated potassium channels:</strong> Kv1–12; control repolarization, firing frequency.</li>
+                        <li><strong>Hyperpolarization‑activated cyclic nucleotide‑gated (HCN) channels:</strong> Generate pacemaker currents (I<sub>h</sub>) in rhythmic neurons.</li>
+                        <li><strong>Two‑pore K⁺ channels (K2P):</strong> Responsible for background (leak) K⁺ currents.</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <p>Channelopathies (genetic ion channel defects) underlie many neurologic disorders: epilepsy, migraine, ataxia, periodic paralysis, and cardiac arrhythmias [citation:5].</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PART II: SYNAPTIC TRANSMISSION ==================== -->
+        <section id="synapse" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-plug"></i> 7. Synaptic Transmission – Overview</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Synaptic transmission is the process by which one neuron communicates with another (or with a muscle/gland). It occurs at specialized junctions called <strong>synapses</strong> [citation:5].</p>
+                    <ul>
+                        <li><strong>Electrical synapses:</strong> Gap junctions connect cytoplasm; rapid, bidirectional, often in escape circuits.</li>
+                        <li><strong>Chemical synapses:</strong> Neurotransmitter released from presynaptic terminal binds to postsynaptic receptors; slower but modulatable.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="neurotransmitters" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 8. Neurotransmitters & Receptors</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Neurotransmitters are chemicals that mediate synaptic transmission. They are classified by structure and function [citation:5][citation:8]:</p>
+                </div>
+                <div class="premium-table">
+                    <table>
+                        <thead><tr><th>Class</th><th>Examples</th><th>Receptor Types</th></tr></thead>
+                        <tbody>
+                            <tr><td>Amino acids</td><td>Glutamate (excitatory), GABA (inhibitory), glycine (inhibitory)</td><td>Ionotropic (AMPA, NMDA, GABA<sub>A</sub>, glycine) and metabotropic (mGluR, GABA<sub>B</sub>)</td></tr>
+                            <tr><td>Monoamines</td><td>Dopamine, norepinephrine, epinephrine, serotonin, histamine</td><td>Metabotropic (GPCRs)</td></tr>
+                            <tr><td>Acetylcholine</td><td>ACh</td><td>Ionotropic (nicotinic) and metabotropic (muscarinic)</td></tr>
+                            <tr><td>Neuropeptides</td><td>Substance P, enkephalins, oxytocin, vasopressin</td><td>Metabotropic (GPCRs)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="ionotropic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 9. Ionotropic Receptors (Fast Transmission)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Ionotropic receptors are ligand‑gated ion channels. Neurotransmitter binding directly opens the channel, causing rapid (millisecond) changes in membrane potential [citation:5][citation:8].</p>
+                    <ul>
+                        <li><strong>AMPA receptors:</strong> Permeable to Na⁺ and K⁺; mediate fast excitatory transmission.</li>
+                        <li><strong>NMDA receptors:</strong> Permeable to Na⁺, K⁺, and Ca²⁺; require both glutamate and depolarization (Mg²⁺ block); key for plasticity.</li>
+                        <li><strong>GABA<sub>A</sub> receptors:</strong> Permeable to Cl⁻; mediate fast inhibition (hyperpolarization).</li>
+                        <li><strong>Nicotinic ACh receptors:</strong> Permeable to Na⁺, K⁺; mediate fast excitation at neuromuscular junction.</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <p>Benzodiazepines and barbiturates potentiate GABA<sub>A</sub> receptors; ketamine blocks NMDA receptors (anesthetic, dissociative).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="metabotropic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 10. Metabotropic Receptors & Second Messengers</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Metabotropic receptors are G‑protein‑coupled receptors (GPCRs). They act indirectly via G proteins and second messengers, producing slower but longer‑lasting effects [citation:5].</p>
+                    <ul>
+                        <li><strong>G<sub>s</sub>:</strong> Activates adenylyl cyclase → ↑cAMP → activates PKA.</li>
+                        <li><strong>G<sub>i</sub>:</strong> Inhibits adenylyl cyclase → ↓cAMP.</li>
+                        <li><strong>G<sub>q</sub>:</strong> Activates phospholipase C → IP₃ and DAG → ↑Ca²⁺, PKC.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="release" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrow-down"></i> 11. Neurotransmitter Release & Vesicle Cycling</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Action potential invades the presynaptic terminal, opening voltage‑gated Ca²⁺ channels. Ca²⁺ influx triggers vesicle fusion via SNARE proteins (synaptobrevin, syntaxin, SNAP‑25) [citation:5][citation:8].</p>
+                    <ul>
+                        <li><strong>Vesicle pools:</strong> Readily releasable, recycling, and reserve pools.</li>
+                        <li><strong>Endocytosis:</strong> Vesicles retrieved (clathrin‑mediated) and refilled with neurotransmitter.</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <p>Tetanus and botulinum toxins are proteases that cleave SNARE proteins, blocking neurotransmitter release → spastic paralysis (tetanus) or flaccid paralysis (botulism).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="plasticity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 12. Synaptic Plasticity (LTP, LTD)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Long‑term potentiation (LTP)</strong> and <strong>long‑term depression (LTD)</strong> are lasting changes in synaptic strength, considered cellular correlates of learning and memory [citation:5].</p>
+                    <ul>
+                        <li><strong>LTP:</strong> High‑frequency stimulation → NMDA receptor activation → Ca²⁺ influx → insertion of AMPA receptors, structural changes.</li>
+                        <li><strong>LTD:</strong> Low‑frequency stimulation → moderate Ca²⁺ rise → AMPA receptor internalization.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PART III: SENSORY SYSTEMS ==================== -->
+        <section id="sensory" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 13. General Principles of Sensory Transduction</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Sensory receptors convert stimulus energy (light, sound, touch, chemical) into electrical signals (receptor potential). Key concepts [citation:5]:</p>
+                    <ul>
+                        <li><strong>Adequate stimulus:</strong> Each receptor is most sensitive to one modality.</li>
+                        <li><strong>Receptive field:</strong> Area that, when stimulated, alters receptor firing.</li>
+                        <li><strong>Adaptation:</strong> Phasic receptors (rapidly adapting) vs. tonic receptors (slowly adapting).</li>
+                        <li><strong>Labeled line:</strong> Specific pathways for each modality.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="somatosensory" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand"></i> 14. Somatosensory System</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Transmits touch, proprioception, temperature, and pain.</p>
+                    <ul>
+                        <li><strong>Dorsal column‑medial lemniscus pathway:</strong> Fine touch, vibration, proprioception; decussates in medulla.</li>
+                        <li><strong>Spinothalamic tract:</strong> Pain, temperature, crude touch; decussates at spinal cord.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="pain" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-burn"></i> 15. Pain & Nociception</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Nociceptors are free nerve endings responding to mechanical, thermal, or chemical stimuli. Substance P and glutamate are key neurotransmitters [citation:8].</p>
+                    <ul>
+                        <li><strong>Fast pain:</strong> Aδ fibers; sharp, localized.</li>
+                        <li><strong>Slow pain:</strong> C fibers; dull, burning, diffuse.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="vision" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 16. Vision – Photoreceptors & Retina</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Photoreceptors (rods and cones) hyperpolarize in response to light. The phototransduction cascade [citation:5][citation:8]:</p>
+                    <ol>
+                        <li>Light activates rhodopsin → activates transducin (G<sub>t</sub>).</li>
+                        <li>Transducin activates phosphodiesterase → cGMP breakdown.</li>
+                        <li>↓cGMP closes Na⁺ channels (dark current stops) → hyperpolarization.</li>
+                    </ol>
+                </div>
+                <div class="clinical-correlation">
+                    <p>Retinitis pigmentosa involves progressive rod degeneration; gene therapy (RPE65) has shown success in some forms [citation:5].</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="audition" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ear-listen"></i> 17. Audition – Cochlea & Hair Cells</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Hair cells in the organ of Corti transduce sound. Deflection of stereocilia opens mechanically gated channels (tip links) → depolarization → neurotransmitter release [citation:5].</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="vestibular" class="chapter-content"><div class="chapter-title">18. Vestibular System</div><div class="section-card"><div class="body-text">Detects head position and movement via otolith organs and semicircular canals; hair cells similar to cochlea.</div></div></section>
+        <section id="olfaction" class="chapter-content"><div class="chapter-title">19. Olfaction & Taste</div><div class="section-card"><div class="body-text">Olfactory receptors are GPCRs; each neuron expresses one receptor type. Taste cells use ionotropic (salty, sour) and metabotropic (sweet, bitter, umami) mechanisms [citation:5].</div></div></section>
+
+        <!-- ==================== PART IV: MOTOR FUNCTIONS ==================== -->
+        <section id="motor" class="chapter-content"><div class="chapter-title">20. Motor Unit & Muscle Contraction</div><div class="section-card"><div class="body-text">A motor unit = one α‑motor neuron + all fibers it innervates. Excitation‑contraction coupling: AP → SR Ca²⁺ release → cross‑bridge cycling.</div></div></section>
+        <section id="spinal" class="chapter-content"><div class="chapter-title">21. Spinal Reflexes</div><div class="section-card"><div class="body-text">Monosynaptic (stretch reflex) and polysynaptic (flexor withdrawal) reflexes are mediated by spinal circuits [citation:2].</div></div></section>
+        <section id="brainstem" class="chapter-content"><div class="chapter-title">22. Brainstem Control of Posture</div><div class="section-card"><div class="body-text">Vestibular nuclei, reticulospinal tracts maintain upright posture against gravity.</div></div></section>
+        <section id="cortex" class="chapter-content"><div class="chapter-title">23. Motor Cortex & Corticospinal Tract</div><div class="section-card"><div class="body-text">Primary motor cortex (M1) encodes force and direction; corticospinal tract decussates at medulla [citation:2].</div></div></section>
+        <section id="basal-ganglia" class="chapter-content">
+            <div class="chapter-title">24. Basal Ganglia</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Basal ganglia (caudate, putamen, globus pallidus, subthalamic nucleus, substantia nigra) modulate movement via direct (facilitatory) and indirect (inhibitory) pathways [citation:2].</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p>Parkinson disease: loss of nigrostriatal dopamine → hypokinesia, rigidity, tremor. Huntington disease: loss of striatal GABA neurons → hyperkinesia (chorea).</p>
+                </div>
+            </div>
+        </section>
+        <section id="cerebellum" class="chapter-content">
+            <div class="chapter-title">25. Cerebellum</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Coordinates movement, balance, and motor learning. Purkinje cells provide sole output; cerebellar dysfunction causes ataxia, dysmetria, intention tremor [citation:2].</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PART V: HIGHER FUNCTIONS ==================== -->
+        <section id="autonomic" class="chapter-content"><div class="chapter-title">26. Autonomic Nervous System</div><div class="section-card"><div class="body-text">Sympathetic (fight/flight) and parasympathetic (rest/digest) divisions use two‑neuron chains (preganglionic → postganglionic).</div></div></section>
+        <section id="sleep" class="chapter-content"><div class="chapter-title">27. Sleep & EEG Rhythms</div><div class="section-card"><div class="body-text">EEG records cortical activity. Sleep stages: NREM (slow waves) and REM (fast, desynchronized). Sleep cycles are regulated by brainstem and hypothalamic circuits [citation:4].</div></div></section>
+        <section id="memory" class="chapter-content">
+            <div class="chapter-title">28. Learning & Memory (Engrams)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Memories are stored as engrams—sets of neurons activated during learning that can be reactivated during recall [citation:8]. Hippocampus is critical for declarative memory.</p>
+                </div>
+            </div>
+        </section>
+        <section id="language" class="chapter-content"><div class="chapter-title">29. Language & Cognition</div><div class="section-card"><div class="body-text">Broca (production) and Wernicke (comprehension) areas; aphasias result from lesions.</div></div></section>
+        <section id="consciousness" class="chapter-content"><div class="chapter-title">30. Consciousness & Brain Death</div><div class="section-card"><div class="body-text">Consciousness requires intact brainstem arousal systems and cortical activity. Brain death = irreversible loss of all brain function (including brainstem).</div></div></section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Compiled from authoritative sources · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

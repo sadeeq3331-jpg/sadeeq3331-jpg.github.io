@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Najeeb's Cardiology – Complete Physiology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f9ff; font-family: 'Open Sans', sans-serif; }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i { font-size: 2rem; color: #ffd966; }
+        .top-bar h1 { font-family: 'Merriweather', serif; font-weight: 700; font-size: 1.8rem; }
+        .top-bar .author {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position: fixed;
+            top: 5rem;
+            left: -350px;
+            width: 320px;
+            height: calc(100vh - 5rem);
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 1.5rem 0.5rem 1.5rem 1.5rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            z-index: 90;
+        }
+        .toc-sidebar.open { left: 0; }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #ffd966;
+            text-transform: uppercase;
+        }
+        .chapter-list { list-style: none; }
+        .chapter-item { margin-bottom: 0.3rem; }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.8rem 0.6rem 1rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 30px 0 0 30px;
+            transition: 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .chapter-item a i { width: 24px; font-size: 1rem; color: #2c7cb0; }
+        .chapter-item a:hover {
+            background: #e9f0f7;
+            border-left-color: #1f6e9c;
+        }
+        .reader-panel {
+            margin-left: 0;
+            padding: 2rem 2.5rem;
+            transition: margin-left 0.3s ease;
+            background: white;
+            min-height: calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left: 320px; }
+        .chapter-content { max-width: 1000px; margin: 0 auto; }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #ffd966;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chapter-title i { font-size: 2.5rem; color: #2c7cb0; }
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 20px -10px rgba(10,41,66,0.1);
+            border: 1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #ffd966;
+            padding-left: 20px;
+        }
+        .subsection-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #154f78;
+            margin: 1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .body-text strong { color: #0a2942; }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #f39c12;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #27ae60;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points ul { list-style: none; }
+        .key-points li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i { color: #8e44ad; }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .premium-table th { background: #0a2942; color: white; padding: 1rem; text-align: left; }
+        .premium-table td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom: none; }
+        .diagram-placeholder {
+            background: #f9fcff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #b9d5f0;
+            text-align: center;
+            color: #2c7cb0;
+        }
+        .diagram-placeholder i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 1000px) {
+            .toc-sidebar { width: 280px; }
+            .reader-panel.shifted { margin-left: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-heartbeat"></i>
+        <h1>Dr. Najeeb's Cardiology – Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents (Physiology)</h2>
+        <ul class="chapter-list">
+            <li class="chapter-item"><a href="#cardiac-cycle"><i class="fas fa-chart-line"></i> Cardiac Cycle</a></li>
+            <li class="chapter-item"><a href="#ecg-basics"><i class="fas fa-wave-square"></i> Electrocardiography</a></li>
+            <li class="chapter-item"><a href="#electrophysiology"><i class="fas fa-bolt"></i> Electrophysiology of Heart</a></li>
+            <li class="chapter-item"><a href="#bipolar-leads"><i class="fas fa-bolt"></i> Bipolar Limb Leads</a></li>
+            <li class="chapter-item"><a href="#augmented-leads"><i class="fas fa-bolt"></i> Augmented Unipolar Limb Leads</a></li>
+            <li class="chapter-item"><a href="#chest-leads"><i class="fas fa-heart"></i> Chest Leads</a></li>
+            <li class="chapter-item"><a href="#qrs-nomenclature"><i class="fas fa-heart"></i> QRS Complex Nomenclature</a></li>
+            <li class="chapter-item"><a href="#qrs-chest"><i class="fas fa-heart"></i> QRS Complex in Chest Leads</a></li>
+            <li class="chapter-item"><a href="#r-progression"><i class="fas fa-chart-line"></i> Abnormalities of R wave progression</a></li>
+            <li class="chapter-item"><a href="#first-heart-sound"><i class="fas fa-music"></i> First Heart Sound</a></li>
+            <li class="chapter-item"><a href="#second-heart-sound"><i class="fas fa-music"></i> Second Heart Sound</a></li>
+            <li class="chapter-item"><a href="#third-fourth-heart-sound"><i class="fas fa-music"></i> Third & Fourth Heart Sound</a></li>
+            <li class="chapter-item"><a href="#arrhythmias"><i class="fas fa-bolt"></i> Arrhythmias</a></li>
+            <li class="chapter-item"><a href="#contractility"><i class="fas fa-heart"></i> Myocardial Contractility</a></li>
+            <li class="chapter-item"><a href="#cardiac-output"><i class="fas fa-heart"></i> Cardiac Output</a></li>
+            <li class="chapter-item"><a href="#heart-sounds-murmurs"><i class="fas fa-stethoscope"></i> Heart Sounds & Murmurs</a></li>
+            <li class="chapter-item"><a href="#systolic-clicks"><i class="fas fa-music"></i> Systolic Clicks</a></li>
+            <li class="chapter-item"><a href="#diastolic-sounds"><i class="fas fa-music"></i> Diastolic Sounds</a></li>
+            <li class="chapter-item"><a href="#diastolic-murmurs"><i class="fas fa-music"></i> Diastolic Murmurs</a></li>
+            <li class="chapter-item"><a href="#wpw"><i class="fas fa-bolt"></i> Wolff‑Parkinson‑White Syndrome</a></li>
+            <li class="chapter-item"><a href="#jvp"><i class="fas fa-heart"></i> Jugular Venous Pressure</a></li>
+        </ul>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- 1. Cardiac Cycle -->
+        <section id="cardiac-cycle" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> Cardiac Cycle</div>
+            <div class="section-card">
+                <div class="section-heading">What Is the Cardiac Cycle?</div>
+                <div class="body-text">
+                    <p>The cardiac cycle refers to the sequence of mechanical and electrical events that occur from the beginning of one heartbeat to the next. It includes systole (contraction) and diastole (relaxation) of the atria and ventricles.</p>
+                    <p>A complete cycle lasts about 0.8 seconds at a heart rate of 75 beats per minute.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Phases of the Cardiac Cycle</div>
+                <ol>
+                    <li><strong>Atrial systole:</strong> Atria contract, contributing the last 20–30% of ventricular filling. Produces the "a" wave in atrial pressure tracing.</li>
+                    <li><strong>Isovolumetric ventricular contraction:</strong> Ventricles contract, AV valves close (S1). No change in volume because all valves are closed; pressure rises rapidly.</li>
+                    <li><strong>Rapid ejection:</strong> When ventricular pressure exceeds aortic pressure, semilunar valves open. Blood is ejected rapidly into the aorta and pulmonary artery.</li>
+                    <li><strong>Reduced ejection:</strong> Ventricular pressure begins to fall, ejection slows.</li>
+                    <li><strong>Isovolumetric relaxation:</strong> Ventricles relax, pressure drops below aortic pressure; semilunar valves close (S2). All valves closed, no volume change.</li>
+                    <li><strong>Rapid filling:</strong> AV valves open; blood that had accumulated in atria rushes into ventricles (may cause S3).</li>
+                    <li><strong>Diastasis:</strong> Slow filling period.</li>
+                    <li><strong>Last filling (atrial systole):</strong> Atria contract again, completing the cycle.</li>
+                </ol>
+                <div class="diagram-placeholder"><i class="fas fa-chart-gantt"></i> Wiggers diagram: aortic pressure, ventricular pressure, atrial pressure, ventricular volume, ECG, heart sounds</div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pressure‑Volume Loop</div>
+                <div class="body-text">
+                    <p>The left ventricular pressure‑volume loop plots pressure against volume during one cardiac cycle.</p>
+                    <ul>
+                        <li><strong>A → B (filling):</strong> Ventricular filling (end‑diastolic volume, EDV).</li>
+                        <li><strong>B → C (isovolumetric contraction):</strong> Pressure rises, volume constant.</li>
+                        <li><strong>C → D (ejection):</strong> Volume decreases, pressure rises then falls (end‑systolic volume, ESV).</li>
+                        <li><strong>D → A (isovolumetric relaxation):</strong> Pressure falls, volume constant.</li>
+                    </ul>
+                    <p>Stroke volume = EDV – ESV. Ejection fraction = SV/EDV.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Key Points</div>
+                <div class="key-points">
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Atrial systole contributes ~20% of ventricular filling.</li>
+                        <li><i class="fas fa-check-circle"></i> Isovolumetric phases occur when all valves are closed.</li>
+                        <li><i class="fas fa-check-circle"></i> S1 = AV valve closure; S2 = semilunar valve closure.</li>
+                        <li><i class="fas fa-check-circle"></i> EDV ~120 mL, ESV ~50 mL, SV ~70 mL.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Electrocardiography (ECG) -->
+        <section id="ecg-basics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wave-square"></i> Electrocardiography</div>
+            <div class="section-card">
+                <div class="section-heading">What Is an ECG?</div>
+                <div class="body-text">
+                    <p>Electrocardiography records the electrical activity of the heart from electrodes placed on the body surface. The ECG provides information about heart rate, rhythm, conduction, and myocardial ischemia/infarction.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">ECG Waves and Intervals</div>
+                <ul>
+                    <li><strong>P wave:</strong> Atrial depolarization.</li>
+                    <li><strong>PR interval:</strong> Time from atrial depolarization to ventricular depolarization (includes AV nodal delay). Normal 0.12–0.20 s.</li>
+                    <li><strong>QRS complex:</strong> Ventricular depolarization. Normal duration <0.12 s.</li>
+                    <li><strong>ST segment:</strong> Early ventricular repolarization; normally isoelectric.</li>
+                    <li><strong>T wave:</strong> Ventricular repolarization.</li>
+                    <li><strong>QT interval:</strong> Total duration of ventricular depolarization and repolarization (corrected for heart rate).</li>
+                </ul>
+                <div class="diagram-placeholder"><i class="fas fa-wave-square"></i> Normal ECG tracing with labeled waves and intervals</div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">ECG Paper</div>
+                <div class="body-text">
+                    <p>Standard ECG paper speed is 25 mm/s. Each small square (1 mm) = 0.04 s, each large square (5 mm) = 0.2 s. Voltage calibration: 10 mm = 1 mV.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Correlations</div>
+                <div class="clinical-correlation">
+                    <p><strong>ST elevation:</strong> Acute myocardial infarction, pericarditis.</p>
+                    <p><strong>ST depression:</strong> Ischemia, digoxin effect, hypokalemia.</p>
+                    <p><strong>T wave inversion:</strong> Ischemia, ventricular hypertrophy, electrolyte disturbances.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Electrophysiology of Heart -->
+        <section id="electrophysiology" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> Electrophysiology of Heart</div>
+            <div class="section-card">
+                <div class="section-heading">Cardiac Action Potentials</div>
+                <div class="body-text">
+                    <p>Two main types: fast response (atrial and ventricular myocytes, Purkinje fibers) and slow response (SA and AV nodes).</p>
+                </div>
+                <div class="subsection-heading">Fast Response Action Potential</div>
+                <ul>
+                    <li><strong>Phase 0:</strong> Rapid depolarization – opening of fast Na⁺ channels.</li>
+                    <li><strong>Phase 1:</strong> Early repolarization – transient K⁺ efflux.</li>
+                    <li><strong>Phase 2:</strong> Plateau – Ca²⁺ influx through L‑type channels balances K⁺ efflux.</li>
+                    <li><strong>Phase 3:</strong> Repolarization – Ca²⁺ channels close, K⁺ efflux dominates.</li>
+                    <li><strong>Phase 4:</strong> Resting membrane potential (stable).</li>
+                </ul>
+                <div class="subsection-heading">Slow Response Action Potential (SA/AV Node)</div>
+                <ul>
+                    <li>Phase 0: Depolarization via L‑type Ca²⁺ channels (slower).</li>
+                    <li>Phase 3: Repolarization by K⁺ efflux.</li>
+                    <li>Phase 4: Spontaneous diastolic depolarization due to "funny current" (If) and T‑type Ca²⁺ channels.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Autonomic Effects</div>
+                <div class="body-text">
+                    <p><strong>Sympathetic stimulation</strong> (norepinephrine, β1 receptors) → ↑ cAMP → ↑ Ca²⁺ influx → increased heart rate (positive chronotropy), increased conduction velocity (positive dromotropy), increased contractility (positive inotropy).</p>
+                    <p><strong>Parasympathetic stimulation</strong> (acetylcholine, M2 receptors) → ↑ K⁺ conductance, ↓ cAMP → hyperpolarization, ↓ slope of phase 4 → decreased heart rate, decreased AV nodal conduction.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Bipolar Limb Leads -->
+        <section id="bipolar-leads" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> Bipolar Limb Leads</div>
+            <div class="section-card">
+                <div class="section-heading">Einthoven's Leads</div>
+                <div class="body-text">
+                    <p>Bipolar limb leads record voltage between two electrodes placed on the limbs:</p>
+                    <ul>
+                        <li><strong>Lead I:</strong> Left arm (+) – Right arm (–)</li>
+                        <li><strong>Lead II:</strong> Left leg (+) – Right arm (–)</li>
+                        <li><strong>Lead III:</strong> Left leg (+) – Left arm (–)</li>
+                    </ul>
+                    <p>These leads form Einthoven's triangle. Lead II usually shows the largest QRS because its axis aligns with the main cardiac vector.</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Einthoven's law:</strong> Lead II = Lead I + Lead III (voltage differences).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Augmented Unipolar Limb Leads -->
+        <section id="augmented-leads" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> Augmented Unipolar Limb Leads</div>
+            <div class="section-card">
+                <div class="section-heading">Goldberger's Leads</div>
+                <div class="body-text">
+                    <p>Augmented leads use a combination of limb electrodes to create a reference point. They are unipolar (positive electrode on one limb, negative is a combination of the other two).</p>
+                    <ul>
+                        <li><strong>aVR:</strong> Right arm positive</li>
+                        <li><strong>aVL:</strong> Left arm positive</li>
+                        <li><strong>aVF:</strong> Left leg positive</li>
+                    </ul>
+                    <p>These leads view the heart from different angles in the frontal plane.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Chest Leads -->
+        <section id="chest-leads" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Chest Leads (Precordial Leads)</div>
+            <div class="section-card">
+                <div class="section-heading">Placement</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>V1:</strong> 4th intercostal space, right sternal border</li>
+                        <li><strong>V2:</strong> 4th intercostal space, left sternal border</li>
+                        <li><strong>V3:</strong> Midway between V2 and V4</li>
+                        <li><strong>V4:</strong> 5th intercostal space, midclavicular line</li>
+                        <li><strong>V5:</strong> 5th intercostal space, anterior axillary line</li>
+                        <li><strong>V6:</strong> 5th intercostal space, midaxillary line</li>
+                    </ul>
+                    <p>These leads record electrical activity in the horizontal plane. V1 and V2 face the right ventricle and septum, V3 and V4 the anterior wall, V5 and V6 the lateral wall.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. QRS Nomenclature -->
+        <section id="qrs-nomenclature" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> QRS Complex Nomenclature</div>
+            <div class="section-card">
+                <div class="section-heading">Naming Deflections</div>
+                <div class="body-text">
+                    <p>If the first deflection is negative, it is called a Q wave. The first positive deflection is an R wave. A negative deflection after an R is an S wave. Subsequent positive or negative deflections are labeled R' or S'. Lowercase letters (q, r, s) indicate small deflections.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. QRS in Chest Leads -->
+        <section id="qrs-chest" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> QRS Complex in Chest Leads</div>
+            <div class="section-card">
+                <div class="section-heading">Normal Patterns</div>
+                <div class="body-text">
+                    <p><strong>V1:</strong> rS pattern (small R, deep S) because the main ventricular vector moves away from V1.</p>
+                    <p><strong>V6:</strong> qR pattern (small q, tall R) because the vector moves toward V6.</p>
+                    <p>The transition zone (where R and S are equal) is normally at V3–V4.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. Abnormalities of R wave progression -->
+        <section id="r-progression" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> Abnormalities of R Wave Progression</div>
+            <div class="section-card">
+                <div class="section-heading">Poor R Wave Progression</div>
+                <div class="body-text">
+                    <p>R wave amplitude normally increases from V1 to V5. Poor progression (R < S in V3–V4) may indicate anterior myocardial infarction, left ventricular hypertrophy, or cardiomyopathy.</p>
+                </div>
+                <div class="section-heading">Reversed R Wave Progression</div>
+                <div class="body-text">
+                    <p>R waves become smaller from V1 to V6; suggests right ventricular hypertrophy, dextrocardia, or misplacement of leads.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. First Heart Sound -->
+        <section id="first-heart-sound" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-music"></i> First Heart Sound (S1)</div>
+            <div class="section-card">
+                <div class="section-heading">Origin</div>
+                <div class="body-text">
+                    <p>S1 is produced by closure of the mitral (M1) and tricuspid (T1) valves at the onset of ventricular systole. It is best heard at the apex (mitral area) and left lower sternal border (tricuspid area).</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Factors Affecting Intensity</div>
+                <ul>
+                    <li><strong>Loud S1:</strong> Short PR interval (e.g., WPW), tachycardia (increased flow), mitral stenosis (mobile leaflets), hyperdynamic states (fever, anemia).</li>
+                    <li><strong>Soft S1:</strong> Long PR interval (first‑degree heart block), mitral regurgitation, aortic regurgitation, calcified immobile mitral valve, heart failure.</li>
+                    <li><strong>Variable S1:</strong> Atrial fibrillation, complete heart block, ventricular tachycardia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 11. Second Heart Sound -->
+        <section id="second-heart-sound" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-music"></i> Second Heart Sound (S2)</div>
+            <div class="section-card">
+                <div class="section-heading">Origin</div>
+                <div class="body-text">
+                    <p>S2 results from closure of the aortic (A2) and pulmonary (P2) valves at the end of systole. A2 normally precedes P2.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Splitting of S2</div>
+                <ul>
+                    <li><strong>Physiologic splitting:</strong> During inspiration, venous return to the right heart increases, delaying P2. Heard only in pulmonary area.</li>
+                    <li><strong>Wide splitting (fixed or variable):</strong> Causes: RBBB, pulmonary stenosis, MR (early A2), VSD (early A2). Fixed splitting is classic for ASD.</li>
+                    <li><strong>Paradoxical splitting:</strong> A2 is delayed, so P2 precedes A2; splitting occurs in expiration. Causes: aortic stenosis, LBBB, HCM.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 12. Third & Fourth Heart Sounds -->
+        <section id="third-fourth-heart-sound" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-music"></i> Third & Fourth Heart Sounds</div>
+            <div class="section-card">
+                <div class="section-heading">S3 (Ventricular Gallop)</div>
+                <div class="body-text">
+                    <p>S3 is a low‑pitched sound heard just after S2 during rapid ventricular filling. It is normal in children and young adults, but in older adults it indicates ventricular failure (dilated ventricle) or volume overload (MR, TR).</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">S4 (Atrial Gallop)</div>
+                <div class="body-text">
+                    <p>S4 occurs just before S1, caused by atrial contraction against a stiff ventricle (due to hypertrophy, ischemia, or restrictive cardiomyopathy). It is always pathological.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 13. Arrhythmias -->
+        <section id="arrhythmias" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> Arrhythmias</div>
+            <div class="section-card">
+                <div class="section-heading">Mechanisms</div>
+                <ul>
+                    <li><strong>Enhanced automaticity:</strong> Abnormal pacemaker activity (e.g., ischemia, catecholamines).</li>
+                    <li><strong>Triggered activity:</strong> Early or delayed afterdepolarizations (e.g., digitalis toxicity, long QT).</li>
+                    <li><strong>Reentry:</strong> Circus movement due to unidirectional block and slow conduction (e.g., AVNRT, WPW, atrial flutter).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Common Arrhythmias</div>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>ECG Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sinus tachycardia</td><td>Normal P waves, rate >100</td></tr>
+                        <tr><td>Sinus bradycardia</td><td>Normal P waves, rate <60</td></tr>
+                        <tr><td>Atrial fibrillation</td><td>Irregularly irregular, no P waves, fibrillatory baseline</td></tr>
+                        <tr><td>Atrial flutter</td><td>Sawtooth flutter waves, ventricular rate ~150 (2:1 block)</td></tr>
+                        <tr><td>AVNRT</td><td>Narrow QRS tachycardia, sudden onset/offset, retrograde P waves</td></tr>
+                        <tr><td>Ventricular tachycardia</td><td>Wide QRS, AV dissociation, fusion beats</td></tr>
+                        <tr><td>Ventricular fibrillation</td><td>Chaotic, no identifiable QRS</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 14. Myocardial Contractility -->
+        <section id="contractility" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Myocardial Contractility</div>
+            <div class="section-card">
+                <div class="section-heading">Definition</div>
+                <div class="body-text">
+                    <p>Contractility is the intrinsic ability of cardiac muscle to generate force at a given muscle length (preload). It is influenced by sympathetic tone, circulating catecholamines, drugs, and disease.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Cellular Mechanism</div>
+                <div class="body-text">
+                    <p>Increased intracellular Ca²⁺ during systole enhances cross‑bridge formation. Positive inotropic agents (sympathetic, digitalis) increase Ca²⁺ availability. Negative inotropic agents (β‑blockers, heart failure) decrease it.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Indices of Contractility</div>
+                <ul>
+                    <li>Ejection fraction (EF = SV/EDV)</li>
+                    <li>dP/dt max (rate of pressure rise in ventricle)</li>
+                    <li>Ventricular function curves (Frank‑Starling relationship shifted up or down)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 15. Cardiac Output -->
+        <section id="cardiac-output" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Cardiac Output</div>
+            <div class="section-card">
+                <div class="section-heading">Definition</div>
+                <div class="body-text">
+                    <p>Cardiac output (CO) = heart rate (HR) × stroke volume (SV). Normal: 4–8 L/min.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Determinants of Stroke Volume</div>
+                <ul>
+                    <li><strong>Preload:</strong> End‑diastolic volume (Frank‑Starling law).</li>
+                    <li><strong>Afterload:</strong> Aortic pressure (inverse relation).</li>
+                    <li><strong>Contractility:</strong> Intrinsic inotropic state.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Fick Principle</div>
+                <div class="body-text">
+                    <p>CO = O₂ consumption / (arterial O₂ content – venous O₂ content).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 16. Heart Sounds & Murmurs -->
+        <section id="heart-sounds-murmurs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stethoscope"></i> Heart Sounds & Murmurs</div>
+            <div class="section-card">
+                <div class="section-heading">Classification of Murmurs</div>
+                <ul>
+                    <li><strong>Systolic murmurs:</strong> Mid‑systolic (ejection) – aortic stenosis, pulmonary stenosis; holosystolic – MR, TR, VSD; late systolic – MVP.</li>
+                    <li><strong>Diastolic murmurs:</strong> Early diastolic – AR, PR; mid‑diastolic – MS, TS; late diastolic (presystolic) – MS.</li>
+                    <li><strong>Continuous murmurs:</strong> PDA, AV fistula, venous hum.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Maneuvers</div>
+                <div class="body-text">
+                    <p><strong>Valsalva:</strong> Decreases venous return → most murmurs decrease, but HCM murmur increases.</p>
+                    <p><strong>Squatting:</strong> Increases venous return and afterload → most murmurs increase, but HCM murmur decreases.</p>
+                    <p><strong>Inspiration:</strong> Increases right‑sided murmurs (Carvallo's sign).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 17. Systolic Clicks -->
+        <section id="systolic-clicks" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-music"></i> Systolic Clicks</div>
+            <div class="section-card">
+                <div class="section-heading">Ejection Clicks (Early Systolic)</div>
+                <div class="body-text">
+                    <p>Produced by opening of abnormal semilunar valves (bicuspid aortic valve, pulmonary stenosis). They occur just after S1 and are best heard at the base.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Non‑ejection Clicks (Mid‑systolic)</div>
+                <div class="body-text">
+                    <p>Classic of mitral valve prolapse. Caused by sudden tensing of chordae as the leaflet prolapses. May be followed by a late systolic murmur.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 18. Diastolic Sounds -->
+        <section id="diastolic-sounds" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-music"></i> Diastolic Sounds</div>
+            <div class="section-card">
+                <div class="section-heading">Opening Snap</div>
+                <div class="body-text">
+                    <p>Heard in mitral stenosis (pliable valve). Occurs shortly after S2 due to abrupt halt of opening mitral valve. The shorter the S2‑OS interval, the more severe the stenosis.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Tumor Plop</div>
+                <div class="body-text">
+                    <p>Rare sound in atrial myxoma when the tumor strikes the valve or chamber wall.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pericardial Knock</div>
+                <div class="body-text">
+                    <p>Early diastolic sound in constrictive pericarditis due to sudden cessation of ventricular filling.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 19. Diastolic Murmurs -->
+        <section id="diastolic-murmurs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-music"></i> Diastolic Murmurs</div>
+            <div class="section-card">
+                <div class="section-heading">Early Diastolic</div>
+                <div class="body-text">
+                    <p><strong>Aortic regurgitation:</strong> Decrescendo, high‑pitched, best heard with diaphragm at left sternal border, patient leaning forward.</p>
+                    <p><strong>Graham Steell murmur:</strong> Pulmonary regurgitation due to pulmonary hypertension.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Mid‑Diastolic</div>
+                <div class="body-text">
+                    <p><strong>Mitral stenosis:</strong> Low‑pitched rumbling, best heard at apex with bell, left lateral position. May have presystolic accentuation.</p>
+                    <p><strong>Tricuspid stenosis:</strong> Similar at lower left sternal border, increases with inspiration.</p>
+                    <p><strong>Austin Flint murmur:</strong> Mid‑diastolic rumble in severe aortic regurgitation due to functional mitral stenosis (anterior leaflet fluttering).</p>
+                    <p><strong>Carey Coombs murmur:</strong> Mid‑diastolic murmur in acute rheumatic fever due to mitral valvulitis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 20. Wolff‑Parkinson‑White Syndrome -->
+        <section id="wpw" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> Wolff‑Parkinson‑White Syndrome</div>
+            <div class="section-card">
+                <div class="section-heading">What Is WPW?</div>
+                <div class="body-text">
+                    <p>WPW is a pre‑excitation syndrome caused by an accessory pathway (Bundle of Kent) connecting atria and ventricles, bypassing the AV node.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">ECG Features</div>
+                <ul>
+                    <li>Short PR interval (<0.12 s).</li>
+                    <li>Delta wave (slurred upstroke of QRS).</li>
+                    <li>Wide QRS (>0.10 s).</li>
+                    <li>Secondary ST‑T changes.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Types</div>
+                <ul>
+                    <li><strong>Type A:</strong> Positive delta wave in V1 (left‑sided pathway).</li>
+                    <li><strong>Type B:</strong> Negative delta wave in V1 (right‑sided pathway).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Tachyarrhythmias</div>
+                <div class="body-text">
+                    <p><strong>Orthodromic AVRT:</strong> Impulse goes down AV node, up accessory pathway → narrow QRS tachycardia.</p>
+                    <p><strong>Antidromic AVRT:</strong> Impulse goes down accessory pathway, up AV node → wide QRS tachycardia.</p>
+                    <p>Atrial fibrillation with rapid conduction via accessory pathway can degenerate to ventricular fibrillation.</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Treatment:</strong> Avoid AV nodal blockers (adenosine, verapamil) in atrial fibrillation with WPW – they may enhance conduction via the accessory pathway. Use procainamide or cardioversion.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 21. Jugular Venous Pressure -->
+        <section id="jvp" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Jugular Venous Pressure</div>
+            <div class="section-card">
+                <div class="section-heading">Normal Waveform</div>
+                <ul>
+                    <li><strong>a wave:</strong> Atrial contraction (right atrium).</li>
+                    <li><strong>c wave:</strong> Tricuspid valve bulging into atrium during isovolumetric contraction.</li>
+                    <li><strong>x descent:</strong> Atrial relaxation and downward displacement of tricuspid valve.</li>
+                    <li><strong>v wave:</strong> Passive filling of atrium during systole (venous return).</li>
+                    <li><strong>y descent:</strong> Rapid atrial emptying after AV valve opening.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Abnormalities</div>
+                <ul>
+                    <li><strong>Large a wave:</strong> Tricuspid stenosis, pulmonary hypertension, right ventricular hypertrophy.</li>
+                    <li><strong>Cannon a wave:</strong> Atria contract against closed tricuspid valve (complete heart block, ventricular tachycardia).</li>
+                    <li><strong>Absent a wave:</strong> Atrial fibrillation.</li>
+                    <li><strong>Prominent v wave:</strong> Tricuspid regurgitation (fused cv wave, loss of x descent).</li>
+                    <li><strong>Steep y descent:</strong> Constrictive pericarditis, severe tricuspid regurgitation.</li>
+                    <li><strong>Kussmaul sign:</strong> Paradoxical rise in JVP during inspiration (constrictive pericarditis, right ventricular failure).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Compiled from Dr. Najeeb's Cardiology Lectures · Detailed explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

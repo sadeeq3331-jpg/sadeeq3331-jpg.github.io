@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiology · Complete Premium Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f9ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i {
+            font-size: 2.5rem;
+            color: #ffd966;
+        }
+        .top-bar h1 {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+        .top-bar .sub {
+            margin-left: auto;
+            background: rgba(255,255,255,0.1);
+            padding: 0.6rem 2rem;
+            border-radius: 40px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .book-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            flex: 1;
+            height: calc(100vh - 95px);
+            overflow: hidden;
+        }
+        .toc-sidebar {
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 2.5rem 1rem 2.5rem 2rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.1);
+        }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+            border-left: 8px solid #ffd966;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chapter-list {
+            list-style: none;
+        }
+        .chapter-item {
+            margin-bottom: 0.6rem;
+        }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 1rem 1.2rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s;
+            background: #f8faff;
+        }
+        .chapter-item a i {
+            width: 28px;
+            font-size: 1.2rem;
+            color: #2c7cb0;
+            text-align: center;
+        }
+        .chapter-item a:hover {
+            background: #e6f0fa;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .chapter-item.active a {
+            background: linear-gradient(135deg, #0a2942, #1b4c72);
+            color: white;
+            box-shadow: 0 10px 20px -8px #0a2942;
+        }
+        .chapter-item.active a i {
+            color: #ffd966;
+        }
+        .reader-panel {
+            background: white;
+            overflow-y: auto;
+            padding: 3rem 4rem;
+        }
+        .chapter-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0.3; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1rem;
+            border-bottom: 4px solid #ffd966;
+            padding-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .chapter-title i {
+            font-size: 3rem;
+            color: #2c7cb0;
+        }
+        .section-card {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 2.5rem 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 20px 40px -15px rgba(10,41,66,0.15);
+            border: 1px solid #eef6ff;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 50px -15px rgba(10,41,66,0.2);
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 10px solid #ffd966;
+            padding-left: 25px;
+        }
+        .section-heading i {
+            font-size: 2.2rem;
+            color: #2c7cb0;
+        }
+        .lead-text {
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #2c3e50;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 8px solid #2c7cb0;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .definition-box h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #0a2942;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 8px solid #f39c12;
+            box-shadow: 0 5px 15px rgba(243,156,18,0.1);
+        }
+        .clinical-correlation h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #c9760e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 8px solid #27ae60;
+        }
+        .memory-aid h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #1e8449;
+            margin-bottom: 1rem;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #6c3483;
+            margin-bottom: 1rem;
+        }
+        .key-points ul {
+            list-style: none;
+        }
+        .key-points li {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            color: #34495e;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i {
+            color: #8e44ad;
+            font-size: 1.2rem;
+        }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2.5rem 0;
+        }
+        .premium-table th {
+            background: #0a2942;
+            color: white;
+            font-family: 'Merriweather', serif;
+            font-weight: 600;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            text-align: left;
+        }
+        .premium-table td {
+            padding: 1.2rem;
+            font-family: 'Open Sans', sans-serif;
+            color: #34495e;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .premium-table tr:last-child td {
+            border-bottom: none;
+        }
+        .premium-table tr:hover td {
+            background: #f8fbff;
+        }
+        .diagram-box {
+            background: #f9fcff;
+            border-radius: 30px;
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            border: 2px solid #d4e6f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .diagram-box svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .diagram-caption {
+            margin-top: 1.5rem;
+            font-family: 'Open Sans', sans-serif;
+            font-style: italic;
+            color: #2c7cb0;
+            font-weight: 500;
+        }
+        .progress-checkbox {
+            position: absolute;
+            top: 2rem;
+            right: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.9rem;
+            color: #2c7cb0;
+            background: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #d0e0f0;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .progress-checkbox input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .summary-box {
+            background: linear-gradient(135deg, #f5f7fa, #eef2f7);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0 1rem;
+            border: 1px solid #d0e0f0;
+        }
+        .summary-box h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #0a2942;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 2rem;
+            font-family: 'Open Sans', sans-serif;
+        }
+        @media (max-width: 1000px) {
+            .book-container { grid-template-columns: 1fr; height: auto; }
+            .toc-sidebar { max-height: 300px; }
+            .reader-panel { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <i class="fas fa-heartbeat"></i>
+        <h1>Cardiology · Premium Textbook</h1>
+        <div class="sub">Complete Coverage · Clinical Correlations · Memory Aids</div>
+    </div>
+    <div class="book-container">
+        <div class="toc-sidebar">
+            <h2><i class="fas fa-list-ul"></i> Contents</h2>
+            <ul class="chapter-list" id="chapterList">
+                <li class="chapter-item active" data-chapter="anatomy"><a href="#"><i class="fas fa-heart"></i> 1. Cardiac Anatomy</a></li>
+                <li class="chapter-item" data-chapter="physiology"><a href="#"><i class="fas fa-chart-line"></i> 2. Cardiac Physiology</a></li>
+                <li class="chapter-item" data-chapter="cycle"><a href="#"><i class="fas fa-wave-square"></i> 3. Cardiac Cycle & ECG</a></li>
+                <li class="chapter-item" data-chapter="hemodynamics"><a href="#"><i class="fas fa-gauge-high"></i> 4. Hemodynamics</a></li>
+                <li class="chapter-item" data-chapter="cad"><a href="#"><i class="fas fa-disease"></i> 5. Coronary Artery Disease</a></li>
+                <li class="chapter-item" data-chapter="hf"><a href="#"><i class="fas fa-heart-crack"></i> 6. Heart Failure</a></li>
+                <li class="chapter-item" data-chapter="valvular"><a href="#"><i class="fas fa-door-open"></i> 7. Valvular Heart Disease</a></li>
+                <li class="chapter-item" data-chapter="arrhythmias"><a href="#"><i class="fas fa-bolt"></i> 8. Arrhythmias</a></li>
+                <li class="chapter-item" data-chapter="congenital"><a href="#"><i class="fas fa-child"></i> 9. Congenital Heart Disease</a></li>
+                <li class="chapter-item" data-chapter="pharma"><a href="#"><i class="fas fa-pills"></i> 10. Cardiovascular Pharmacology</a></li>
+            </ul>
+        </div>
+        <div class="reader-panel" id="readerPanel"></div>
+    </div>
+
+    <script>
+        (function() {
+            const chapters = {
+                // ==================== 1. CARDIAC ANATOMY ====================
+                anatomy: {
+                    title: 'Cardiac Anatomy',
+                    icon: 'fa-heart',
+                    sections: [
+                        {
+                            heading: '1.1 Heart Chambers',
+                            content: `
+                                <div class="lead-text">
+                                    The heart is a four‑chambered muscular pump that circulates blood through the body. It lies in the middle mediastinum, enclosed by the pericardium.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-cube"></i> Chambers</h4>
+                                    <div class="body-text">
+                                        <strong>Right Atrium (RA):</strong> Receives deoxygenated blood from the superior vena cava (SVC), inferior vena cava (IVC), and coronary sinus. Its anterior wall is rough due to pectinate muscles; the posterior wall is smooth (sinus venarum). The fossa ovalis (remnant of foramen ovale) is on the interatrial septum.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Right Ventricle (RV):</strong> Pumps blood through the pulmonary valve into the pulmonary artery. It has a thin wall (about 1/3 of LV thickness) and contains trabeculae carneae, the moderator band (carries right bundle branch), and papillary muscles attached to the tricuspid valve via chordae tendineae.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Left Atrium (LA):</strong> Receives oxygenated blood from four pulmonary veins. It has thicker walls than RA and also has pectinate muscles confined to the atrial appendage.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Left Ventricle (LV):</strong> Pumps blood through the aortic valve into the aorta. It has the thickest myocardium (≈8–15 mm) and a conical shape. Two large papillary muscles anchor the mitral valve.
+                                    </div>
+                                </div>
+                                <table class="premium-table">
+                                    <thead><tr><th>Chamber</th><th>Inflow</th><th>Outflow</th><th>Wall Thickness</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>RA</td><td>SVC, IVC, coronary sinus</td><td>Tricuspid valve → RV</td><td>Thin</td></tr>
+                                        <tr><td>RV</td><td>Tricuspid</td><td>Pulmonary valve → pulmonary artery</td><td>≈3–5 mm</td></tr>
+                                        <tr><td>LA</td><td>Pulmonary veins</td><td>Mitral valve → LV</td><td>Moderate</td></tr>
+                                        <tr><td>LV</td><td>Mitral</td><td>Aortic valve → aorta</td><td>≈8–15 mm</td></tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '1.2 Cardiac Valves',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Atrioventricular valves:</strong> Tricuspid (right) and mitral (left) prevent backflow during ventricular systole. They are anchored by chordae tendineae and papillary muscles.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Semilunar valves:</strong> Pulmonary and aortic open during systole to allow ejection. They have three cusps (aortic valve may have two in bicuspid aortic valve).
+                                </div>
+                                <div class="body-text">
+                                    <strong>Valve areas (normal):</strong> Mitral ≈ 4–6 cm², aortic ≈ 3–4 cm², tricuspid ≈ 7–9 cm², pulmonary ≈ 2 cm².
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Clinical Pearl</h4>
+                                    <div class="body-text">
+                                        <strong>Stenosis</strong> narrows the valve area (e.g., aortic stenosis <1 cm² is severe). <strong>Regurgitation</strong> allows backward flow due to incomplete leaflet coaptation.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '1.3 Coronary Arteries',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Left main coronary artery</strong> divides into:
+                                    <ul style="margin-left:2rem;">
+                                        <li><strong>Left anterior descending (LAD):</strong> Supplies anterior wall of LV, anterior septum, and apex.</li>
+                                        <li><strong>Left circumflex (LCx):</strong> Supplies lateral wall of LV.</li>
+                                    </ul>
+                                    <strong>Right coronary artery (RCA):</strong> Supplies RV, inferior wall of LV, posterior septum, and in 90% of people the SA node (60%) and AV node (90%).
+                                </div>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid</h4>
+                                    <div class="body-text">
+                                        "RCA = Right Coronary Artery = Right ventricle, Conduction (SA/AV), and back of heart (inferior/posterior)."
+                                    </div>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 2. CARDIAC PHYSIOLOGY ====================
+                physiology: {
+                    title: 'Cardiac Physiology',
+                    icon: 'fa-chart-line',
+                    sections: [
+                        {
+                            heading: '2.1 Cardiac Cycle',
+                            content: `
+                                <div class="lead-text">
+                                    The cardiac cycle consists of alternating periods of contraction (systole) and relaxation (diastole). Each cycle lasts about 0.8 seconds at a heart rate of 75 bpm.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-clock"></i> Phases of the Cardiac Cycle</h4>
+                                    <div class="body-text">
+                                        <strong>1. Isovolumetric contraction:</strong> Ventricles contract, all valves closed; pressure rises sharply (0.05 s).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>2. Rapid ejection:</strong> Semilunar valves open; blood ejected rapidly (0.10 s).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>3. Reduced ejection:</strong> Ventricular pressure falls, ejection slows (0.15 s).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>4. Isovolumetric relaxation:</strong> All valves closed, ventricular pressure drops (0.08 s).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>5. Rapid filling:</strong> AV valves open; blood pours into ventricles (0.10 s).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>6. Diastasis:</strong> Slow filling (0.20 s).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>7. Atrial systole:</strong> Atria contract, contributing 10–30% of ventricular filling (0.10 s).
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '2.2 Pressure-Volume Loop',
+                            content: `
+                                <div class="diagram-box">
+                                    <i class="fas fa-chart-gantt" style="font-size:4rem;"></i>
+                                    <div class="diagram-caption">Schematic left ventricular pressure‑volume loop</div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Points:</strong>
+                                    <ul style="margin-left:2rem;">
+                                        <li><strong>A → B (filling):</strong> EDV increases, pressure rises slightly (diastolic filling).</li>
+                                        <li><strong>B → C (isovolumetric contraction):</strong> Pressure rises, volume constant.</li>
+                                        <li><strong>C → D (ejection):</strong> Volume decreases, pressure rises then falls.</li>
+                                        <li><strong>D → A (isovolumetric relaxation):</strong> Pressure falls, volume constant.</li>
+                                    </ul>
+                                    <strong>EDV:</strong> end‑diastolic volume (≈120 mL); <strong>ESV:</strong> end‑systolic volume (≈50 mL); <strong>SV = EDV – ESV</strong>.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '2.3 Cardiac Output & Regulation',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Cardiac output (CO) = heart rate × stroke volume</strong> (normal 4–8 L/min).<br>
+                                    <strong>Stroke volume</strong> is determined by:
+                                    <ul style="margin-left:2rem;">
+                                        <li><strong>Preload:</strong> End‑diastolic volume (Frank‑Starling law).</li>
+                                        <li><strong>Afterload:</strong> Wall stress during ejection (≈ aortic pressure).</li>
+                                        <li><strong>Contractility:</strong> Intrinsic inotropic state (↑ by β1 stimulation, digitalis).</li>
+                                    </ul>
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Frank‑Starling Mechanism</h4>
+                                    <div class="body-text">
+                                        Increased venous return stretches ventricular myocytes, increasing sarcomere length and force of contraction – up to a point. This matches output to venous return.
+                                    </div>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 3. CARDIAC CYCLE & ECG ====================
+                cycle: {
+                    title: 'Cardiac Cycle & ECG',
+                    icon: 'fa-wave-square',
+                    sections: [
+                        {
+                            heading: '3.1 ECG Waves and Intervals',
+                            content: `
+                                <div class="body-text">
+                                    <strong>P wave:</strong> Atrial depolarization.<br>
+                                    <strong>PR interval:</strong> AV node delay (120–200 ms).<br>
+                                    <strong>QRS complex:</strong> Ventricular depolarization (<120 ms).<br>
+                                    <strong>QT interval:</strong> Ventricular depolarization + repolarization (corrected for HR).<br>
+                                    <strong>T wave:</strong> Ventricular repolarization.<br>
+                                    <strong>U wave:</strong> Possibly Purkinje repolarization; prominent in hypokalemia.
+                                </div>
+                                <table class="premium-table">
+                                    <thead><tr><th>Interval</th><th>Normal</th><th>Abnormal if</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>PR</td><td>120–200 ms</td><td>Long in AV block; short in WPW</td></tr>
+                                        <tr><td>QRS</td><td><120 ms</td><td>Wide in BBB, VT, WPW</td></tr>
+                                        <tr><td>QTc</td><td><440 ms (men), <460 ms (women)</td><td>Long in congenital LQTS, drugs, electrolyte disorders</td></tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '3.2 ECG Leads and Axis',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Limb leads (I, II, III, aVR, aVL, aVF):</strong> view the heart in the frontal plane.<br>
+                                    <strong>Precordial leads (V1‑V6):</strong> view the heart in the horizontal plane.<br>
+                                    <strong>Normal axis:</strong> –30° to +90°. Left axis deviation (–30° to –90°) occurs in LBBB, left anterior fascicular block, inferior MI. Right axis deviation (+90° to +180°) occurs in RVH, PE, left posterior fascicular block.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 4. HEMODYNAMICS ====================
+                hemodynamics: {
+                    title: 'Hemodynamics',
+                    icon: 'fa-gauge-high',
+                    sections: [
+                        {
+                            heading: '4.1 Normal Pressures',
+                            content: `
+                                <table class="premium-table">
+                                    <thead><tr><th>Location</th><th>Pressure (mmHg)</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>Right atrium</td><td>0–8</td></tr>
+                                        <tr><td>Right ventricle</td><td>25/0–8</td></tr>
+                                        <tr><td>Pulmonary artery</td><td>25/10 (mean ≈15)</td></tr>
+                                        <tr><td>Pulmonary capillary wedge</td><td>6–12 (≈ LA pressure)</td></tr>
+                                        <tr><td>Left atrium</td><td>8–12</td></tr>
+                                        <tr><td>Left ventricle</td><td>120/8</td></tr>
+                                        <tr><td>Aorta</td><td>120/80 (mean ≈90–100)</td></tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '4.2 Vascular Resistance',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Systemic vascular resistance (SVR) = (MAP – RAP) × 80 / CO</strong> (normal 800–1200 dyn·s·cm⁻⁵).<br>
+                                    <strong>Pulmonary vascular resistance (PVR) = (PAP – PCWP) × 80 / CO</strong> (normal <250 dyn·s·cm⁻⁵).
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 5. CORONARY ARTERY DISEASE ====================
+                cad: {
+                    title: 'Coronary Artery Disease',
+                    icon: 'fa-disease',
+                    sections: [
+                        {
+                            heading: '5.1 Pathophysiology of Atherosclerosis',
+                            content: `
+                                <div class="body-text">
+                                    Atherosclerosis begins with endothelial injury → LDL accumulation → oxidation → monocyte recruitment → foam cell formation → fatty streak → fibrous plaque. Plaque can rupture, causing thrombosis.
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-heart"></i> Risk Factors</h4>
+                                    <div class="body-text">
+                                        <strong>Modifiable:</strong> hypertension, diabetes, dyslipidemia, smoking, obesity, sedentary lifestyle.<br>
+                                        <strong>Non‑modifiable:</strong> age, male sex, family history.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '5.2 Stable Angina',
+                            content: `
+                                <div class="body-text">
+                                    Chest discomfort on exertion relieved by rest or nitroglycerin. ECG shows ST depression during stress. Management: beta‑blockers, nitrates, aspirin, statins.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '5.3 Acute Coronary Syndromes',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Unstable angina:</strong> pain at rest, new‑onset, or increasing frequency; no elevated cardiac enzymes.<br>
+                                    <strong>NSTEMI:</strong> enzyme elevation without ST elevation.<br>
+                                    <strong>STEMI:</strong> ST elevation ≥1 mm in two contiguous leads; enzymes elevated.<br>
+                                    <strong>Treatment:</strong> MONA (morphine, oxygen, nitrates, aspirin) plus reperfusion (PCI or fibrinolytics for STEMI).
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 6. HEART FAILURE ====================
+                hf: {
+                    title: 'Heart Failure',
+                    icon: 'fa-heart-crack',
+                    sections: [
+                        {
+                            heading: '6.1 Types: HFrEF vs HFpEF',
+                            content: `
+                                <div class="body-text">
+                                    <strong>HFrEF</strong> (systolic): LVEF <40%. Causes: CAD, dilated cardiomyopathy, valvular.<br>
+                                    <strong>HFpEF</strong> (diastolic): LVEF ≥50%. Causes: hypertension, aging, diabetes, obesity.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '6.2 Clinical Presentation',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Left heart failure:</strong> dyspnea, orthopnea, paroxysmal nocturnal dyspnea, crackles, S3.<br>
+                                    <strong>Right heart failure:</strong> JVD, hepatomegaly, ascites, peripheral edema.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '6.3 Pharmacologic Management',
+                            content: `
+                                <div class="body-text">
+                                    HFrEF: ACE inhibitors/ARB, beta‑blockers (carvedilol, metoprolol), spironolactone/eplerenone, SGLT2 inhibitors, diuretics for congestion.<br>
+                                    HFpEF: treat underlying causes, diuretics, possibly SGLT2 inhibitors.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 7. VALVULAR HEART DISEASE ====================
+                valvular: {
+                    title: 'Valvular Heart Disease',
+                    icon: 'fa-door-open',
+                    sections: [
+                        {
+                            heading: '7.1 Aortic Stenosis',
+                            content: `
+                                <div class="body-text">
+                                    Triad: angina, syncope, dyspnea. Harsh systolic ejection murmur at right upper sternal border, radiating to carotids. Delayed and diminished carotid upstroke (pulsus parvus et tardus). Causes: calcific (elderly), bicuspid valve, rheumatic.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.2 Aortic Regurgitation',
+                            content: `
+                                <div class="body-text">
+                                    Diastolic decrescendo murmur at left sternal border. Wide pulse pressure, water‑hammer pulse (Corrigan’s), head bobbing (de Musset’s). Causes: bicuspid valve, endocarditis, aortic root dilation (Marfan, syphilis).
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.3 Mitral Stenosis',
+                            content: `
+                                <div class="body-text">
+                                    Opening snap followed by diastolic rumble at apex. Loud S1. Causes: rheumatic fever (almost always). Complications: left atrial enlargement, AF, thromboembolism.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.4 Mitral Regurgitation',
+                            content: `
+                                <div class="body-text">
+                                    Holosystolic murmur at apex, radiating to axilla. Causes: mitral valve prolapse, rheumatic, ischemic, LV dilation. Acute MR (e.g., chordae rupture) causes severe pulmonary edema.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.5 Tricuspid and Pulmonic Disease',
+                            content: `
+                                <div class="body-text">
+                                    Tricuspid regurgitation: holosystolic murmur at left lower sternal border, increases with inspiration (Carvallo’s sign). Usually functional from RV dilation.<br>
+                                    Pulmonic stenosis: systolic ejection murmur at left upper sternal border.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 8. ARRHYTHMIAS ====================
+                arrhythmias: {
+                    title: 'Arrhythmias',
+                    icon: 'fa-bolt',
+                    sections: [
+                        {
+                            heading: '8.1 Supraventricular Tachycardias',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Atrial fibrillation:</strong> irregularly irregular, no P waves. Complications: stroke (anticoagulate), rate control.<br>
+                                    <strong>Atrial flutter:</strong> sawtooth baseline (flutter waves) at ~300/min, ventricular rate ~150 (2:1 block).<br>
+                                    <strong>AVNRT:</strong> narrow QRS tachycardia, sudden onset/offset, retrograde P waves.<br>
+                                    <strong>AVRT (WPW):</strong> delta wave, short PR, wide QRS during tachycardia.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '8.2 Ventricular Arrhythmias',
+                            content: `
+                                <div class="body-text">
+                                    <strong>PVC:</strong> wide QRS, no preceding P wave.<br>
+                                    <strong>Ventricular tachycardia:</strong> ≥3 consecutive PVCs, wide QRS >120 ms. Monomorphic vs polymorphic (torsades).<br>
+                                    <strong>Ventricular fibrillation:</strong> chaotic, no organized rhythm – cardiac arrest.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '8.3 Bradyarrhythmias & AV Block',
+                            content: `
+                                <div class="body-text">
+                                    <strong>First‑degree AV block:</strong> PR >200 ms.<br>
+                                    <strong>Second‑degree type I (Mobitz I/Wenckebach):</strong> progressive PR lengthening until dropped beat; usually benign.<br>
+                                    <strong>Second‑degree type II:</strong> dropped beats without PR change; often progresses to complete heart block.<br>
+                                    <strong>Third‑degree (complete) heart block:</strong> atria and ventricles dissociated; wide QRS escape if below block.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 9. CONGENITAL HEART DISEASE ====================
+                congenital: {
+                    title: 'Congenital Heart Disease',
+                    icon: 'fa-child',
+                    sections: [
+                        {
+                            heading: '9.1 Left‑to‑Right Shunts (Acyanotic)',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Ventricular septal defect (VSD):</strong> holosystolic murmur at left lower sternal border. Most common CHD.<br>
+                                    <strong>Atrial septal defect (ASD):</strong> fixed splitting of S2, systolic flow murmur at pulmonary area.<br>
+                                    <strong>Patent ductus arteriosus (PDA):</strong> continuous machinery murmur, bounding pulses.<br>
+                                    Prolonged left‑to‑right shunt can lead to pulmonary hypertension and reversal (Eisenmenger syndrome).
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '9.2 Right‑to‑Left Shunts (Cyanotic)',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Tetralogy of Fallot:</strong> VSD, overriding aorta, RVH, pulmonary stenosis. Boot‑shaped heart, hypercyanotic spells.<br>
+                                    <strong>Transposition of great arteries:</strong> aorta from RV, pulmonary artery from LV. Needs mixing via ASD/VSD/PDA.<br>
+                                    <strong>Truncus arteriosus:</strong> single great vessel.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 10. CARDIOVASCULAR PHARMACOLOGY ====================
+                pharma: {
+                    title: 'Cardiovascular Pharmacology',
+                    icon: 'fa-pills',
+                    sections: [
+                        {
+                            heading: '10.1 Antihypertensives',
+                            content: `
+                                <table class="premium-table">
+                                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Side Effects</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>Thiazides</td><td>HCTZ</td><td>↓ NaCl reabsorption in DCT</td><td>Hypokalemia, hyperuricemia, hyperglycemia</td></tr>
+                                        <tr><td>ACE inhibitors</td><td>Lisinopril</td><td>Inhibit ACE → ↓ angiotensin II, ↑ bradykinin</td><td>Cough, angioedema, hyperkalemia</td></tr>
+                                        <tr><td>ARBs</td><td>Losartan</td><td>Block AT1 receptors</td><td>No cough, otherwise similar</td></tr>
+                                        <tr><td>CCB (dihydropyridine)</td><td>Amlodipine</td><td>Block L‑type Ca channels in vascular smooth muscle</td><td>Edema, flushing, headache</td></tr>
+                                        <tr><td>CCB (non‑dihydropyridine)</td><td>Verapamil, Diltiazem</td><td>Block Ca channels in heart (↓ rate, contractility)</td><td>Constipation (verapamil), bradycardia, heart block</td></tr>
+                                        <tr><td>Beta‑blockers</td><td>Metoprolol, Carvedilol</td><td>Block β1 (and β2) receptors</td><td>Bradycardia, fatigue, bronchospasm (non‑selective)</td></tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '10.2 Anti‑anginal Drugs',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Nitrates:</strong> venodilators → ↓ preload → ↓ myocardial O2 demand. Side effects: headache, tolerance.<br>
+                                    <strong>Beta‑blockers:</strong> ↓ HR, contractility → ↓ O2 demand.<br>
+                                    <strong>CCB:</strong> ↓ afterload (dihydropyridines) or ↓ HR/contractility (verapamil/diltiazem).
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '10.3 Anti‑arrhythmics (Vaughan‑Williams)',
+                            content: `
+                                <table class="premium-table">
+                                    <thead><tr><th>Class</th><th>Mechanism</th><th>Drugs</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>I</td><td>Na⁺ channel blockade</td><td>Ia: Quinidine, Procainamide; Ib: Lidocaine; Ic: Flecainide</td></tr>
+                                        <tr><td>II</td><td>β‑blockers</td><td>Metoprolol, Propranolol</td></tr>
+                                        <tr><td>III</td><td>K⁺ channel blockade</td><td>Amiodarone, Sotalol, Ibutilide</td></tr>
+                                        <tr><td>IV</td><td>Ca²⁺ channel blockade</td><td>Verapamil, Diltiazem</td></tr>
+                                        <tr><td>V</td><td>Other</td><td>Digoxin, Adenosine</td></tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '10.4 Heart Failure Drugs',
+                            content: `
+                                <div class="body-text">
+                                    <strong>ACE inhibitors / ARB:</strong> reduce mortality.<br>
+                                    <strong>Beta‑blockers:</strong> reduce mortality (carvedilol, bisoprolol, metoprolol).<br>
+                                    <strong>Spironolactone / eplerenone:</strong> aldosterone antagonists, reduce mortality.<br>
+                                    <strong>SGLT2 inhibitors (empagliflozin, dapagliflozin):</strong> reduce HF hospitalization and mortality.<br>
+                                    <strong>Digoxin:</strong> improves symptoms, no mortality benefit.<br>
+                                    <strong>Diuretics (furosemide):</strong> relieve congestion.
+                                </div>
+                            `
+                        }
+                    ]
+                }
+            };
+
+            // Render function
+            function renderChapter(chapterId) {
+                const chap = chapters[chapterId];
+                if (!chap) return;
+
+                let html = `<div class="chapter-content">`;
+                html += `<div class="chapter-title"><i class="fas ${chap.icon}"></i> ${chap.title}</div>`;
+
+                chap.sections.forEach((section, idx) => {
+                    html += `<div class="section-card">`;
+                    html += `<div class="section-heading"><i class="fas fa-book-open"></i> ${section.heading}</div>`;
+                    html += section.content;
+
+                    // Progress checkbox
+                    html += `<div class="progress-checkbox" onclick="toggleProgressHandler(event, this)">`;
+                    html += `<input type="checkbox" class="progress-input" data-key="${chapterId}-${idx}" onclick="event.stopPropagation()"> <span>Mark as read</span>`;
+                    html += `</div>`;
+
+                    html += `</div>`;
+                });
+
+                html += `<div class="footer-note"><i class="fas fa-feather"></i> Abubakar Sadeeq · Premium Cardiology Textbook</div>`;
+                html += `</div>`;
+
+                document.getElementById('readerPanel').innerHTML = html;
+
+                // Restore progress
+                document.querySelectorAll('.progress-input').forEach(cb => {
+                    const key = cb.dataset.key;
+                    const saved = localStorage.getItem(`progress-${key}`);
+                    if (saved === 'true') cb.checked = true;
+                });
+            }
+
+            window.toggleProgressHandler = function(event, container) {
+                const cb = container.querySelector('.progress-input');
+                cb.checked = !cb.checked;
+                localStorage.setItem(`progress-${cb.dataset.key}`, cb.checked);
+                event.stopPropagation();
+            };
+
+            // Chapter switching
+            const chapterItems = document.querySelectorAll('.chapter-item');
+            chapterItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    chapterItems.forEach(ci => ci.classList.remove('active'));
+                    this.classList.add('active');
+                    renderChapter(this.dataset.chapter);
+                });
+            });
+
+            // Load first chapter
+            renderChapter('anatomy');
+        })();
+    </script>
+</body>
+</html>

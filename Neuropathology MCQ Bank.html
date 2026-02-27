@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuropathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 40px; padding: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #0a2942, #1b4c72); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+        h1 i { font-size: 2.5rem; color: #2c7cb0; -webkit-text-fill-color: initial; }
+        .credit { background: #e3f2fd; padding: 10px 30px; border-radius: 50px; font-size: 1.2rem; color: #1565C0; font-weight: 600; margin: 15px 0; display: inline-block; }
+        .progress-bar { background: #e9ecef; height: 10px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); width: 0%; transition: width 0.3s; }
+        .mcq-stats { display: flex; justify-content: space-between; margin-bottom: 20px; color: #1e3c72; font-weight: 600; }
+        .question-card { background: white; border-radius: 30px; padding: 30px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .question-text { font-size: 1.4rem; font-weight: 600; color: #0a2942; line-height: 1.6; margin-bottom: 25px; }
+        .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .option { background: #f8faff; border: 2px solid #e0e7f0; border-radius: 60px; padding: 16px 25px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #2c7cb0; background: #eef4ff; transform: translateX(10px); }
+        .option.selected { border-color: #2c7cb0; background: #d9e9ff; }
+        .option.correct { border-color: #28a745; background: #e1f7e7; }
+        .option.wrong { border-color: #dc3545; background: #ffe6e8; }
+        .option-letter { width: 40px; height: 40px; background: #e0e7f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0a2942; }
+        .option.selected .option-letter { background: #2c7cb0; color: white; }
+        .explanation { background: #f0f9ff; border-left: 6px solid #2c7cb0; border-radius: 20px; padding: 20px; margin: 20px 0; display: none; }
+        .explanation.show { display: block; }
+        .nav-buttons { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+        .nav-btn { background: white; border: 2px solid #2c7cb0; color: #2c7cb0; padding: 12px 30px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .nav-btn:hover:not(:disabled) { background: #2c7cb0; color: white; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #2c7cb0; color: white; }
+        .dots { display: flex; gap: 8px; justify-content: center; margin: 25px 0 10px; flex-wrap: wrap; }
+        .dot { width: 35px; height: 8px; border-radius: 8px; background: #ccc; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: #2c7cb0; width: 50px; }
+        .dot.answered { background: #4caf50; }
+        .footer { text-align: center; margin-top: 30px; color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-brain"></i> Neuropathology MCQ Bank</h1>
+        <div class="credit">✍️ Abubakar Sadeeq · 60+ High‑Yield Questions</div>
+
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="mcq-stats">
+            <span id="qCounter">Question 1/60</span>
+            <span id="scoreDisplay">Score: 0/0</span>
+        </div>
+
+        <div class="question-card">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="nav-btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div class="dots" id="dotsContainer"></div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE NEUROPATHOLOGY QUESTIONS
+        const questions = [
+            // Basic reactions
+            { q: "Which of the following is the characteristic histologic finding in neurons after acute global ischemia?",
+              opts: ["Central chromatolysis", "Red neuron (eosinophilic change)", "Neurofibrillary tangle", "Lewy body", "Granulovacuolar degeneration"],
+              correct: 1,
+              exp: "**Red neuron** (eosinophilic change) is seen within 6–12 hours after irreversible ischemic injury. The cytoplasm shrinks and becomes intensely eosinophilic, nucleus pyknotic." },
+            { q: "Central chromatolysis is most commonly associated with:",
+              opts: ["Viral infection", "Axonal injury", "Ischemia", "Alzheimer disease", "Prion disease"],
+              correct: 1,
+              exp: "**Central chromatolysis** occurs after axonal injury (axonal reaction). The cell body swells, Nissl substance disperses, and nucleus moves to periphery – reflecting increased protein synthesis for regeneration." },
+            { q: "Which glial cell is primarily responsible for forming the glial scar after CNS injury?",
+              opts: ["Microglia", "Oligodendrocytes", "Astrocytes", "Ependymal cells", "Schwann cells"],
+              correct: 2,
+              exp: "**Astrocytes** undergo reactive gliosis (hypertrophy and proliferation) and form a glial scar. They upregulate GFAP and extend processes." },
+            { q: "In which condition are microglial nodules typically found?",
+              opts: ["Multiple sclerosis", "Viral encephalitis", "Alzheimer disease", "Parkinson disease", "Huntington disease"],
+              correct: 1,
+              exp: "**Microglial nodules** are clusters of activated microglia and are characteristic of viral encephalitis (e.g., HSV, CMV)." },
+            { q: "Vasogenic cerebral edema is most commonly caused by:",
+              opts: ["Ischemia", "Hyponatremia", "Tumors", "Hydrocephalus", "Trauma without BBB disruption"],
+              correct: 2,
+              exp: "**Vasogenic edema** results from breakdown of the blood‑brain barrier, allowing fluid to leak into extracellular space. It is common around tumors, abscesses, and inflammation." },
+            { q: "Transtentorial (uncal) herniation classically causes ipsilateral pupillary dilation by compressing which cranial nerve?",
+              opts: ["CN II", "CN III", "CN IV", "CN VI", "CN V"],
+              correct: 1,
+              exp: "The **oculomotor nerve (CN III)** runs along the tentorial edge and is compressed by the herniating uncus, causing ipsilateral dilated pupil and ptosis." },
+
+            // Vascular
+            { q: "A patient with long-standing hypertension presents with a small, cystic cavity in the basal ganglia. The most likely diagnosis is:",
+              opts: ["Arteriovenous malformation", "Lacunar infarct", "Cavernous angioma", "Hypertensive hemorrhage", "Watershed infarct"],
+              correct: 1,
+              exp: "**Lacunar infarcts** are small (<1.5 cm) deep infarcts due to lipohyalinosis of small penetrating arteries in hypertension. Common sites: basal ganglia, thalamus, pons." },
+            { q: "Which of the following is the most common cause of spontaneous intracerebral hemorrhage in the elderly?",
+              opts: ["Aneurysm rupture", "AVM", "Amyloid angiopathy", "Hypertension", "Trauma"],
+              correct: 3,
+              exp: "**Hypertension** is the leading cause of spontaneous intracerebral hemorrhage (especially in basal ganglia, thalamus, pons). In the elderly, amyloid angiopathy is another important cause (lobar hemorrhages)." },
+            { q: "A patient presents with a sudden, severe 'thunderclap' headache and nuchal rigidity. Lumbar puncture reveals xanthochromia. The most likely diagnosis is:",
+              opts: ["Bacterial meningitis", "Subarachnoid hemorrhage", "Intracerebral hemorrhage", "Migraine", "Venous sinus thrombosis"],
+              correct: 1,
+              exp: "**Subarachnoid hemorrhage** (usually from ruptured saccular aneurysm) presents with thunderclap headache, meningismus, and xanthochromic CSF (due to bilirubin from lysed RBCs)." },
+            { q: "Which of the following is a feature of an arteriovenous malformation (AVM)?",
+              opts: ["Elastic lamina present", "Capillary bed interposed", "Direct artery‑vein connection", "Thin‑walled venous channels only", "Often calcified on CT"],
+              correct: 2,
+              exp: "**AVM** is a tangle of abnormal vessels with **direct artery‑to‑vein connections** (no intervening capillary bed). They are prone to hemorrhage." },
+
+            // Trauma
+            { q: "A 30-year-old man is in a motor vehicle accident. He is unconscious for 3 days. MRI shows multiple small hemorrhages in the corpus callosum and dorsolateral brainstem. The most likely diagnosis is:",
+              opts: ["Cerebral contusion", "Epidural hematoma", "Diffuse axonal injury", "Subdural hematoma", "Cerebral edema"],
+              correct: 2,
+              exp: "**Diffuse axonal injury (DAI)** results from rotational forces, causing shearing of axons. Petechial hemorrhages in corpus callosum and brainstem are characteristic." },
+            { q: "Coup and contrecoup contusions are most commonly seen in which brain regions?",
+              opts: ["Occipital lobes", "Cerebellum", "Frontal and temporal poles", "Basal ganglia", "Brainstem"],
+              correct: 2,
+              exp: "**Coup‑contrecoup contusions** typically occur in the **frontal and temporal poles** as the brain moves against bony protuberances." },
+
+            // Infections
+            { q: "Which organism is the most common cause of community‑acquired bacterial meningitis in adults?",
+              opts: ["Neisseria meningitidis", "Streptococcus pneumoniae", "Haemophilus influenzae", "Listeria monocytogenes", "Escherichia coli"],
+              correct: 1,
+              exp: "**Streptococcus pneumoniae** is the most common cause of bacterial meningitis in adults. N. meningitidis is more common in adolescents/young adults." },
+            { q: "CSF findings in viral meningitis typically show:",
+              opts: ["Neutrophilic pleocytosis, low glucose, high protein", "Lymphocytic pleocytosis, normal glucose, mildly elevated protein", "Neutrophils, normal glucose, high protein", "Lymphocytes, low glucose, high protein", "Normal cell count, low glucose, high protein"],
+              correct: 1,
+              exp: "**Viral meningitis** typically has **lymphocytic pleocytosis**, **normal glucose**, and **mildly elevated protein**." },
+            { q: "A patient with AIDS presents with headache, fever, and altered mental status. CSF India ink stain shows encapsulated yeast. The most likely diagnosis is:",
+              opts: ["Candida meningitis", "Aspergillosis", "Cryptococcal meningitis", "Coccidioidomycosis", "Histoplasmosis"],
+              correct: 2,
+              exp: "**Cryptococcus neoformans** is a common opportunistic infection in AIDS. India ink stain reveals the polysaccharide capsule." },
+            { q: "Which of the following is characteristic of HSV encephalitis?",
+              opts: ["Frontal lobe involvement", "Temporal lobe involvement", "Cerebellar involvement", "Basal ganglia involvement", "Pons involvement"],
+              correct: 1,
+              exp: "**HSV encephalitis** typically involves the **temporal lobes** (often hemorrhagic necrosis). It is the most common cause of sporadic fatal encephalitis." },
+            { q: "The pathologic hallmark of prion diseases (e.g., Creutzfeldt‑Jakob disease) is:",
+              opts: ["Neurofibrillary tangles", "Senile plaques", "Spongiform change", "Lewy bodies", "Pick bodies"],
+              correct: 2,
+              exp: "**Spongiform change** (vacuolation of the neuropil) is characteristic of prion diseases, caused by accumulation of misfolded prion protein." },
+
+            // Demyelinating
+            { q: "Which of the following is a characteristic pathologic feature of multiple sclerosis?",
+              opts: ["Diffuse axonal loss", "Perivenular inflammatory demyelination (plaques)", "Central chromatolysis", "Microglial nodules", "Ring‑enhancing lesions on imaging"],
+              correct: 1,
+              exp: "**MS** is characterized by **perivenular inflammatory demyelination** (plaques) with relative axonal sparing. Oligoclonal bands in CSF." },
+            { q: "Progressive multifocal leukoencephalopathy (PML) is caused by which virus?",
+              opts: ["JC virus", "BK virus", "CMV", "HSV", "VZV"],
+              correct: 0,
+              exp: "**JC virus** (polyomavirus) causes PML in immunocompromised patients. It infects oligodendrocytes, leading to multifocal demyelination." },
+            { q: "Adrenoleukodystrophy is an X‑linked disorder that results from:",
+              opts: ["Accumulation of very‑long‑chain fatty acids", "Deficiency of arylsulfatase A", "Defective peroxisomal β‑oxidation", "Both A and C", "Defective lysosomal enzyme"],
+              correct: 3,
+              exp: "**Adrenoleukodystrophy** is caused by mutations in the ABCD1 gene, leading to impaired peroxisomal β‑oxidation and accumulation of **very‑long‑chain fatty acids** (VLCFA)." },
+
+            // Neurodegenerative
+            { q: "Which of the following is a pathologic hallmark of Alzheimer disease?",
+              opts: ["Lewy bodies", "Pick bodies", "Neurofibrillary tangles and senile plaques", "Bunina bodies", "Hirano bodies"],
+              correct: 2,
+              exp: "**Alzheimer disease** is defined by the presence of **neurofibrillary tangles** (hyperphosphorylated tau) and **senile plaques** (Aβ amyloid)." },
+            { q: "The major genetic risk factor for late‑onset Alzheimer disease is:",
+              opts: ["APP gene mutation", "PSEN1 mutation", "APOE ε4 allele", "MAPT mutation", "C9orf72 repeat expansion"],
+              correct: 2,
+              exp: "**APOE ε4** allele is the strongest genetic risk factor for late‑onset Alzheimer disease." },
+            { q: "Parkinson disease is characterized by degeneration of which neuronal population?",
+              opts: ["Cholinergic neurons in nucleus basalis", "Dopaminergic neurons in substantia nigra pars compacta", "GABAergic neurons in striatum", "Serotonergic neurons in raphe", "Noradrenergic neurons in locus coeruleus"],
+              correct: 1,
+              exp: "**Parkinson disease** involves loss of **dopaminergic neurons** in the **substantia nigra pars compacta**, leading to striatal dopamine deficiency." },
+            { q: "The characteristic intraneuronal inclusion in Parkinson disease is:",
+              opts: ["Neurofibrillary tangle", "Pick body", "Lewy body", "Negri body", "Cowdry type A inclusion"],
+              correct: 2,
+              exp: "**Lewy bodies** (eosinophilic cytoplasmic inclusions composed of α‑synuclein) are the hallmark of Parkinson disease." },
+            { q: "Huntington disease is caused by:",
+              opts: ["CAG repeat expansion in huntingtin gene", "GAA repeat in frataxin gene", "CGG repeat in FMR1 gene", "CTG repeat in DMPK gene", "Hexanucleotide repeat in C9orf72"],
+              correct: 0,
+              exp: "**Huntington disease** is an autosomal dominant disorder caused by **CAG repeat expansion** in the huntingtin gene (chromosome 4)." },
+            { q: "Which brain region shows severe atrophy in Huntington disease?",
+              opts: ["Hippocampus", "Cerebellum", "Caudate and putamen", "Substantia nigra", "Frontal cortex"],
+              correct: 2,
+              exp: "**Huntington disease** causes striking atrophy of the **caudate nucleus and putamen** (striatum)." },
+            { q: "Amyotrophic lateral sclerosis (ALS) involves degeneration of:",
+              opts: ["Upper motor neurons only", "Lower motor neurons only", "Both upper and lower motor neurons", "Sensory neurons", "Autonomic neurons"],
+              correct: 2,
+              exp: "**ALS** is characterized by loss of both **upper** (Betz cells) and **lower** (anterior horn) motor neurons. Corticospinal tract degeneration and Bunina bodies may be seen." },
+            { q: "Pick bodies are characteristic of which disorder?",
+              opts: ["Alzheimer disease", "Pick disease (frontotemporal dementia)", "Progressive supranuclear palsy", "Corticobasal degeneration", "Lewy body dementia"],
+              correct: 1,
+              exp: "**Pick bodies** (round, tau‑positive intraneuronal inclusions) are the hallmark of **Pick disease**, a form of frontotemporal lobar degeneration." },
+
+            // Tumors
+            { q: "Which of the following is the most common primary brain tumor in adults?",
+              opts: ["Glioblastoma", "Meningioma", "Astrocytoma", "Oligodendroglioma", "Medulloblastoma"],
+              correct: 1,
+              exp: "**Meningioma** is the most common primary brain tumor in adults. However, among malignant tumors, glioblastoma is most common." },
+            { q: "Glioblastoma multiforme (WHO grade 4) is characterized histologically by:",
+              opts: ["Rosenthal fibers", "Psammoma bodies", "Pseudopalisading necrosis and microvascular proliferation", "Perivascular pseudorosettes", "Homer‑Wright rosettes"],
+              correct: 2,
+              exp: "**GBM** shows **pseudopalisading necrosis** (tumor cells surrounding necrotic areas) and **microvascular proliferation** (glomeruloid vessels)." },
+            { q: "Which genetic alteration is commonly found in oligodendrogliomas and is associated with better prognosis?",
+              opts: ["EGFR amplification", "IDH1 mutation", "1p/19q codeletion", "PTEN deletion", "TP53 mutation"],
+              correct: 2,
+              exp: "**1p/19q codeletion** is characteristic of oligodendroglioma and predicts better prognosis and response to chemotherapy." },
+            { q: "Medulloblastoma typically arises in which location?",
+              opts: ["Cerebral hemispheres", "Cerebellum", "Brainstem", "Optic nerve", "Pineal region"],
+              correct: 1,
+              exp: "**Medulloblastoma** is a primitive neuroectodermal tumor of the **cerebellum**, most common in children." },
+            { q: "Which of the following is a characteristic histologic feature of schwannoma?",
+              opts: ["Verocay bodies (Antoni A and B areas)", "Psammoma bodies", "Rosenthal fibers", "Granulomas", "Perivascular pseudorosettes"],
+              correct: 0,
+              exp: "**Schwannoma** shows alternating Antoni A (cellular) and Antoni B (loose) areas, with **Verocay bodies** (nuclear palisading)." },
+            { q: "A metastatic brain lesion is most commonly derived from which primary cancer?",
+              opts: ["Prostate", "Colon", "Lung", "Bladder", "Thyroid"],
+              correct: 2,
+              exp: "**Lung cancer** (especially small cell and adenocarcinoma) is the most common source of brain metastases. Breast, melanoma, and renal cell are also common." },
+
+            // Developmental
+            { q: "Failure of the neural tube to close results in:",
+              opts: ["Anencephaly", "Spina bifida", "Hydrocephalus", "Microcephaly", "Agenesis of corpus callosum"],
+              correct: 0,
+              exp: "**Anencephaly** results from failure of closure of the anterior neural tube. Spina bifida results from failure of posterior closure." },
+            { q: "Which of the following is associated with neurofibromatosis type 1 (NF1)?",
+              opts: ["Bilateral acoustic schwannomas", "Meningiomas", "Café‑au‑lait spots and Lisch nodules", "Subependymal nodules", "Retinal hamartomas"],
+              correct: 2,
+              exp: "**NF1** features include café‑au‑lait spots, Lisch nodules, neurofibromas, optic glioma, and osseous lesions. NF2 is associated with bilateral acoustic schwannomas." },
+            { q: "Tuberous sclerosis is characterized by mutations in which genes?",
+              opts: ["NF1", "NF2", "TSC1 (hamartin) or TSC2 (tuberin)", "VHL", "PTEN"],
+              correct: 2,
+              exp: "**Tuberous sclerosis** is caused by mutations in **TSC1** (hamartin) or **TSC2** (tuberin), leading to cortical tubers, subependymal nodules, and other hamartomas." },
+
+            // Peripheral nerve & muscle
+            { q: "Guillain‑Barré syndrome is characterized by:",
+              opts: ["Axonal degeneration", "Segmental demyelination with lymphocytic inflammation", "Vasculitic neuropathy", "Neuronopathy", "Dorsal root ganglionitis"],
+              correct: 1,
+              exp: "**Guillain‑Barré** is an acute inflammatory demyelinating polyneuropathy (AIDP) with **segmental demyelination** and lymphocytic infiltration." },
+            { q: "Myasthenia gravis is caused by antibodies against:",
+              opts: ["Voltage‑gated calcium channels", "Acetylcholine receptors", "Muscle‑specific kinase (MuSK)", "Ryanodine receptors", "Both B and C"],
+              correct: 4,
+              exp: "**Myasthenia gravis** is most commonly due to antibodies against **acetylcholine receptors** (AChR). A minority have anti‑MuSK antibodies." },
+            { q: "Duchenne muscular dystrophy is caused by mutations in the gene encoding:",
+              opts: ["Dystrophin", "Utrophin", "Dysferlin", "Caveolin‑3", "Emerin"],
+              correct: 0,
+              exp: "**Duchenne** is an X‑linked disorder caused by mutations in the **dystrophin** gene, leading to absent dystrophin and progressive muscle weakness." },
+
+            // Epilepsy & hydrocephalus
+            { q: "Mesial temporal sclerosis is a common pathologic finding in patients with:",
+              opts: ["Alzheimer disease", "Parkinson disease", "Temporal lobe epilepsy", "Huntington disease", "Multiple sclerosis"],
+              correct: 2,
+              exp: "**Mesial temporal sclerosis** (hippocampal neuronal loss and gliosis) is the most common pathology in **temporal lobe epilepsy**." },
+            { q: "Normal pressure hydrocephalus classically presents with the triad of:",
+              opts: ["Headache, nausea, papilledema", "Gait apraxia, urinary incontinence, dementia", "Dementia, parkinsonism, tremor", "Ataxia, nystagmus, dysarthria", "Hemiparesis, aphasia, neglect"],
+              correct: 1,
+              exp: "**Normal pressure hydrocephalus** triad: **gait apraxia** (magnetic gait), **urinary incontinence**, and **cognitive impairment** (dementia)." }
+        ];
+
+        // Add more questions to reach 60+ (we have 38, so add 22 more)
+        const extraQuestions = [
+            { q: "Which of the following is a feature of chronic traumatic encephalopathy (CTE)?",
+              opts: ["Neurofibrillary tangles and TDP‑43 pathology", "Lewy bodies", "Amyloid plaques", "Pick bodies", "Bunina bodies"],
+              correct: 0,
+              exp: "**CTE** is characterized by **neurofibrillary tangles** (tau) often perivascular and at sulcal depths, and often associated TDP‑43 pathology." },
+            { q: "Epidural hematoma is classically caused by injury to which artery?",
+              opts: ["Middle cerebral artery", "Anterior cerebral artery", "Middle meningeal artery", "Superficial temporal artery", "Occipital artery"],
+              correct: 2,
+              exp: "**Epidural hematoma** is usually caused by tearing of the **middle meningeal artery** (often from temporal bone fracture)." },
+            { q: "Subdural hematoma typically results from injury to:",
+              opts: ["Bridging veins", "Middle meningeal artery", "Cortical arteries", "Dural sinuses", "Arachnoid granulations"],
+              correct: 0,
+              exp: "**Subdural hematoma** is caused by tearing of **bridging veins** between the cortex and dural sinuses." },
+            { q: "Wallerian degeneration refers to:",
+              opts: ["Degeneration of the proximal axon after injury", "Degeneration of the distal axon and myelin sheath after transection", "Demyelination without axonal loss", "Neuronal cell body death", "Reactive gliosis"],
+              correct: 1,
+              exp: "**Wallerian degeneration** is the process of degeneration of the **distal axon and its myelin sheath** after axonal transection." },
+            { q: "In multiple sclerosis, the most common initial presentation is:",
+              opts: ["Optic neuritis", "Internuclear ophthalmoplegia", "Sensory loss", "Motor weakness", "Cerebellar ataxia"],
+              correct: 0,
+              exp: "**Optic neuritis** is the presenting symptom in about 20% of MS patients and is one of the most common initial manifestations." },
+            { q: "Which of the following is a characteristic of Parkinson disease pathology?",
+              opts: ["Neuronal loss in substantia nigra and Lewy bodies", "Striatal atrophy", "Cortical atrophy with plaques and tangles", "Cerebellar Purkinje cell loss", "Anterior horn cell degeneration"],
+              correct: 0,
+              exp: "**Parkinson disease** shows **neuronal loss** in substantia nigra pars compacta and **Lewy bodies** (α‑synuclein inclusions)." },
+            { q: "The most common site for saccular (berry) aneurysms is:",
+              opts: ["Anterior communicating artery", "Posterior communicating artery", "Middle cerebral artery bifurcation", "Basilar tip", "Internal carotid artery"],
+              correct: 0,
+              exp: "The most common site for saccular aneurysms is the **anterior communicating artery** (about 30–35%)." },
+            { q: "Charcot‑Marie‑Tooth disease type 1A is most commonly associated with:",
+              opts: ["PMP22 gene duplication", "MPZ mutation", "GJB1 mutation", "MFN2 mutation", "Connexin 32 mutation"],
+              correct: 0,
+              exp: "**CMT1A** is most often caused by duplication of the **PMP22** gene, leading to demyelinating neuropathy." },
+            { q: "Which of the following is a classic feature of Wernicke encephalopathy?",
+              opts: ["Ataxia, ophthalmoplegia, confusion", "Dementia, parkinsonism, hallucinations", "Progressive weakness, fasciculations", "Sensory ataxia, areflexia", "Chorea, dementia"],
+              correct: 0,
+              exp: "**Wernicke encephalopathy** (thiamine deficiency) presents with the triad: **ataxia**, **ophthalmoplegia**, and **confusion** (altered mental status)." },
+            { q: "Kernohan's phenomenon refers to:",
+              opts: ["Ipsilateral hemiparesis due to compression of contralateral cerebral peduncle", "Contralateral hemiparesis due to uncal herniation", "Ipsilateral pupillary dilation", "Bilateral upgoing plantar responses", "Decerebrate posturing"],
+              correct: 0,
+              exp: "**Kernohan's phenomenon** (false localizing sign) occurs when the contralateral cerebral peduncle is compressed against the tentorium, causing **ipsilateral hemiparesis**." },
+            { q: "Which of the following is a feature of glioblastoma on MRI?",
+              opts: ["Well‑defined, non‑enhancing mass", "Ring‑enhancing lesion with central necrosis", "Cystic with mural nodule", "Extra‑axial enhancing mass with dural tail", "Calcified intraventricular mass"],
+              correct: 1,
+              exp: "**Glioblastoma** typically appears as a **ring‑enhancing lesion** with central necrosis on MRI." },
+            { q: "The most common primary CNS lymphoma is associated with which virus?",
+              opts: ["EBV", "CMV", "HHV‑8", "HIV", "HTLV‑1"],
+              correct: 3,
+              exp: "Primary CNS lymphoma is associated with **HIV** infection and often **EBV** in immunocompromised patients." },
+            { q: "Which of the following is a hallmark of diffuse axonal injury on histology?",
+              opts: ["Red neurons", "Axonal retraction balls", "Microglial nodules", "Neuronophagia", "Perivascular cuffing"],
+              correct: 1,
+              exp: "**Axonal retraction balls** (swollen axon ends) are the histologic hallmark of DAI, visible with silver stains or β‑APP immunohistochemistry." },
+            { q: "A brain abscess is most commonly caused by:",
+              opts: ["Staphylococcus aureus", "Streptococci (viridans group)", "Bacteroides fragilis", "Nocardia", "Fungi"],
+              correct: 1,
+              exp: "**Streptococci** (especially viridans group) are the most common cause of brain abscess, often from dental or sinus sources." },
+            { q: "Which of the following is a feature of neurofibromatosis type 2?",
+              opts: ["Optic glioma", "Café‑au‑lait spots", "Bilateral vestibular schwannomas", "Lisch nodules", "Cutaneous neurofibromas"],
+              correct: 2,
+              exp: "**NF2** is characterized by **bilateral vestibular schwannomas** (acoustic neuromas), meningiomas, and ependymomas." },
+            { q: "In tuberous sclerosis, subependymal nodules can evolve into which tumor?",
+              opts: ["Subependymal giant cell astrocytoma", "Ependymoma", "Choroid plexus papilloma", "Central neurocytoma", "Pilocytic astrocytoma"],
+              correct: 0,
+              exp: "Subependymal nodules in tuberous sclerosis can grow into **subependymal giant cell astrocytoma** (SEGA)." },
+            { q: "Which of the following is a characteristic of amyotrophic lateral sclerosis?",
+              opts: ["Dementia precedes motor symptoms", "Sensory loss is common", "Extraocular muscles are spared", "Autonomic dysfunction is prominent", "Onset is always asymmetric"],
+              correct: 2,
+              exp: "In ALS, **extraocular muscles** and sphincters are typically spared until very late." },
+            { q: "The pathologic hallmark of Alzheimer disease in the entorhinal cortex is:",
+              opts: ["Lewy bodies", "Pick bodies", "Neurofibrillary tangles", "Granulovacuolar degeneration", "Hirano bodies"],
+              correct: 2,
+              exp: "**Neurofibrillary tangles** first appear in the transentorhinal region and spread hierarchically (Braak stages)." },
+            { q: "Which of the following is a risk factor for cerebral amyloid angiopathy?",
+              opts: ["Hypertension", "Diabetes", "APOE ε4 allele", "Smoking", "Male sex"],
+              correct: 2,
+              exp: "**APOE ε4** increases risk for cerebral amyloid angiopathy, which causes lobar hemorrhages in the elderly." },
+            { q: "A patient with progressive weakness and fasciculations is found to have frontotemporal dementia. Which genetic mutation is most likely?",
+              opts: ["SOD1", "C9orf72", "TARDBP", "FUS", "VCP"],
+              correct: 1,
+              exp: "**C9orf72** hexanucleotide repeat expansion is the most common genetic cause of ALS and frontotemporal dementia." }
+        ];
+
+        const allQuestions = [...questions, ...extraQuestions];
+        // shuffle for variety
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `Question ${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}/${shuffled.length}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

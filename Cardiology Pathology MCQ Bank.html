@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiology Pathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 40px; padding: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #0a2942, #1b4c72); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+        h1 i { font-size: 2.5rem; color: #2c7cb0; -webkit-text-fill-color: initial; }
+        .credit { background: #e3f2fd; padding: 10px 30px; border-radius: 50px; font-size: 1.2rem; color: #1565C0; font-weight: 600; margin: 15px 0; display: inline-block; }
+        .progress-bar { background: #e9ecef; height: 10px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); width: 0%; transition: width 0.3s; }
+        .mcq-stats { display: flex; justify-content: space-between; margin-bottom: 20px; color: #1e3c72; font-weight: 600; }
+        .question-card { background: white; border-radius: 30px; padding: 30px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .question-text { font-size: 1.4rem; font-weight: 600; color: #0a2942; line-height: 1.6; margin-bottom: 25px; }
+        .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .option { background: #f8faff; border: 2px solid #e0e7f0; border-radius: 60px; padding: 16px 25px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #2c7cb0; background: #eef4ff; transform: translateX(10px); }
+        .option.selected { border-color: #2c7cb0; background: #d9e9ff; }
+        .option.correct { border-color: #28a745; background: #e1f7e7; }
+        .option.wrong { border-color: #dc3545; background: #ffe6e8; }
+        .option-letter { width: 40px; height: 40px; background: #e0e7f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0a2942; }
+        .option.selected .option-letter { background: #2c7cb0; color: white; }
+        .explanation { background: #f0f9ff; border-left: 6px solid #2c7cb0; border-radius: 20px; padding: 20px; margin: 20px 0; display: none; }
+        .explanation.show { display: block; }
+        .nav-buttons { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+        .nav-btn { background: white; border: 2px solid #2c7cb0; color: #2c7cb0; padding: 12px 30px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .nav-btn:hover:not(:disabled) { background: #2c7cb0; color: white; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #2c7cb0; color: white; }
+        .dots { display: flex; gap: 8px; justify-content: center; margin: 25px 0 10px; flex-wrap: wrap; }
+        .dot { width: 35px; height: 8px; border-radius: 8px; background: #ccc; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: #2c7cb0; width: 50px; }
+        .dot.answered { background: #4caf50; }
+        .footer { text-align: center; margin-top: 30px; color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-heartbeat"></i> Cardiology Pathology MCQ Bank</h1>
+        <div class="credit">✍️ Abubakar Sadeeq · 50+ High‑Yield Questions</div>
+
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="mcq-stats">
+            <span id="qCounter">Question 1/50</span>
+            <span id="scoreDisplay">Score: 0/0</span>
+        </div>
+
+        <div class="question-card">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="nav-btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div class="dots" id="dotsContainer"></div>
+    </div>
+
+    <script>
+        // 50 UNIQUE PATHOLOGY QUESTIONS
+        const questions = [
+            { q: "Which of the following is the most common cause of infective endocarditis in intravenous drug users?",
+              opts: ["Streptococcus viridans", "Staphylococcus aureus", "Staphylococcus epidermidis", "Enterococcus faecalis", "Streptococcus bovis"],
+              correct: 1,
+              exp: "**Staphylococcus aureus** is the most common cause of IE in IV drug users, typically affecting the tricuspid valve." },
+            { q: "A patient with a history of rheumatic fever presents with a new holosystolic murmur at the apex radiating to the axilla. What is the most likely diagnosis?",
+              opts: ["Mitral stenosis", "Mitral regurgitation", "Aortic stenosis", "Tricuspid regurgitation", "Ventricular septal defect"],
+              correct: 1,
+              exp: "**Mitral regurgitation** is common in rheumatic heart disease due to fibrosis and shortening of the chordae tendineae." },
+            { q: "What is the pathognomonic histological finding in acute rheumatic myocarditis?",
+              opts: ["Aschoff bodies", "Anitschkow cells", "Roth spots", "Osler nodes", "Janeway lesions"],
+              correct: 0,
+              exp: "**Aschoff bodies** (granulomas with Anitschkow cells) are pathognomonic for acute rheumatic fever." },
+            { q: "A 60-year-old man with aortic stenosis undergoes valve replacement. The excised valve shows commissural fusion and calcification. The most common etiology is:",
+              opts: ["Rheumatic heart disease", "Congenital bicuspid valve", "Senile calcific degeneration", "Infective endocarditis", "Syphilis"],
+              correct: 2,
+              exp: "**Senile calcific degeneration** is the most common cause of aortic stenosis in elderly. Bicuspid valve presents earlier." },
+            { q: "In dilated cardiomyopathy, which of the following echocardiographic findings is expected?",
+              opts: ["Asymmetric septal hypertrophy", "Small ventricular cavity", "Decreased ejection fraction", "Restrictive filling pattern", "Normal systolic function"],
+              correct: 2,
+              exp: "DCM is characterized by systolic dysfunction (↓EF) and dilated ventricles." },
+            { q: "A 20-year-old athlete collapses during a game and dies. Autopsy shows asymmetric septal hypertrophy and myofiber disarray. The cause of death is most likely:",
+              opts: ["Dilated cardiomyopathy", "Restrictive cardiomyopathy", "Hypertrophic cardiomyopathy", "Arrhythmogenic right ventricular dysplasia", "Myocarditis"],
+              correct: 2,
+              exp: "**HCM** is the most common cause of sudden cardiac death in young athletes." },
+            { q: "Which of the following is a characteristic feature of restrictive cardiomyopathy?",
+              opts: ["Increased ventricular compliance", "Diastolic dysfunction", "Systolic dysfunction", "Septal hypertrophy", "Dilated ventricles"],
+              correct: 1,
+              exp: "Restrictive cardiomyopathy is characterized by **diastolic dysfunction** due to stiff ventricular walls." },
+            { q: "A patient with long-standing hypertension presents with dyspnea and S4 gallop. The most likely underlying mechanism is:",
+              opts: ["Systolic dysfunction", "Diastolic dysfunction", "Volume overload", "Valvular regurgitation", "Pericardial effusion"],
+              correct: 1,
+              exp: "S4 is due to atrial contraction against a stiff (hypertrophied) ventricle – **diastolic dysfunction**." },
+            { q: "In acute pericarditis, which ECG finding is most characteristic?",
+              opts: ["Focal ST elevation", "Diffuse ST elevation", "ST depression", "Pathologic Q waves", "T wave inversions"],
+              correct: 1,
+              exp: "**Diffuse ST elevation** (concave upward) and PR depression are typical of acute pericarditis." },
+            { q: "A patient with a large VSD develops cyanosis later in life. This complication is known as:",
+              opts: ["Eisenmenger syndrome", "Tetralogy of Fallot", "Transposition of great arteries", "Pulmonary stenosis", "Ebstein anomaly"],
+              correct: 0,
+              exp: "**Eisenmenger syndrome** refers to reversal of a left‑to‑right shunt due to pulmonary hypertension, leading to cyanosis." },
+            { q: "Which of the following is a major criterion for the diagnosis of acute rheumatic fever?",
+              opts: ["Fever", "Arthralgia", "Prolonged PR interval", "Erythema marginatum", "Elevated ESR"],
+              correct: 3,
+              exp: "Major criteria: Pancarditis, polyarthritis, chorea, subcutaneous nodules, **erythema marginatum**." },
+            { q: "A patient with infective endocarditis develops a new heart block on ECG. This suggests:",
+              opts: ["Mitral valve involvement", "Aortic valve involvement", "Ring abscess", "Septic emboli", "Myocarditis"],
+              correct: 2,
+              exp: "**Ring abscess** (perivalvular abscess) can extend into the conduction system, causing heart block." },
+            { q: "What is the most common primary cardiac tumor in adults?",
+              opts: ["Rhabdomyoma", "Myxoma", "Fibroma", "Lipoma", "Angiosarcoma"],
+              correct: 1,
+              exp: "**Myxoma** is the most common primary cardiac tumor, usually in the left atrium." },
+            { q: "In mitral stenosis, the opening snap occurs because:",
+              opts: ["The valve leaflets are calcified", "The valve leaflets are thickened but still mobile", "The chordae tendineae are fused", "There is associated regurgitation", "The left atrium is dilated"],
+              correct: 1,
+              exp: "**Opening snap** occurs when a stenotic but still **pliable** valve domes and abruptly halts." },
+            { q: "A patient with chronic aortic regurgitation presents with a bounding pulse and head bobbing. These findings are due to:",
+              opts: ["Increased pulse pressure", "Decreased afterload", "Increased systemic vascular resistance", "Left ventricular hypertrophy", "Decreased stroke volume"],
+              correct: 0,
+              exp: "**Wide pulse pressure** from rapid diastolic runoff causes bounding pulses (water‑hammer pulse) and head bobbing." },
+            { q: "Which of the following is a complication of myocardial infarction that typically occurs 3–7 days post‑MI?",
+              opts: ["Pericarditis", "Ventricular free wall rupture", "Mural thrombus", "Arrhythmia", "Cardiogenic shock"],
+              correct: 1,
+              exp: "**Free wall rupture** is most common 3–7 days after transmural MI due to softening of necrotic myocardium." },
+            { q: "A 70-year-old man with calcific aortic stenosis develops syncope on exertion. The mechanism is:",
+              opts: ["Decreased cerebral perfusion due to fixed cardiac output", "Vasovagal response", "Arrhythmia", "Cerebral emboli", "Pulmonary hypertension"],
+              correct: 0,
+              exp: "Syncope in AS occurs because the **fixed cardiac output** cannot increase during exertion, leading to cerebral hypoperfusion." },
+            { q: "In chronic constrictive pericarditis, which of the following is typically seen on examination?",
+              opts: ["Pulsus paradoxus", "Kussmaul sign", "Loud S3", "Pericardial friction rub", "Holosystolic murmur"],
+              correct: 1,
+              exp: "**Kussmaul sign** (rise in JVP during inspiration) is characteristic of constrictive pericarditis." },
+            { q: "A patient with tetralogy of Fallot assumes a squatting position during a cyanotic spell. This improves cyanosis by:",
+              opts: ["Increasing systemic vascular resistance", "Decreasing venous return", "Increasing pulmonary blood flow", "Decreasing right‑to‑left shunt", "All of the above"],
+              correct: 4,
+              exp: "Squatting **increases SVR** (decreasing R→L shunt) and **increases venous return** (improving pulmonary flow)." },
+            { q: "Which of the following is associated with mitral valve prolapse?",
+              opts: ["Mid‑systolic click", "Opening snap", "Fixed splitting of S2", "Paradoxical splitting of S2", "S3 gallop"],
+              correct: 0,
+              exp: "**Mid‑systolic click** (due to sudden tensing of chordae) is hallmark of MVP." },
+            { q: "In a patient with chronic heart failure, the presence of S3 gallop indicates:",
+              opts: ["Atrial contraction", "Rapid ventricular filling into a dilated ventricle", "Ventricular hypertrophy", "Aortic regurgitation", "Mitral stenosis"],
+              correct: 1,
+              exp: "**S3** occurs during rapid filling into a dilated, poorly compliant ventricle." },
+            { q: "What is the most common cause of death in acute myocardial infarction?",
+              opts: ["Cardiogenic shock", "Ventricular rupture", "Arrhythmia", "Heart failure", "Pericarditis"],
+              correct: 2,
+              exp: "**Arrhythmias** (especially ventricular fibrillation) are the most common cause of death in the first few hours." },
+            { q: "A patient with pulmonary stenosis has a systolic murmur that:",
+              opts: ["Increases with inspiration", "Decreases with inspiration", "Is holosystolic", "Is best heard at the apex", "Is accompanied by an opening snap"],
+              correct: 0,
+              exp: "**Right‑sided murmurs** (including PS) increase with inspiration due to increased venous return." },
+            { q: "In Ebstein anomaly, which valve is primarily affected?",
+              opts: ["Mitral", "Aortic", "Tricuspid", "Pulmonary", "All valves"],
+              correct: 2,
+              exp: "**Ebstein anomaly** is a congenital malformation of the tricuspid valve, often with apical displacement." },
+            { q: "A patient with syphilis may develop aortic regurgitation due to:",
+              opts: ["Valve leaflet destruction", "Aortic root dilation", "Commissural fusion", "Vegetations", "Ruptured chordae"],
+              correct: 1,
+              exp: "Syphilitic aortitis causes **aortic root dilation**, leading to aortic regurgitation." },
+            { q: "Which of the following is a feature of cardiac tamponade?",
+              opts: ["Kussmaul sign", "Pulsus paradoxus", "Pericardial knock", "Loud S1", "Wide pulse pressure"],
+              correct: 1,
+              exp: "**Pulsus paradoxus** (exaggerated drop in systolic BP during inspiration) is classic for tamponade." },
+            { q: "A patient with hypertrophic cardiomyopathy experiences worsening of his systolic murmur during Valsalva. This is because Valsalva:",
+              opts: ["Increases preload", "Decreases preload", "Increases afterload", "Decreases contractility", "Increases heart rate"],
+              correct: 1,
+              exp: "Valsalva **decreases venous return (preload)** → increased obstruction → louder murmur." },
+            { q: "In aortic regurgitation, the Austin Flint murmur is due to:",
+              opts: ["Mitral stenosis", "Tricuspid stenosis", "Fluttering of the anterior mitral leaflet", "Pulmonary regurgitation", "Increased flow across the mitral valve"],
+              correct: 2,
+              exp: "The regurgitant jet causes **anterior mitral leaflet flutter**, creating a functional mid‑diastolic murmur." },
+            { q: "A 30-year-old woman with a history of recurrent deep vein thrombosis presents with dyspnea and a continuous machinery‑type murmur at the left upper sternal border. What is the most likely diagnosis?",
+              opts: ["PDA", "ASD", "VSD", "Pulmonary AV malformation", "Venous hum"],
+              correct: 0,
+              exp: "**Patent ductus arteriosus** produces a continuous murmur due to flow from aorta to pulmonary artery throughout the cardiac cycle." },
+            { q: "Which of the following is a common cause of restrictive cardiomyopathy?",
+              opts: ["Amyloidosis", "Myocarditis", "Alcohol", "Hypertension", "Valvular disease"],
+              correct: 0,
+              exp: "**Amyloidosis** infiltrates the myocardium, making it stiff (restrictive physiology)." },
+            { q: "In a patient with mitral stenosis, the intensity of S1 is loudest when:",
+              opts: ["The valve is heavily calcified", "The valve is still pliable", "Atrial fibrillation develops", "Pulmonary hypertension is severe", "Mitral regurgitation coexists"],
+              correct: 1,
+              exp: "Loud S1 occurs when the valve is **pliable and mobile**; calcification softens S1." },
+            { q: "A 50-year-old man with known chronic atrial fibrillation presents with a stroke. The most likely source of embolus is:",
+              opts: ["Left atrial appendage thrombus", "Left ventricular thrombus", "Aortic plaque", "Carotid stenosis", "Paradoxical embolus"],
+              correct: 0,
+              exp: "Atrial fibrillation predisposes to **left atrial thrombus** (especially in the appendage), which can embolize to brain." },
+            { q: "Which of the following is a characteristic of uncomplicated atrial septal defect?",
+              opts: ["Fixed splitting of S2", "Paradoxical splitting of S2", "Loud S1", "Early systolic click", "Continuous murmur"],
+              correct: 0,
+              exp: "ASD causes **fixed splitting** of S2 due to constant right ventricular volume overload." },
+            { q: "A patient with acute myocardial infarction develops a new harsh holosystolic murmur at the left sternal border. This most likely indicates:",
+              opts: ["Mitral regurgitation", "Ventricular septal rupture", "Tricuspid regurgitation", "Aortic stenosis", "Pericardial friction rub"],
+              correct: 1,
+              exp: "**Ventricular septal rupture** (post‑MI VSD) produces a holosystolic murmur at LSB." },
+            { q: "In infective endocarditis, Osler nodes are caused by:",
+              opts: ["Septic emboli", "Immune complex deposition", "Bacterial invasion", "Vasculitis", "Thrombocytopenia"],
+              correct: 1,
+              exp: "**Osler nodes** (painful, tender nodules on fingers) are due to **immune complex deposition**." },
+            { q: "What is the most common cause of death in patients with chronic Chagas disease?",
+              opts: ["Heart failure", "Arrhythmias", "Thromboembolism", "Sudden cardiac death", "Aneurysm rupture"],
+              correct: 3,
+              exp: "**Sudden cardiac death** from ventricular arrhythmias is the most common cause of death in Chagas cardiomyopathy." },
+            { q: "A patient with a prosthetic mitral valve presents with fever and a new murmur. Blood cultures grow coagulase‑negative staphylococci. This is most consistent with:",
+              opts: ["Early prosthetic valve endocarditis", "Late prosthetic valve endocarditis", "Rheumatic fever", "Nonbacterial thrombotic endocarditis", "Culture‑negative endocarditis"],
+              correct: 0,
+              exp: "**Early prosthetic valve endocarditis** (<2 months post‑op) is often due to coagulase‑negative staphylococci." },
+            { q: "In tetralogy of Fallot, which of the following is NOT a classic feature?",
+              opts: ["VSD", "Pulmonary stenosis", "Right ventricular hypertrophy", "Overriding aorta", "Left ventricular hypertrophy"],
+              correct: 4,
+              exp: "TOF includes VSD, pulmonary stenosis, RVH, and overriding aorta; **LVH is not a feature**." },
+            { q: "A 60-year-old man with hypertension and chest pain has an ECG showing left ventricular hypertrophy and deep T wave inversions in leads V5‑V6. This pattern is most suggestive of:",
+              opts: ["Acute MI", "LVH with strain", "Pericarditis", "Pulmonary embolism", "Early repolarization"],
+              correct: 1,
+              exp: "**LVH with strain** typically shows tall R waves in left leads and ST‑T inversions." },
+            { q: "Which of the following is a risk factor for developing atrial myxoma embolization?",
+              opts: ["Polypoid shape", "Sessile shape", "Calcification", "Large size", "Both A and D"],
+              correct: 4,
+              exp: "**Polypoid, friable myxomas** are more likely to embolize; large size increases risk." },
+            { q: "In a patient with chronic aortic regurgitation, the best surgical timing is based on:",
+              opts: ["Symptoms only", "LV end‑systolic diameter >50 mm or EF <50%", "Presence of an S3", "Degree of diastolic murmur", "Aortic root size"],
+              correct: 1,
+              exp: "Surgery is indicated when LV becomes severely dilated (ESD >50 mm) or EF drops (<50%)." },
+            { q: "What is the most common congenital heart defect?",
+              opts: ["ASD", "VSD", "PDA", "Tetralogy of Fallot", "Coarctation of aorta"],
+              correct: 1,
+              exp: "**Ventricular septal defect** is the most common congenital heart defect." },
+            { q: "A patient with Marfan syndrome develops chest pain and a widened mediastinum on CXR. The most likely diagnosis is:",
+              opts: ["Aortic dissection", "Myocardial infarction", "Pulmonary embolism", "Pericarditis", "Aortic regurgitation"],
+              correct: 0,
+              exp: "Marfan patients are prone to **aortic dissection** due to cystic medial necrosis." },
+            { q: "In a patient with heart failure and preserved ejection fraction (HFpEF), which of the following is most likely?",
+              opts: ["Dilated LV", "Thickened LV walls", "Low EF", "S3 gallop", "Mitral regurgitation"],
+              correct: 1,
+              exp: "HFpEF often results from **LV hypertrophy** (hypertension, aging), leading to diastolic dysfunction." },
+            { q: "A patient with chronic atrial fibrillation is started on warfarin. The target INR for this patient is:",
+              opts: ["2.0–3.0", "2.5–3.5", "1.5–2.0", "3.0–4.0", "1.0–1.5"],
+              correct: 0,
+              exp: "For non‑valvular AF, **INR 2.0–3.0** is recommended." },
+            { q: "Which of the following is a characteristic of coarctation of the aorta?",
+              opts: ["Upper extremity hypertension", "Delayed femoral pulses", "Rib notching on X‑ray", "All of the above", "None of the above"],
+              correct: 3,
+              exp: "Coarctation causes **upper extremity hypertension, radiofemoral delay, and rib notching** (collateral vessels)." },
+            { q: "A patient with acute pulmonary edema is found to have a loud S1 and an opening snap. The most likely diagnosis is:",
+              opts: ["Aortic stenosis", "Mitral stenosis", "Mitral regurgitation", "Tricuspid regurgitation", "Pulmonary stenosis"],
+              correct: 1,
+              exp: "**Mitral stenosis** presents with loud S1, opening snap, and diastolic rumble; acute pulmonary edema occurs when severe." },
+            { q: "In a patient with infective endocarditis, the presence of Roth spots is due to:",
+              opts: ["Septic emboli", "Immune complexes", "Bacterial endocarditis", "Anemia", "Thrombocytopenia"],
+              correct: 1,
+              exp: "**Roth spots** (retinal hemorrhages with pale centers) are an immunologic phenomenon." },
+            { q: "A 70-year-old man with known aortic stenosis presents with angina and syncope. The next best step is:",
+              opts: ["Medical management with beta‑blockers", "Aortic valve replacement", "Balloon valvuloplasty", "Antianginal therapy", "Observation"],
+              correct: 1,
+              exp: "Symptomatic severe aortic stenosis (angina, syncope, dyspnea) is an indication for **valve replacement**." },
+            { q: "What is the mechanism of chest pain in hypertrophic cardiomyopathy?",
+              opts: ["Coronary artery spasm", "Increased oxygen demand relative to supply", "Coronary emboli", "Aortic dissection", "Pericardial inflammation"],
+              correct: 1,
+              exp: "Chest pain in HCM is due to **supply‑demand mismatch** (thick muscle compresses coronaries, increased demand)." }
+        ];
+
+        let shuffled = questions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `Question ${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}/${shuffled.length}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

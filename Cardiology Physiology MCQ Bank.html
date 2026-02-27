@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiology Physiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 40px; padding: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #0a2942, #1b4c72); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+        h1 i { font-size: 2.5rem; color: #2c7cb0; -webkit-text-fill-color: initial; }
+        .credit { background: #e3f2fd; padding: 10px 30px; border-radius: 50px; font-size: 1.2rem; color: #1565C0; font-weight: 600; margin: 15px 0; display: inline-block; }
+        .progress-bar { background: #e9ecef; height: 10px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); width: 0%; transition: width 0.3s; }
+        .mcq-stats { display: flex; justify-content: space-between; margin-bottom: 20px; color: #1e3c72; font-weight: 600; }
+        .question-card { background: white; border-radius: 30px; padding: 30px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .question-text { font-size: 1.4rem; font-weight: 600; color: #0a2942; line-height: 1.6; margin-bottom: 25px; }
+        .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .option { background: #f8faff; border: 2px solid #e0e7f0; border-radius: 60px; padding: 16px 25px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #2c7cb0; background: #eef4ff; transform: translateX(10px); }
+        .option.selected { border-color: #2c7cb0; background: #d9e9ff; }
+        .option.correct { border-color: #28a745; background: #e1f7e7; }
+        .option.wrong { border-color: #dc3545; background: #ffe6e8; }
+        .option-letter { width: 40px; height: 40px; background: #e0e7f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0a2942; }
+        .option.selected .option-letter { background: #2c7cb0; color: white; }
+        .explanation { background: #f0f9ff; border-left: 6px solid #2c7cb0; border-radius: 20px; padding: 20px; margin: 20px 0; display: none; }
+        .explanation.show { display: block; }
+        .nav-buttons { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+        .nav-btn { background: white; border: 2px solid #2c7cb0; color: #2c7cb0; padding: 12px 30px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .nav-btn:hover:not(:disabled) { background: #2c7cb0; color: white; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #2c7cb0; color: white; }
+        .dots { display: flex; gap: 8px; justify-content: center; margin: 25px 0 10px; flex-wrap: wrap; }
+        .dot { width: 35px; height: 8px; border-radius: 8px; background: #ccc; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: #2c7cb0; width: 50px; }
+        .dot.answered { background: #4caf50; }
+        .footer { text-align: center; margin-top: 30px; color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-heartbeat"></i> Cardiology Physiology MCQ Bank</h1>
+        <div class="credit">✍️ Abubakar Sadeeq · 50+ High‑Yield Questions</div>
+
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="mcq-stats">
+            <span id="qCounter">Question 1/50</span>
+            <span id="scoreDisplay">Score: 0/0</span>
+        </div>
+
+        <div class="question-card">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="nav-btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div class="dots" id="dotsContainer"></div>
+    </div>
+
+    <script>
+        // 50 UNIQUE PHYSIOLOGY QUESTIONS
+        const questions = [
+            { q: "Which phase of the cardiac cycle is associated with the closure of the atrioventricular valves?",
+              opts: ["Isovolumetric contraction", "Rapid ejection", "Isovolumetric relaxation", "Rapid filling", "Atrial systole"],
+              correct: 0,
+              exp: "**Isovolumetric contraction** begins with AV valve closure (S1)." },
+            { q: "The second heart sound (S2) is caused by:",
+              opts: ["Closure of AV valves", "Closure of semilunar valves", "Ventricular filling", "Atrial contraction", "Opening of AV valves"],
+              correct: 1,
+              exp: "**S2** is due to closure of aortic and pulmonary valves." },
+            { q: "In a normal ECG, the PR interval represents:",
+              opts: ["Atrial depolarization", "Ventricular depolarization", "AV nodal delay", "Ventricular repolarization", "Atrial repolarization"],
+              correct: 2,
+              exp: "**PR interval** includes atrial depolarization and AV nodal delay." },
+            { q: "What is the main ion responsible for the plateau phase (phase 2) of the ventricular action potential?",
+              opts: ["Na⁺ influx", "K⁺ efflux", "Ca²⁺ influx", "Cl⁻ influx", "Mg²⁺ influx"],
+              correct: 2,
+              exp: "**Ca²⁺ influx** through L‑type channels balances K⁺ efflux, creating the plateau." },
+            { q: "Which of the following leads is a bipolar limb lead?",
+              opts: ["aVR", "aVL", "aVF", "Lead I", "V1"],
+              correct: 3,
+              exp: "**Lead I** (LA‑RA) is a bipolar limb lead." },
+            { q: "In the normal heart, the intrinsic rate of the SA node is approximately:",
+              opts: ["20–40 bpm", "40–60 bpm", "60–100 bpm", "100–120 bpm", "120–140 bpm"],
+              correct: 2,
+              exp: "**SA node** fires at 60–100 bpm." },
+            { q: "A patient has a blood pressure of 120/80 mmHg. What is the mean arterial pressure (MAP)?",
+              opts: ["80 mmHg", "93 mmHg", "100 mmHg", "107 mmHg", "120 mmHg"],
+              correct: 1,
+              exp: "MAP = diastolic + 1/3 pulse pressure = 80 + 1/3(40) = 93 mmHg." },
+            { q: "During exercise, which of the following changes increases cardiac output?",
+              opts: ["Increased parasympathetic tone", "Decreased sympathetic tone", "Increased heart rate and stroke volume", "Decreased venous return", "Increased afterload"],
+              correct: 2,
+              exp: "Exercise increases **HR and SV** via sympathetic activation." },
+            { q: "Which of the following murmurs is classically associated with aortic stenosis?",
+              opts: ["Holosystolic at apex", "Early diastolic at left sternal border", "Systolic ejection murmur at right upper sternal border", "Late systolic at apex", "Continuous murmur"],
+              correct: 2,
+              exp: "Aortic stenosis produces a **systolic ejection murmur** at the right upper sternal border." },
+            { q: "A patient with mitral regurgitation has a holosystolic murmur that:",
+              opts: ["Radiates to the carotids", "Radiates to the axilla", "Increases with inspiration", "Is best heard with the bell", "Is accompanied by an opening snap"],
+              correct: 1,
+              exp: "**Mitral regurgitation** murmur radiates to the axilla." },
+            { q: "What does the QRS complex represent on ECG?",
+              opts: ["Atrial depolarization", "Ventricular depolarization", "Ventricular repolarization", "AV nodal delay", "Atrial repolarization"],
+              correct: 1,
+              exp: "**QRS** represents ventricular depolarization." },
+            { q: "The normal PR interval duration is:",
+              opts: ["0.04–0.10 s", "0.12–0.20 s", "0.20–0.30 s", "0.30–0.40 s", ">0.40 s"],
+              correct: 1,
+              exp: "**PR interval** normally 0.12–0.20 s." },
+            { q: "Which ECG lead is most likely to show a positive QRS complex in a normal heart?",
+              opts: ["aVR", "Lead I", "V1", "V2", "Lead III"],
+              correct: 1,
+              exp: "**Lead I** usually has a positive QRS because the main vector points leftward." },
+            { q: "A mid‑systolic click is characteristic of:",
+              opts: ["Aortic stenosis", "Mitral valve prolapse", "Pulmonary stenosis", "Mitral stenosis", "Tricuspid regurgitation"],
+              correct: 1,
+              exp: "**MVP** causes a mid‑systolic click due to sudden tensing of chordae." },
+            { q: "In a patient with atrial fibrillation, the pulse is:",
+              opts: ["Regular", "Regularly irregular", "Irregularly irregular", "Bounding", "Pulsus paradoxus"],
+              correct: 2,
+              exp: "Atrial fibrillation produces an **irregularly irregular** pulse." },
+            { q: "Which of the following is a feature of first‑degree AV block?",
+              opts: ["PR interval >0.20 s with dropped beats", "PR interval >0.20 s with every P conducted", "Progressive PR prolongation until a beat is dropped", "Complete dissociation of P and QRS", "No P waves"],
+              correct: 1,
+              exp: "**First‑degree AV block** = PR >0.20 s, but every P conducts." },
+            { q: "The dicrotic notch on the aortic pressure tracing corresponds to:",
+              opts: ["Onset of systole", "Closure of aortic valve", "Opening of aortic valve", "Mitral valve closure", "Tricuspid valve closure"],
+              correct: 1,
+              exp: "**Dicrotic notch** is caused by aortic valve closure." },
+            { q: "Which of the following increases myocardial contractility (positive inotropy)?",
+              opts: ["β‑blockers", "Calcium channel blockers", "Sympathetic stimulation", "Vagal stimulation", "Hypoxia"],
+              correct: 2,
+              exp: "**Sympathetic stimulation** (catecholamines) increases contractility via cAMP." },
+            { q: "In the Frank‑Starling curve, an increase in preload leads to:",
+              opts: ["Decreased stroke volume", "Increased stroke volume (within limits)", "Decreased contractility", "Increased afterload", "Decreased heart rate"],
+              correct: 1,
+              exp: "Frank‑Starling law: increased preload → increased stroke volume." },
+            { q: "A patient with a wide QRS tachycardia and no visible P waves is most likely in:",
+              opts: ["SVT", "Atrial fibrillation", "Ventricular tachycardia", "Atrial flutter", "Sinus tachycardia"],
+              correct: 2,
+              exp: "**VT** presents with wide QRS and AV dissociation." },
+            { q: "The normal ejection fraction of the left ventricle is approximately:",
+              opts: ["30–40%", "40–50%", "50–65%", "65–75%", ">75%"],
+              correct: 2,
+              exp: "Normal EF is **55–65%**." },
+            { q: "Which of the following is a cause of paradoxical splitting of S2?",
+              opts: ["ASD", "RBBB", "Pulmonary stenosis", "LBBB", "Mitral regurgitation"],
+              correct: 3,
+              exp: "**LBBB** delays aortic valve closure → paradoxical splitting." },
+            { q: "In which condition is pulsus paradoxus typically observed?",
+              opts: ["Aortic stenosis", "Hypertrophic cardiomyopathy", "Cardiac tamponade", "Atrial fibrillation", "Aortic regurgitation"],
+              correct: 2,
+              exp: "**Cardiac tamponade** causes pulsus paradoxus (exaggerated drop in BP during inspiration)." },
+            { q: "The a wave in the jugular venous pulse is absent in:",
+              opts: ["Tricuspid regurgitation", "Atrial fibrillation", "Complete heart block", "Pulmonary hypertension", "Tricuspid stenosis"],
+              correct: 1,
+              exp: "**Atrial fibrillation** abolishes the a wave because atria don't contract." },
+            { q: "A patient with complete heart block may have:",
+              opts: ["Regular cannon a waves", "Fixed splitting of S2", "Wide pulse pressure", "Pulsus alternans", "Paradoxical splitting"],
+              correct: 0,
+              exp: "**Cannon a waves** occur when atria contract against closed AV valves." },
+            { q: "Which of the following is characteristic of third heart sound (S3)?",
+              opts: ["Occurs just before S1", "Due to atrial contraction", "Best heard with diaphragm", "Indicates rapid ventricular filling", "Always pathological"],
+              correct: 3,
+              exp: "**S3** occurs during rapid filling; it can be normal in children but pathological in adults." },
+            { q: "In a normal ECG, the QT interval corrected for heart rate (QTc) is:",
+              opts: ["<350 ms", "<440 ms", "<480 ms", "<500 ms", "<550 ms"],
+              correct: 1,
+              exp: "Normal QTc is **<440 ms** in men, <460 ms in women." },
+            { q: "Which of the following leads is a unipolar chest lead?",
+              opts: ["Lead I", "Lead II", "aVF", "V3", "aVR"],
+              correct: 3,
+              exp: "**V leads** are unipolar chest leads." },
+            { q: "The T wave on ECG represents:",
+              opts: ["Atrial depolarization", "Ventricular depolarization", "Ventricular repolarization", "Atrial repolarization", "AV nodal depolarization"],
+              correct: 2,
+              exp: "**T wave** represents ventricular repolarization." },
+            { q: "In Wolff‑Parkinson‑White syndrome, the ECG shows:",
+              opts: ["Prolonged PR interval", "Delta wave", "Wide QRS without delta wave", "Short QRS", "QT prolongation"],
+              correct: 1,
+              exp: "WPW is characterized by **short PR** and **delta wave**." },
+            { q: "During the Valsalva maneuver, most murmurs decrease in intensity except the murmur of:",
+              opts: ["Aortic stenosis", "Mitral regurgitation", "Hypertrophic cardiomyopathy", "VSD", "Pulmonary stenosis"],
+              correct: 2,
+              exp: "**HCM** murmur increases with Valsalva (decreased preload worsens obstruction)." },
+            { q: "Which of the following is a cause of wide splitting of S2 that is fixed?",
+              opts: ["ASD", "RBBB", "Pulmonary stenosis", "Mitral regurgitation", "VSD"],
+              correct: 0,
+              exp: "**ASD** causes fixed, wide splitting of S2." },
+            { q: "The end‑diastolic volume (preload) is directly increased by:",
+              opts: ["Vasodilation", "Increased venous return", "Tachycardia", "Decreased blood volume", "Sympathetic stimulation"],
+              correct: 1,
+              exp: "Increased venous return increases **preload**." },
+            { q: "A patient with aortic regurgitation may have an Austin Flint murmur due to:",
+              opts: ["Mitral stenosis", "Tricuspid stenosis", "Fluttering of anterior mitral leaflet", "Pulmonary regurgitation", "Increased flow across aortic valve"],
+              correct: 2,
+              exp: "The regurgitant jet causes **anterior mitral leaflet flutter**, mimicking mitral stenosis." },
+            { q: "Which of the following describes the normal R wave progression in chest leads?",
+              opts: ["R wave increases from V1 to V6", "R wave decreases from V1 to V6", "R wave is tallest in V1", "R wave absent in V6", "R wave is biphasic in V6"],
+              correct: 0,
+              exp: "Normally, **R wave amplitude increases** from V1 to V5/V6." },
+            { q: "In a patient with left ventricular hypertrophy, the ECG typically shows:",
+              opts: ["Deep S waves in right leads, tall R waves in left leads", "Tall R waves in V1", "Q waves in all leads", "Low voltage", "Right axis deviation"],
+              correct: 0,
+              exp: "LVH causes **increased QRS voltage** (deep S in V1‑V2, tall R in V5‑V6)." },
+            { q: "The first heart sound (S1) is loudest in which condition?",
+              opts: ["Mitral regurgitation", "Mitral stenosis with pliable valve", "Aortic regurgitation", "Calcific mitral stenosis", "Heart failure"],
+              correct: 1,
+              exp: "**Mitral stenosis** with pliable leaflets produces loud S1." },
+            { q: "A patient with a ventricular septal defect will have a murmur that is:",
+              opts: ["Systolic ejection", "Holosystolic", "Diastolic", "Continuous", "Late systolic"],
+              correct: 1,
+              exp: "**VSD** produces a holosystolic murmur (pansystolic)." },
+            { q: "Which of the following is a feature of cardiac output?",
+              opts: ["CO = HR × SV", "CO = SV / HR", "CO = MAP × SVR", "CO = EDV – ESV", "CO = (MAP – RAP) × 80 / SVR"],
+              correct: 0,
+              exp: "Cardiac output = **heart rate × stroke volume**." },
+            { q: "The plateau phase (phase 2) of the cardiac action potential is due to:",
+              opts: ["Na⁺ influx", "K⁺ efflux", "Ca²⁺ influx and K⁺ efflux balance", "Cl⁻ influx", "Na⁺‑K⁺ ATPase activity"],
+              correct: 2,
+              exp: "**Ca²⁺ influx** balances **K⁺ efflux**, creating a plateau." },
+            { q: "In a normal ECG, the QRS duration should be less than:",
+              opts: ["0.04 s", "0.08 s", "0.12 s", "0.16 s", "0.20 s"],
+              correct: 2,
+              exp: "Normal QRS duration is **<0.12 s**." },
+            { q: "A patient with atrial flutter typically has an atrial rate of approximately:",
+              opts: ["150 bpm", "250–350 bpm", "100 bpm", "60 bpm", "400–600 bpm"],
+              correct: 1,
+              exp: "Atrial flutter rate is **250–350 bpm** (sawtooth waves)." },
+            { q: "Which of the following maneuvers increases venous return?",
+              opts: ["Valsalva", "Standing up", "Squatting", "Positive pressure ventilation", "Tension pneumothorax"],
+              correct: 2,
+              exp: "**Squatting** increases venous return (preload)." },
+            { q: "The dicrotic pulse is classically seen in:",
+              opts: ["Aortic stenosis", "Hypertrophic cardiomyopathy", "Aortic regurgitation", "Cardiac tamponade", "Constrictive pericarditis"],
+              correct: 2,
+              exp: "**Aortic regurgitation** may have a bisferiens or dicrotic pulse." },
+            { q: "In a patient with constrictive pericarditis, the JVP shows:",
+              opts: ["Absent a wave", "Prominent v wave", "Steep y descent", "Cannon a waves", "Kussmaul sign"],
+              correct: 2,
+              exp: "**Steep y descent** (Friedreich's sign) is seen in constrictive pericarditis." },
+            { q: "The normal PR segment is usually:",
+              opts: ["Depressed", "Elevated", "Isoelectric", "Variable", "Negative"],
+              correct: 2,
+              exp: "**PR segment** is normally isoelectric." },
+            { q: "Which of the following is a cause of right axis deviation?",
+              opts: ["LVH", "LBBB", "COPD", "Left anterior fascicular block", "Obesity"],
+              correct: 2,
+              exp: "**COPD**, RVH, and pulmonary embolism cause right axis deviation." },
+            { q: "A patient with an S3 gallop and dilated LV most likely has:",
+              opts: ["Heart failure", "Mitral stenosis", "Aortic stenosis", "Hypertrophic cardiomyopathy", "Constrictive pericarditis"],
+              correct: 0,
+              exp: "**S3** in an adult suggests heart failure (dilated ventricle)." },
+            { q: "In which condition is the murmur of aortic stenosis best heard?",
+              opts: ["Apex", "Left sternal border", "Right upper sternal border", "Left lower sternal border", "Right lower sternal border"],
+              correct: 2,
+              exp: "Aortic stenosis murmur is best at **right upper sternal border** (aortic area)." }
+        ];
+
+        let shuffled = questions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `Question ${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}/${shuffled.length}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

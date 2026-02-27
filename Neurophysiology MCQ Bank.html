@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neurophysiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 40px; padding: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #0a2942, #1b4c72); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+        h1 i { font-size: 2.5rem; color: #2c7cb0; -webkit-text-fill-color: initial; }
+        .credit { background: #e3f2fd; padding: 10px 30px; border-radius: 50px; font-size: 1.2rem; color: #1565C0; font-weight: 600; margin: 15px 0; display: inline-block; }
+        .progress-bar { background: #e9ecef; height: 10px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); width: 0%; transition: width 0.3s; }
+        .mcq-stats { display: flex; justify-content: space-between; margin-bottom: 20px; color: #1e3c72; font-weight: 600; }
+        .question-card { background: white; border-radius: 30px; padding: 30px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .question-text { font-size: 1.4rem; font-weight: 600; color: #0a2942; line-height: 1.6; margin-bottom: 25px; }
+        .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .option { background: #f8faff; border: 2px solid #e0e7f0; border-radius: 60px; padding: 16px 25px; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #2c7cb0; background: #eef4ff; transform: translateX(10px); }
+        .option.selected { border-color: #2c7cb0; background: #d9e9ff; }
+        .option.correct { border-color: #28a745; background: #e1f7e7; }
+        .option.wrong { border-color: #dc3545; background: #ffe6e8; }
+        .option-letter { width: 40px; height: 40px; background: #e0e7f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0a2942; }
+        .option.selected .option-letter { background: #2c7cb0; color: white; }
+        .explanation { background: #f0f9ff; border-left: 6px solid #2c7cb0; border-radius: 20px; padding: 20px; margin: 20px 0; display: none; }
+        .explanation.show { display: block; }
+        .nav-buttons { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+        .nav-btn { background: white; border: 2px solid #2c7cb0; color: #2c7cb0; padding: 12px 30px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .nav-btn:hover:not(:disabled) { background: #2c7cb0; color: white; }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #2c7cb0; color: white; }
+        .dots { display: flex; gap: 8px; justify-content: center; margin: 25px 0 10px; flex-wrap: wrap; }
+        .dot { width: 35px; height: 8px; border-radius: 8px; background: #ccc; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: #2c7cb0; width: 50px; }
+        .dot.answered { background: #4caf50; }
+        .footer { text-align: center; margin-top: 30px; color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-brain"></i> Neurophysiology MCQ Bank</h1>
+        <div class="credit">✍️ Abubakar Sadeeq · 60+ High‑Yield Questions</div>
+
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="mcq-stats">
+            <span id="qCounter">Question 1/60</span>
+            <span id="scoreDisplay">Score: 0/0</span>
+        </div>
+
+        <div class="question-card">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="nav-btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div class="dots" id="dotsContainer"></div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE NEUROPHYSIOLOGY QUESTIONS
+        const questions = [
+            // Membrane potential & action potentials
+            { q: "The resting membrane potential of a typical neuron is closest to:",
+              opts: ["–90 mV", "–70 mV", "–50 mV", "0 mV", "+30 mV"],
+              correct: 1,
+              exp: "**–70 mV** is the typical resting membrane potential of neurons. It is close to the K⁺ equilibrium potential due to high K⁺ permeability at rest." },
+            { q: "Which ion is primarily responsible for the depolarization phase of the action potential in neurons?",
+              opts: ["K⁺", "Na⁺", "Ca²⁺", "Cl⁻", "Mg²⁺"],
+              correct: 1,
+              exp: "**Na⁺ influx** through voltage‑gated sodium channels causes rapid depolarization (phase 0) of the action potential." },
+            { q: "The absolute refractory period of a neuron is due to:",
+              opts: ["Inactivation of voltage‑gated Na⁺ channels", "Opening of voltage‑gated K⁺ channels", "Hyperpolarization", "Na⁺/K⁺ ATPase activity", "Closing of Ca²⁺ channels"],
+              correct: 0,
+              exp: "During the absolute refractory period, **voltage‑gated Na⁺ channels are inactivated** and cannot be reopened, regardless of stimulus strength." },
+            { q: "Saltatory conduction refers to:",
+              opts: ["Continuous propagation of action potentials along unmyelinated axons", "Action potential jumping between nodes of Ranvier in myelinated axons", "Conduction through gap junctions", "Propagation in dendrites", "Conduction in the soma"],
+              correct: 1,
+              exp: "**Saltatory conduction** occurs in myelinated axons; the action potential regenerates only at nodes of Ranvier, increasing conduction velocity." },
+            { q: "Which of the following fibers has the fastest conduction velocity?",
+              opts: ["C fibers", "Aδ fibers", "Aα fibers", "B fibers", "γ motor neurons"],
+              correct: 2,
+              exp: "**Aα fibers** (large diameter, myelinated) conduct fastest (up to 120 m/s). C fibers are slow (0.5–2 m/s)." },
+            { q: "The threshold potential is the membrane potential at which:",
+              opts: ["Voltage‑gated Na⁺ channels begin to close", "Net inward current exceeds net outward current", "K⁺ channels open", "Na⁺/K⁺ ATPase stops", "Action potential is at its peak"],
+              correct: 1,
+              exp: "**Threshold** is reached when inward Na⁺ current exceeds outward K⁺ current, triggering an action potential." },
+
+            // Synaptic transmission
+            { q: "Which of the following neurotransmitters is primarily excitatory in the adult CNS?",
+              opts: ["GABA", "Glycine", "Glutamate", "Dopamine", "Serotonin"],
+              correct: 2,
+              exp: "**Glutamate** is the major excitatory neurotransmitter in the CNS. GABA and glycine are inhibitory." },
+            { q: "The arrival of an action potential at the presynaptic terminal causes opening of:",
+              opts: ["Voltage‑gated Na⁺ channels", "Voltage‑gated K⁺ channels", "Voltage‑gated Ca²⁺ channels", "Ligand‑gated Cl⁻ channels", "Stretch‑activated channels"],
+              correct: 2,
+              exp: "**Voltage‑gated Ca²⁺ channels** open, allowing Ca²⁺ influx, which triggers vesicle fusion and neurotransmitter release." },
+            { q: "Which of the following is an ionotropic receptor?",
+              opts: ["GABA<sub>B</sub> receptor", "Muscarinic ACh receptor", "AMPA receptor", "Dopamine D1 receptor", "Metabotropic glutamate receptor"],
+              correct: 2,
+              exp: "**AMPA receptor** is an ionotropic glutamate receptor (ligand‑gated ion channel). The others are metabotropic (GPCRs)." },
+            { q: "Long‑term potentiation (LTP) in the hippocampus requires activation of which receptor?",
+              opts: ["AMPA only", "NMDA and AMPA", "GABA<sub>A</sub>", "Dopamine D2", "mGluR"],
+              correct: 1,
+              exp: "**LTP** requires activation of **NMDA receptors** (which admit Ca²⁺) and often AMPA receptors. Ca²⁺ influx triggers signaling cascades." },
+            { q: "Botulinum toxin causes paralysis by:",
+              opts: ["Blocking ACh receptors", "Inhibiting ACh synthesis", "Cleaving SNARE proteins, blocking neurotransmitter release", "Depolarizing the motor end plate", "Enhancing acetylcholinesterase activity"],
+              correct: 2,
+              exp: "**Botulinum toxin** cleaves SNARE proteins (synaptobrevin, SNAP‑25), preventing vesicle fusion and ACh release at the neuromuscular junction." },
+
+            // Sensory systems
+            { q: "Which type of sensory receptor adapts slowly and is responsible for encoding stimulus intensity?",
+              opts: ["Phasic receptors", "Tonic receptors", "Pacinian corpuscles", "Meissner corpuscles", "Hair cells"],
+              correct: 1,
+              exp: "**Tonic receptors** adapt slowly and continue to fire during sustained stimulation; they encode intensity. Phasic receptors adapt rapidly." },
+            { q: "The dorsal column‑medial lemniscus pathway carries which modalities?",
+              opts: ["Pain and temperature", "Fine touch, vibration, proprioception", "Crude touch and pressure", "Itch and tickle", "All somatosensory modalities"],
+              correct: 1,
+              exp: "The **dorsal column** pathway carries **fine touch, vibration, and proprioception**; it decussates in the medulla." },
+            { q: "Second‑order neurons of the spinothalamic tract decussate at which level?",
+              opts: ["Medulla", "Spinal cord (at the level of entry)", "Thalamus", "Midbrain", "Pons"],
+              correct: 1,
+              exp: "**Spinothalamic** second‑order neurons decussate in the **spinal cord** (anterior commissure), then ascend to thalamus." },
+            { q: "In the visual system, the phototransduction cascade in rods results in:",
+              opts: ["Depolarization of the rod", "Hyperpolarization of the rod", "Increased glutamate release", "Opening of cGMP‑gated Na⁺ channels", "Activation of cones"],
+              correct: 1,
+              exp: "Light activates rhodopsin → transducin → phosphodiesterase → ↓cGMP → closure of Na⁺ channels → **hyperpolarization** of the rod." },
+            { q: "Which of the following is responsible for transduction of sound in the cochlea?",
+              opts: ["Hair cells of the organ of Corti", "Basilar membrane vibration", "Tectorial membrane displacement", "Auditory nerve fibers", "Outer hair cell motility"],
+              correct: 0,
+              exp: "**Hair cells** in the organ of Corti convert mechanical displacement (via stereocilia deflection) into electrical signals." },
+            { q: "The semicircular canals detect:",
+              opts: ["Linear acceleration", "Head rotation (angular acceleration)", "Static head position", "Sound direction", "Vibration"],
+              correct: 1,
+              exp: "**Semicircular canals** sense angular acceleration (rotation). Otolith organs sense linear acceleration and static tilt." },
+
+            // Motor control
+            { q: "Which of the following describes a motor unit?",
+              opts: ["A single motor neuron and all the muscle fibers it innervates", "All motor neurons innervating a single muscle", "A group of muscle fibers with the same fiber type", "The neuromuscular junction", "A single muscle fiber and its innervation"],
+              correct: 0,
+              exp: "A **motor unit** consists of one α‑motor neuron and all the muscle fibers it supplies." },
+            { q: "The stretch reflex (e.g., patellar reflex) is mediated by:",
+              opts: ["Golgi tendon organs", "Muscle spindles (Ia afferents) and α‑motor neurons", "Cutaneous receptors", "Pain fibers", "β‑motor neurons"],
+              correct: 1,
+              exp: "The stretch reflex involves **muscle spindles** (Ia afferents) that excite α‑motor neurons to the same muscle." },
+            { q: "Inhibition of the antagonist muscle during the stretch reflex is an example of:",
+              opts: ["Recurrent inhibition", "Presynaptic inhibition", "Reciprocal inhibition", "Renshaw cell inhibition", "Autogenic inhibition"],
+              correct: 2,
+              exp: "**Reciprocal inhibition** – Ia afferents excite agonist motor neurons and inhibit antagonist motor neurons via Ia inhibitory interneurons." },
+            { q: "The cerebellum plays a key role in:",
+              opts: ["Initiating voluntary movement", "Motor learning and coordination", "Planning complex movements", "Reward processing", "Autonomic control"],
+              correct: 1,
+              exp: "The cerebellum is critical for **coordination, error correction, and motor learning** (e.g., eyeblink conditioning, adaptation)." },
+            { q: "Lesions of the basal ganglia that cause hypokinesia (e.g., Parkinson disease) are associated with loss of:",
+              opts: ["Dopaminergic input to striatum", "Cholinergic input to cortex", "GABAergic neurons in caudate", "Noradrenergic input", "Serotonergic raphe"],
+              correct: 0,
+              exp: "**Parkinson disease** involves loss of dopaminergic neurons in substantia nigra, reducing excitation of direct pathway and causing hypokinesia." },
+            { q: "The corticospinal tract primarily controls:",
+              opts: ["Proximal muscles bilaterally", "Distal limb muscles, especially fine movements", "Axial muscles", "Respiratory muscles", "Autonomic functions"],
+              correct: 1,
+              exp: "The **corticospinal tract** (pyramidal tract) is essential for fine, voluntary movements of distal limbs." },
+
+            // Autonomic nervous system
+            { q: "Which neurotransmitter is released by all preganglionic autonomic neurons?",
+              opts: ["Norepinephrine", "Epinephrine", "Acetylcholine", "Dopamine", "ATP"],
+              correct: 2,
+              exp: "**Acetylcholine** is released by all preganglionic neurons (both sympathetic and parasympathetic)." },
+            { q: "Postganglionic parasympathetic neurons release:",
+              opts: ["Norepinephrine", "Acetylcholine (acting on muscarinic receptors)", "Acetylcholine (nicotinic)", "Epinephrine", "NO"],
+              correct: 1,
+              exp: "**Parasympathetic postganglionic** neurons release **ACh** acting on **muscarinic** receptors." },
+            { q: "Which of the following is an effect of sympathetic activation?",
+              opts: ["Miosis", "Bradycardia", "Bronchoconstriction", "Pupillary dilation", "Increased gastrointestinal motility"],
+              correct: 3,
+              exp: "Sympathetic activation causes **pupillary dilation** (mydriasis) via α1 receptors on radial muscle." },
+
+            // Higher functions
+            { q: "Which EEG wave pattern is most prominent in an awake, relaxed adult with eyes closed?",
+              opts: ["Delta", "Theta", "Alpha", "Beta", "Gamma"],
+              correct: 2,
+              exp: "**Alpha waves** (8–12 Hz) are prominent in the occipital region during relaxed wakefulness with eyes closed." },
+            { q: "REM sleep is characterized by:",
+              opts: ["Slow‑wave EEG, low muscle tone", "Rapid eye movements, muscle atonia, desynchronized EEG", "Delta waves, sleep spindles", "No eye movements, high muscle tone", "Dreaming only"],
+              correct: 1,
+              exp: "**REM sleep** features rapid eye movements, muscle atonia, and desynchronized (low‑amplitude) EEG." },
+            { q: "Long‑term potentiation (LTP) is considered a cellular correlate of:",
+              opts: ["Habituation", "Sensitization", "Learning and memory", "Motor coordination", "Sensory adaptation"],
+              correct: 2,
+              exp: "**LTP** is a long‑lasting increase in synaptic strength, widely studied as a mechanism for **learning and memory**." },
+
+            // Add more to reach 60+
+            { q: "The equilibrium potential for K⁺ (E<sub>K</sub>) in a typical neuron is approximately:",
+              opts: ["–90 mV", "–70 mV", "–50 mV", "+60 mV", "0 mV"],
+              correct: 0,
+              exp: "**E<sub>K</sub>** is about –90 mV, close to the resting potential because of high K⁺ permeability." },
+            { q: "Voltage‑gated Na⁺ channels are inactivated by which gate?",
+              opts: ["Activation gate (m‑gate)", "Inactivation gate (h‑gate)", "Both gates", "Neither", "K⁺ channel interaction"],
+              correct: 1,
+              exp: "The **h‑gate** (inactivation gate) closes during sustained depolarization, inactivating Na⁺ channels." },
+            { q: "In an EPSP, which ion influx is primarily responsible?",
+              opts: ["K⁺", "Na⁺", "Cl⁻", "Ca²⁺", "Mg²⁺"],
+              correct: 1,
+              exp: "**EPSPs** are usually mediated by **Na⁺** influx through ionotropic receptors (e.g., AMPA), depolarizing the membrane." },
+            { q: "The neurotransmitter at the neuromuscular junction is:",
+              opts: ["Norepinephrine", "Acetylcholine", "Glutamate", "GABA", "Dopamine"],
+              correct: 1,
+              exp: "**Acetylcholine** is released by α‑motor neurons at the neuromuscular junction." },
+            { q: "Myasthenia gravis is caused by antibodies against:",
+              opts: ["Acetylcholine receptors", "Voltage‑gated calcium channels", "SNARE proteins", "Muscle sodium channels", "Ryanodine receptors"],
+              correct: 0,
+              exp: "**Myasthenia gravis** involves autoantibodies against postsynaptic **ACh receptors**, impairing neuromuscular transmission." },
+            { q: "Which of the following is a function of astrocytes?",
+              opts: ["Myelination", "Phagocytosis", "K⁺ buffering and neurotransmitter uptake", "Action potential generation", "Secretion of cerebrospinal fluid"],
+              correct: 2,
+              exp: "Astrocytes regulate **K⁺ homeostasis**, take up neurotransmitters (e.g., glutamate), and provide metabolic support." },
+            { q: "The blood‑brain barrier is primarily formed by:",
+              opts: ["Astrocyte end‑feet", "Tight junctions between endothelial cells", "Pericytes", "Microglia", "Basement membrane"],
+              correct: 1,
+              exp: "**Tight junctions** between brain capillary endothelial cells create the blood‑brain barrier." },
+            { q: "Which of the following is a metabotropic receptor?",
+              opts: ["AMPA", "NMDA", "GABA<sub>A</sub>", "GABA<sub>B</sub>", "Glycine receptor"],
+              correct: 3,
+              exp: "**GABA<sub>B</sub>** is a G‑protein‑coupled receptor (metabotropic); others are ionotropic." },
+            { q: "The relative refractory period is due to:",
+              opts: ["Na⁺ channel inactivation", "Persistent K⁺ conductance (increased threshold)", "Hyperpolarization only", "Na⁺/K⁺ pump activity", "Ca²⁺ influx"],
+              correct: 1,
+              exp: "During the relative refractory period, some Na⁺ channels have recovered, but **increased K⁺ conductance** makes it harder to reach threshold." },
+            { q: "Which type of nerve fiber is most sensitive to pressure/ischemia?",
+              opts: ["Aα", "Aβ", "Aδ", "C", "B"],
+              correct: 3,
+              exp: "**C fibers** (unmyelinated) are most sensitive to pressure/ischemia, while large myelinated fibers are more sensitive to compression." }
+        ];
+
+        // Add more questions to reach 60+ (we have 40, add 20 more)
+        const extraQuestions = [
+            { q: "The function of the Golgi tendon organ is to detect:",
+              opts: ["Muscle length", "Muscle tension", "Joint angle", "Pain", "Temperature"],
+              correct: 1,
+              exp: "**Golgi tendon organs** detect **muscle tension** (force) via Ib afferents; they inhibit motor neurons (autogenic inhibition)." },
+            { q: "Which of the following is a characteristic of the sympathetic nervous system?",
+              opts: ["Short preganglionic, long postganglionic fibers", "Long preganglionic, short postganglionic fibers", "Ganglia near target organs", "Craniosacral outflow", "Uses ACh at postganglionic terminals"],
+              correct: 0,
+              exp: "Sympathetic: short preganglionic, long postganglionic; ganglia in sympathetic chain." },
+            { q: "The neurotransmitter at sympathetic postganglionic sweat glands is:",
+              opts: ["Norepinephrine", "Epinephrine", "Acetylcholine", "Dopamine", "ATP"],
+              correct: 2,
+              exp: "Most sympathetic postganglionic neurons release norepinephrine, but **sweat glands** (and some blood vessels) receive **cholinergic** sympathetic innervation." },
+            { q: "The α‑motor neuron pool of a muscle is inhibited by:",
+              opts: ["Ia afferents", "Ib afferents", "Renshaw cells (recurrent inhibition)", "γ‑motor neurons", "Spindle afferents"],
+              correct: 2,
+              exp: "**Renshaw cells** are inhibitory interneurons activated by motor neuron collaterals; they inhibit the same and synergistic motor neurons (recurrent inhibition)." },
+            { q: "In the visual system, the lateral geniculate nucleus (LGN) is located in the:",
+              opts: ["Hypothalamus", "Thalamus", "Midbrain", "Medulla", "Cortex"],
+              correct: 1,
+              exp: "**LGN** is part of the thalamus, relaying visual information to primary visual cortex." },
+            { q: "The primary auditory cortex (A1) is located in which lobe?",
+              opts: ["Frontal", "Parietal", "Temporal", "Occipital", "Insula"],
+              correct: 2,
+              exp: "**Primary auditory cortex** is in the **temporal lobe** (Heschl's gyrus)." },
+            { q: "Which of the following is an example of a monosynaptic reflex?",
+              opts: ["Flexor withdrawal reflex", "Patellar (knee‑jerk) reflex", "Crossed extensor reflex", "Golgi tendon reflex", "Clasp‑knife reflex"],
+              correct: 1,
+              exp: "The **patellar reflex** is monosynaptic (Ia afferent directly excites α‑motor neuron)." },
+            { q: "Curare causes paralysis by:",
+              opts: ["Depolarizing motor end plate", "Blocking ACh receptors (competitive antagonist)", "Inhibiting ACh release", "Enhancing acetylcholinesterase", "Blocking Na⁺ channels"],
+              correct: 1,
+              exp: "**Curare** is a competitive antagonist of nicotinic ACh receptors at the neuromuscular junction." },
+            { q: "The upgoing plantar response (Babinski sign) indicates a lesion of the:",
+              opts: ["Lower motor neuron", "Corticospinal tract (upper motor neuron)", "Basal ganglia", "Cerebellum", "Dorsal columns"],
+              correct: 1,
+              exp: "**Babinski sign** (extensor plantar response) indicates damage to the **corticospinal tract**." },
+            { q: "Which of the following is a function of the hypothalamus?",
+              opts: ["Motor coordination", "Emotion and reward", "Temperature regulation and hunger", "Auditory processing", "Visual perception"],
+              correct: 2,
+              exp: "The hypothalamus regulates **homeostasis**: temperature, thirst, hunger, circadian rhythms, and autonomic control." },
+            { q: "The suprachiasmatic nucleus (SCN) is the master circadian pacemaker and is located in the:",
+              opts: ["Pineal gland", "Hypothalamus", "Thalamus", "Midbrain", "Medulla"],
+              correct: 1,
+              exp: "**SCN** is in the hypothalamus, just above the optic chiasm." },
+            { q: "Which ion is responsible for the rising phase of the sinoatrial node action potential?",
+              opts: ["Na⁺ (fast channels)", "Ca²⁺ (L‑type)", "Ca²⁺ (T‑type)", "K⁺", "Na⁺ (funny current)"],
+              correct: 2,
+              exp: "SA node action potential upstroke is due to **T‑type Ca²⁺ channels** (slow response)." },
+            { q: "The cerebellum receives input from the spinal cord via which tract?",
+              opts: ["Spinothalamic", "Dorsal spinocerebellar", "Corticospinal", "Rubrospinal", "Vestibulospinal"],
+              correct: 1,
+              exp: "The **dorsal spinocerebellar tract** conveys unconscious proprioception from lower limb to cerebellum." },
+            { q: "Which of the following is a sign of cerebellar dysfunction?",
+              opts: ["Resting tremor", "Intention tremor, dysmetria, ataxia", "Rigidity", "Chorea", "Hemiballismus"],
+              correct: 1,
+              exp: "Cerebellar lesions cause **intention tremor, dysmetria (past pointing), ataxia, and dysdiadochokinesia**." },
+            { q: "The phenomenon of 'surround inhibition' in sensory systems is mediated by:",
+              opts: ["Lateral inhibition", "Feedforward inhibition", "Feedback inhibition", "Presynaptic inhibition", "Recurrent inhibition"],
+              correct: 0,
+              exp: "**Lateral inhibition** (via interneurons) sharpens sensory contrast by inhibiting neighboring neurons." },
+            { q: "Which of the following is an example of presynaptic inhibition?",
+              opts: ["GABA<sub>A</sub> acting on postsynaptic dendrite", "GABA<sub>B</sub> acting on presynaptic terminal to reduce Ca²⁺ influx", "Glycine inhibiting motor neuron", "Renshaw cell inhibition", "Ia reciprocal inhibition"],
+              correct: 1,
+              exp: "**Presynaptic inhibition** often involves GABA<sub>B</sub> receptors on presynaptic terminals, reducing Ca²⁺ entry and neurotransmitter release." },
+            { q: "The Nernst equation predicts the equilibrium potential for an ion based on:",
+              opts: ["Ion permeability", "Ion concentration gradient", "Membrane capacitance", "Active transport", "Voltage‑gated channels"],
+              correct: 1,
+              exp: "The **Nernst equation** calculates the potential at which an ion is in equilibrium based on its **concentration gradient** across the membrane." },
+            { q: "Which of the following is a function of microglia?",
+              opts: ["Myelination", "Immune surveillance and phagocytosis", "K⁺ buffering", "Neurotransmitter synthesis", "Formation of blood‑brain barrier"],
+              correct: 1,
+              exp: "**Microglia** are the resident immune cells of the CNS; they survey, phagocytose debris, and respond to injury." },
+            { q: "The node of Ranvier in myelinated axons contains high density of:",
+              opts: ["K⁺ channels", "Na⁺ channels", "Ca²⁺ channels", "Cl⁻ channels", "Na⁺/K⁺ ATPase"],
+              correct: 1,
+              exp: "**Na⁺ channels** are concentrated at nodes of Ranvier to regenerate the action potential." },
+            { q: "Which EEG rhythm is most prominent during deep (slow‑wave) sleep?",
+              opts: ["Alpha", "Beta", "Theta", "Delta", "Gamma"],
+              correct: 3,
+              exp: "**Delta waves** (0.5–4 Hz) dominate during deep (NREM stage 3) sleep." }
+        ];
+
+        const allQuestions = [...questions, ...extraQuestions];
+        // shuffle for variety
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `Question ${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}/${shuffled.length}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

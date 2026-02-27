@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Najeeb's Cardiology – Complete Pathology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f9ff; font-family: 'Open Sans', sans-serif; }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i { font-size: 2rem; color: #ffd966; }
+        .top-bar h1 { font-family: 'Merriweather', serif; font-weight: 700; font-size: 1.8rem; }
+        .top-bar .author {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position: fixed;
+            top: 5rem;
+            left: -350px;
+            width: 320px;
+            height: calc(100vh - 5rem);
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 1.5rem 0.5rem 1.5rem 1.5rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            z-index: 90;
+        }
+        .toc-sidebar.open { left: 0; }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #ffd966;
+            text-transform: uppercase;
+        }
+        .chapter-list { list-style: none; }
+        .chapter-item { margin-bottom: 0.3rem; }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.8rem 0.6rem 1rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 30px 0 0 30px;
+            transition: 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .chapter-item a i { width: 24px; font-size: 1rem; color: #2c7cb0; }
+        .chapter-item a:hover {
+            background: #e9f0f7;
+            border-left-color: #1f6e9c;
+        }
+        .reader-panel {
+            margin-left: 0;
+            padding: 2rem 2.5rem;
+            transition: margin-left 0.3s ease;
+            background: white;
+            min-height: calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left: 320px; }
+        .chapter-content { max-width: 1000px; margin: 0 auto; }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #ffd966;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chapter-title i { font-size: 2.5rem; color: #2c7cb0; }
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 20px -10px rgba(10,41,66,0.1);
+            border: 1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #ffd966;
+            padding-left: 20px;
+        }
+        .subsection-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #154f78;
+            margin: 1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .body-text strong { color: #0a2942; }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #f39c12;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #27ae60;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points ul { list-style: none; }
+        .key-points li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i { color: #8e44ad; }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .premium-table th { background: #0a2942; color: white; padding: 1rem; text-align: left; }
+        .premium-table td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom: none; }
+        .diagram-placeholder {
+            background: #f9fcff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #b9d5f0;
+            text-align: center;
+            color: #2c7cb0;
+        }
+        .diagram-placeholder i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 1000px) {
+            .toc-sidebar { width: 280px; }
+            .reader-panel.shifted { margin-left: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-heartbeat"></i>
+        <h1>Dr. Najeeb's Cardiology – Pathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents (Pathology)</h2>
+        <ul class="chapter-list">
+            <li class="chapter-item"><a href="#infective-endocarditis"><i class="fas fa-bacteria"></i> Infective Endocarditis</a></li>
+            <li class="chapter-item"><a href="#cardiomyopathy"><i class="fas fa-heart"></i> Cardiomyopathy</a></li>
+            <li class="chapter-item"><a href="#rheumatic-fever"><i class="fas fa-stethoscope"></i> Rheumatic Fever & RHD</a></li>
+            <li class="chapter-item"><a href="#myocarditis"><i class="fas fa-disease"></i> Myocarditis</a></li>
+            <li class="chapter-item"><a href="#pericarditis"><i class="fas fa-heart"></i> Pericarditis</a></li>
+            <li class="chapter-item"><a href="#hemopericardium"><i class="fas fa-droplet"></i> Hemopericardium</a></li>
+            <li class="chapter-item"><a href="#mvp"><i class="fas fa-heart"></i> Mitral Valve Prolapse</a></li>
+            <li class="chapter-item"><a href="#mr"><i class="fas fa-heart"></i> Mitral Regurgitation</a></li>
+            <li class="chapter-item"><a href="#ms"><i class="fas fa-heart"></i> Mitral Stenosis</a></li>
+            <li class="chapter-item"><a href="#cardiac-tumors"><i class="fas fa-tumor"></i> Cardiac Tumors</a></li>
+            <li class="chapter-item"><a href="#heart-failure"><i class="fas fa-heart-crack"></i> Heart Failure</a></li>
+            <li class="chapter-item"><a href="#ihd"><i class="fas fa-heart"></i> Ischemic Heart Disease</a></li>
+            <li class="chapter-item"><a href="#as"><i class="fas fa-heart"></i> Aortic Stenosis</a></li>
+            <li class="chapter-item"><a href="#ar"><i class="fas fa-heart"></i> Aortic Regurgitation</a></li>
+            <li class="chapter-item"><a href="#ts"><i class="fas fa-heart"></i> Tricuspid Stenosis</a></li>
+            <li class="chapter-item"><a href="#tr"><i class="fas fa-heart"></i> Tricuspid Regurgitation</a></li>
+            <li class="chapter-item"><a href="#ps"><i class="fas fa-heart"></i> Pulmonary Stenosis</a></li>
+            <li class="chapter-item"><a href="#pr"><i class="fas fa-heart"></i> Pulmonary Regurgitation</a></li>
+            <li class="chapter-item"><a href="#chd"><i class="fas fa-child"></i> Congenital Heart Disease</a></li>
+            <li class="chapter-item"><a href="#acute-pericarditis"><i class="fas fa-heart"></i> Acute Pericarditis</a></li>
+        </ul>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- 1. Infective Endocarditis -->
+        <section id="infective-endocarditis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> Infective Endocarditis</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Infective Endocarditis?</div>
+                <div class="body-text">
+                    <p>Infective endocarditis (IE) is an infection of the inner lining of the heart chambers and valves (the endocardium). It occurs when bacteria, fungi, or other germs enter the bloodstream and settle on damaged or abnormal heart valves. Think of it as a "settlement" of germs on the heart's surface, leading to inflammation, growth of vegetations (clumps of germs and clotting material), and potential damage to the heart valves.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">What Causes Infective Endocarditis?</div>
+                <div class="subsection-heading">1. Predisposing Conditions</div>
+                <div class="body-text">
+                    <p>Germs cannot easily stick to healthy, normal heart tissue. They need a rough surface to cling to. Certain conditions create this rough surface:</p>
+                    <ul>
+                        <li><strong>Ventricular Septal Defect (VSD):</strong> A hole between the ventricles causes a high‑velocity jet of blood to strike the right ventricular wall. This jet damages the endocardium (jet lesion), creating a rough area where platelets and fibrin deposit (microthrombi). Bacteria can then stick to these microthrombi.</li>
+                        <li><strong>Valvular diseases:</strong> Rheumatic heart disease, mitral valve prolapse, bicuspid aortic valve, calcific aortic stenosis – all create abnormal valve surfaces.</li>
+                        <li><strong>Prosthetic valves:</strong> Artificial valves provide a surface for bacteria to attach, especially coagulase‑negative staphylococci (e.g., Staphylococcus epidermidis).</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">2. Host Factors</div>
+                <div class="body-text">
+                    <p>People with weakened immune systems are more susceptible. This includes patients with:</p>
+                    <ul>
+                        <li>Immunodeficiency syndromes</li>
+                        <li>Diabetes mellitus</li>
+                        <li>Chronic alcoholism</li>
+                        <li>Intravenous drug abuse (IVDA) – often affects the right side of the heart, especially the tricuspid valve. The most common organism in IVDA is Staphylococcus aureus.</li>
+                        <li>Indwelling catheters</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">3. Causative Organisms</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>Streptococcus viridans:</strong> Most common cause of subacute IE (often follows dental procedures).</li>
+                        <li><strong>Staphylococcus aureus:</strong> Most common cause of acute IE – rapidly destructive.</li>
+                        <li><strong>Streptococcus bovis:</strong> Associated with colon carcinoma and ulcerative colitis.</li>
+                        <li><strong>Coagulase‑negative staphylococci:</strong> Common on prosthetic valves.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">What Happens in Infective Endocarditis? (The "Domino Effect")</div>
+                <div class="body-text">
+                    <p><strong>Step 1: Endothelial Injury</strong> – The normal, smooth endothelium is damaged (by jet lesions, inflammation, or foreign material).</p>
+                    <p><strong>Step 2: Platelet and Fibrin Deposition</strong> – The body tries to heal the injury by depositing platelets and fibrin, forming a small, sterile clot (nonbacterial thrombotic vegetation).</p>
+                    <p><strong>Step 3: Bacteremia</strong> – Bacteria enter the bloodstream (from dental procedures, IV lines, etc.).</p>
+                    <p><strong>Step 4: Adhesion and Colonization</strong> – Bacteria stick to the sterile vegetation. Some bacteria produce dextran, which helps them adhere.</p>
+                    <p><strong>Step 5: Vegetation Growth</strong> – Bacteria multiply within the vegetation, and more platelets and fibrin are deposited, creating a larger, infected mass. This mass can:</p>
+                    <ul>
+                        <li>Damage the valve further (perforation, destruction).</li>
+                        <li>Break off (embolize) and travel to other parts of the body (brain, kidneys, spleen, limbs).</li>
+                        <li>Spread infection locally (forming abscesses, e.g., ring abscess around the valve).</li>
+                    </ul>
+                </div>
+                <div class="diagram-placeholder">
+                    <i class="fas fa-heart"></i>
+                    [Diagram: Vegetation on mitral valve – a clump of bacteria, fibrin, and platelets]
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>Fever:</strong> High‑grade in acute IE, low‑grade in subacute.</li>
+                        <li><strong>Heart murmurs:</strong> New or changing murmur due to valve damage.</li>
+                        <li><strong>Embolic phenomena:</strong> Pieces of vegetation break off and travel: to brain → stroke; to spleen → abdominal pain; to kidneys → hematuria; to skin → petechiae, Osler nodes (painful nodules on fingers), Janeway lesions (painless macules on palms/soles).</li>
+                        <li><strong>Immunologic phenomena:</strong> Immune complexes can cause glomerulonephritis, arthritis, and Roth spots (retinal hemorrhages).</li>
+                        <li><strong>Systemic symptoms:</strong> Weight loss, malaise, night sweats.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Complications</div>
+                <div class="body-text">
+                    <ul>
+                        <li>Valvular destruction → regurgitation, heart failure.</li>
+                        <li>Perivalvular abscess → conduction abnormalities (ring abscess).</li>
+                        <li>Septic emboli → metastatic abscesses.</li>
+                        <li>Glomerulonephritis.</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation"><strong>Ring abscess:</strong> Infection in the annulus can disrupt conduction pathways, causing heart block.</div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Diagnosis and Treatment</div>
+                <div class="body-text">
+                    <p><strong>Diagnosis:</strong> Modified Duke criteria: positive blood cultures, echocardiographic evidence of vegetations/abscess, plus minor criteria (fever, vascular phenomena, etc.).</p>
+                    <p><strong>Treatment:</strong> Prolonged IV antibiotics (4–6 weeks). Surgery for heart failure, uncontrolled infection, large vegetations, prosthetic valve IE.</p>
+                    <p><strong>Prophylaxis:</strong> Antibiotics before dental procedures for high‑risk patients.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Cardiomyopathy -->
+        <section id="cardiomyopathy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Cardiomyopathy</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Cardiomyopathy?</div>
+                <div class="body-text">
+                    <p>Cardiomyopathies are diseases of the heart muscle that are not caused by coronary artery disease, hypertension, valvular or congenital heart disease. They primarily affect the myocardium and can lead to mechanical or electrical dysfunction.</p>
+                </div>
+                <div class="subsection-heading">Three Main Types:</div>
+                <ul>
+                    <li><strong>Dilated Cardiomyopathy (DCM):</strong> The heart becomes enlarged (dilated) and contractile function is reduced (systolic failure).</li>
+                    <li><strong>Hypertrophic Cardiomyopathy (HCM):</strong> The heart muscle becomes abnormally thick (hypertrophied) without an obvious cause (e.g., hypertension). Often asymmetrical, affecting the septum.</li>
+                    <li><strong>Restrictive Cardiomyopathy (RCM):</strong> The ventricles become stiff and cannot relax properly (diastolic failure), often due to infiltration.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Dilated Cardiomyopathy (DCM)</div>
+                <div class="body-text">
+                    <p><strong>Mechanism:</strong> DCM results from injury to myocytes (e.g., viral myocarditis, toxins, genetic mutations) leading to progressive myocardial dysfunction. The heart dilates to maintain stroke volume (Frank‑Starling mechanism), but eventually the dilation becomes excessive and contractility declines. According to Laplace's law, wall tension increases, increasing oxygen demand and worsening failure.</p>
+                    <p><strong>Causes:</strong> Idiopathic, viral (Coxsackie), alcohol, peripartum, genetic (e.g., dystrophin mutations).</p>
+                    <p><strong>Clinical:</strong> Signs of heart failure (dyspnea, edema), S3 gallop, mitral regurgitation (due to annular dilation).</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Hypertrophic Cardiomyopathy (HCM)</div>
+                <div class="body-text">
+                    <p><strong>Mechanism:</strong> Usually autosomal dominant (mutations in sarcomere proteins). Disorganized myocyte arrangement (myofiber disarray) and hypertrophy, especially of the interventricular septum. This can cause left ventricular outflow tract obstruction (systolic anterior motion of the mitral valve). Diastolic dysfunction occurs because the thickened muscle is stiff.</p>
+                    <p><strong>Clinical:</strong> Dyspnea, chest pain, syncope, sudden cardiac death (especially in young athletes). Harsh systolic murmur that increases with Valsalva (decreased preload).</p>
+                    <p><strong>Memory aid:</strong> "HOCM" – Hypertrophic Obstructive Cardiomyopathy. Murmur decreases with squatting (increased preload).</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Restrictive Cardiomyopathy (RCM)</div>
+                <div class="body-text">
+                    <p><strong>Mechanism:</strong> Infiltration of the myocardium (amyloid, sarcoid, hemochromatosis) or fibrosis (post‑radiation) makes the ventricles stiff, impairing diastolic filling. Systolic function is often preserved until late.</p>
+                    <p><strong>Clinical:</strong> Signs of heart failure with preserved ejection fraction, often with right‑sided failure (JVD, edema). May have S4 gallop.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Summary Table</div>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Systolic/Diastolic</th><th>Ventricular Size</th><th>Wall Thickness</th></tr></thead>
+                    <tbody>
+                        <tr><td>Dilated</td><td>Systolic failure</td><td>Dilated</td><td>Normal/thin</td></tr>
+                        <tr><td>Hypertrophic</td><td>Diastolic failure (often with obstruction)</td><td>Small cavity</td><td>Increased (asymmetric)</td></tr>
+                        <tr><td>Restrictive</td><td>Diastolic failure</td><td>Normal/small</td><td>Normal/increased (infiltration)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. Rheumatic Fever & Rheumatic Heart Disease -->
+        <section id="rheumatic-fever" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stethoscope"></i> Rheumatic Fever & Rheumatic Heart Disease</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Rheumatic Fever?</div>
+                <div class="body-text">
+                    <p>Acute rheumatic fever (ARF) is an inflammatory disease that occurs 2–4 weeks after a group A streptococcal pharyngitis. It is caused by molecular mimicry: antibodies against streptococcal antigens cross‑react with human tissues, particularly heart, joints, skin, and brain.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathogenesis – Why the Heart?</div>
+                <div class="body-text">
+                    <p>Streptococcal M protein and other antigens share epitopes with cardiac myosin, tropomyosin, and valvular glycoproteins. Antibodies bind to these tissues, activating complement and recruiting inflammatory cells. The result is <strong>pancarditis</strong> (inflammation of all three layers).</p>
+                    <ul>
+                        <li><strong>Endocarditis:</strong> Small vegetations (verrucae) along valve closure lines – most commonly mitral & aortic.</li>
+                        <li><strong>Myocarditis:</strong> Aschoff bodies (granulomas with Anitschkow cells) – pathognomonic.</li>
+                        <li><strong>Pericarditis:</strong> Fibrinous or serous inflammation.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Acute Rheumatic Endocarditis – Valve Damage</div>
+                <div class="body-text">
+                    <p>In the acute phase, valves become edematous and inflamed, leading to regurgitation (mitral > aortic). The chordae tendineae may elongate, causing prolapse. A mid‑diastolic murmur (Carey Coombs) may be heard due to increased flow across the mitral valve.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Chronic Rheumatic Heart Disease</div>
+                <div class="body-text">
+                    <p>Repeated episodes cause fibrosis, neovascularization, and commissural fusion. The valve becomes stenotic and/or regurgitant. The classic <strong>fish‑mouth</strong> or <strong>button‑hole</strong> stenosis of the mitral valve is characteristic.</p>
+                    <p><strong>Mitral stenosis</strong> is the most common chronic lesion. Left atrial enlargement, atrial fibrillation, and thromboembolism are complications.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Modified Jones Criteria</div>
+                <div class="body-text">
+                    <p><strong>Major:</strong> Pancarditis, polyarthritis, chorea, subcutaneous nodules, erythema marginatum.</p>
+                    <p><strong>Minor:</strong> Fever, arthralgia, elevated acute phase reactants (ESR, CRP), prolonged PR interval.</p>
+                    <p>Diagnosis requires evidence of recent streptococcal infection + 2 major or 1 major + 2 minor.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Myocarditis -->
+        <section id="myocarditis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-disease"></i> Myocarditis</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Myocarditis?</div>
+                <div class="body-text">
+                    <p>Myocarditis is inflammation of the heart muscle (myocardium). It can be caused by infections, toxins, or immune‑mediated reactions. The inflammation leads to myocyte injury, necrosis, and often fibrosis.</p>
+                </div>
+                <div class="subsection-heading">Causes:</div>
+                <ul>
+                    <li><strong>Infectious:</strong> Viruses (Coxsackie B, influenza, HIV, CMV), bacteria (Corynebacterium diphtheriae, Borrelia burgdorferi – Lyme disease), parasites (Trypanosoma cruzi – Chagas disease).</li>
+                    <li><strong>Immune‑mediated:</strong> Rheumatic fever, SLE, sarcoidosis.</li>
+                    <li><strong>Toxic:</strong> Alcohol, cocaine, doxorubicin.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Direct microbial invasion or toxin effects cause myocyte necrosis. Additionally, the immune response (cytotoxic T cells, cytokines) can further damage myocytes. In some cases, molecular mimicry (e.g., Chagas) leads to chronic inflammation.</p>
+                    <p>The inflamed myocardium becomes weak, leading to dilated cardiomyopathy, arrhythmias, and heart failure.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <div class="body-text">
+                    <ul>
+                        <li>Chest pain (often pleuritic, pericardial involvement).</li>
+                        <li>Dyspnea, fatigue.</li>
+                        <li>Arrhythmias, syncope.</li>
+                        <li>Signs of heart failure (S3, edema).</li>
+                        <li>Elevated cardiac enzymes (troponin).</li>
+                        <li>ECG: diffuse ST‑T changes, conduction delays.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Pericarditis -->
+        <section id="pericarditis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Pericarditis</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Pericarditis?</div>
+                <div class="body-text">
+                    <p>Pericarditis is inflammation of the pericardium – the fibroserous sac surrounding the heart. It can be acute, subacute, or chronic, and may lead to pericardial effusion, tamponade, or constriction.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li><strong>Idiopathic/viral:</strong> Most common (Coxsackie, echo).</li>
+                    <li><strong>Bacterial:</strong> Tuberculosis (especially in developing countries), purulent (Staph, Strep).</li>
+                    <li><strong>Uremic:</strong> End‑stage renal disease.</li>
+                    <li><strong>Post‑MI:</strong> Early (pericarditis epistenocardica) or late (Dressler syndrome).</li>
+                    <li><strong>Neoplastic:</strong> Metastases (lung, breast), mesothelioma.</li>
+                    <li><strong>Autoimmune:</strong> SLE, rheumatoid arthritis.</li>
+                    <li><strong>Radiation.</strong></li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Inflammation leads to exudation of fluid (serous, fibrinous, purulent, or hemorrhagic). Fibrinous pericarditis gives a "bread‑and‑butter" appearance. Adhesions may form, leading to constrictive pericarditis. Fluid accumulation can impair cardiac filling (tamponade).</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Chest pain – sharp, pleuritic, relieved by sitting forward.</li>
+                    <li>Pericardial friction rub – scratchy, triphasic (best heard with diaphragm at left sternal border).</li>
+                    <li>ECG: diffuse ST elevation (concave upward) and PR depression.</li>
+                    <li>If effusion: muffled heart sounds, Ewart sign (dullness at left scapula), pulsus paradoxus.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Complications</div>
+                <ul>
+                    <li><strong>Pericardial effusion:</strong> Can lead to cardiac tamponade (Beck's triad: hypotension, JVD, muffled sounds).</li>
+                    <li><strong>Constrictive pericarditis:</strong> Fibrosis and calcification encase the heart, restricting diastolic filling. Signs: Kussmaul sign, pericardial knock, low voltage ECG.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 6. Hemopericardium -->
+        <section id="hemopericardium" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> Hemopericardium</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Hemopericardium?</div>
+                <div class="body-text">
+                    <p>Hemopericardium is the presence of blood in the pericardial sac. It can result from trauma, myocardial rupture, aortic dissection, or rupture of a cardiac abscess. The accumulation of blood can rapidly lead to cardiac tamponade because the pericardium cannot stretch quickly.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Mechanism</div>
+                <div class="body-text">
+                    <p>Blood enters the pericardial space, increasing intrapericardial pressure. This pressure is transmitted to the cardiac chambers, impeding diastolic filling. The result is decreased cardiac output and hypotension (tamponade).</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li>Myocardial infarction (free wall rupture, especially 3–7 days post‑MI).</li>
+                    <li>Aortic dissection (rupture into pericardium).</li>
+                    <li>Trauma (penetrating or blunt).</li>
+                    <li>Infective endocarditis (ring abscess rupture).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Beck's triad: hypotension, jugular venous distension, muffled heart sounds.</li>
+                    <li>Pulsus paradoxus (exaggerated drop in systolic BP during inspiration).</li>
+                    <li>ECG: low voltage, electrical alternans.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 7. Mitral Valve Prolapse -->
+        <section id="mvp" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Mitral Valve Prolapse</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Mitral Valve Prolapse?</div>
+                <div class="body-text">
+                    <p>Mitral valve prolapse (MVP) is a condition where one or both mitral valve leaflets bulge (prolapse) into the left atrium during ventricular systole. It is also known as Barlow's syndrome or floppy mitral valve.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathology</div>
+                <div class="body-text">
+                    <p>There is myxomatous degeneration of the valve leaflets – the spongiosa layer thickens and accumulates mucopolysaccharides, while the collagenous fibrosa layer is attenuated. This makes the leaflets redundant and billowy. Chordae tendineae may elongate or rupture.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Most patients are asymptomatic.</li>
+                    <li>Mid‑systolic click (due to sudden tensing of chordae as leaflets prolapse).</li>
+                    <li>If regurgitation occurs, a late systolic murmur is heard.</li>
+                    <li>Atypical chest pain, palpitations.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Complications</div>
+                <ul>
+                    <li>Mitral regurgitation (progressive).</li>
+                    <li>Infective endocarditis.</li>
+                    <li>Thromboembolism.</li>
+                    <li>Arrhythmias, sudden death (rare).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 8. Mitral Regurgitation -->
+        <section id="mr" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Mitral Regurgitation</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Mitral Regurgitation?</div>
+                <div class="body-text">
+                    <p>Mitral regurgitation (MR) is the backward flow of blood from the left ventricle into the left atrium during systole due to incomplete closure of the mitral valve.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Mechanism</div>
+                <div class="body-text">
+                    <p>During ventricular systole, blood is ejected into the aorta, but if the mitral valve does not close properly, some blood also leaks back into the left atrium. This causes volume overload of the left atrium and, eventually, the left ventricle.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li>Chronic: Rheumatic heart disease, mitral valve prolapse, infective endocarditis, dilated cardiomyopathy (annular dilation), ischemic heart disease (papillary muscle dysfunction).</li>
+                    <li>Acute: Rupture of chordae tendineae or papillary muscle (MI), infective endocarditis.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>In chronic MR, the left atrium enlarges to accommodate the regurgitant volume, and the left ventricle dilates (eccentric hypertrophy) to maintain forward stroke volume. Eventually, left ventricular dysfunction occurs. In acute MR, the left atrium cannot stretch, leading to rapid rise in left atrial pressure and pulmonary edema.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Dyspnea, fatigue.</li>
+                    <li>Palpitations (atrial fibrillation common).</li>
+                    <li>Holosystolic (pansystolic) murmur at apex, radiating to axilla.</li>
+                    <li>S3 gallop (due to increased flow).</li>
+                    <li>Thrusting apex beat.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 9. Mitral Stenosis -->
+        <section id="ms" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Mitral Stenosis</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Mitral Stenosis?</div>
+                <div class="body-text">
+                    <p>Mitral stenosis (MS) is narrowing of the mitral valve orifice, obstructing blood flow from the left atrium to the left ventricle during diastole.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Cause</div>
+                <div class="body-text">
+                    <p>Almost always due to rheumatic heart disease (chronic). Rarely congenital.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathology</div>
+                <div class="body-text">
+                    <p>The valve leaflets become thickened, fibrotic, and calcified. Commissures fuse, and chordae tendineae shorten and thicken. The valve orifice becomes a "fish‑mouth" or "button‑hole" shape.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Obstruction to left atrial emptying → increased left atrial pressure → pulmonary venous congestion → pulmonary hypertension → right ventricular hypertrophy and failure. Left atrial enlargement predisposes to atrial fibrillation and thrombus formation.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Dyspnea, orthopnea, paroxysmal nocturnal dyspnea.</li>
+                    <li>Hemoptysis (from bronchial vein rupture).</li>
+                    <li>Atrial fibrillation → thromboembolism (stroke).</li>
+                    <li>Diastolic rumble at apex with opening snap.</li>
+                    <li>Loud S1 (if valve still pliable).</li>
+                    <li>Signs of pulmonary hypertension (right ventricular heave, loud P2).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 10. Cardiac Tumors -->
+        <section id="cardiac-tumors" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tumor"></i> Cardiac Tumors</div>
+            <div class="section-card">
+                <div class="section-heading">Primary Cardiac Tumors</div>
+                <div class="body-text">
+                    <p>Primary cardiac tumors are rare. The most common is <strong>myxoma</strong> (usually in left atrium). Others include rhabdomyoma (in children, associated with tuberous sclerosis), fibroma, and papillary fibroelastoma.</p>
+                </div>
+                <div class="subsection-heading">Myxoma</div>
+                <div class="body-text">
+                    <p>Myxomas are gelatinous, polypoid tumors arising from the interatrial septum near the fossa ovalis. They can obstruct the mitral valve (tumor plop sound) and embolize. Clinical features mimic mitral stenosis or infective endocarditis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. Heart Failure -->
+        <section id="heart-failure" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart-crack"></i> Heart Failure</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Heart Failure?</div>
+                <div class="body-text">
+                    <p>Heart failure is a clinical syndrome where the heart cannot pump enough blood to meet the metabolic needs of the body, or does so only at elevated filling pressures.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Types</div>
+                <ul>
+                    <li><strong>Left‑sided failure:</strong> Dyspnea, orthopnea, pulmonary edema.</li>
+                    <li><strong>Right‑sided failure:</strong> Peripheral edema, JVD, hepatomegaly.</li>
+                    <li><strong>Systolic failure (HFrEF):</strong> Reduced ejection fraction (<40%).</li>
+                    <li><strong>Diastolic failure (HFpEF):</strong> Preserved ejection fraction but impaired filling.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li>Ischemic heart disease (most common).</li>
+                    <li>Hypertension.</li>
+                    <li>Cardiomyopathy (dilated, hypertrophic, restrictive).</li>
+                    <li>Valvular disease.</li>
+                    <li>Myocarditis.</li>
+                    <li>High‑output states (anemia, thyrotoxicosis).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Compensatory Mechanisms</div>
+                <ul>
+                    <li>Frank‑Starling mechanism (increased preload → increased contractility).</li>
+                    <li>Sympathetic activation (increases heart rate and contractility).</li>
+                    <li>Renin‑angiotensin‑aldosterone system (RAAS) activation → fluid retention, vasoconstriction.</li>
+                </ul>
+                <div class="clinical-correlation">Chronic activation of these mechanisms leads to adverse remodeling and worsening failure.</div>
+            </div>
+        </section>
+
+        <!-- 12. Ischemic Heart Disease -->
+        <section id="ihd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Ischemic Heart Disease</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Ischemic Heart Disease?</div>
+                <div class="body-text">
+                    <p>Ischemic heart disease (IHD) results from an imbalance between myocardial oxygen supply and demand, usually due to atherosclerotic coronary artery disease.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology of Atherosclerosis</div>
+                <div class="body-text">
+                    <p>Atherosclerosis begins with endothelial injury → lipid accumulation → monocyte recruitment → foam cell formation → fatty streak → fibrous plaque. Plaque can rupture, causing thrombosis and acute coronary syndromes.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Syndromes</div>
+                <ul>
+                    <li><strong>Stable angina:</strong> Reversible myocardial ischemia on exertion, relieved by rest/nitrates. ECG: ST depression.</li>
+                    <li><strong>Unstable angina:</strong> Ischemia at rest or with minimal exertion, without myocardial necrosis.</li>
+                    <li><strong>Myocardial infarction (MI):</strong> Irreversible myocyte necrosis due to prolonged ischemia.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Myocardial Infarction – Pathology</div>
+                <div class="body-text">
+                    <p>After coronary occlusion, irreversible injury begins after 20–30 minutes. Coagulative necrosis develops. Over days, neutrophils infiltrate; after a week, granulation tissue forms; eventually, a collagen scar replaces the infarcted area.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Complications of MI</div>
+                <ul>
+                    <li>Arrhythmias (most common cause of death).</li>
+                    <li>Heart failure.</li>
+                    <li>Myocardial rupture (free wall, septum, papillary muscle).</li>
+                    <li>Pericarditis.</li>
+                    <li>Ventricular aneurysm, mural thrombus.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 13. Aortic Stenosis -->
+        <section id="as" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Aortic Stenosis</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Aortic Stenosis?</div>
+                <div class="body-text">
+                    <p>Aortic stenosis (AS) is narrowing of the aortic valve orifice, obstructing left ventricular outflow during systole.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li><strong>Calcific (senile):</strong> Degenerative calcification of a trileaflet valve in elderly.</li>
+                    <li><strong>Bicuspid aortic valve:</strong> Congenital, presents earlier.</li>
+                    <li><strong>Rheumatic:</strong> Usually combined with mitral involvement.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Pressure overload leads to concentric left ventricular hypertrophy. Initially, this maintains cardiac output, but eventually the hypertrophied muscle becomes ischemic (increased demand, decreased supply) and fails.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Classic triad: angina, syncope, dyspnea (heart failure).</li>
+                    <li>Harsh systolic ejection murmur at right upper sternal border, radiating to carotids.</li>
+                    <li>Slow‑rising carotid pulse (pulsus parvus et tardus).</li>
+                    <li>S4 gallop.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 14. Aortic Regurgitation -->
+        <section id="ar" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Aortic Regurgitation</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Aortic Regurgitation?</div>
+                <div class="body-text">
+                    <p>Aortic regurgitation (AR) is backward flow from the aorta into the left ventricle during diastole due to incomplete closure of the aortic valve.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li><strong>Chronic:</strong> Rheumatic, bicuspid valve, infective endocarditis, aortic root dilation (Marfan, syphilis).</li>
+                    <li><strong>Acute:</strong> Infective endocarditis, aortic dissection, trauma.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Volume overload leads to eccentric left ventricular hypertrophy (dilation). In chronic AR, the left ventricle adapts, but eventually fails. In acute AR, the left ventricle cannot dilate quickly, leading to rapid rise in left ventricular end‑diastolic pressure and pulmonary edema.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Wide pulse pressure, bounding pulses (water‑hammer pulse).</li>
+                    <li>Decrescendo diastolic murmur at left sternal border.</li>
+                    <li>Austin Flint murmur (mid‑diastolic rumble due to functional mitral stenosis).</li>
+                    <li>Signs of hyperdynamic circulation (Corrigan's sign, de Musset's sign, Quincke's sign).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 15. Tricuspid Stenosis -->
+        <section id="ts" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Tricuspid Stenosis</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Tricuspid Stenosis?</div>
+                <div class="body-text">
+                    <p>Tricuspid stenosis (TS) is narrowing of the tricuspid valve orifice, obstructing blood flow from the right atrium to the right ventricle during diastole.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li><strong>Rheumatic heart disease</strong> (almost always with mitral stenosis).</li>
+                    <li>Carcinoid syndrome (fibrosis of right‑sided valves).</li>
+                    <li>Congenital (rare).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Obstruction to right atrial emptying → increased right atrial pressure → systemic venous congestion (JVD, hepatomegaly, edema). Cardiac output may be low.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Prominent a wave in JVP.</li>
+                    <li>Diastolic rumble at left lower sternal border, increasing with inspiration.</li>
+                    <li>Hepatomegaly, ascites, edema.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 16. Tricuspid Regurgitation -->
+        <section id="tr" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Tricuspid Regurgitation</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Tricuspid Regurgitation?</div>
+                <div class="body-text">
+                    <p>Tricuspid regurgitation (TR) is backward flow from the right ventricle into the right atrium during systole due to incomplete closure of the tricuspid valve.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li><strong>Functional (most common):</strong> Right ventricular dilation (from pulmonary hypertension, left heart failure) stretches the tricuspid annulus.</li>
+                    <li><strong>Organic:</strong> Rheumatic, infective endocarditis (especially IV drug users), Ebstein anomaly, carcinoid.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Regurgitation causes right atrial enlargement and elevated venous pressure. Chronic TR leads to right ventricular volume overload and failure.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Prominent v wave in JVP, with rapid y descent.</li>
+                    <li>Pulsatile hepatomegaly.</li>
+                    <li>Holosystolic murmur at left lower sternal border, increasing with inspiration (Carvallo's sign).</li>
+                    <li>Signs of right heart failure.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 17. Pulmonary Stenosis -->
+        <section id="ps" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Pulmonary Stenosis</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Pulmonary Stenosis?</div>
+                <div class="body-text">
+                    <p>Pulmonary stenosis (PS) is narrowing of the pulmonary valve or infundibulum, obstructing right ventricular outflow.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li>Congenital (most common – part of tetralogy of Fallot or isolated).</li>
+                    <li>Rarely, carcinoid syndrome, rheumatic.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Pathophysiology</div>
+                <div class="body-text">
+                    <p>Pressure overload leads to right ventricular hypertrophy. If severe, right ventricular failure and decreased cardiac output occur.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Systolic ejection murmur at left upper sternal border, radiating to back.</li>
+                    <li>Ejection click (if valve is pliable).</li>
+                    <li>Right ventricular heave.</li>
+                    <li>Cyanosis if associated with right‑to‑left shunt (e.g., tetralogy).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 18. Pulmonary Regurgitation -->
+        <section id="pr" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Pulmonary Regurgitation</div>
+            <div class="section-card">
+                <div class="section-heading">What Is Pulmonary Regurgitation?</div>
+                <div class="body-text">
+                    <p>Pulmonary regurgitation (PR) is backward flow from the pulmonary artery into the right ventricle during diastole.</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Causes</div>
+                <ul>
+                    <li>Pulmonary hypertension (causes dilation of pulmonary artery and valve ring).</li>
+                    <li>Infective endocarditis (rare).</li>
+                    <li>Post‑surgical repair of tetralogy of Fallot.</li>
+                    <li>Congenital (absent pulmonary valve).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Clinical Features</div>
+                <ul>
+                    <li>Early diastolic decrescendo murmur at left sternal border (Graham Steell murmur if due to pulmonary hypertension).</li>
+                    <li>Right ventricular enlargement and failure in chronic severe PR.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 19. Congenital Heart Disease -->
+        <section id="chd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> Congenital Heart Disease</div>
+            <div class="section-card">
+                <div class="section-heading">Overview</div>
+                <div class="body-text">
+                    <p>Congenital heart defects are malformations present at birth. They are often classified into left‑to‑right shunts (acyanotic) and right‑to‑left shunts (cyanotic).</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Left‑to‑Right Shunts</div>
+                <ul>
+                    <li><strong>Ventricular Septal Defect (VSD):</strong> Most common. Small defects may close spontaneously; large defects cause pulmonary hypertension and Eisenmenger syndrome.</li>
+                    <li><strong>Atrial Septal Defect (ASD):</strong> Fixed splitting of S2, left‑to‑right shunt, pulmonary overcirculation.</li>
+                    <li><strong>Patent Ductus Arteriosus (PDA):</strong> Continuous machinery murmur, bounding pulses.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Right‑to‑Left Shunts (Cyanotic)</div>
+                <ul>
+                    <li><strong>Tetralogy of Fallot:</strong> VSD, pulmonary stenosis, overriding aorta, right ventricular hypertrophy. Patients have "tet spells" and squatting relieves cyanosis.</li>
+                    <li><strong>Transposition of Great Arteries:</strong> Aorta arises from right ventricle, pulmonary artery from left ventricle.</li>
+                    <li><strong>Truncus Arteriosus:</strong> Single great vessel.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 20. Acute Pericarditis (already covered under Pericarditis, but included for completeness) -->
+        <section id="acute-pericarditis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> Acute Pericarditis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Acute pericarditis is inflammation of the pericardium of sudden onset. It can be fibrinous, serous, or purulent. Causes include viral infection, uremia, myocardial infarction, and autoimmune diseases.</p>
+                    <p><strong>Clinical features:</strong> Sharp chest pain, pericardial friction rub, diffuse ST elevation on ECG.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Compiled from Dr. Najeeb's Cardiology Lectures · Detailed explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
