@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiratory System · Complete Teacher‑Style Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Textbook Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background: #0b2f4e;
+            color: white;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 3px solid #9fc5e8;
+        }
+        .top-bar i {
+            font-size: 2.2rem;
+            color: #f9e79f;
+        }
+        .top-bar h1 {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: -0.3px;
+        }
+        .top-bar .sub {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+        }
+        .book-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            flex: 1;
+            height: calc(100vh - 85px);
+            overflow: hidden;
+        }
+        .toc-sidebar {
+            background: white;
+            border-right: 1px solid #d8e2ed;
+            overflow-y: auto;
+            padding: 2rem 0.5rem 2rem 1.5rem;
+        }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0b2f4e;
+            margin-bottom: 1.8rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #9fc5e8;
+            text-transform: uppercase;
+        }
+        .chapter-list {
+            list-style: none;
+        }
+        .chapter-item {
+            margin-bottom: 0.5rem;
+        }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0.8rem 1rem 0.8rem 1.2rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 30px 0 0 30px;
+            transition: 0.15s;
+            border-left: 4px solid transparent;
+        }
+        .chapter-item a i {
+            width: 28px;
+            font-size: 1.2rem;
+            color: #2c7cb0;
+            text-align: center;
+        }
+        .chapter-item a:hover {
+            background: #e9f0f7;
+            border-left-color: #2c7cb0;
+        }
+        .chapter-item.active a {
+            background: #d4e3f0;
+            border-left: 6px solid #0f4c75;
+            font-weight: 600;
+            color: #03273d;
+        }
+        .reader-panel {
+            background: white;
+            overflow-y: auto;
+            padding: 2.5rem 3.5rem;
+        }
+        .chapter-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            animation: fadeSlide 0.3s;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0.3; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0b2f4e;
+            margin-bottom: 0.8rem;
+            border-bottom: 3px solid #9fc5e8;
+            padding-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chapter-title i {
+            font-size: 2.5rem;
+            color: #2c7cb0;
+        }
+        .section-card {
+            background: #fcfcfc;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 8px 20px -12px #1f4761;
+            border: 1px solid #e2edf7;
+            position: relative;
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #154f78;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 8px solid #2f86bc;
+            padding-left: 20px;
+        }
+        .section-heading i {
+            font-size: 2rem;
+            color: #2f86bc;
+        }
+        .teacher-box {
+            background: #f0f7fe;
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2c7cb0;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        .teacher-box i {
+            color: #2c7cb0;
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+        .definition-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 14px -8px #2c587b;
+            margin: 1.8rem 0;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .definition-table th {
+            background: #1e5f8e;
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+        }
+        .definition-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #dde7f0;
+        }
+        .definition-table tr:last-child td {
+            border-bottom: none;
+        }
+        .definition-table tr:hover td {
+            background: #f0f7fe;
+        }
+        .clinical-pearl {
+            background: #d4edda;
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            border: 1px solid #28a745;
+            margin: 1.8rem 0;
+        }
+        .memory-hook {
+            background: #fff3cd;
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            border: 1px dashed #ffc107;
+            margin: 1.8rem 0;
+            font-style: italic;
+        }
+        .diagram-box {
+            background: #f9fcff;
+            border-radius: 24px;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            border: 1px solid #c1daf2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .diagram-box svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .diagram-caption {
+            margin-top: 1rem;
+            font-style: italic;
+            color: #1f5b88;
+        }
+        .progress-checkbox {
+            position: absolute;
+            top: 1.8rem;
+            right: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.9rem;
+            color: #2c7cb0;
+            background: white;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbdae6;
+            cursor: pointer;
+            z-index: 5;
+        }
+        .progress-checkbox input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .quick-quiz {
+            background: #e9f2fa;
+            border-radius: 28px;
+            padding: 2rem 2.8rem;
+            margin: 3rem 0 1.5rem;
+        }
+        .quiz-question {
+            background: white;
+            border-radius: 60px;
+            padding: 1rem 2rem;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 2px solid #bdd7ed;
+            justify-content: space-between;
+        }
+        .quiz-question:hover {
+            background: #d4e6fa;
+            transform: translateX(8px);
+        }
+        .quiz-answer {
+            display: none;
+            background: white;
+            border-radius: 30px;
+            padding: 1rem 2rem;
+            margin: 0 0 1rem 2rem;
+            border-left: 6px solid #1f6b9e;
+        }
+        .quiz-question.active + .quiz-answer {
+            display: block;
+        }
+        .footer-note {
+            margin-top: 3rem;
+            font-style: italic;
+            color: #4b6f8b;
+            text-align: right;
+            border-top: 1px solid #d9e6f2;
+            padding-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <i class="fas fa-lungs"></i>
+        <h1>Respiratory System · Complete Teacher‑Style Textbook</h1>
+        <div class="sub">Physiology · Pathology · Pharmacology</div>
+    </div>
+    <div class="book-container">
+        <div class="toc-sidebar">
+            <h2><i class="fas fa-list-ul"></i> Topics</h2>
+            <ul class="chapter-list" id="chapterList">
+                <li class="chapter-item active" data-chapter="anatomy"><a href="#"><i class="fas fa-skeleton"></i> Anatomy of Respiratory System</a></li>
+                <li class="chapter-item" data-chapter="lung-volumes"><a href="#"><i class="fas fa-chart-simple"></i> Lung Volumes & Capacities</a></li>
+                <li class="chapter-item" data-chapter="mechanics"><a href="#"><i class="fas fa-wind"></i> Mechanics of Breathing</a></li>
+                <li class="chapter-item" data-chapter="surfactant"><a href="#"><i class="fas fa-soap"></i> Surfactant: The Alveolar Lifesaver</a></li>
+                <li class="chapter-item" data-chapter="gas-exchange"><a href="#"><i class="fas fa-exchange-alt"></i> Gas Exchange & Transport</a></li>
+                <li class="chapter-item" data-chapter="vq"><a href="#"><i class="fas fa-scale-balanced"></i> Ventilation/Perfusion (V/Q)</a></li>
+                <li class="chapter-item" data-chapter="control"><a href="#"><i class="fas fa-brain"></i> Control of Breathing</a></li>
+                <li class="chapter-item" data-chapter="pft"><a href="#"><i class="fas fa-chart-line"></i> Pulmonary Function Tests</a></li>
+                <li class="chapter-item" data-chapter="obstructive"><a href="#"><i class="fas fa-disease"></i> Obstructive Lung Diseases</a></li>
+                <li class="chapter-item" data-chapter="restrictive"><a href="#"><i class="fas fa-lungs"></i> Restrictive Lung Diseases</a></li>
+                <li class="chapter-item" data-chapter="vascular"><a href="#"><i class="fas fa-heart-crack"></i> Pulmonary Vascular Disease</a></li>
+                <li class="chapter-item" data-chapter="infections"><a href="#"><i class="fas fa-virus"></i> Respiratory Infections</a></li>
+                <li class="chapter-item" data-chapter="neonatal"><a href="#"><i class="fas fa-baby"></i> Neonatal & Pediatric</a></li>
+                <li class="chapter-item" data-chapter="pharma"><a href="#"><i class="fas fa-pills"></i> Respiratory Pharmacology</a></li>
+                <li class="chapter-item" data-chapter="hypoxia"><a href="#"><i class="fas fa-droplet"></i> Hypoxia & Oxygen Therapy</a></li>
+            </ul>
+        </div>
+        <div class="reader-panel" id="readerPanel"></div>
+    </div>
+
+    <script>
+        (function() {
+            const chapters = {
+                // ==================== 1. ANATOMY OF RESPIRATORY SYSTEM ====================
+                anatomy: {
+                    title: 'Anatomy of the Respiratory System',
+                    icon: 'fa-skeleton',
+                    sections: [
+                        {
+                            heading: '🔹 Conducting Zone vs Respiratory Zone',
+                            icon: 'fa-road',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Conducting zone:</strong> nose, pharynx, larynx, trachea, bronchi, bronchioles (up to terminal bronchioles). Function: warm, humidify, filter air. No gas exchange.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Respiratory zone:</strong> respiratory bronchioles, alveolar ducts, alveoli. Site of gas exchange.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Transition:</strong> from terminal bronchiole to respiratory bronchiole is where gas exchange begins.' }
+                            ],
+                            teacher: '🧑‍🏫 Think of the conducting zone as the hallways leading to the classroom (respiratory zone). No learning happens in the hallway – only in the classroom!'
+                        },
+                        {
+                            heading: '🔹 Alveolar Structure',
+                            icon: 'fa-circle',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Type I pneumocytes:</strong> thin, flat cells covering 95% of alveolar surface. Site of gas exchange.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Type II pneumocytes:</strong> cuboidal cells that produce surfactant and serve as progenitor cells.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Alveolar macrophages (dust cells):</strong> phagocytose inhaled particles.' }
+                            ],
+                            diagram: {
+                                svg: `
+                                    <svg viewBox="0 0 400 200" style="background:#f9fcff;">
+                                        <circle cx="200" cy="100" r="80" fill="#a9d6e5" stroke="#0f4c75" stroke-width="2" />
+                                        <circle cx="150" cy="70" r="10" fill="#f9e79f" />
+                                        <text x="110" y="60" fill="#000">Type I</text>
+                                        <circle cx="250" cy="130" r="15" fill="#f9e79f" stroke="#000" stroke-width="2" />
+                                        <text x="230" y="160" fill="#000">Type II</text>
+                                        <circle cx="280" cy="70" r="8" fill="#b33e2b" />
+                                        <text x="270" y="50" fill="#b33e2b">Macrophage</text>
+                                    </svg>
+                                `,
+                                caption: 'Alveolar structure: Type I (gas exchange), Type II (surfactant), and macrophages.'
+                            }
+                        },
+                        {
+                            heading: '🔹 Blood Supply',
+                            icon: 'fa-heart',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Pulmonary circulation:</strong> low pressure, high flow. Deoxygenated blood from RV → lungs → oxygenated blood to LA.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Bronchial circulation:</strong> supplies oxygenated blood to lung tissue (bronchi, vessels). Part of systemic circulation (from aorta).' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What cells produce surfactant? (Type II pneumocytes)',
+                        'What is the function of the conducting zone? (Warm, humidify, filter air)',
+                        'Where does gas exchange begin? (Respiratory bronchioles)'
+                    ]
+                },
+                // ==================== 2. LUNG VOLUMES & CAPACITIES ====================
+                'lung-volumes': {
+                    title: 'Lung Volumes & Capacities',
+                    icon: 'fa-chart-simple',
+                    sections: [
+                        {
+                            heading: '🔹 Standard Lung Volumes',
+                            icon: 'fa-table',
+                            table: {
+                                headers: ['Volume', 'Definition', 'Typical Value'],
+                                rows: [
+                                    ['Tidal Volume (TV)', 'Air inhaled or exhaled during normal, quiet breathing', '~500 mL'],
+                                    ['Inspiratory Reserve Volume (IRV)', 'Extra air that can be inhaled after a normal inspiration', '~3000 mL'],
+                                    ['Expiratory Reserve Volume (ERV)', 'Extra air that can be exhaled after a normal expiration', '~1100 mL'],
+                                    ['Residual Volume (RV)', 'Air remaining in lungs after maximal exhalation (cannot be exhaled)', '~1200 mL']
+                                ]
+                            },
+                            teacher: '🧑‍🏫 Residual volume is the air you cannot exhale – it keeps your lungs from collapsing. Think of it as the air left in a balloon after you let go.'
+                        },
+                        {
+                            heading: '🔹 Lung Capacities (Sum of Volumes)',
+                            icon: 'fa-table',
+                            table: {
+                                headers: ['Capacity', 'Definition', 'Formula', 'Typical Value'],
+                                rows: [
+                                    ['Inspiratory Capacity (IC)', 'Maximum air inhaled after normal expiration', 'TV + IRV', '~3500 mL'],
+                                    ['Vital Capacity (VC)', 'Maximum air exhaled after maximal inspiration', 'IRV + TV + ERV', '~4600 mL'],
+                                    ['Functional Residual Capacity (FRC)', 'Air remaining after normal expiration', 'ERV + RV', '~2300 mL'],
+                                    ['Total Lung Capacity (TLC)', 'Total air in lungs after maximal inspiration', 'VC + RV', '~5800 mL']
+                                ]
+                            }
+                        },
+                        {
+                            heading: '🔹 Clinical Application: Spirometry',
+                            icon: 'fa-stethoscope',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>FEV1:</strong> Forced expiratory volume in 1 second.' },
+                                { icon: 'fa-arrow-right', text: '<strong>FVC:</strong> Forced vital capacity.' },
+                                { icon: 'fa-arrow-right', text: '<strong>FEV1/FVC ratio:</strong> Normally >0.7–0.8. ↓ in obstructive diseases; normal or ↑ in restrictive.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'Which lung volume cannot be measured by spirometry? (Residual volume)',
+                        'What is the formula for vital capacity? (IRV + TV + ERV)',
+                        'Normal FEV1/FVC ratio? (>0.7)'
+                    ]
+                },
+                // ==================== 3. MECHANICS OF BREATHING ====================
+                mechanics: {
+                    title: 'Mechanics of Breathing',
+                    icon: 'fa-wind',
+                    sections: [
+                        {
+                            heading: '🔹 Pressures in the Thorax',
+                            icon: 'fa-gauge-high',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Intrapleural pressure:</strong> normally negative (-5 cmH₂O at rest, more negative during inspiration).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Alveolar (intrapulmonary) pressure:</strong> equals atmospheric pressure at rest, negative during inspiration, positive during expiration.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Transpulmonary pressure</strong> = alveolar pressure – intrapleural pressure; keeps lungs inflated.' }
+                            ],
+                            teacher: '🧑‍🏫 Negative intrapleural pressure is like a vacuum that keeps the lungs stuck to the chest wall. If air enters (pneumothorax), the lung collapses.'
+                        },
+                        {
+                            heading: '🔹 Lung Compliance',
+                            icon: 'fa-chart-line',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Compliance = ΔV / ΔP</strong> (change in volume per unit pressure).' },
+                                { icon: 'fa-arrow-right', text: '<strong>High compliance:</strong> emphysema (loss of elastic tissue).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Low compliance:</strong> pulmonary fibrosis, atelectasis, surfactant deficiency.' }
+                            ],
+                            table: {
+                                headers: ['Condition', 'Compliance', 'Elastic Recoil'],
+                                rows: [
+                                    ['Emphysema', '↑', '↓'],
+                                    ['Pulmonary fibrosis', '↓', '↑']
+                                ]
+                            }
+                        },
+                        {
+                            heading: '🔹 Airway Resistance',
+                            icon: 'fa-road',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Poiseuille’s law:</strong> resistance ∝ 1/r⁴. Small changes in radius greatly affect airflow.' },
+                                { icon: 'fa-arrow-right', text: 'Resistance highest in medium bronchi (not smallest airways due to parallel branching).' },
+                                { icon: 'fa-arrow-right', text: 'Increased in asthma, COPD, bronchiolitis.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Work of Breathing',
+                            icon: 'fa-bolt',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Elastic work:</strong> overcoming elastic recoil of lungs and chest wall (60‑70% of total work).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Resistive work:</strong> overcoming airway resistance (20‑30%).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Inertial work:</strong> minimal, usually ignored.' }
+                            ],
+                            memory: 'Elastic work = stretching a rubber band; Resistive work = blowing through a straw.'
+                        }
+                    ],
+                    quiz: [
+                        'What is normal intrapleural pressure? (-5 cmH₂O)',
+                        'Which disease increases lung compliance? (Emphysema)',
+                        'What is the largest component of the work of breathing? (Elastic work)'
+                    ]
+                },
+                // ==================== 4. SURFACTANT: THE ALVEOLAR LIFESAVER ====================
+                surfactant: {
+                    title: 'Surfactant: The Alveolar Lifesaver',
+                    icon: 'fa-soap',
+                    sections: [
+                        {
+                            heading: '🔹 What Is Surfactant?',
+                            icon: 'fa-question-circle',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>A lipoprotein mixture</strong> secreted by <strong>type II pneumocytes</strong> in the alveoli.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Composition:</strong> ~90% lipids (mainly dipalmitoylphosphatidylcholine, DPPC) and ~10% proteins (surfactant proteins SP‑A, SP‑B, SP‑C, SP‑D).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Begins production</strong> around week <strong>20–24 of gestation</strong>, but becomes sufficient by <strong>~34–36 weeks</strong>.' }
+                            ],
+                            teacher: '🧑‍🏫 Think of surfactant as the <strong>“soap” of the alveoli</strong> – it helps the tiny air sacs stay open, just like soap prevents soap bubbles from popping instantly.'
+                        },
+                        {
+                            heading: '🔹 Functions of Surfactant – A Closer Look',
+                            icon: 'fa-table',
+                            table: {
+                                headers: ['Function', 'How It Helps', 'Why It Matters'],
+                                rows: [
+                                    ['↓ Surface Tension', 'Breaks the cohesive forces between water molecules at the alveolar air‑liquid interface.', 'Prevents alveoli from collapsing during exhalation (like soap bubbles resisting popping). Without it, small alveoli would empty into larger ones (atelectasis).'],
+                                    ['↑ Lung Compliance', 'Makes the lungs easier to expand – less effort needed to breathe.', 'Reduces the work of breathing. Think of inflating a wet balloon (high surface tension) vs a dry one (low surface tension).'],
+                                    ['Stabilizes Alveoli', 'Ensures that small and large alveoli remain open together (Laplace’s law: P = 2T/r).', 'Prevents uneven collapse; smaller alveoli would otherwise collapse into larger ones because pressure is higher in small alveoli (if T is constant). Surfactant lowers T more in small alveoli, equalizing pressure.']
+                                ]
+                            }
+                        },
+                        {
+                            heading: '🌫️ What Happens in Surfactant Deficiency?',
+                            icon: 'fa-cloud-rain',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>🍼 Infant Respiratory Distress Syndrome (IRDS)</strong>' },
+                                { icon: 'fa-arrow-right', text: '• Seen in <strong>premature infants</strong> (especially <34 weeks gestation).' },
+                                { icon: 'fa-arrow-right', text: '• Insufficient surfactant → ↑ surface tension → alveolar collapse (<strong>atelectasis</strong>).' },
+                                { icon: 'fa-arrow-right', text: '• Leads to: ↓ gas exchange, hypoxemia, increased work of breathing, ground‑glass appearance on chest X‑ray.' }
+                            ]
+                        },
+                        {
+                            heading: '💉 Clinical Pearls – Management',
+                            icon: 'fa-stethoscope',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Antenatal corticosteroids</strong> (e.g., betamethasone) given to mothers if preterm delivery is expected.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Exogenous surfactant</strong> (e.g., beractant, poractant alfa) via endotracheal tube after birth.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Oxygen therapy</strong> with careful monitoring to avoid retinopathy of prematurity (ROP).' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What cells produce surfactant? (Type II pneumocytes)',
+                        'By which week is surfactant sufficient? (34‑36 weeks)',
+                        'Name two functions of surfactant. (↓ surface tension, ↑ compliance, stabilizes alveoli)',
+                        'What is the X‑ray finding in IRDS? (Ground‑glass)'
+                    ]
+                },
+                // ==================== 5. GAS EXCHANGE & TRANSPORT ====================
+                'gas-exchange': {
+                    title: 'Gas Exchange & Transport',
+                    icon: 'fa-exchange-alt',
+                    sections: [
+                        {
+                            heading: '🔹 Alveolar Gas Equation',
+                            icon: 'fa-square-root-variable',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>PAO₂ = PIO₂ – (PaCO₂ / RQ)</strong>' },
+                                { icon: 'fa-arrow-right', text: 'PIO₂ = FiO₂ × (Patm – PH₂O) = 0.21 × (760 – 47) ≈ 150 mmHg.' },
+                                { icon: 'fa-arrow-right', text: 'RQ (respiratory quotient) ≈ 0.8 (CO₂ produced / O₂ consumed).' },
+                                { icon: 'fa-arrow-right', text: 'Thus PAO₂ ≈ 150 – (40/0.8) = 100 mmHg.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Oxygen Transport',
+                            icon: 'fa-droplet',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>O₂ content</strong> = (1.34 × Hb × SaO₂) + (0.003 × PaO₂).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Oxyhemoglobin curve:</strong> right shift (↑P50) by ↑CO₂, ↑H⁺, ↑temp, ↑2,3‑BPG.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Left shift</strong> (↓P50) by opposite factors; impairs O₂ unloading.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 CO₂ Transport',
+                            icon: 'fa-recycle',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'As bicarbonate (70%), dissolved (10%), carbamino compounds (20%).' },
+                                { icon: 'fa-arrow-right', text: 'Chloride shift maintains electroneutrality in RBCs.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What is normal PAO₂? (100 mmHg)',
+                        'Name a factor that shifts O₂‑Hb curve to the right. (↑CO₂, ↑H⁺, ↑temp, ↑2,3‑BPG)',
+                        'How is most CO₂ transported? (As bicarbonate)'
+                    ]
+                },
+                // ==================== 6. VENTILATION/PERFUSION ====================
+                vq: {
+                    title: 'Ventilation/Perfusion (V/Q)',
+                    icon: 'fa-scale-balanced',
+                    sections: [
+                        {
+                            heading: '🔹 V/Q Relationships',
+                            icon: 'fa-diagram-project',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Normal V/Q = 0.8</strong> (4 L/min ventilation, 5 L/min perfusion).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Shunt (V/Q = 0):</strong> perfusion without ventilation (e.g., pneumonia, atelectasis). 100% O₂ does NOT correct.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Dead space (V/Q = ∞):</strong> ventilation without perfusion (e.g., pulmonary embolism).' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 West Zones of the Lung',
+                            icon: 'fa-layer-group',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Zone 1 (top):</strong> PA > Pa > Pv – dead space (only in shock).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Zone 2:</strong> Pa > PA > Pv – intermittent flow.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Zone 3 (bottom):</strong> Pa > Pv > PA – continuous flow.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What is normal V/Q ratio? (0.8)',
+                        'Does 100% O₂ correct hypoxemia from a shunt? (No)',
+                        'What condition causes dead space? (Pulmonary embolism)'
+                    ]
+                },
+                // ==================== 7. CONTROL OF BREATHING ====================
+                control: {
+                    title: 'Control of Breathing',
+                    icon: 'fa-brain',
+                    sections: [
+                        {
+                            heading: '🔹 Respiratory Centers',
+                            icon: 'fa-brain',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Medulla:</strong> dorsal (inspiration) and ventral (expiration) groups. Generates basic rhythm.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Pons:</strong> pneumotaxic center (fine‑tunes) and apneustic center (promotes inspiration).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Cortex:</strong> voluntary control.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Chemoreceptors',
+                            icon: 'fa-flask',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Central chemoreceptors:</strong> near ventral medulla; respond to changes in CSF H⁺ (indirectly via PaCO₂).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Peripheral chemoreceptors:</strong> carotid and aortic bodies; respond to ↓PaO₂ (<60 mmHg), ↑PaCO₂, ↑H⁺.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Reflexes',
+                            icon: 'fa-bolt',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Hering‑Breuer reflex:</strong> stretch receptors inhibit inspiration to prevent overinflation.' },
+                                { icon: 'fa-arrow-right', text: '<strong>J reflex (juxtapulmonary):</strong> responds to pulmonary congestion, causing rapid shallow breathing.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'Where are central chemoreceptors located? (Near ventral medulla)',
+                        'What do peripheral chemoreceptors respond to? (↓PaO₂, ↑PaCO₂, ↑H⁺)',
+                        'What is the Hering‑Breuer reflex? (Stretch reflex preventing overinflation)'
+                    ]
+                },
+                // ==================== 8. PULMONARY FUNCTION TESTS ====================
+                pft: {
+                    title: 'Pulmonary Function Tests',
+                    icon: 'fa-chart-line',
+                    sections: [
+                        {
+                            heading: '🔹 Spirometry Patterns',
+                            icon: 'fa-table',
+                            table: {
+                                headers: ['Parameter', 'Obstructive', 'Restrictive'],
+                                rows: [
+                                    ['FEV1', '↓', '↓ or normal'],
+                                    ['FVC', '↓ or normal', '↓↓'],
+                                    ['FEV1/FVC', '↓↓ (<0.7)', 'Normal or ↑ (>0.8)'],
+                                    ['TLC', 'Normal or ↑', '↓↓'],
+                                    ['RV', '↑ (air trapping)', '↓'],
+                                    ['DLCO', '↓ in emphysema', '↓ in fibrosis']
+                                ]
+                            },
+                            teacher: '🧑‍🏫 In obstructive diseases, it takes longer to exhale (↓FEV1/FVC). In restrictive diseases, the lungs are small (↓TLC, ↓FVC).'
+                        },
+                        {
+                            heading: '🔹 Flow‑Volume Loops',
+                            icon: 'fa-chart-gantt',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Normal:</strong> rapid rise, linear descent.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Obstructive:</strong> scooped out, concave shape.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Restrictive:</strong> tall, narrow pattern.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Fixed upper airway obstruction:</strong> flattened both inspiration and expiration.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What is the FEV1/FVC ratio in obstructive disease? (↓ <0.7)',
+                        'What happens to TLC in restrictive disease? (↓↓ decreased)',
+                        'What shape is an obstructive flow‑volume loop? (Scooped out)'
+                    ]
+                },
+                // ==================== 9. OBSTRUCTIVE LUNG DISEASES ====================
+                obstructive: {
+                    title: 'Obstructive Lung Diseases',
+                    icon: 'fa-disease',
+                    sections: [
+                        {
+                            heading: '🔹 Asthma',
+                            icon: 'fa-wind',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'Reversible airflow obstruction due to bronchial hyperreactivity; inflammation (eosinophils, mast cells).' },
+                                { icon: 'fa-arrow-right', text: 'Pathology: mucus plugs, Curschmann spirals, Charcot‑Leyden crystals, thickened basement membrane.' },
+                                { icon: 'fa-arrow-right', text: 'Clinical: wheezing, dyspnea, cough; triggers include allergens, cold air, exercise.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 COPD – Emphysema',
+                            icon: 'fa-bolt',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Centriacinar:</strong> respiratory bronchioles destroyed; upper lobes; smoking.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Panacinar:</strong> entire acinus; lower lobes; α1‑antitrypsin deficiency.' },
+                                { icon: 'fa-arrow-right', text: 'Loss of elastic recoil → ↑compliance, ↑RV, ↓FEV1, ↓DLCO.' }
+                            ],
+                            memory: 'Pink puffers (emphysema) vs blue bloaters (chronic bronchitis).'
+                        },
+                        {
+                            heading: '🔹 COPD – Chronic Bronchitis',
+                            icon: 'fa-fire',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'Chronic cough with sputum ≥3 months for ≥2 years.' },
+                                { icon: 'fa-arrow-right', text: 'Pathology: mucous gland hyperplasia (Reid index >0.4), inflammation, fibrosis.' },
+                                { icon: 'fa-arrow-right', text: 'Hypoxemia, cyanosis, cor pulmonale.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Bronchiectasis',
+                            icon: 'fa-droplet',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'Permanent dilation of bronchi due to chronic infection/inflammation.' },
+                                { icon: 'fa-arrow-right', text: 'Causes: CF, ciliary dyskinesia (Kartagener), allergic bronchopulmonary aspergillosis.' },
+                                { icon: 'fa-arrow-right', text: 'Clinical: chronic cough, copious sputum, clubbing.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What is the Reid index in chronic bronchitis? (>0.4)',
+                        'Which type of emphysema is associated with α1‑antitrypsin deficiency? (Panacinar)',
+                        'Name a cause of bronchiectasis. (CF, Kartagener)'
+                    ]
+                },
+                // ==================== 10. RESTRICTIVE LUNG DISEASES ====================
+                restrictive: {
+                    title: 'Restrictive Lung Diseases',
+                    icon: 'fa-lungs',
+                    sections: [
+                        {
+                            heading: '🔹 Interstitial Lung Diseases',
+                            icon: 'fa-droplet',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Idiopathic pulmonary fibrosis (IPF):</strong> usual interstitial pneumonia (UIP) – honeycombing, fibroblastic foci.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Hypersensitivity pneumonitis:</strong> granulomatous inflammation from inhaled antigens.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Sarcoidosis:</strong> non‑caseating granulomas; hilar lymphadenopathy, ↑ACE.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Pneumoconioses',
+                            icon: 'fa-industry',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Silicosis:</strong> eggshell calcification of hilar nodes; ↑risk TB.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Asbestosis:</strong> asbestos bodies, pleural plaques; ↑risk mesothelioma, bronchogenic carcinoma.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Coal worker’s pneumoconiosis:</strong> coal macules, progressive massive fibrosis.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What is the pathology of IPF? (UIP, honeycombing)',
+                        'Which pneumoconiosis increases risk of TB? (Silicosis)',
+                        'Name a finding in asbestosis. (Pleural plaques, asbestos bodies)'
+                    ]
+                },
+                // ==================== 11. PULMONARY VASCULAR DISEASE ====================
+                vascular: {
+                    title: 'Pulmonary Vascular Disease',
+                    icon: 'fa-heart-crack',
+                    sections: [
+                        {
+                            heading: '🔹 Pulmonary Embolism',
+                            icon: 'fa-clot',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'Thrombi usually from deep leg veins (DVT).' },
+                                { icon: 'fa-arrow-right', text: 'Consequences: ↑dead space, hypoxemia, pulmonary infarction (triangular, hemorrhagic).' },
+                                { icon: 'fa-arrow-right', text: 'CT angiography is diagnostic.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Pulmonary Hypertension',
+                            icon: 'fa-gauge-high',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'Mean PA pressure >20 mmHg.' },
+                                { icon: 'fa-arrow-right', text: 'Causes: idiopathic (plexiform lesions), left heart disease, lung disease, chronic PE.' },
+                                { icon: 'fa-arrow-right', text: 'Leads to right ventricular hypertrophy and cor pulmonale.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What is the most common source of PE? (DVT)',
+                        'What are plexiform lesions? (Idiopathic pulmonary arterial hypertension)',
+                        'Define pulmonary hypertension. (Mean PA pressure >20 mmHg)'
+                    ]
+                },
+                // ==================== 12. RESPIRATORY INFECTIONS ====================
+                infections: {
+                    title: 'Respiratory Infections',
+                    icon: 'fa-virus',
+                    sections: [
+                        {
+                            heading: '🔹 Pneumonia – Classification',
+                            icon: 'fa-table',
+                            table: {
+                                headers: ['Type', 'Etiology', 'Pathology'],
+                                rows: [
+                                    ['Lobar pneumonia', 'Streptococcus pneumoniae', 'RBCs (red hepatization), neutrophils (gray hepatization)'],
+                                    ['Bronchopneumonia', 'Staph. aureus, H. flu, anaerobes', 'Patchy, peribronchiolar inflammation'],
+                                    ['Interstitial (atypical)', 'Mycoplasma, viruses, Chlamydia', 'Interstitial infiltrate, no exudate']
+                                ]
+                            }
+                        },
+                        {
+                            heading: '🔹 Tuberculosis',
+                            icon: 'fa-biohazard',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Primary:</strong> Ghon focus (subpleural) + caseous granuloma; Ghon complex (Ghon focus + involved lymph node).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Secondary (reactivation):</strong> apical upper lobes; cavity formation.' },
+                                { icon: 'fa-arrow-right', text: 'Acid‑fast bacilli; granuloma with caseous necrosis.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What organism causes lobar pneumonia? (Strep. pneumoniae)',
+                        'What is a Ghon complex? (Ghon focus + involved lymph node)',
+                        'Which lobe is affected in reactivation TB? (Apical upper lobes)'
+                    ]
+                },
+                // ==================== 13. NEONATAL & PEDIATRIC ====================
+                neonatal: {
+                    title: 'Neonatal & Pediatric Respiratory Disorders',
+                    icon: 'fa-baby',
+                    sections: [
+                        {
+                            heading: '🔹 Respiratory Distress Syndrome (RDS)',
+                            icon: 'fa-baby',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'Surfactant deficiency in premature infants (type II pneumocytes immature).' },
+                                { icon: 'fa-arrow-right', text: 'Pathology: hyaline membranes lining alveoli.' },
+                                { icon: 'fa-arrow-right', text: 'Prevention: glucocorticoids before delivery; treatment: surfactant replacement.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Meconium Aspiration',
+                            icon: 'fa-droplet',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: 'Fetal stress → meconium passed in utero; aspirated → airway obstruction, chemical pneumonitis.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What causes neonatal RDS? (Surfactant deficiency)',
+                        'What are hyaline membranes composed of? (Fibrin and necrotic cells)'
+                    ]
+                },
+                // ==================== 14. RESPIRATORY PHARMACOLOGY ====================
+                pharma: {
+                    title: 'Respiratory Pharmacology',
+                    icon: 'fa-pills',
+                    sections: [
+                        {
+                            heading: '🔹 Bronchodilators',
+                            icon: 'fa-wind',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>β2‑agonists:</strong> albuterol (short), salmeterol (long); smooth muscle relaxation.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Anticholinergics:</strong> ipratropium (short), tiotropium (long); block M3 receptors.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Methylxanthines:</strong> theophylline; inhibit phosphodiesterase, ↑cAMP.' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Anti‑inflammatory Drugs',
+                            icon: 'fa-shield',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Inhaled corticosteroids:</strong> beclomethasone, fluticasone; reduce inflammation.' },
+                                { icon: 'fa-arrow-right', text: '<strong>Leukotriene antagonists:</strong> montelukast (inhibit LTD4).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Mast cell stabilizers:</strong> cromolyn (prophylaxis).' }
+                            ]
+                        },
+                        {
+                            heading: '🔹 Other Agents',
+                            icon: 'fa-pump-medical',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Omalizumab:</strong> anti‑IgE antibody for severe asthma.' },
+                                { icon: 'fa-arrow-right', text: '<strong>α1‑antitrypsin augmentation</strong> for deficiency.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'Name a long‑acting β2‑agonist. (Salmeterol)',
+                        'What is the mechanism of ipratropium? (Muscarinic antagonist)',
+                        'Which drug is a leukotriene antagonist? (Montelukast)'
+                    ]
+                },
+                // ==================== 15. HYPOXIA & OXYGEN THERAPY ====================
+                hypoxia: {
+                    title: 'Hypoxia & Oxygen Therapy',
+                    icon: 'fa-droplet',
+                    sections: [
+                        {
+                            heading: '🔹 Types of Hypoxia',
+                            icon: 'fa-droplet',
+                            table: {
+                                headers: ['Type', 'Definition', 'Example', 'PaO₂', 'O₂ Content'],
+                                rows: [
+                                    ['Hypoxemic', 'Low PaO₂', 'COPD, PE, shunt', '↓', '↓'],
+                                    ['Anemic', '↓ O₂‑carrying capacity', 'Anemia, CO poisoning', 'Normal', '↓'],
+                                    ['Stagnant', '↓ blood flow', 'Heart failure, shock', 'Normal', 'Normal'],
+                                    ['Histotoxic', 'Cells cannot use O₂', 'Cyanide poisoning', 'Normal', 'Normal']
+                                ]
+                            }
+                        },
+                        {
+                            heading: '🔹 Oxygen Therapy',
+                            icon: 'fa-wind',
+                            facts: [
+                                { icon: 'fa-arrow-right', text: '<strong>Indications:</strong> hypoxemia (PaO₂ <60 mmHg or SaO₂ <90%).' },
+                                { icon: 'fa-arrow-right', text: '<strong>Hazards:</strong> oxygen toxicity (ARDS), retinopathy of prematurity, absorption atelectasis.' },
+                                { icon: 'fa-arrow-right', text: '<strong>COPD patients:</strong> hypoxic drive – give O₂ cautiously to avoid suppressing ventilation.' }
+                            ]
+                        }
+                    ],
+                    quiz: [
+                        'What type of hypoxia occurs in cyanide poisoning? (Histotoxic)',
+                        'What is the PaO₂ threshold for oxygen therapy? (<60 mmHg)',
+                        'Why give oxygen cautiously in COPD? (May suppress hypoxic drive)'
+                    ]
+                }
+            };
+
+            function renderChapter(chapterId) {
+                const chap = chapters[chapterId];
+                if (!chap) return;
+
+                let html = `<div class="chapter-content">`;
+                html += `<div class="chapter-title"><i class="fas ${chap.icon}"></i> ${chap.title}</div>`;
+
+                chap.sections.forEach((section, idx) => {
+                    html += `<div class="section-card" id="section-${chapterId}-${idx}">`;
+
+                    html += `<div class="progress-checkbox" onclick="toggleProgressHandler(event, this)">`;
+                    html += `<input type="checkbox" class="progress-input" data-key="${chapterId}-${idx}" onclick="event.stopPropagation()"> <span>Mark as read</span>`;
+                    html += `</div>`;
+
+                    html += `<div class="section-heading"><i class="fas ${section.icon || 'fa-book-open'}"></i> ${section.heading}</div>`;
+
+                    if (section.teacher) {
+                        html += `<div class="teacher-box"><i class="fas fa-chalkboard-teacher"></i> ${section.teacher}</div>`;
+                    }
+
+                    if (section.memory) {
+                        html += `<div class="memory-hook"><i class="fas fa-lightbulb"></i> ${section.memory}</div>`;
+                    }
+
+                    if (section.facts && section.facts.length) {
+                        section.facts.forEach(fact => {
+                            html += `<div class="teacher-box" style="background:#f9f9f9;"><i class="fas ${fact.icon || 'fa-check-circle'}"></i> ${fact.text}</div>`;
+                        });
+                    }
+
+                    if (section.table) {
+                        html += `<table class="definition-table">`;
+                        html += `<thead><tr>${section.table.headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
+                        html += `<tbody>`;
+                        section.table.rows.forEach(row => {
+                            html += `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
+                        });
+                        html += `</tbody></table>`;
+                    }
+
+                    if (section.diagram && section.diagram.svg) {
+                        html += `<div class="diagram-box">${section.diagram.svg}<div class="diagram-caption">${section.diagram.caption}</div></div>`;
+                    }
+
+                    if (section.clinical) {
+                        html += `<div class="clinical-pearl"><i class="fas fa-stethoscope"></i> ${section.clinical}</div>`;
+                    }
+
+                    html += `</div>`;
+                });
+
+                if (chap.quiz && chap.quiz.length) {
+                    html += `<div class="quick-quiz">`;
+                    html += `<h3><i class="fas fa-question-circle"></i> Quick Questions</h3>`;
+                    chap.quiz.forEach((q, i) => {
+                        let answer = '';
+                        const match = q.match(/\(([^)]+)\)/);
+                        answer = match ? match[1] : 'See text';
+                        html += `<div class="quiz-question" onclick="toggleAnswer(this)"><span>${q}</span> <i class="fas fa-chevron-down"></i></div>`;
+                        html += `<div class="quiz-answer">✅ ${answer}</div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `<div class="footer-note"><i class="fas fa-feather"></i> Abubakar Sadeeq · Complete Respiratory Teacher‑Style Textbook</div>`;
+                html += `</div>`;
+
+                document.getElementById('readerPanel').innerHTML = html;
+
+                document.querySelectorAll('.progress-input').forEach(cb => {
+                    const key = cb.dataset.key;
+                    const saved = localStorage.getItem(`progress-${key}`);
+                    if (saved === 'true') cb.checked = true;
+                });
+            }
+
+            window.toggleProgressHandler = function(event, container) {
+                const cb = container.querySelector('.progress-input');
+                cb.checked = !cb.checked;
+                localStorage.setItem(`progress-${cb.dataset.key}`, cb.checked);
+                event.stopPropagation();
+            };
+
+            window.toggleAnswer = function(el) {
+                el.classList.toggle('active');
+                const answer = el.nextElementSibling;
+                if (answer && answer.classList.contains('quiz-answer')) {
+                    answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+                }
+            };
+
+            const chapterItems = document.querySelectorAll('.chapter-item');
+            chapterItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    chapterItems.forEach(ci => ci.classList.remove('active'));
+                    this.classList.add('active');
+                    renderChapter(this.dataset.chapter);
+                });
+            });
+
+            renderChapter('anatomy');
+        })();
+    </script>
+</body>
+</html>
