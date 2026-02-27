@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiratory System · Complete Premium Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Premium Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f9ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 1.5rem 3rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i {
+            font-size: 2.5rem;
+            color: #ffd966;
+        }
+        .top-bar h1 {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+        .top-bar .sub {
+            margin-left: auto;
+            background: rgba(255,255,255,0.1);
+            padding: 0.6rem 2rem;
+            border-radius: 40px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .book-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            flex: 1;
+            height: calc(100vh - 95px);
+            overflow: hidden;
+        }
+        .toc-sidebar {
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 2.5rem 1rem 2.5rem 2rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.1);
+        }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+            border-left: 8px solid #ffd966;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chapter-list {
+            list-style: none;
+        }
+        .chapter-item {
+            margin-bottom: 0.6rem;
+        }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 1rem 1.2rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border-radius: 12px;
+            transition: all 0.3s;
+            background: #f8faff;
+        }
+        .chapter-item a i {
+            width: 28px;
+            font-size: 1.2rem;
+            color: #2c7cb0;
+            text-align: center;
+        }
+        .chapter-item a:hover {
+            background: #e6f0fa;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .chapter-item.active a {
+            background: linear-gradient(135deg, #0a2942, #1b4c72);
+            color: white;
+            box-shadow: 0 10px 20px -8px #0a2942;
+        }
+        .chapter-item.active a i {
+            color: #ffd966;
+        }
+        .reader-panel {
+            background: white;
+            overflow-y: auto;
+            padding: 3rem 4rem;
+        }
+        .chapter-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1rem;
+            border-bottom: 4px solid #ffd966;
+            padding-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .chapter-title i {
+            font-size: 3rem;
+            color: #2c7cb0;
+        }
+        .section-card {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 2.5rem 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 20px 40px -15px rgba(10,41,66,0.15);
+            border: 1px solid #eef6ff;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 50px -15px rgba(10,41,66,0.2);
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 10px solid #ffd966;
+            padding-left: 25px;
+        }
+        .section-heading i {
+            font-size: 2.2rem;
+            color: #2c7cb0;
+        }
+        .lead-text {
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #2c3e50;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 8px solid #2c7cb0;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .definition-box h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #0a2942;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 8px solid #f39c12;
+            box-shadow: 0 5px 15px rgba(243,156,18,0.1);
+        }
+        .clinical-correlation h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #c9760e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 8px solid #27ae60;
+        }
+        .memory-aid h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #1e8449;
+            margin-bottom: 1rem;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #6c3483;
+            margin-bottom: 1rem;
+        }
+        .key-points ul {
+            list-style: none;
+        }
+        .key-points li {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            color: #34495e;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i {
+            color: #8e44ad;
+            font-size: 1.2rem;
+        }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2.5rem 0;
+        }
+        .premium-table th {
+            background: #0a2942;
+            color: white;
+            font-family: 'Merriweather', serif;
+            font-weight: 600;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            text-align: left;
+        }
+        .premium-table td {
+            padding: 1.2rem;
+            font-family: 'Open Sans', sans-serif;
+            color: #34495e;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .premium-table tr:last-child td {
+            border-bottom: none;
+        }
+        .premium-table tr:hover td {
+            background: #f8fbff;
+        }
+        .diagram-box {
+            background: #f9fcff;
+            border-radius: 30px;
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            border: 2px solid #d4e6f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .diagram-box svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .diagram-caption {
+            margin-top: 1.5rem;
+            font-family: 'Open Sans', sans-serif;
+            font-style: italic;
+            color: #2c7cb0;
+            font-weight: 500;
+        }
+        .progress-checkbox {
+            position: absolute;
+            top: 2rem;
+            right: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.9rem;
+            color: #2c7cb0;
+            background: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #d0e0f0;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .progress-checkbox input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .summary-box {
+            background: linear-gradient(135deg, #f5f7fa, #eef2f7);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0 1rem;
+            border: 1px solid #d0e0f0;
+        }
+        .summary-box h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            color: #0a2942;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 2rem;
+            font-family: 'Open Sans', sans-serif;
+        }
+        @media (max-width: 1000px) {
+            .book-container { grid-template-columns: 1fr; height: auto; }
+            .toc-sidebar { max-height: 300px; }
+            .reader-panel { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <i class="fas fa-lungs"></i>
+        <h1>Respiratory System · Premium Textbook</h1>
+        <div class="sub">Complete Coverage · Clinical Correlations · Memory Aids</div>
+    </div>
+    <div class="book-container">
+        <!-- Table of Contents -->
+        <div class="toc-sidebar">
+            <h2><i class="fas fa-list-ul"></i> Contents</h2>
+            <ul class="chapter-list" id="chapterList">
+                <li class="chapter-item active" data-chapter="anatomy"><a href="#"><i class="fas fa-skeleton"></i> 1. Anatomy of Respiratory System</a></li>
+                <li class="chapter-item" data-chapter="volumes"><a href="#"><i class="fas fa-chart-simple"></i> 2. Lung Volumes & Capacities</a></li>
+                <li class="chapter-item" data-chapter="mechanics"><a href="#"><i class="fas fa-wind"></i> 3. Mechanics of Breathing</a></li>
+                <li class="chapter-item" data-chapter="surfactant"><a href="#"><i class="fas fa-soap"></i> 4. Surfactant: The Alveolar Lifesaver</a></li>
+                <li class="chapter-item" data-chapter="gas-exchange"><a href="#"><i class="fas fa-exchange-alt"></i> 5. Gas Exchange & Transport</a></li>
+                <li class="chapter-item" data-chapter="vq"><a href="#"><i class="fas fa-scale-balanced"></i> 6. Ventilation/Perfusion (V/Q)</a></li>
+                <li class="chapter-item" data-chapter="control"><a href="#"><i class="fas fa-brain"></i> 7. Control of Breathing</a></li>
+                <li class="chapter-item" data-chapter="pft"><a href="#"><i class="fas fa-chart-line"></i> 8. Pulmonary Function Tests</a></li>
+                <li class="chapter-item" data-chapter="obstructive"><a href="#"><i class="fas fa-disease"></i> 9. Obstructive Lung Diseases</a></li>
+                <li class="chapter-item" data-chapter="restrictive"><a href="#"><i class="fas fa-lungs"></i> 10. Restrictive Lung Diseases</a></li>
+                <li class="chapter-item" data-chapter="vascular"><a href="#"><i class="fas fa-heart-crack"></i> 11. Pulmonary Vascular Disease</a></li>
+                <li class="chapter-item" data-chapter="infections"><a href="#"><i class="fas fa-virus"></i> 12. Respiratory Infections</a></li>
+                <li class="chapter-item" data-chapter="neonatal"><a href="#"><i class="fas fa-baby"></i> 13. Neonatal & Pediatric Disorders</a></li>
+                <li class="chapter-item" data-chapter="pharma"><a href="#"><i class="fas fa-pills"></i> 14. Respiratory Pharmacology</a></li>
+                <li class="chapter-item" data-chapter="hypoxia"><a href="#"><i class="fas fa-droplet"></i> 15. Hypoxia & Oxygen Therapy</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Reader Panel -->
+        <div class="reader-panel" id="readerPanel">
+            <!-- Content will be injected -->
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ==================== COMPLETE PREMIUM CONTENT ====================
+            const chapters = {
+                // ==================== 1. ANATOMY ====================
+                anatomy: {
+                    title: 'Anatomy of the Respiratory System',
+                    icon: 'fa-skeleton',
+                    sections: [
+                        {
+                            heading: '1.1 Overview of Respiratory Anatomy',
+                            content: `
+                                <div class="lead-text">
+                                    The respiratory system is anatomically divided into two main functional components: the conducting zone and the respiratory zone. This division reflects the transition from air transport to gas exchange.
+                                </div>
+                                <div class="body-text">
+                                    The conducting zone includes all structures that conduct air to the gas exchange surfaces: nose, pharynx, larynx, trachea, bronchi, and bronchioles up to the terminal bronchioles. These structures warm, humidify, and filter inspired air but do not participate in gas exchange.
+                                </div>
+                                <div class="body-text">
+                                    The respiratory zone is where actual gas exchange occurs and includes respiratory bronchioles, alveolar ducts, and alveoli. The transition occurs at the level of the respiratory bronchiole, where scattered alveoli first appear.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '1.2 The Conducting Zone: Detailed Structure',
+                            content: `
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-microscope"></i> Conducting Zone Structures</h4>
+                                    <div class="body-text">
+                                        <strong>Nasal Cavity:</strong> Warms and humidifies air; filters particles >10 μm through nasal hairs and turbinates. Rich blood supply facilitates heat exchange.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Pharynx:</strong> Common pathway for air and food; divided into nasopharynx, oropharynx, and laryngopharynx.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Larynx:</strong> Contains vocal cords; prevents aspiration during swallowing; cough reflex protects lower airways.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Trachea:</strong> 10-12 cm long; C-shaped cartilage rings keep airway open; lined by ciliated pseudostratified epithelium with goblet cells.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Bronchial Tree:</strong> Divides into primary bronchi (right main bronchus wider, more vertical), lobar bronchi, segmental bronchi, and bronchioles.
+                                    </div>
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Clinical Pearl: Aspiration</h4>
+                                    <div class="body-text">
+                                        The right main bronchus is wider, shorter, and more vertical than the left. Therefore, aspirated foreign bodies and endotracheal tubes preferentially enter the right lung.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '1.3 The Respiratory Zone: Alveolar Structure',
+                            content: `
+                                <div class="body-text">
+                                    The respiratory zone begins where gas exchange first becomes possible. Understanding alveolar structure is fundamental to understanding respiratory physiology.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-circle"></i> Alveolar Cell Types</h4>
+                                    <div class="body-text">
+                                        <strong>Type I Pneumocytes:</strong> Extremely thin, flattened cells covering 95% of the alveolar surface. They form the blood-air barrier and are the primary site of gas exchange. Cannot divide.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Type II Pneumocytes:</strong> Cuboidal cells that produce, secrete, and recycle surfactant. They also serve as progenitor cells, differentiating into type I cells after injury.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Alveolar Macrophages (Dust Cells):</strong> Phagocytic cells that ingest inhaled particles, bacteria, and debris. They migrate to lymphatics or are carried up the mucociliary escalator.
+                                    </div>
+                                </div>
+                                <div class="diagram-box">
+                                    <svg viewBox="0 0 500 250" style="background:#f9fcff; border-radius:20px;">
+                                        <circle cx="250" cy="125" r="80" fill="#d4e6f1" stroke="#2c7cb0" stroke-width="3" stroke-dasharray="5,3"/>
+                                        <circle cx="200" cy="90" r="12" fill="#f9e79f" stroke="#000" stroke-width="2"/>
+                                        <text x="150" y="80" fill="#000" font-size="12">Type I</text>
+                                        <circle cx="300" cy="160" r="18" fill="#f9e79f" stroke="#000" stroke-width="2"/>
+                                        <text x="280" y="200" fill="#000" font-size="12">Type II</text>
+                                        <circle cx="320" cy="90" r="10" fill="#e6b8b8" stroke="#000" stroke-width="2"/>
+                                        <text x="310" y="60" fill="#000" font-size="12">Macrophage</text>
+                                        <line x1="250" y1="45" x2="250" y2="205" stroke="#2c7cb0" stroke-width="2" stroke-dasharray="5,3"/>
+                                        <text x="260" y="30" fill="#2c7cb0" font-size="12">Alveolar Lumen</text>
+                                    </svg>
+                                    <div class="diagram-caption">Figure 1.1: Alveolar structure showing Type I cells (gas exchange), Type II cells (surfactant production), and alveolar macrophages.</div>
+                                </div>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid</h4>
+                                    <div class="body-text">
+                                        <strong>"Type I are thin for gas in"</strong> – Type I cells are thin for gas exchange.<br>
+                                        <strong>"Type II are square to prepare the air"</strong> – Type II cells are cuboidal and produce surfactant.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '1.4 Blood Supply to the Lungs',
+                            content: `
+                                <div class="body-text">
+                                    The lungs have a dual blood supply: the pulmonary circulation for gas exchange and the bronchial circulation for nutritive support of lung tissue.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Feature</th>
+                                            <th>Pulmonary Circulation</th>
+                                            <th>Bronchial Circulation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Function</strong></td>
+                                            <td>Gas exchange</td>
+                                            <td>Nutritive supply to lung tissue</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Origin</strong></td>
+                                            <td>Right ventricle (pulmonary artery)</td>
+                                            <td>Aorta (usually at T5-T6 level)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Pressure</strong></td>
+                                            <td>Low pressure (25/8 mmHg)</td>
+                                            <td>Systemic pressure (120/80 mmHg)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Blood Flow</strong></td>
+                                            <td>Total cardiac output (5 L/min)</td>
+                                            <td>1-2% of cardiac output</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Oxygen Content</strong></td>
+                                            <td>Deoxygenated (mixed venous)</td>
+                                            <td>Oxygenated</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-heart"></i> Clinical Pearl: Pulmonary Edema</h4>
+                                    <div class="body-text">
+                                        Pulmonary edema occurs when fluid filters from pulmonary capillaries into the interstitium and alveoli. This can result from increased capillary pressure (left heart failure), increased capillary permeability (ARDS), or decreased oncotic pressure (hypoalbuminemia).
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '1.5 Lymphatics and Innervation',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Lymphatic Drainage:</strong> The lungs have extensive lymphatic networks that drain toward the hilum. Lymph nodes are classified as intrapulmonary, bronchopulmonary, and tracheobronchial. This drainage is clinically important in lung cancer staging.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Nerve Supply:</strong> The lungs receive both sympathetic (bronchodilation, vasoconstriction) and parasympathetic (bronchoconstriction, vasodilation, gland secretion) innervation via the pulmonary plexus.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 1 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Conducting zone: nose to terminal bronchioles – warms, humidifies, filters air. No gas exchange.</li>
+                                        <li><i class="fas fa-check"></i> Respiratory zone: respiratory bronchioles to alveoli – site of gas exchange.</li>
+                                        <li><i class="fas fa-check"></i> Type I pneumocytes: thin, 95% surface area, gas exchange.</li>
+                                        <li><i class="fas fa-check"></i> Type II pneumocytes: produce surfactant, progenitor cells.</li>
+                                        <li><i class="fas fa-check"></i> Alveolar macrophages: phagocytic defense cells.</li>
+                                        <li><i class="fas fa-check"></i> Right main bronchus: wider, shorter, more vertical → aspiration risk.</li>
+                                        <li><i class="fas fa-check"></i> Dual blood supply: pulmonary (gas exchange) and bronchial (nutritive).</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 2. LUNG VOLUMES & CAPACITIES ====================
+                volumes: {
+                    title: 'Lung Volumes & Capacities',
+                    icon: 'fa-chart-simple',
+                    sections: [
+                        {
+                            heading: '2.1 Introduction to Lung Volumes',
+                            content: `
+                                <div class="lead-text">
+                                    Lung volumes and capacities are measured by spirometry and are essential for diagnosing and classifying respiratory diseases. Understanding these measurements provides insight into the mechanical properties of the lungs and chest wall.
+                                </div>
+                                <div class="body-text">
+                                    Four primary lung volumes cannot be subdivided further. Lung capacities are combinations of two or more lung volumes. Some volumes (residual volume) cannot be measured by simple spirometry and require special techniques.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '2.2 The Four Primary Lung Volumes',
+                            content: `
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-chart-bar"></i> Primary Lung Volumes</h4>
+                                    <table class="premium-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Volume</th>
+                                                <th>Definition</th>
+                                                <th>Typical Value (Adult)</th>
+                                                <th>Clinical Significance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Tidal Volume (TV)</strong></td>
+                                                <td>Volume of air inhaled or exhaled during normal, quiet breathing</td>
+                                                <td>~500 mL (5-8 mL/kg)</td>
+                                                <td>Decreased in restrictive diseases; increased in metabolic acidosis (Kussmaul)</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Inspiratory Reserve Volume (IRV)</strong></td>
+                                                <td>Maximum volume of air that can be inhaled after a normal inspiration</td>
+                                                <td>~3000 mL (male) ~1900 mL (female)</td>
+                                                <td>Represents inspiratory reserve capacity</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Expiratory Reserve Volume (ERV)</strong></td>
+                                                <td>Maximum volume of air that can be exhaled after a normal expiration</td>
+                                                <td>~1100 mL (male) ~700 mL (female)</td>
+                                                <td>Decreased in obesity, ascites, restrictive diseases</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Residual Volume (RV)</strong></td>
+                                                <td>Volume of air remaining in lungs after maximal exhalation</td>
+                                                <td>~1200 mL (male) ~1000 mL (female)</td>
+                                                <td>Increased in obstructive diseases (air trapping); cannot be measured by spirometry</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Why Can't Residual Volume Be Measured by Spirometry?</h4>
+                                    <div class="body-text">
+                                        Spirometry measures air that can be moved in and out of the lungs. Since residual volume is the air that remains after maximal exhalation, it cannot be exhaled and therefore cannot be measured by simple spirometry. RV requires special techniques like helium dilution, nitrogen washout, or body plethysmography.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '2.3 Lung Capacities',
+                            content: `
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-chart-pie"></i> Lung Capacities</h4>
+                                    <table class="premium-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Capacity</th>
+                                                <th>Definition</th>
+                                                <th>Formula</th>
+                                                <th>Typical Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Inspiratory Capacity (IC)</strong></td>
+                                                <td>Maximum volume inhaled after normal expiration</td>
+                                                <td>TV + IRV</td>
+                                                <td>~3500 mL</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Vital Capacity (VC)</strong></td>
+                                                <td>Maximum volume exhaled after maximal inspiration</td>
+                                                <td>IRV + TV + ERV</td>
+                                                <td>~4600 mL</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Functional Residual Capacity (FRC)</strong></td>
+                                                <td>Volume remaining after normal expiration</td>
+                                                <td>ERV + RV</td>
+                                                <td>~2300 mL</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total Lung Capacity (TLC)</strong></td>
+                                                <td>Volume after maximal inspiration</td>
+                                                <td>VC + RV</td>
+                                                <td>~5800 mL</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="diagram-box">
+                                    <svg viewBox="0 0 500 250" style="background:#f9fcff; border-radius:20px;">
+                                        <!-- IRV -->
+                                        <rect x="50" y="30" width="400" height="50" fill="#a9d6e5" stroke="#2c7cb0" stroke-width="2"/>
+                                        <text x="230" y="65" fill="#000" font-weight="bold">IRV (3000 mL)</text>
+                                        <!-- TV -->
+                                        <rect x="50" y="80" width="400" height="40" fill="#f9e79f" stroke="#2c7cb0" stroke-width="2"/>
+                                        <text x="230" y="110" fill="#000" font-weight="bold">TV (500 mL)</text>
+                                        <!-- ERV -->
+                                        <rect x="50" y="120" width="400" height="40" fill="#f5b7b1" stroke="#2c7cb0" stroke-width="2"/>
+                                        <text x="230" y="150" fill="#000" font-weight="bold">ERV (1100 mL)</text>
+                                        <!-- RV -->
+                                        <rect x="50" y="160" width="400" height="40" fill="#d7bde2" stroke="#2c7cb0" stroke-width="2"/>
+                                        <text x="230" y="190" fill="#000" font-weight="bold">RV (1200 mL)</text>
+                                        <!-- Labels -->
+                                        <text x="20" y="50" fill="#000">Volume (mL)</text>
+                                        <line x1="50" y1="200" x2="450" y2="200" stroke="#000" stroke-width="2"/>
+                                    </svg>
+                                    <div class="diagram-caption">Figure 2.1: Spirometry tracing showing lung volumes</div>
+                                </div>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aids</h4>
+                                    <div class="body-text">
+                                        <strong>"IRV + TV + ERV = Vital Capacity"</strong><br>
+                                        <strong>"ERV + RV = FRC"</strong><br>
+                                        <strong>"FRC is the resting point of the lungs"</strong> – at FRC, the inward elastic recoil of lungs equals the outward recoil of chest wall.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '2.4 Spirometry and Flow Rates',
+                            content: `
+                                <div class="body-text">
+                                    Spirometry not only measures static volumes but also dynamic flow rates, which are essential for differentiating obstructive from restrictive lung diseases.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Measurement</th>
+                                            <th>Definition</th>
+                                            <th>Normal Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>FEV₁</strong></td>
+                                            <td>Forced Expiratory Volume in 1 second</td>
+                                            <td>>80% predicted</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FVC</strong></td>
+                                            <td>Forced Vital Capacity</td>
+                                            <td>>80% predicted</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FEV₁/FVC Ratio</strong></td>
+                                            <td>Proportion of vital capacity exhaled in first second</td>
+                                            <td>>0.7-0.8 (depends on age)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FEF₂₅₋₇₅</strong></td>
+                                            <td>Forced expiratory flow during middle half of FVC</td>
+                                            <td>>60% predicted</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>PEFR</strong></td>
+                                            <td>Peak Expiratory Flow Rate</td>
+                                            <td>400-600 L/min</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '2.5 Obstructive vs Restrictive Patterns',
+                            content: `
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-chart-line"></i> Spirometry Patterns</h4>
+                                    <table class="premium-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Parameter</th>
+                                                <th>Obstructive</th>
+                                                <th>Restrictive</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>FEV₁</strong></td>
+                                                <td>↓↓ Decreased</td>
+                                                <td>↓ or Normal</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>FVC</strong></td>
+                                                <td>↓ or Normal</td>
+                                                <td>↓↓ Decreased</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>FEV₁/FVC</strong></td>
+                                                <td>↓↓ <0.7</td>
+                                                <td>Normal or ↑ >0.8</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>TLC</strong></td>
+                                                <td>Normal or ↑</td>
+                                                <td>↓↓ Decreased</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>RV</strong></td>
+                                                <td>↑ (air trapping)</td>
+                                                <td>↓</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>RV/TLC</strong></td>
+                                                <td>↑</td>
+                                                <td>Normal</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-diagnoses"></i> Clinical Application</h4>
+                                    <div class="body-text">
+                                        <strong>Obstructive diseases</strong> (asthma, COPD) → difficulty exhaling → ↓ FEV₁, ↓ FEV₁/FVC, ↑ RV, normal or ↑ TLC.<br>
+                                        <strong>Restrictive diseases</strong> (fibrosis, scoliosis) → difficulty expanding lungs → ↓ FVC, normal or ↑ FEV₁/FVC, ↓ TLC.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '2.6 Methods for Measuring Residual Volume',
+                            content: `
+                                <div class="body-text">
+                                    Since RV cannot be measured by spirometry, three main techniques are used:
+                                </div>
+                                <div class="body-text">
+                                    <strong>1. Helium Dilution:</strong> Patient rebreaches from a spirometer containing known concentration of helium. Helium distributes into the lungs; final concentration allows calculation of FRC.
+                                </div>
+                                <div class="body-text">
+                                    <strong>2. Nitrogen Washout:</strong> Patient breathes 100% oxygen; exhaled nitrogen is collected. Total nitrogen washed out equals nitrogen originally in lungs (80%).
+                                </div>
+                                <div class="body-text">
+                                    <strong>3. Body Plethysmography:</strong> Based on Boyle's law (P₁V₁ = P₂V₂). Patient pants against a closed shutter; changes in pressure and volume allow calculation of thoracic gas volume. This measures all compressible gas in chest, including air not communicating with airways (e.g., bullae).
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 2 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Four primary volumes: TV, IRV, ERV, RV (RV cannot be measured by spirometry)</li>
+                                        <li><i class="fas fa-check"></i> Capacities: IC = TV + IRV; VC = IRV + TV + ERV; FRC = ERV + RV; TLC = VC + RV</li>
+                                        <li><i class="fas fa-check"></i> FEV₁/FVC ratio: >0.7 normal; ↓ in obstruction; normal/↑ in restriction</li>
+                                        <li><i class="fas fa-check"></i> Obstructive pattern: ↓FEV₁, ↓FEV₁/FVC, ↑RV, normal/↑TLC</li>
+                                        <li><i class="fas fa-check"></i> Restrictive pattern: ↓FVC, normal/↑FEV₁/FVC, ↓TLC</li>
+                                        <li><i class="fas fa-check"></i> RV measured by helium dilution, nitrogen washout, or body plethysmography</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 3. MECHANICS OF BREATHING ====================
+                mechanics: {
+                    title: 'Mechanics of Breathing',
+                    icon: 'fa-wind',
+                    sections: [
+                        {
+                            heading: '3.1 Pressures in the Thorax',
+                            content: `
+                                <div class="lead-text">
+                                    Understanding the pressures that drive ventilation is fundamental to respiratory mechanics. Three key pressures interact to determine airflow and lung volume.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-gauge-high"></i> Thoracic Pressures</h4>
+                                    <div class="body-text">
+                                        <strong>Intrapleural Pressure (Ppl):</strong> Pressure within the pleural space. Normally negative (-5 cmH₂O at rest) due to opposing elastic recoil of lungs (tend to collapse) and chest wall (tend to expand). Becomes more negative during inspiration (-8 cmH₂O) and returns to -5 during expiration.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Alveolar Pressure (Palv):</strong> Pressure within the alveoli. Equals atmospheric pressure (0 cmH₂O) at rest (no airflow). Becomes negative during inspiration (air flows in) and positive during expiration (air flows out).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Transpulmonary Pressure (Ptp):</strong> The pressure difference across the lung (Palv - Ppl). This is the distending pressure that keeps alveoli open.
+                                    </div>
+                                </div>
+                                <div class="diagram-box">
+                                    <svg viewBox="0 0 500 200" style="background:#f9fcff;">
+                                        <!-- Lungs -->
+                                        <ellipse cx="200" cy="100" rx="60" ry="80" fill="#d4e6f1" stroke="#2c7cb0" stroke-width="3"/>
+                                        <ellipse cx="300" cy="100" rx="60" ry="80" fill="#d4e6f1" stroke="#2c7cb0" stroke-width="3"/>
+                                        <!-- Chest wall outline -->
+                                        <path d="M100 20 L400 20 L450 180 L50 180 Z" fill="none" stroke="#0a2942" stroke-width="3" stroke-dasharray="5,3"/>
+                                        <!-- Pressures -->
+                                        <text x="150" y="40" fill="#0a2942" font-size="14">Ppl = -5</text>
+                                        <text x="250" y="150" fill="#2c7cb0" font-size="14">Palv = 0</text>
+                                        <text x="50" y="170" fill="#f39c12" font-size="14">Ptp = Palv - Ppl = 5</text>
+                                    </svg>
+                                    <div class="diagram-caption">Figure 3.1: Thoracic pressures at rest (cmH₂O)</div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '3.2 Lung Compliance',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Compliance (C)</strong> is a measure of lung distensibility, defined as the change in volume per unit change in pressure: C = ΔV / ΔP.
+                                </div>
+                                <div class="body-text">
+                                    Normal lung compliance is approximately 200 mL/cmH₂O. Compliance is determined by:
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Elastic properties of lung tissue (elastin and collagen fibers)</li>
+                                    <li>Surface tension at the air-liquid interface (most important factor)</li>
+                                </ul>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Condition</th>
+                                            <th>Compliance</th>
+                                            <th>Elastic Recoil</th>
+                                            <th>Mechanism</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Emphysema</strong></td>
+                                            <td>↑ (high)</td>
+                                            <td>↓ (low)</td>
+                                            <td>Destruction of elastic tissue; lungs become floppy</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Pulmonary Fibrosis</strong></td>
+                                            <td>↓ (low)</td>
+                                            <td>↑ (high)</td>
+                                            <td>Excess collagen makes lungs stiff</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Surfactant Deficiency</strong></td>
+                                            <td>↓ (low)</td>
+                                            <td>↑ (high)</td>
+                                            <td>Increased surface tension</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '3.3 Surface Tension and Laplace\'s Law',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Laplace's Law:</strong> P = 2T/r (for a sphere), where P = pressure, T = surface tension, r = radius.
+                                </div>
+                                <div class="body-text">
+                                    This law explains why small alveoli would tend to collapse into larger ones if surface tension were constant. Surfactant solves this problem by decreasing surface tension more in smaller alveoli, equalizing pressure across alveoli of different sizes.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-calculator"></i> Clinical Application of Laplace's Law</h4>
+                                    <div class="body-text">
+                                        In a lung without surfactant (e.g., IRDS), pressure is higher in small alveoli (P ∝ 1/r), causing them to empty into larger alveoli → atelectasis. Surfactant lowers T more in small alveoli, equalizing pressure and maintaining alveolar stability.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '3.4 Airway Resistance',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Airway resistance</strong> is determined by Poiseuille's law: R = 8ηL/πr⁴, where η = viscosity, L = length, r = radius.
+                                </div>
+                                <div class="body-text">
+                                    The most important factor is <strong>radius</strong> because resistance is inversely proportional to r⁴. A 50% reduction in radius increases resistance 16-fold!
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Clinical Relevance</h4>
+                                    <div class="body-text">
+                                        In asthma and COPD, bronchoconstriction and inflammation reduce airway radius, dramatically increasing resistance. This is why these patients have difficulty exhaling (prolonged expiration).
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '3.5 Work of Breathing',
+                            content: `
+                                <div class="body-text">
+                                    The work of breathing is the energy required to overcome:
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>Elastic work (60-70%):</strong> Overcoming elastic recoil of lungs and chest wall</li>
+                                    <li><strong>Resistive work (20-30%):</strong> Overcoming airway resistance and tissue viscosity</li>
+                                    <li><strong>Inertial work (minimal):</strong> Accelerating air and tissues</li>
+                                </ul>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid</h4>
+                                    <div class="body-text">
+                                        "Elastic work is like stretching a rubber band; resistive work is like blowing through a straw."
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 3 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Intrapleural pressure: negative (-5 cmH₂O) – keeps lungs inflated</li>
+                                        <li><i class="fas fa-check"></i> Transpulmonary pressure = Palv - Ppl; keeps alveoli open</li>
+                                        <li><i class="fas fa-check"></i> Compliance = ΔV/ΔP; increased in emphysema, decreased in fibrosis</li>
+                                        <li><i class="fas fa-check"></i> Laplace's law: P = 2T/r; surfactant prevents alveolar collapse</li>
+                                        <li><i class="fas fa-check"></i> Airway resistance ∝ 1/r⁴; main site of resistance is medium bronchi</li>
+                                        <li><i class="fas fa-check"></i> Work of breathing: elastic (60-70%) > resistive (20-30%)</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 4. SURFACTANT: THE ALVEOLAR LIFESAVER ====================
+                surfactant: {
+                    title: 'Surfactant: The Alveolar Lifesaver',
+                    icon: 'fa-soap',
+                    sections: [
+                        {
+                            heading: '4.1 What Is Surfactant?',
+                            content: `
+                                <div class="lead-text">
+                                    Pulmonary surfactant is a complex mixture of lipids and proteins that reduces surface tension at the air-liquid interface in the alveoli. Without it, the lungs would collapse, and breathing would be impossible.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-flask"></i> Composition of Surfactant</h4>
+                                    <div class="body-text">
+                                        <strong>Lipids (90%):</strong>
+                                        <ul style="margin-left:2rem;">
+                                            <li>Dipalmitoylphosphatidylcholine (DPPC) – the major surface tension-lowering component</li>
+                                            <li>Phosphatidylglycerol – enhances spreading</li>
+                                            <li>Cholesterol – fluidity modulator</li>
+                                        </ul>
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Proteins (10%):</strong>
+                                        <ul style="margin-left:2rem;">
+                                            <li>SP-A and SP-D – host defense (collectins)</li>
+                                            <li>SP-B and SP-C – enhance adsorption and spreading of phospholipids</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '4.2 Production and Development',
+                            content: `
+                                <div class="body-text">
+                                    Surfactant is produced by <strong>type II pneumocytes</strong>, stored in lamellar bodies, and secreted by exocytosis.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Developmental Timeline:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>20-24 weeks:</strong> Surfactant production begins</li>
+                                    <li><strong>24-28 weeks:</strong> Low levels, insufficient for extrauterine life</li>
+                                    <li><strong>28-32 weeks:</strong> Increasing production</li>
+                                    <li><strong>34-36 weeks:</strong> Surfactant system becomes mature and sufficient</li>
+                                    <li><strong>Term (40 weeks):</strong> Full maturity</li>
+                                </ul>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-baby"></i> Clinical Significance: Prematurity</h4>
+                                    <div class="body-text">
+                                        Infants born before 34 weeks are at high risk for Respiratory Distress Syndrome (IRDS) due to surfactant deficiency. The risk decreases with each week of gestation after 34 weeks.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '4.3 Functions of Surfactant',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Function</th>
+                                            <th>Mechanism</th>
+                                            <th>Clinical Consequence of Deficiency</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>↓ Surface Tension</strong></td>
+                                            <td>DPPC inserts into the air-liquid interface, disrupting hydrogen bonds between water molecules</td>
+                                            <td>Atelectasis (alveolar collapse)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>↑ Lung Compliance</strong></td>
+                                            <td>Reduced surface tension makes lungs easier to inflate</td>
+                                            <td>Increased work of breathing</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Alveolar Stabilization</strong></td>
+                                            <td>Equalizes pressure in alveoli of different sizes (via Laplace's law)</td>
+                                            <td>Uneven ventilation, collapse of small alveoli</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Host Defense</strong></td>
+                                            <td>SP-A and SP-D opsonize pathogens, enhance phagocytosis</td>
+                                            <td>Increased susceptibility to infection</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Prevents Pulmonary Edema</strong></td>
+                                            <td>Reduces surface tension that would otherwise draw fluid into alveoli</td>
+                                            <td>Pulmonary edema</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '4.4 Infant Respiratory Distress Syndrome (IRDS)',
+                            content: `
+                                <div class="body-text">
+                                    IRDS (also called hyaline membrane disease) is caused by surfactant deficiency in premature infants.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-stethoscope"></i> Pathophysiology</h4>
+                                    <div class="body-text">
+                                        Surfactant deficiency → ↑ surface tension → alveolar collapse (atelectasis) → ↓ gas exchange → hypoxemia → cellular injury → proteinaceous fluid leaks into alveoli → formation of hyaline membranes (fibrin-rich membranes lining alveoli) → further impairs gas exchange.
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Clinical Features:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Tachypnea, grunting, nasal flaring, intercostal retractions</li>
+                                    <li>Cyanosis (hypoxemia)</li>
+                                    <li>Chest X-ray: diffuse ground-glass appearance with air bronchograms</li>
+                                    <li>Blood gas: hypoxemia, hypercapnia, respiratory acidosis</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '4.5 Prevention and Treatment of IRDS',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Prevention (Antenatal):</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>Antenatal corticosteroids</strong> (betamethasone, dexamethasone) given to mothers if preterm delivery is expected (24-34 weeks).</li>
+                                    <li>Steroids cross placenta and accelerate surfactant production by stimulating type II pneumocyte maturation.</li>
+                                    <li>Maximum benefit occurs 24-48 hours after administration; reduces IRDS incidence by ~50%.</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Treatment (Postnatal):</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>Exogenous surfactant</strong> (beractant, poractant alfa, calfactant) administered via endotracheal tube.</li>
+                                    <li>Improves oxygenation, reduces mortality, decreases air leaks.</li>
+                                    <li><strong>Supportive care:</strong> Oxygen therapy, continuous positive airway pressure (CPAP), mechanical ventilation.</li>
+                                    <li>Careful monitoring to avoid complications: retinopathy of prematurity (ROP), bronchopulmonary dysplasia (BPD).</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '4.6 Other Causes of Surfactant Dysfunction',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Adult Respiratory Distress Syndrome (ARDS):</strong> Surfactant dysfunction due to:
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Inactivation by plasma proteins leaking into alveoli</li>
+                                    <li>Altered surfactant composition</li>
+                                    <li>Type II cell injury</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Genetic Surfactant Deficiencies:</strong> Mutations in SP-B, SP-C, or ABCA3 transporter genes cause severe respiratory failure in newborns.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 4 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Surfactant produced by type II pneumocytes (20-24 weeks, sufficient at 34-36 weeks)</li>
+                                        <li><i class="fas fa-check"></i> Main lipid: DPPC; main proteins: SP-A, B, C, D</li>
+                                        <li><i class="fas fa-check"></i> Functions: ↓ surface tension, ↑ compliance, alveolar stability, host defense</li>
+                                        <li><i class="fas fa-check"></i> IRDS: surfactant deficiency in prematurity → atelectasis, hypoxemia, ground-glass X-ray</li>
+                                        <li><i class="fas fa-check"></i> Prevention: antenatal betamethasone; Treatment: exogenous surfactant, supportive care</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 5. GAS EXCHANGE & TRANSPORT ====================
+                'gas-exchange': {
+                    title: 'Gas Exchange & Transport',
+                    icon: 'fa-exchange-alt',
+                    sections: [
+                        {
+                            heading: '5.1 Alveolar Gas Equation',
+                            content: `
+                                <div class="lead-text">
+                                    The alveolar gas equation calculates the partial pressure of oxygen in the alveoli (PAO₂), which is essential for determining the A-a gradient and understanding hypoxemia.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-square-root-variable"></i> Alveolar Gas Equation</h4>
+                                    <div class="body-text" style="font-size:1.2rem; text-align:center;">
+                                        <strong>PAO₂ = PIO₂ - (PaCO₂ / RQ)</strong>
+                                    </div>
+                                    <div class="body-text">
+                                        Where:<br>
+                                        <strong>PIO₂</strong> = inspired O₂ pressure = FiO₂ × (Patm - PH₂O) = 0.21 × (760 - 47) ≈ 150 mmHg<br>
+                                        <strong>PaCO₂</strong> = arterial CO₂ pressure (normal 40 mmHg)<br>
+                                        <strong>RQ</strong> = respiratory quotient (CO₂ produced / O₂ consumed) ≈ 0.8
+                                    </div>
+                                    <div class="body-text" style="margin-top:1rem;">
+                                        <strong>Therefore, normal PAO₂ ≈ 150 - (40/0.8) = 100 mmHg</strong>
+                                    </div>
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Clinical Application</h4>
+                                    <div class="body-text">
+                                        The A-a gradient (PAO₂ - PaO₂) is normally 5-15 mmHg. An increased A-a gradient indicates V/Q mismatch, shunt, or diffusion impairment. A normal A-a gradient with hypoxemia suggests hypoventilation or low PIO₂ (e.g., high altitude).
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '5.2 Oxygen Transport',
+                            content: `
+                                <div class="body-text">
+                                    Oxygen is transported in blood in two forms:
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>Dissolved in plasma (2%):</strong> Determines PaO₂; follows Henry's law (O₂ content = 0.003 × PaO₂)</li>
+                                    <li><strong>Bound to hemoglobin (98%):</strong> Main transport form; each gram of Hb binds 1.34 mL O₂</li>
+                                </ul>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-calculator"></i> Oxygen Content Equation</h4>
+                                    <div class="body-text" style="font-size:1.2rem; text-align:center;">
+                                        <strong>O₂ Content = (1.34 × Hb × SaO₂) + (0.003 × PaO₂)</strong>
+                                    </div>
+                                    <div class="body-text">
+                                        Normal arterial O₂ content ≈ 20 mL O₂/100 mL blood.
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Oxyhemoglobin Dissociation Curve:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>P₅₀:</strong> PaO₂ at which Hb is 50% saturated (normal 26 mmHg)</li>
+                                    <li><strong>Right shift (↓ affinity, ↑ P₅₀):</strong> ↑CO₂, ↑H⁺ (Bohr effect), ↑temperature, ↑2,3-BPG – enhances O₂ unloading to tissues</li>
+                                    <li><strong>Left shift (↑ affinity, ↓ P₅₀):</strong> ↓CO₂, ↓H⁺, ↓temperature, ↓2,3-BPG – impairs O₂ unloading</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '5.3 Carbon Dioxide Transport',
+                            content: `
+                                <div class="body-text">
+                                    CO₂ is transported in three forms:
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Form</th>
+                                            <th>Percentage</th>
+                                            <th>Mechanism</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Bicarbonate (HCO₃⁻)</strong></td>
+                                            <td>70%</td>
+                                            <td>CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻ (catalyzed by carbonic anhydrase in RBCs)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Dissolved</strong></td>
+                                            <td>10%</td>
+                                            <td>Physical solution in plasma</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Carbamino compounds</strong></td>
+                                            <td>20%</td>
+                                            <td>CO₂ bound to terminal amino groups of proteins (mainly hemoglobin)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="body-text">
+                                    <strong>Chloride Shift (Hamburger Phenomenon):</strong> As HCO₃⁻ accumulates in RBCs, it diffuses out in exchange for Cl⁻ to maintain electroneutrality.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 5 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> PAO₂ = 150 - (PaCO₂/0.8) ≈ 100 mmHg normal</li>
+                                        <li><i class="fas fa-check"></i> A-a gradient = PAO₂ - PaO₂; normal 5-15 mmHg</li>
+                                        <li><i class="fas fa-check"></i> O₂ content = (1.34 × Hb × SaO₂) + (0.003 × PaO₂)</li>
+                                        <li><i class="fas fa-check"></i> O₂ curve right shift: ↑CO₂, ↑H⁺, ↑temp, ↑2,3-BPG</li>
+                                        <li><i class="fas fa-check"></i> CO₂ transport: 70% HCO₃⁻, 20% carbamino, 10% dissolved</li>
+                                        <li><i class="fas fa-check"></i> Chloride shift maintains RBC electroneutrality</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 6. VENTILATION/PERFUSION (V/Q) ====================
+                vq: {
+                    title: 'Ventilation/Perfusion (V/Q)',
+                    icon: 'fa-scale-balanced',
+                    sections: [
+                        {
+                            heading: '6.1 V/Q Relationships',
+                            content: `
+                                <div class="lead-text">
+                                    Ventilation/perfusion (V/Q) matching is the most important determinant of normal gas exchange. Even with adequate ventilation and perfusion, mismatching can cause hypoxemia.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-calculator"></i> Normal V/Q</h4>
+                                    <div class="body-text">
+                                        Normal alveolar ventilation (V̇) ≈ 4 L/min<br>
+                                        Normal pulmonary blood flow (Q̇) ≈ 5 L/min<br>
+                                        <strong>Normal V/Q ratio = 4/5 = 0.8</strong>
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>V/Q Abnormalities:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>Shunt (V/Q = 0):</strong> Perfusion without ventilation. Examples: pneumonia, atelectasis. 100% O₂ does NOT correct hypoxemia.</li>
+                                    <li><strong>Dead space (V/Q = ∞):</strong> Ventilation without perfusion. Examples: pulmonary embolism, hypotension (Zone 1).</li>
+                                    <li><strong>Low V/Q (0 < V/Q < 0.8):</strong> Relative hypoventilation (e.g., asthma, COPD). Responds to 100% O₂.</li>
+                                    <li><strong>High V/Q (V/Q > 0.8):</strong> Relative hypoperfusion (e.g., PE).</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '6.2 West Zones of the Lung',
+                            content: `
+                                <div class="body-text">
+                                    The distribution of blood flow in the lung is gravity-dependent. West described three zones based on the relationships between alveolar pressure (PA), arterial pressure (Pa), and venous pressure (Pv).
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Zone</th>
+                                            <th>Pressure Relationship</th>
+                                            <th>Blood Flow</th>
+                                            <th>Location</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Zone 1 (top)</strong></td>
+                                            <td>PA > Pa > Pv</td>
+                                            <td>No flow (dead space)</td>
+                                            <td>Occurs only in pathology (shock, PE)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Zone 2</strong></td>
+                                            <td>Pa > PA > Pv</td>
+                                            <td>Intermittent flow (driving pressure = Pa - PA)</td>
+                                            <td>Upper lung regions</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Zone 3 (bottom)</strong></td>
+                                            <td>Pa > Pv > PA</td>
+                                            <td>Continuous flow (driving pressure = Pa - Pv)</td>
+                                            <td>Lower lung regions</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="diagram-box">
+                                    <svg viewBox="0 0 400 250" style="background:#f9fcff;">
+                                        <!-- Lung shape -->
+                                        <path d="M100 50 L300 50 L350 200 L50 200 Z" fill="#d4e6f1" stroke="#2c7cb0" stroke-width="2"/>
+                                        <!-- Zone labels -->
+                                        <text x="180" y="80" fill="#0a2942" font-size="16" font-weight="bold">Zone 1</text>
+                                        <text x="180" y="130" fill="#0a2942" font-size="16" font-weight="bold">Zone 2</text>
+                                        <text x="180" y="180" fill="#0a2942" font-size="16" font-weight="bold">Zone 3</text>
+                                        <!-- Pressures -->
+                                        <line x1="50" y1="60" x2="100" y2="60" stroke="#000" stroke-width="2"/>
+                                        <text x="20" y="55" fill="#000">PA</text>
+                                        <line x1="50" y1="100" x2="100" y2="100" stroke="#000" stroke-width="2"/>
+                                        <text x="20" y="95" fill="#000">Pa</text>
+                                        <line x1="50" y1="140" x2="100" y2="140" stroke="#000" stroke-width="2"/>
+                                        <text x="20" y="135" fill="#000">Pv</text>
+                                    </svg>
+                                    <div class="diagram-caption">Figure 6.1: West zones of the lung</div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '6.3 Hypoxic Vasoconstriction (Euler-Liljestrand Mechanism)',
+                            content: `
+                                <div class="body-text">
+                                    Local hypoxic vasoconstriction is a protective mechanism that diverts blood away from poorly ventilated areas to improve V/Q matching.
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Low alveolar PO₂ → vasoconstriction of pulmonary arterioles</li>
+                                    <li>Redirects blood to better-ventilated regions</li>
+                                    <li>Opposite of systemic circulation (hypoxia causes vasodilation)</li>
+                                    <li>Mechanism: inhibits voltage-gated K⁺ channels → depolarization → Ca²⁺ influx → smooth muscle contraction</li>
+                                </ul>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Clinical Pearl</h4>
+                                    <div class="body-text">
+                                        In COPD, chronic hypoxia causes global vasoconstriction → pulmonary hypertension → cor pulmonale.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 6 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Normal V/Q = 0.8 (4 L/min ventilation, 5 L/min perfusion)</li>
+                                        <li><i class="fas fa-check"></i> Shunt (V/Q=0): perfusion without ventilation – 100% O₂ does NOT correct</li>
+                                        <li><i class="fas fa-check"></i> Dead space (V/Q=∞): ventilation without perfusion – e.g., PE</li>
+                                        <li><i class="fas fa-check"></i> West zones: Zone 1 (PA>Pa>Pv), Zone 2 (Pa>PA>Pv), Zone 3 (Pa>Pv>PA)</li>
+                                        <li><i class="fas fa-check"></i> Hypoxic vasoconstriction diverts blood from poorly ventilated areas</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 7. CONTROL OF BREATHING ====================
+                control: {
+                    title: 'Control of Breathing',
+                    icon: 'fa-brain',
+                    sections: [
+                        {
+                            heading: '7.1 Respiratory Centers in the Brainstem',
+                            content: `
+                                <div class="lead-text">
+                                    Breathing is automatically controlled by centers in the brainstem that generate rhythmic impulses to respiratory muscles.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-brain"></i> Medullary Centers</h4>
+                                    <div class="body-text">
+                                        <strong>Dorsal Respiratory Group (DRG):</strong> Primarily inspiratory neurons; receives input from cranial nerves IX and X (peripheral chemoreceptors, lung stretch receptors). Generates basic inspiratory rhythm.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Ventral Respiratory Group (VRG):</strong> Contains both inspiratory and expiratory neurons. Active during forced breathing; drives muscles of expiration.
+                                    </div>
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-brain"></i> Pontine Centers</h4>
+                                    <div class="body-text">
+                                        <strong>Pneumotaxic Center (upper pons):</strong> Inhibits inspiration, regulates inspiratory volume and rate. Fine-tunes breathing pattern.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Apneustic Center (lower pons):</strong> Promotes inspiration by stimulating the DRG. Inhibited by pneumotaxic center and vagal afferents.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.2 Chemoreceptors',
+                            content: `
+                                <div class="body-text">
+                                    Chemoreceptors detect changes in blood gases and pH, providing feedback to adjust ventilation.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Feature</th>
+                                            <th>Central Chemoreceptors</th>
+                                            <th>Peripheral Chemoreceptors</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Location</strong></td>
+                                            <td>Ventral surface of medulla (near exit of CN IX and X)</td>
+                                            <td>Carotid bodies (bifurcation of common carotid) and aortic bodies (arch of aorta)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Stimulus</strong></td>
+                                            <td>↑ CSF H⁺ (indirectly via ↑ PaCO₂ crossing blood-brain barrier)</td>
+                                            <td>↓ PaO₂ (<60 mmHg), ↑ PaCO₂, ↑ H⁺</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Response Time</strong></td>
+                                            <td>Slow (minutes) due to blood-brain barrier</td>
+                                            <td>Fast (seconds)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Contribution to Ventilatory Drive</strong></td>
+                                            <td>70-80% of response to CO₂</td>
+                                            <td>20-30% of response to CO₂; main sensors for O₂</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid</h4>
+                                    <div class="body-text">
+                                        "Central senses CSF, Peripheral senses blood."<br>
+                                        "O₂ drive is peripheral only – central doesn't sense O₂."
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.3 Reflexes Affecting Breathing',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Hering-Breuer Reflex:</strong> Stretch receptors in bronchial smooth muscle inhibit inspiration when lungs are overinflated. Mediated by vagal afferents. More important in infants than adults.
+                                </div>
+                                <div class="body-text">
+                                    <strong>J Reflex (Juxtapulmonary Capillary Receptors):</strong> Responds to pulmonary congestion or edema, causing rapid, shallow breathing.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Irritant Reflexes:</strong> Cough, sneeze, bronchoconstriction in response to noxious stimuli.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.4 Response to CO₂ and O₂',
+                            content: `
+                                <div class="body-text">
+                                    <strong>CO₂ Response:</strong> Ventilation increases linearly with PaCO₂ (slope ≈ 2-3 L/min per mmHg). This is the primary drive in normal individuals.
+                                </div>
+                                <div class="body-text">
+                                    <strong>O₂ Response:</strong> Ventilation increases little until PaO₂ falls below 60 mmHg, then increases exponentially. In chronic hypercapnia (COPD), the hypoxic drive becomes important.
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Clinical Pearl: Oxygen Therapy in COPD</h4>
+                                    <div class="body-text">
+                                        In chronic CO₂ retainers (COPD), the hypoxic drive may be the main stimulus for breathing. High-flow O₂ can suppress this drive, causing hypercapnia and respiratory acidosis. Give O₂ cautiously to maintain SpO₂ 88-92%.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 7 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Medulla: DRG (inspiration), VRG (forced breathing)</li>
+                                        <li><i class="fas fa-check"></i> Pons: pneumotaxic (inhibits inspiration), apneustic (promotes inspiration)</li>
+                                        <li><i class="fas fa-check"></i> Central chemoreceptors: respond to CSF H⁺ (CO₂)</li>
+                                        <li><i class="fas fa-check"></i> Peripheral chemoreceptors: respond to ↓PaO₂, ↑PaCO₂, ↑H⁺</li>
+                                        <li><i class="fas fa-check"></i> Hering-Breuer reflex: prevents overinflation</li>
+                                        <li><i class="fas fa-check"></i> Hypoxic drive important in COPD – avoid high-flow O₂</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 8. PULMONARY FUNCTION TESTS ====================
+                pft: {
+                    title: 'Pulmonary Function Tests',
+                    icon: 'fa-chart-line',
+                    sections: [
+                        {
+                            heading: '8.1 Spirometry Patterns',
+                            content: `
+                                <div class="lead-text">
+                                    Pulmonary function tests are essential for diagnosing and classifying respiratory diseases. They measure volumes, flow rates, and gas exchange capacity.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Obstructive</th>
+                                            <th>Restrictive</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>FEV₁</td>
+                                            <td>↓↓ Decreased</td>
+                                            <td>↓ or Normal</td>
+                                        </tr>
+                                        <tr>
+                                            <td>FVC</td>
+                                            <td>↓ or Normal</td>
+                                            <td>↓↓ Decreased</td>
+                                        </tr>
+                                        <tr>
+                                            <td>FEV₁/FVC</td>
+                                            <td>↓↓ <0.7</td>
+                                            <td>Normal or ↑ >0.8</td>
+                                        </tr>
+                                        <tr>
+                                            <td>TLC</td>
+                                            <td>Normal or ↑</td>
+                                            <td>↓↓ Decreased</td>
+                                        </tr>
+                                        <tr>
+                                            <td>RV</td>
+                                            <td>↑ (air trapping)</td>
+                                            <td>↓</td>
+                                        </tr>
+                                        <tr>
+                                            <td>RV/TLC</td>
+                                            <td>↑</td>
+                                            <td>Normal</td>
+                                        </tr>
+                                        <tr>
+                                            <td>DLCO</td>
+                                            <td>↓ in emphysema; normal in asthma</td>
+                                            <td>↓ in fibrosis; normal in chest wall restriction</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '8.2 Flow-Volume Loops',
+                            content: `
+                                <div class="body-text">
+                                    Flow-volume loops provide visual patterns of airway obstruction:
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Condition</th>
+                                            <th>Loop Shape</th>
+                                            <th>Example</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Normal</strong></td>
+                                            <td>Rapid rise to peak flow, linear descent</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Obstructive</strong></td>
+                                            <td>Scooped out, concave shape (decreased flow at low lung volumes)</td>
+                                            <td>COPD, asthma</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Restrictive</strong></td>
+                                            <td>Tall, narrow pattern (normal flow but reduced volumes)</td>
+                                            <td>Pulmonary fibrosis</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Fixed Upper Airway Obstruction</strong></td>
+                                            <td>Flattened on both inspiration and expiration</td>
+                                            <td>Tracheal stenosis, goiter</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Variable Extrathoracic Obstruction</strong></td>
+                                            <td>Flattened on inspiration only</td>
+                                            <td>Vocal cord paralysis</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Variable Intrathoracic Obstruction</strong></td>
+                                            <td>Flattened on expiration only</td>
+                                            <td>Tracheomalacia</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '8.3 Diffusing Capacity (DLCO)',
+                            content: `
+                                <div class="body-text">
+                                    DLCO measures the lung's ability to transfer gas from alveoli to pulmonary capillaries. It depends on:
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Alveolar surface area</li>
+                                    <li>Thickness of alveolar-capillary membrane</li>
+                                    <li>Pulmonary capillary blood volume</li>
+                                </ul>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>↓ DLCO (Decreased)</th>
+                                            <th>Normal DLCO</th>
+                                            <th>↑ DLCO (Increased)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Emphysema</td>
+                                            <td>Asthma</td>
+                                            <td>Polycythemia</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pulmonary fibrosis</td>
+                                            <td>Chronic bronchitis</td>
+                                            <td>Left-to-right shunt</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pulmonary embolism</td>
+                                            <td>Chest wall restriction</td>
+                                            <td>Asthma (mild increase)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Anemia</td>
+                                            <td></td>
+                                            <td>Pulmonary hemorrhage</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 8 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Obstructive: ↓FEV₁/FVC, ↑RV, normal/↑TLC</li>
+                                        <li><i class="fas fa-check"></i> Restrictive: ↓FVC, normal/↑FEV₁/FVC, ↓TLC</li>
+                                        <li><i class="fas fa-check"></i> Flow-volume loops: obstructive (scooped), restrictive (tall/narrow)</li>
+                                        <li><i class="fas fa-check"></i> DLCO decreased in emphysema, fibrosis, PE, anemia</li>
+                                        <li><i class="fas fa-check"></i> DLCO normal in asthma, chronic bronchitis</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 9. OBSTRUCTIVE LUNG DISEASES ====================
+                obstructive: {
+                    title: 'Obstructive Lung Diseases',
+                    icon: 'fa-disease',
+                    sections: [
+                        {
+                            heading: '9.1 Asthma',
+                            content: `
+                                <div class="lead-text">
+                                    Asthma is a chronic inflammatory disorder of the airways characterized by reversible airflow obstruction, bronchial hyperresponsiveness, and airway inflammation.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-microscope"></i> Pathophysiology</h4>
+                                    <div class="body-text">
+                                        <strong>Early Phase (acute):</strong> IgE-mediated mast cell degranulation → histamine, leukotrienes, prostaglandins → bronchospasm, mucosal edema, mucus secretion.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Late Phase (4-8 hours later):</strong> Eosinophil and neutrophil recruitment → epithelial damage, chronic inflammation, airway remodeling.
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Pathology Findings:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Mucus plugs with Curschmann spirals (casts of small airways)</li>
+                                    <li>Charcot-Leyden crystals (eosinophil breakdown products)</li>
+                                    <li>Thickened basement membrane</li>
+                                    <li>Hypertrophy of bronchial smooth muscle</li>
+                                    <li>Eosinophilic infiltration</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '9.2 COPD: Emphysema',
+                            content: `
+                                <div class="body-text">
+                                    Emphysema is characterized by permanent enlargement of air spaces distal to terminal bronchioles, with destruction of alveolar walls.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Location</th>
+                                            <th>Cause</th>
+                                            <th>Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Centriacinar (Centrilobular)</strong></td>
+                                            <td>Respiratory bronchioles (upper lobes)</td>
+                                            <td>Smoking (most common)</td>
+                                            <td>Destruction of central portion of acinus; spares distal alveoli</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Panacinar (Panlobular)</strong></td>
+                                            <td>Entire acinus (lower lobes)</td>
+                                            <td>α1-antitrypsin deficiency</td>
+                                            <td>Uniform destruction of all alveoli; associated with cirrhosis</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Paraseptal (Distal acinar)</strong></td>
+                                            <td>Distal acinus, adjacent to pleura</td>
+                                            <td>Often spontaneous</td>
+                                            <td>Associated with spontaneous pneumothorax</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-dna"></i> α1-Antitrypsin Deficiency</h4>
+                                    <div class="body-text">
+                                        α1-antitrypsin inhibits neutrophil elastase. Deficiency (PiZZ phenotype) allows elastase to destroy alveolar walls. Presents with panacinar emphysema and cirrhosis. Autosomal codominant; more common in Europeans.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '9.3 COPD: Chronic Bronchitis',
+                            content: `
+                                <div class="body-text">
+                                    Chronic bronchitis is defined clinically as chronic cough with sputum production for at least 3 months in 2 consecutive years.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-microscope"></i> Pathology</h4>
+                                    <div class="body-text">
+                                        <strong>Reid Index:</strong> Ratio of mucous gland thickness to bronchial wall thickness. Normal <0.3; in chronic bronchitis, >0.4 due to mucous gland hyperplasia.
+                                    </div>
+                                    <div class="body-text">
+                                        Other findings: Goblet cell metaplasia, chronic inflammation, squamous metaplasia, smooth muscle hypertrophy.
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>"Blue Bloaters":</strong> Hypoxemia, cyanosis, cor pulmonale, edema (due to right heart failure).
+                                </div>
+                                <div class="body-text">
+                                    <strong>"Pink Puffers" (emphysema):</strong> Cachexia, pursed-lip breathing, minimal cyanosis.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '9.4 Bronchiectasis',
+                            content: `
+                                <div class="body-text">
+                                    Bronchiectasis is permanent dilation of bronchi due to chronic infection and inflammation that destroys smooth muscle and elastic tissue.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Causes:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Cystic fibrosis (most common cause in developed countries)</li>
+                                    <li>Primary ciliary dyskinesia (Kartagener syndrome: bronchiectasis, sinusitis, situs inversus)</li>
+                                    <li>Allergic bronchopulmonary aspergillosis (ABPA)</li>
+                                    <li>Post-infectious (pertussis, measles, TB)</li>
+                                    <li>Immunodeficiency states</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Clinical:</strong> Chronic cough with copious purulent sputum, hemoptysis, clubbing.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Pathology:</strong> Dilated airways filled with mucus and neutrophils; bronchial arteries enlarge and can rupture (hemoptysis).
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 9 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Asthma: reversible obstruction, eosinophils, Curschmann spirals, Charcot-Leyden crystals</li>
+                                        <li><i class="fas fa-check"></i> Centriacinar emphysema: upper lobes, smoking</li>
+                                        <li><i class="fas fa-check"></i> Panacinar emphysema: lower lobes, α1-antitrypsin deficiency</li>
+                                        <li><i class="fas fa-check"></i> Chronic bronchitis: Reid index >0.4, blue bloaters</li>
+                                        <li><i class="fas fa-check"></i> Bronchiectasis: permanent dilation; causes: CF, Kartagener, ABPA</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 10. RESTRICTIVE LUNG DISEASES ====================
+                restrictive: {
+                    title: 'Restrictive Lung Diseases',
+                    icon: 'fa-lungs',
+                    sections: [
+                        {
+                            heading: '10.1 Idiopathic Pulmonary Fibrosis (IPF)',
+                            content: `
+                                <div class="lead-text">
+                                    IPF is the most common idiopathic interstitial pneumonia, characterized by progressive fibrosis leading to restrictive physiology and respiratory failure.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-microscope"></i> Pathology: Usual Interstitial Pneumonia (UIP)</h4>
+                                    <div class="body-text">
+                                        <strong>Hallmarks:</strong>
+                                        <ul style="margin-left:2rem;">
+                                            <li>Heterogeneous appearance: areas of fibrosis adjacent to normal lung</li>
+                                            <li>Fibroblastic foci (clusters of proliferating fibroblasts)</li>
+                                            <li>Honeycombing (cystic spaces lined by bronchiolar epithelium)</li>
+                                            <li>Temporal heterogeneity (different stages of fibrosis)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Clinical:</strong> Progressive dyspnea, dry cough, clubbing, Velcro-like crackles on auscultation.
+                                </div>
+                                <div class="body-text">
+                                    <strong>PFTs:</strong> Restrictive pattern (↓ TLC, ↓ FVC, normal FEV₁/FVC), ↓ DLCO.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '10.2 Pneumoconioses',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disease</th>
+                                            <th>Agent</th>
+                                            <th>Occupations</th>
+                                            <th>Pathology</th>
+                                            <th>Complications</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Silicosis</strong></td>
+                                            <td>Silica (SiO₂)</td>
+                                            <td>Mining, sandblasting, stone cutting</td>
+                                            <td>Silicotic nodules (whorled collagen), eggshell calcification of hilar nodes</td>
+                                            <td>↑ risk TB, Caplan syndrome (rheumatoid nodules + pneumoconiosis)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Asbestosis</strong></td>
+                                            <td>Asbestos fibers</td>
+                                            <td>Shipbuilding, construction, insulation</td>
+                                            <td>Asbestos bodies (golden-brown, beaded rods), interstitial fibrosis, pleural plaques</td>
+                                            <td>Mesothelioma, bronchogenic carcinoma (↑ risk with smoking)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Coal Worker's Pneumoconiosis</strong></td>
+                                            <td>Coal dust</td>
+                                            <td>Coal mining</td>
+                                            <td>Coal macules (carbon-laden macrophages), progressive massive fibrosis</td>
+                                            <td>Cor pulmonale</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Berylliosis</strong></td>
+                                            <td>Beryllium</td>
+                                            <td>Aerospace, electronics</td>
+                                            <td>Non-caseating granulomas (similar to sarcoidosis)</td>
+                                            <td>Chronic lung disease</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid</h4>
+                                    <div class="body-text">
+                                        "Asbestos = bodies and plaques, cancer; Silica = TB and eggshell nodes; Coal = macules"
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '10.3 Sarcoidosis',
+                            content: `
+                                <div class="body-text">
+                                    Sarcoidosis is a multisystem granulomatous disorder of unknown cause, characterized by non-caseating granulomas.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Pathology:</strong> Non-caseating granulomas with giant cells (Langhans type), Schaumann bodies (calcified inclusions), asteroid bodies.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Clinical:</strong> Bilateral hilar lymphadenopathy, pulmonary infiltrates, erythema nodosum, uveitis, hypercalcemia (due to ↑ 1,25-dihydroxyvitamin D from macrophages), ↑ ACE levels.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '10.4 Hypersensitivity Pneumonitis',
+                            content: `
+                                <div class="body-text">
+                                    Hypersensitivity pneumonitis (extrinsic allergic alveolitis) is a granulomatous interstitial lung disease caused by inhalation of organic antigens.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disease</th>
+                                            <th>Antigen</th>
+                                            <th>Source</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Farmer's lung</td>
+                                            <td>Saccharopolyspora rectivirgula</td>
+                                            <td>Moldy hay</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bird fancier's lung</td>
+                                            <td>Avian proteins</td>
+                                            <td>Bird droppings</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Humidifier lung</td>
+                                            <td>Various bacteria/fungi</td>
+                                            <td>Contaminated humidifiers</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="body-text">
+                                    <strong>Pathology:</strong> Non-caseating granulomas, mononuclear cell infiltrate, giant cells. Chronic form leads to fibrosis.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 10 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> IPF: UIP pattern, honeycombing, fibroblastic foci</li>
+                                        <li><i class="fas fa-check"></i> Silicosis: eggshell nodes, ↑ TB risk</li>
+                                        <li><i class="fas fa-check"></i> Asbestosis: asbestos bodies, pleural plaques, ↑ mesothelioma and lung cancer</li>
+                                        <li><i class="fas fa-check"></i> Coal worker's: coal macules, progressive massive fibrosis</li>
+                                        <li><i class="fas fa-check"></i> Sarcoidosis: non-caseating granulomas, ↑ACE, hypercalcemia</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 11. PULMONARY VASCULAR DISEASE ====================
+                vascular: {
+                    title: 'Pulmonary Vascular Disease',
+                    icon: 'fa-heart-crack',
+                    sections: [
+                        {
+                            heading: '11.1 Pulmonary Embolism (PE)',
+                            content: `
+                                <div class="lead-text">
+                                    Pulmonary embolism is occlusion of pulmonary arteries by thrombus, usually originating from deep veins of the legs (DVT).
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-clot"></i> Pathophysiology</h4>
+                                    <div class="body-text">
+                                        <strong>Virchow's Triad:</strong> Stasis, endothelial injury, hypercoagulability.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Sources:</strong> 95% from deep leg veins (iliac, femoral, popliteal). Other sources: pelvic veins, right atrium (in AF), upper extremities.
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Consequences:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Increased dead space (V/Q mismatch)</li>
+                                    <li>Hypoxemia due to shunting and low mixed venous O₂</li>
+                                    <li>Pulmonary infarction (if collateral circulation inadequate) – hemorrhagic, wedge-shaped</li>
+                                    <li>Increased pulmonary vascular resistance → right heart strain</li>
+                                </ul>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Diagnosis</h4>
+                                    <div class="body-text">
+                                        CT pulmonary angiography is diagnostic. D-dimer has high negative predictive value. ECG: S1Q3T3 (rare), right heart strain. ABG: hypoxemia, respiratory alkalosis.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '11.2 Pulmonary Hypertension',
+                            content: `
+                                <div class="body-text">
+                                    Pulmonary hypertension (PH) is defined as mean pulmonary artery pressure >20 mmHg at rest (previously >25 mmHg).
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>WHO Group</th>
+                                            <th>Classification</th>
+                                            <th>Examples</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Group 1</strong></td>
+                                            <td>Pulmonary arterial hypertension (PAH)</td>
+                                            <td>Idiopathic (plexiform lesions), heritable (BMPR2 mutation), drugs, connective tissue disease, HIV</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Group 2</strong></td>
+                                            <td>Left heart disease</td>
+                                            <td>Mitral stenosis, LV failure (most common cause)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Group 3</strong></td>
+                                            <td>Lung disease/hypoxia</td>
+                                            <td>COPD, interstitial lung disease, sleep apnea</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Group 4</strong></td>
+                                            <td>Chronic thromboembolic PH</td>
+                                            <td>Chronic PE</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Group 5</strong></td>
+                                            <td>Multifactorial/unclear</td>
+                                            <td>Sarcoidosis, hematologic disorders</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="body-text">
+                                    <strong>Pathology:</strong> Intimal fibrosis, medial hypertrophy, plexiform lesions (idiopathic PAH). Right ventricular hypertrophy → cor pulmonale.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 11 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> PE: from DVT → increased dead space, hypoxemia, hemorrhagic infarction</li>
+                                        <li><i class="fas fa-check"></i> Virchow's triad: stasis, injury, hypercoagulability</li>
+                                        <li><i class="fas fa-check"></i> Pulmonary hypertension: mean PA >20 mmHg</li>
+                                        <li><i class="fas fa-check"></i> Group 1: PAH (plexiform lesions, BMPR2 mutation)</li>
+                                        <li><i class="fas fa-check"></i> Group 2: left heart disease (most common)</li>
+                                        <li><i class="fas fa-check"></i> Cor pulmonale: RV failure due to lung disease</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 12. RESPIRATORY INFECTIONS ====================
+                infections: {
+                    title: 'Respiratory Infections',
+                    icon: 'fa-virus',
+                    sections: [
+                        {
+                            heading: '12.1 Pneumonia: Classification',
+                            content: `
+                                <div class="lead-text">
+                                    Pneumonia is inflammation of lung parenchyma caused by infectious agents. Classification helps predict etiology and guide treatment.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Typical Organisms</th>
+                                            <th>Pathology</th>
+                                            <th>Chest X-ray</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Lobar Pneumonia</strong></td>
+                                            <td>Streptococcus pneumoniae (most common), Klebsiella</td>
+                                            <td>Fills entire lobe; stages: congestion, red hepatization (RBCs), gray hepatization (neutrophils), resolution</td>
+                                            <td>Lobar consolidation</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Bronchopneumonia</strong></td>
+                                            <td>Staph. aureus, H. influenzae, anaerobes, aspiration</td>
+                                            <td>Patchy, peribronchiolar inflammation, centered on airways</td>
+                                            <td>Patchy infiltrates, often bilateral</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Interstitial (Atypical) Pneumonia</strong></td>
+                                            <td>Mycoplasma pneumoniae, viruses (influenza, RSV), Chlamydia</td>
+                                            <td>Interstitial inflammation, no alveolar exudate</td>
+                                            <td>Interstitial infiltrates, often bilateral</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '12.2 Specific Organisms and Features',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Organism</th>
+                                            <th>Risk Factors/Settings</th>
+                                            <th>Key Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Streptococcus pneumoniae</strong></td>
+                                            <td>Most common community-acquired; post-influenza</td>
+                                            <td>Lobar pattern, rusty sputum, positive quellung reaction</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Klebsiella pneumoniae</strong></td>
+                                            <td>Alcoholics, diabetics, hospitalized</td>
+                                            <td>Currant jelly sputum, bulging fissure on X-ray, lobar</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Staphylococcus aureus</strong></td>
+                                            <td>Post-viral, hospitalized, IV drug users</td>
+                                            <td>Bronchopneumonia, cavitation, pneumatocele (children)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Haemophilus influenzae</strong></td>
+                                            <td>COPD, children (unvaccinated)</td>
+                                            <td>Bronchopneumonia, epiglottitis (type b)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Legionella pneumophila</strong></td>
+                                            <td>Contaminated water (air conditioning), smokers</td>
+                                            <td>Multi-system: fever, hyponatremia, elevated LFTs, diarrhea</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Mycoplasma pneumoniae</strong></td>
+                                            <td>Young adults, closed communities</td>
+                                            <td>Interstitial, cold agglutinins, extrapulmonary (rash, hemolysis)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Pneumocystis jirovecii</strong></td>
+                                            <td>HIV (CD4 <200), immunosuppressed</td>
+                                            <td>Ground-glass opacities, frothy eosinophilic exudate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '12.3 Tuberculosis',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Primary Tuberculosis:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>Ghon focus:</strong> Subpleural parenchymal lesion (usually upper part of lower lobe or lower part of upper lobe)</li>
+                                    <li><strong>Ghon complex:</strong> Ghon focus + caseous granuloma in involved lymph node</li>
+                                    <li>Usually heals, may become latent</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Secondary (Reactivation) Tuberculosis:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Typically in apical upper lobes (high oxygen tension)</li>
+                                    <li>Cavitation common (caseous necrosis drains via bronchus)</li>
+                                    <li>Can spread locally or via blood (miliary TB – multiple small granulomas throughout body)</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Pathology:</strong> Caseating granulomas with Langhans giant cells, acid-fast bacilli (AFB) on Ziehl-Neelsen stain.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 12 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Lobar: Strep pneumo (rusty sputum), Klebsiella (currant jelly)</li>
+                                        <li><i class="fas fa-check"></i> Bronchopneumonia: Staph, H. flu, aspiration</li>
+                                        <li><i class="fas fa-check"></i> Atypical: Mycoplasma (cold agglutinins), Legionella (hyponatremia)</li>
+                                        <li><i class="fas fa-check"></i> Primary TB: Ghon complex</li>
+                                        <li><i class="fas fa-check"></i> Secondary TB: apical cavitation, reactivation</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 13. NEONATAL & PEDIATRIC DISORDERS ====================
+                neonatal: {
+                    title: 'Neonatal & Pediatric Disorders',
+                    icon: 'fa-baby',
+                    sections: [
+                        {
+                            heading: '13.1 Respiratory Distress Syndrome (RDS)',
+                            content: `
+                                <div class="body-text">
+                                    See Chapter 4 (Surfactant) for detailed coverage.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '13.2 Meconium Aspiration Syndrome',
+                            content: `
+                                <div class="body-text">
+                                    Fetal stress (hypoxia) → meconium passed in utero → aspirated into lungs before or during delivery.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Consequences:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Airway obstruction (ball-valve effect → air trapping or atelectasis)</li>
+                                    <li>Chemical pneumonitis (inflammation from meconium components)</li>
+                                    <li>Surfactant inactivation</li>
+                                    <li>Secondary bacterial pneumonia</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Clinical:</strong> Tachypnea, retractions, cyanosis in post-term infant. Chest X-ray: coarse, patchy infiltrates, hyperinflation, atelectasis.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '13.3 Bronchopulmonary Dysplasia (BPD)',
+                            content: `
+                                <div class="body-text">
+                                    Chronic lung disease of prematurity resulting from oxygen toxicity and barotrauma in mechanically ventilated infants.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Pathology:</strong> Alveolar simplification, fibrosis, smooth muscle hypertrophy.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Risk factors:</strong> Prematurity, low birth weight, oxygen therapy, mechanical ventilation, PDA.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '13.4 Congenital Diaphragmatic Hernia',
+                            content: `
+                                <div class="body-text">
+                                    Failure of pleuroperitoneal canal closure → herniation of abdominal contents into thorax → pulmonary hypoplasia and persistent pulmonary hypertension.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Clinical:</strong> Respiratory distress at birth, scaphoid abdomen, bowel sounds in chest. Most common on left side.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 13 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> RDS: surfactant deficiency in prematurity</li>
+                                        <li><i class="fas fa-check"></i> Meconium aspiration: post-term, chemical pneumonitis, air trapping</li>
+                                        <li><i class="fas fa-check"></i> BPD: oxygen toxicity + barotrauma in preemies</li>
+                                        <li><i class="fas fa-check"></i> Diaphragmatic hernia: left-sided, pulmonary hypoplasia</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 14. RESPIRATORY PHARMACOLOGY ====================
+                pharma: {
+                    title: 'Respiratory Pharmacology',
+                    icon: 'fa-pills',
+                    sections: [
+                        {
+                            heading: '14.1 Bronchodilators',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Class</th>
+                                            <th>Drugs</th>
+                                            <th>Mechanism</th>
+                                            <th>Clinical Use</th>
+                                            <th>Side Effects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>β2-Agonists (Short-acting, SABA)</strong></td>
+                                            <td>Albuterol (salbutamol), terbutaline</td>
+                                            <td>β2 receptor stimulation → ↑cAMP → smooth muscle relaxation</td>
+                                            <td>Acute asthma attacks, prevention of exercise-induced bronchospasm</td>
+                                            <td>Tachycardia, tremor, hypokalemia</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>β2-Agonists (Long-acting, LABA)</strong></td>
+                                            <td>Salmeterol, formoterol</td>
+                                            <td>Same mechanism, longer duration</td>
+                                            <td>Maintenance therapy (always with ICS)</td>
+                                            <td>Same as SABA</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Anticholinergics (Short-acting)</strong></td>
+                                            <td>Ipratropium</td>
+                                            <td>Muscarinic (M3) receptor antagonist → ↓ bronchomotor tone</td>
+                                            <td>COPD, acute asthma (with β2-agonist)</td>
+                                            <td>Dry mouth, bitter taste</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Anticholinergics (Long-acting, LAMA)</strong></td>
+                                            <td>Tiotropium</td>
+                                            <td>Same mechanism</td>
+                                            <td>COPD maintenance</td>
+                                            <td>Dry mouth</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Methylxanthines</strong></td>
+                                            <td>Theophylline</td>
+                                            <td>Non-selective phosphodiesterase inhibitor → ↑cAMP; adenosine antagonist</td>
+                                            <td>Add-on therapy in severe COPD/asthma</td>
+                                            <td>Tachycardia, nausea, seizures (narrow therapeutic window)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '14.2 Anti-inflammatory Drugs',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Class</th>
+                                            <th>Drugs</th>
+                                            <th>Mechanism</th>
+                                            <th>Clinical Use</th>
+                                            <th>Side Effects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Inhaled Corticosteroids (ICS)</strong></td>
+                                            <td>Fluticasone, budesonide, beclomethasone</td>
+                                            <td>Suppress airway inflammation, reduce eosinophils, decrease cytokine production</td>
+                                            <td>Asthma maintenance (first-line), COPD with frequent exacerbations</td>
+                                            <td>Oral candidiasis, dysphonia</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Systemic Corticosteroids</strong></td>
+                                            <td>Prednisone, methylprednisolone</td>
+                                            <td>Same mechanism</td>
+                                            <td>Acute severe asthma, COPD exacerbations</td>
+                                            <td>Hyperglycemia, osteoporosis, immunosuppression</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Leukotriene Receptor Antagonists</strong></td>
+                                            <td>Montelukast, zafirlukast</td>
+                                            <td>Block LTD4 receptors</td>
+                                            <td>Asthma (especially exercise-induced, allergic), aspirin-exacerbated respiratory disease</td>
+                                            <td>Neuropsychiatric effects (montelukast)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>5-Lipoxygenase Inhibitor</strong></td>
+                                            <td>Zileuton</td>
+                                            <td>Inhibits leukotriene synthesis</td>
+                                            <td>Asthma</td>
+                                            <td>Hepatotoxicity, drug interactions</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Mast Cell Stabilizers</strong></td>
+                                            <td>Cromolyn, nedocromil</td>
+                                            <td>Inhibit mast cell degranulation</td>
+                                            <td>Prophylaxis (not acute), allergic asthma</td>
+                                            <td>Minimal, cough</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '14.3 Other Respiratory Drugs',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Drug</th>
+                                            <th>Mechanism</th>
+                                            <th>Clinical Use</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Omalizumab</strong></td>
+                                            <td>Anti-IgE monoclonal antibody</td>
+                                            <td>Severe allergic asthma, chronic urticaria</td>
+                                            <td>Subcutaneous, expensive, risk of anaphylaxis</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Mepolizumab, Benralizumab</strong></td>
+                                            <td>Anti-IL-5 antibodies (inhibit eosinophils)</td>
+                                            <td>Severe eosinophilic asthma</td>
+                                            <td>Reduce exacerbations</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Dupilumab</strong></td>
+                                            <td>Anti-IL-4/IL-13 receptor</td>
+                                            <td>Severe asthma, atopic dermatitis</td>
+                                            <td>Th2 inflammation blockade</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>α1-Antitrypsin Augmentation</strong></td>
+                                            <td>Replaces deficient enzyme</td>
+                                            <td>α1-antitrypsin deficiency</td>
+                                            <td>IV infusion, slows emphysema progression</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Pulmonary Vasodilators</strong></td>
+                                            <td>Prostacyclin analogs (epoprostenol), endothelin antagonists (bosentan), PDE5 inhibitors (sildenafil)</td>
+                                            <td>Pulmonary arterial hypertension</td>
+                                            <td>See pharmacology chapter</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 14 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> SABA: albuterol – acute relief</li>
+                                        <li><i class="fas fa-check"></i> LABA: salmeterol – maintenance (always with ICS)</li>
+                                        <li><i class="fas fa-check"></i> Anticholinergics: ipratropium (short), tiotropium (long) – COPD</li>
+                                        <li><i class="fas fa-check"></i> ICS: fluticasone – asthma maintenance</li>
+                                        <li><i class="fas fa-check"></i> Leukotriene antagonists: montelukast – allergic asthma</li>
+                                        <li><i class="fas fa-check"></i> Anti-IgE: omalizumab – severe allergic asthma</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // ==================== 15. HYPOXIA & OXYGEN THERAPY ====================
+                hypoxia: {
+                    title: 'Hypoxia & Oxygen Therapy',
+                    icon: 'fa-droplet',
+                    sections: [
+                        {
+                            heading: '15.1 Types of Hypoxia',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Definition</th>
+                                            <th>PaO₂</th>
+                                            <th>O₂ Content</th>
+                                            <th>Examples</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Hypoxemic Hypoxia</strong></td>
+                                            <td>Low arterial PaO₂</td>
+                                            <td>↓</td>
+                                            <td>↓</td>
+                                            <td>V/Q mismatch, shunt, hypoventilation, diffusion impairment, low PIO₂</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Anemic Hypoxia</strong></td>
+                                            <td>Reduced O₂-carrying capacity</td>
+                                            <td>Normal</td>
+                                            <td>↓</td>
+                                            <td>Anemia, CO poisoning, methemoglobinemia</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Stagnant Hypoxia</strong></td>
+                                            <td>Reduced blood flow</td>
+                                            <td>Normal</td>
+                                            <td>Normal</td>
+                                            <td>Heart failure, shock, local ischemia</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Histotoxic Hypoxia</strong></td>
+                                            <td>Tissues unable to use O₂</td>
+                                            <td>Normal</td>
+                                            <td>Normal</td>
+                                            <td>Cyanide poisoning (inhibits cytochrome oxidase)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Carbon Monoxide Poisoning</h4>
+                                    <div class="body-text">
+                                        CO binds Hb with 250x greater affinity than O₂ → ↓ O₂ content, shifts O₂ curve left. PaO₂ normal (dissolved O₂ unaffected). Cherry-red skin color, pulse oximetry falsely normal. Treatment: 100% O₂, hyperbaric O₂.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '15.2 Causes of Hypoxemia',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Cause</th>
+                                            <th>A-a Gradient</th>
+                                            <th>Response to 100% O₂</th>
+                                            <th>Examples</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Hypoventilation</strong></td>
+                                            <td>Normal</td>
+                                            <td>Corrects</td>
+                                            <td>Opiate overdose, neuromuscular disease</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Low PIO₂</strong></td>
+                                            <td>Normal</td>
+                                            <td>Corrects</td>
+                                            <td>High altitude</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>V/Q Mismatch</strong></td>
+                                            <td>↑</td>
+                                            <td>Corrects</td>
+                                            <td>Asthma, COPD (most common cause)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Shunt</strong></td>
+                                            <td>↑</td>
+                                            <td><strong>Does NOT correct</strong></td>
+                                            <td>Pneumonia, atelectasis, ARDS, cardiac shunt</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Diffusion Limitation</strong></td>
+                                            <td>↑</td>
+                                            <td>Corrects</td>
+                                            <td>Interstitial lung disease, emphysema (during exercise)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid</h4>
+                                    <div class="body-text">
+                                        "A-a gradient increased in V/Q mismatch, shunt, and diffusion limitation – NOT in hypoventilation or low PIO₂."
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '15.3 Oxygen Therapy',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Indications:</strong> PaO₂ <60 mmHg or SaO₂ <90%.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Delivery Systems:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Nasal cannula: 1-6 L/min (24-44% O₂)</li>
+                                    <li>Simple face mask: 5-10 L/min (35-60% O₂)</li>
+                                    <li>Non-rebreather mask: 10-15 L/min (60-80% O₂)</li>
+                                    <li>Venturi mask: precise FiO₂ (24-50%), good for COPD</li>
+                                    <li>High-flow nasal cannula: heated, humidified, up to 100% O₂</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Hazards of Oxygen Therapy:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li><strong>Oxygen toxicity:</strong> Free radical damage → ARDS-like picture</li>
+                                    <li><strong>Absorption atelectasis:</strong> High O₂ washes out N₂ (splint) → alveolar collapse</li>
+                                    <li><strong>Retinopathy of prematurity (ROP):</strong> In premature infants</li>
+                                    <li><strong>COPD patients:</strong> May suppress hypoxic drive → hypercapnia</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 15 Summary: Key Points',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> High-Yield Summary</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Hypoxemic: ↓PaO₂; Anemic: normal PaO₂, ↓O₂ content; Stagnant: normal PaO₂ and content; Histotoxic: cyanide</li>
+                                        <li><i class="fas fa-check"></i> Shunt: does NOT correct with 100% O₂</li>
+                                        <li><i class="fas fa-check"></i> CO poisoning: normal PaO₂, ↓O₂ content, cherry-red skin</li>
+                                        <li><i class="fas fa-check"></i> O₂ therapy indicated for PaO₂ <60 mmHg or SaO₂ <90%</li>
+                                        <li><i class="fas fa-check"></i> Hazards: oxygen toxicity, ROP, absorption atelectasis, CO₂ retention</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                }
+            };
+
+            // Render function
+            function renderChapter(chapterId) {
+                const chap = chapters[chapterId];
+                if (!chap) return;
+
+                let html = `<div class="chapter-content">`;
+                html += `<div class="chapter-title"><i class="fas ${chap.icon}"></i> ${chap.title}</div>`;
+
+                chap.sections.forEach((section, idx) => {
+                    html += `<div class="section-card">`;
+                    html += `<div class="section-heading"><i class="fas ${section.icon || 'fa-book-open'}"></i> ${section.heading}</div>`;
+                    
+                    if (section.content) {
+                        html += section.content;
+                    }
+
+                    // Add progress checkbox
+                    html += `<div class="progress-checkbox" onclick="toggleProgressHandler(event, this)">`;
+                    html += `<input type="checkbox" class="progress-input" data-key="${chapterId}-${idx}" onclick="event.stopPropagation()"> <span>Mark as read</span>`;
+                    html += `</div>`;
+
+                    html += `</div>`;
+                });
+
+                html += `<div class="footer-note"><i class="fas fa-feather"></i> Abubakar Sadeeq · Premium Respiratory Textbook</div>`;
+                html += `</div>`;
+
+                document.getElementById('readerPanel').innerHTML = html;
+
+                // Restore progress
+                document.querySelectorAll('.progress-input').forEach(cb => {
+                    const key = cb.dataset.key;
+                    const saved = localStorage.getItem(`progress-${key}`);
+                    if (saved === 'true') cb.checked = true;
+                });
+            }
+
+            // Progress handler
+            window.toggleProgressHandler = function(event, container) {
+                const cb = container.querySelector('.progress-input');
+                cb.checked = !cb.checked;
+                localStorage.setItem(`progress-${cb.dataset.key}`, cb.checked);
+                event.stopPropagation();
+            };
+
+            // Chapter switching
+            const chapterItems = document.querySelectorAll('.chapter-item');
+            chapterItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    chapterItems.forEach(ci => ci.classList.remove('active'));
+                    this.classList.add('active');
+                    renderChapter(this.dataset.chapter);
+                });
+            });
+
+            // Load first chapter
+            renderChapter('anatomy');
+        })();
+    </script>
+</body>
+</html>
