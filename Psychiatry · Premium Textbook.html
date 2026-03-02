@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatry · Premium Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f9ff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i {
+            font-size: 2rem;
+            color: #ffd966;
+        }
+        .top-bar h1 {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .top-bar .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .top-bar .credit i {
+            font-size: 1.2rem;
+            color: #ffd966;
+        }
+        /* toggle button for sidebar */
+        .toggle-sidebar {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+        }
+        .toggle-sidebar:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .book-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            flex: 1;
+            height: calc(100vh - 82px);
+            overflow: hidden;
+            transition: grid-template-columns 0.3s;
+        }
+        .book-container.sidebar-collapsed {
+            grid-template-columns: 0 1fr;
+        }
+        .toc-sidebar {
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 2rem 0.5rem 2rem 1.5rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .book-container.sidebar-collapsed .toc-sidebar {
+            display: none;
+        }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 8px solid #ffd966;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chapter-list {
+            list-style: none;
+        }
+        .chapter-item {
+            margin-bottom: 0.4rem;
+        }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.7rem 1rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            transition: all 0.3s;
+            background: #f8faff;
+        }
+        .chapter-item a i {
+            width: 22px;
+            font-size: 1rem;
+            color: #2c7cb0;
+            text-align: center;
+        }
+        .chapter-item a:hover {
+            background: #e6f0fa;
+            transform: translateX(5px);
+        }
+        .chapter-item.active a {
+            background: linear-gradient(135deg, #0a2942, #1b4c72);
+            color: white;
+            box-shadow: 0 5px 12px -5px #0a2942;
+        }
+        .chapter-item.active a i {
+            color: #ffd966;
+        }
+        .reader-panel {
+            background: white;
+            overflow-y: auto;
+            padding: 2rem 3rem;
+        }
+        .chapter-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1rem;
+            border-bottom: 4px solid #ffd966;
+            padding-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .chapter-title i {
+            font-size: 2.5rem;
+            color: #2c7cb0;
+        }
+        .section-card {
+            background: #ffffff;
+            border-radius: 30px;
+            padding: 2rem 2.5rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 15px 35px -15px rgba(10,41,66,0.15);
+            border: 1px solid #eef6ff;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 45px -15px rgba(10,41,66,0.2);
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 10px solid #ffd966;
+            padding-left: 20px;
+        }
+        .section-heading i {
+            font-size: 1.8rem;
+            color: #2c7cb0;
+        }
+        .lead-text {
+            font-family: 'Merriweather', serif;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #2c3e50;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+            font-style: italic;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            color: #34495e;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #2c7cb0;
+        }
+        .definition-box h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+            color: #0a2942;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #f39c12;
+        }
+        .clinical-correlation h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+            color: #c9760e;
+            margin-bottom: 0.8rem;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #27ae60;
+        }
+        .memory-aid h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+            color: #1e8449;
+            margin-bottom: 0.8rem;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 1.8rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points h4 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+            color: #6c3483;
+            margin-bottom: 0.8rem;
+        }
+        .key-points ul {
+            list-style: none;
+        }
+        .key-points li {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95rem;
+            color: #34495e;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .key-points li i {
+            color: #8e44ad;
+            font-size: 1rem;
+        }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px -10px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .premium-table th {
+            background: #0a2942;
+            color: white;
+            font-family: 'Merriweather', serif;
+            font-weight: 600;
+            padding: 1rem;
+            font-size: 1rem;
+            text-align: left;
+        }
+        .premium-table td {
+            padding: 1rem;
+            font-family: 'Open Sans', sans-serif;
+            color: #34495e;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .premium-table tr:last-child td {
+            border-bottom: none;
+        }
+        .premium-table tr:hover td {
+            background: #f8fbff;
+        }
+        /* Smaller mark as read button */
+        .progress-checkbox {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.8rem;
+            color: #2c7cb0;
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            border: 1px solid #d0e0f0;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .progress-checkbox input {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+        .footer-note {
+            margin-top: 3rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 1.5rem;
+            font-family: 'Open Sans', sans-serif;
+        }
+        @media (max-width: 900px) {
+            .book-container { grid-template-columns: 1fr; height: auto; }
+            .toc-sidebar { max-height: 300px; }
+            .reader-panel { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <i class="fas fa-brain"></i>
+        <h1>Psychiatry · Premium Textbook</h1>
+        <button class="toggle-sidebar" id="toggleSidebarBtn"><i class="fas fa-bars"></i> Contents</button>
+        <div class="credit"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="book-container" id="bookContainer">
+        <!-- Table of Contents Sidebar -->
+        <div class="toc-sidebar" id="tocSidebar">
+            <h2><i class="fas fa-list-ul"></i> Chapters</h2>
+            <ul class="chapter-list" id="chapterList">
+                <li class="chapter-item active" data-chapter="neurobiology"><a href="#"><i class="fas fa-synapse"></i> 1. Neurobiology of Mental Disorders</a></li>
+                <li class="chapter-item" data-chapter="schizophrenia"><a href="#"><i class="fas fa-disease"></i> 2. Schizophrenia Spectrum</a></li>
+                <li class="chapter-item" data-chapter="mood"><a href="#"><i class="fas fa-heart-crack"></i> 3. Mood Disorders</a></li>
+                <li class="chapter-item" data-chapter="anxiety"><a href="#"><i class="fas fa-fear"></i> 4. Anxiety Disorders</a></li>
+                <li class="chapter-item" data-chapter="ocd"><a href="#"><i class="fas fa-repeat"></i> 5. OCD & Related Disorders</a></li>
+                <li class="chapter-item" data-chapter="trauma"><a href="#"><i class="fas fa-shield-halved"></i> 6. Trauma & Stressor-Related</a></li>
+                <li class="chapter-item" data-chapter="dissociative"><a href="#"><i class="fas fa-person-walking"></i> 7. Dissociative Disorders</a></li>
+                <li class="chapter-item" data-chapter="somatic"><a href="#"><i class="fas fa-stethoscope"></i> 8. Somatic Symptom Disorders</a></li>
+                <li class="chapter-item" data-chapter="eating"><a href="#"><i class="fas fa-utensils"></i> 9. Eating Disorders</a></li>
+                <li class="chapter-item" data-chapter="sleep"><a href="#"><i class="fas fa-moon"></i> 10. Sleep Disorders</a></li>
+                <li class="chapter-item" data-chapter="personality"><a href="#"><i class="fas fa-user"></i> 11. Personality Disorders</a></li>
+                <li class="chapter-item" data-chapter="neurocognitive"><a href="#"><i class="fas fa-brain"></i> 12. Neurocognitive Disorders</a></li>
+                <li class="chapter-item" data-chapter="substance"><a href="#"><i class="fas fa-wine-bottle"></i> 13. Substance Use Disorders</a></li>
+                <li class="chapter-item" data-chapter="child"><a href="#"><i class="fas fa-child"></i> 14. Child & Adolescent Psychiatry</a></li>
+                <li class="chapter-item" data-chapter="psychopharm"><a href="#"><i class="fas fa-pills"></i> 15. Psychopharmacology</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Reader Panel -->
+        <div class="reader-panel" id="readerPanel">
+            <!-- Content will be injected -->
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ==================== PSYCHIATRY COMPLETE CONTENT ====================
+            const chapters = {
+                // 1. NEUROBIOLOGY
+                neurobiology: {
+                    title: 'Neurobiology of Mental Disorders',
+                    icon: 'fa-synapse',
+                    sections: [
+                        {
+                            heading: '1.1 Neurotransmitter Systems',
+                            content: `
+                                <div class="lead-text">
+                                    The major neurotransmitter systems implicated in psychiatric disorders include monoamines (dopamine, norepinephrine, serotonin), amino acids (glutamate, GABA), and neuropeptides.
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Neurotransmitter</th>
+                                            <th>Synthesis</th>
+                                            <th>Pathways</th>
+                                            <th>Receptors</th>
+                                            <th>Psychiatric Relevance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Dopamine (DA)</strong></td>
+                                            <td>Tyrosine → L-DOPA → DA</td>
+                                            <td>Mesolimbic, mesocortical, nigrostriatal, tuberoinfundibular</td>
+                                            <td>D1-like (D1,D5), D2-like (D2,D3,D4)</td>
+                                            <td>Schizophrenia (hyperactivity in mesolimbic), Parkinson's (degeneration nigrostriatal), addiction</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Norepinephrine (NE)</strong></td>
+                                            <td>Dopamine → NE (via DBH)</td>
+                                            <td>Locus coeruleus projections</td>
+                                            <td>α1, α2, β1, β2, β3</td>
+                                            <td>Mood disorders, anxiety, attention (ADHD)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Serotonin (5-HT)</strong></td>
+                                            <td>Tryptophan → 5-HTP → 5-HT</td>
+                                            <td>Raphe nuclei projections</td>
+                                            <td>7 families (5-HT1 to 5-HT7), mostly GPCRs except 5-HT3 (ion channel)</td>
+                                            <td>Depression, anxiety, OCD, eating disorders, impulse control</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>GABA</strong></td>
+                                            <td>Glutamate → GABA (via GAD)</td>
+                                            <td>Interneurons throughout brain</td>
+                                            <td>GABA<sub>A</sub> (ionotropic, Cl⁻), GABA<sub>B</sub> (GPCR)</td>
+                                            <td>Anxiety (benzodiazepines enhance GABA), epilepsy, sedation</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Glutamate</strong></td>
+                                            <td>Glutamine → glutamate</td>
+                                            <td>Widespread excitatory neurons</td>
+                                            <td>AMPA, NMDA, Kainate (ionotropic); mGluR (GPCR)</td>
+                                            <td>Schizophrenia (NMDA hypofunction hypothesis), mood disorders, neurotoxicity</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid: "Dopamine = Schizophrenia & Movement; Serotonin = Mood & Appetite; Norepinephrine = Arousal & Attention; GABA = Calm; Glutamate = Excite."</h4>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '1.2 Brain Regions and Circuits',
+                            content: `
+                                <div class="body-text">
+                                    Key brain regions involved in psychiatric disorders:
+                                </div>
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Region</th>
+                                            <th>Function</th>
+                                            <th>Disorders</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Prefrontal Cortex (PFC)</strong></td>
+                                            <td>Executive function, decision-making, impulse control, personality</td>
+                                            <td>Schizophrenia (hypofrontality), ADHD, depression, personality disorders</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Amygdala</strong></td>
+                                            <td>Fear, emotional memory, aggression</td>
+                                            <td>Anxiety disorders, PTSD, depression (hyperactivity)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Hippocampus</strong></td>
+                                            <td>Declarative memory, context processing</td>
+                                            <td>PTSD (volume loss), depression, dementia</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Anterior Cingulate Cortex (ACC)</strong></td>
+                                            <td>Error detection, conflict monitoring, emotion regulation</td>
+                                            <td>OCD (hyperactivity), depression, anxiety</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Nucleus Accumbens (NAc)</strong></td>
+                                            <td>Reward, motivation, pleasure (mesolimbic DA)</td>
+                                            <td>Addiction, anhedonia in depression, psychosis</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Thalamus</strong></td>
+                                            <td>Sensory relay, filtering</td>
+                                            <td>Schizophrenia (sensory gating deficits)</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Hypothalamus</strong></td>
+                                            <td>Autonomic, endocrine (HPA axis), hunger, sleep</td>
+                                            <td>Eating disorders, depression (HPA dysregulation), sleep disorders</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Clinical Pearl: HPA Axis in Depression</h4>
+                                    <div class="body-text">
+                                        Chronic stress activates the hypothalamic-pituitary-adrenal (HPA) axis → elevated cortisol → hippocampal atrophy (via glutamate excitotoxicity and reduced BDNF). This contributes to cognitive deficits and recurrence of depression.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '1.3 Neuroplasticity and Neurotrophins',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Brain-Derived Neurotrophic Factor (BDNF)</strong> is the most abundant neurotrophin in the brain. It supports neuronal survival, differentiation, and synaptic plasticity (LTP).
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Stress and depression → ↓ BDNF in hippocampus and PFC.</li>
+                                    <li>Antidepressants (SSRIs, ketamine) → ↑ BDNF signaling, reverse atrophy.</li>
+                                    <li>Val66Met polymorphism in BDNF gene affects activity-dependent secretion and is linked to mood disorders.</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '1.4 Genetics and Epigenetics',
+                            content: `
+                                <div class="body-text">
+                                    Psychiatric disorders are polygenic with heritability estimates:
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Schizophrenia: ~80% heritability</li>
+                                    <li>Bipolar disorder: ~70-85%</li>
+                                    <li>Major depression: ~40%</li>
+                                    <li>Autism: ~80%</li>
+                                    <li>ADHD: ~75%</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Common risk variants:</strong> Many GWAS-identified loci (e.g., CACNA1C, CACNB2 in bipolar/schizophrenia; SLC6A4 serotonin transporter in depression). Copy number variants (CNVs) like 22q11.2 deletion increase schizophrenia risk.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Epigenetics:</strong> DNA methylation, histone modification, and microRNAs mediate environment-gene interactions. Early life trauma can alter methylation of glucocorticoid receptor gene (NR3C1), affecting stress response.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 1 Summary',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> Key Points</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> DA: mesolimbic (psychosis), nigrostriatal (movement), tuberoinfundibular (prolactin)</li>
+                                        <li><i class="fas fa-check"></i> 5-HT: mood, anxiety, appetite; 5-HT3 is ion channel (nausea)</li>
+                                        <li><i class="fas fa-check"></i> NE: arousal, attention; locus coeruleus</li>
+                                        <li><i class="fas fa-check"></i> GABA: main inhibitory; benzodiazepines enhance</li>
+                                        <li><i class="fas fa-check"></i> Glutamate: main excitatory; NMDA hypofunction in schizophrenia</li>
+                                        <li><i class="fas fa-check"></i> PFC: executive function; amygdala: fear; NAc: reward</li>
+                                        <li><i class="fas fa-check"></i> BDNF: trophic factor, reduced in depression, increased by antidepressants</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 2. SCHIZOPHRENIA SPECTRUM
+                schizophrenia: {
+                    title: 'Schizophrenia Spectrum',
+                    icon: 'fa-disease',
+                    sections: [
+                        {
+                            heading: '2.1 Schizophrenia: Clinical Features',
+                            content: `
+                                <div class="lead-text">
+                                    Schizophrenia is a chronic, severe mental disorder characterized by psychosis (positive symptoms), negative symptoms, and cognitive impairment.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-stethoscope"></i> DSM-5 Criteria (simplified)</h4>
+                                    <div class="body-text">
+                                        ≥2 of the following for at least 1 month (one must be 1-3):
+                                        <ol style="margin-left:2rem; margin-top:0.5rem;">
+                                            <li>Delusions</li>
+                                            <li>Hallucinations (usually auditory)</li>
+                                            <li>Disorganized speech (frequent derailment, incoherence)</li>
+                                            <li>Grossly disorganized or catatonic behavior</li>
+                                            <li>Negative symptoms (diminished emotional expression, avolition)</li>
+                                        </ol>
+                                        Continuous signs for ≥6 months; social/occupational dysfunction.
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Positive Symptoms:</strong> Delusions (persecutory, grandiose, referential, thought broadcasting), hallucinations (auditory most common), disorganized thinking.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Negative Symptoms:</strong> Affective flattening, alogia (poverty of speech), avolition (lack of motivation), anhedonia, asociality.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Cognitive Symptoms:</strong> Deficits in attention, working memory, executive function.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '2.2 Pathophysiology',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Dopamine Hypothesis:</strong> Positive symptoms due to mesolimbic hyperdopaminergia; negative/cognitive symptoms due to mesocortical hypodopaminergia.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Glutamate Hypothesis:</strong> NMDA receptor hypofunction (e.g., from PCP/ketamine) produces both positive and negative symptoms. Hypofunction of NMDA on GABAergic interneurons disinhibits glutamatergic neurons → excess glutamate release → excitotoxicity.
+                                </div>
+                                <div class="body-text">
+                                    <strong>GABA Hypothesis:</strong> Reduced GAD67 (GABA synthesis enzyme) in certain interneurons (parvalbumin-positive) leads to altered gamma oscillations.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Neuropathology:</strong>
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Mild generalized cortical atrophy (enlarged ventricles, reduced cortical thickness)</li>
+                                    <li>No gliosis (suggests developmental, not degenerative, origin)</li>
+                                    <li>Disorganization of hippocampal pyramidal cells</li>
+                                    <li>Decreased neuropil (reduced dendritic arborization and synaptic density)</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '2.3 Other Schizophrenia Spectrum Disorders',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disorder</th>
+                                            <th>Duration</th>
+                                            <th>Key Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Schizophreniform Disorder</strong></td>
+                                            <td>1-6 months</td>
+                                            <td>Same symptoms as schizophrenia but shorter; good prognosis.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Schizoaffective Disorder</strong></td>
+                                            <td>≥2 weeks of psychosis without prominent mood symptoms, plus mood episode (depression or mania) for most of illness.</td>
+                                            <td>Differentiate from MDD with psychotic features (psychosis only during mood episodes).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Delusional Disorder</strong></td>
+                                            <td>≥1 month of non-bizarre delusions (e.g., erotomanic, jealous, persecutory). Functioning not markedly impaired; no negative symptoms.</td>
+                                            <td>Delusions are plausible; hallucinations if present are related to delusion.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Brief Psychotic Disorder</strong></td>
+                                            <td>1 day to 1 month</td>
+                                            <td>Often triggered by stress; may return to premorbid level.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 2 Summary',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> Key Points</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Schizophrenia: ≥2 symptoms for 1 month, total duration ≥6 months</li>
+                                        <li><i class="fas fa-check"></i> Positive symptoms: delusions, hallucinations, disorganization</li>
+                                        <li><i class="fas fa-check"></i> Negative symptoms: flat affect, avolition, alogia</li>
+                                        <li><i class="fas fa-check"></i> Dopamine hypothesis: mesolimbic ↑, mesocortical ↓</li>
+                                        <li><i class="fas fa-check"></i> NMDA hypofunction (via interneurons) contributes to symptoms</li>
+                                        <li><i class="fas fa-check"></i> Pathology: enlarged ventricles, no gliosis, synaptic loss</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 3. MOOD DISORDERS
+                mood: {
+                    title: 'Mood Disorders',
+                    icon: 'fa-heart-crack',
+                    sections: [
+                        {
+                            heading: '3.1 Major Depressive Disorder (MDD)',
+                            content: `
+                                <div class="lead-text">
+                                    MDD is characterized by one or more major depressive episodes without a history of mania or hypomania.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-stethoscope"></i> DSM-5 Criteria for Major Depressive Episode</h4>
+                                    <div class="body-text">
+                                        ≥5 of the following for ≥2 weeks, with either depressed mood or anhedonia:
+                                        <ol style="margin-left:2rem; margin-top:0.5rem;">
+                                            <li>Depressed mood most of the day</li>
+                                            <li>Markedly diminished interest or pleasure (anhedonia)</li>
+                                            <li>Significant weight loss/gain or appetite change</li>
+                                            <li>Insomnia or hypersomnia</li>
+                                            <li>Psychomotor agitation or retardation</li>
+                                            <li>Fatigue or loss of energy</li>
+                                            <li>Feelings of worthlessness or excessive guilt</li>
+                                            <li>Diminished concentration or indecisiveness</li>
+                                            <li>Recurrent thoughts of death or suicide</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-heart"></i> Biological Theories</h4>
+                                    <div class="body-text">
+                                        <strong>Monoamine Hypothesis:</strong> Deficiency of serotonin, norepinephrine, and/or dopamine. Based on mechanism of antidepressants.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>HPA Axis Dysregulation:</strong> Hypercortisolemia (due to CRH overdrive) → impaired negative feedback (dexamethasone suppression test non-suppression).
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Neurotrophic Hypothesis:</strong> Reduced BDNF → hippocampal atrophy; antidepressants ↑ BDNF.
+                                    </div>
+                                    <div class="body-text">
+                                        <strong>Inflammatory Hypothesis:</strong> Elevated pro-inflammatory cytokines (IL-6, TNF-α) can induce sickness behavior.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '3.2 Bipolar Disorders',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disorder</th>
+                                            <th>Definition</th>
+                                            <th>Key Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Bipolar I</strong></td>
+                                            <td>At least one manic episode (usually also major depressive episodes)</td>
+                                            <td>Mania: ≥1 week of elevated/irritable mood, increased goal-directed activity, grandiosity, decreased need for sleep, pressured speech, flight of ideas, distractibility, risky behavior. Causes marked impairment or hospitalization.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Bipolar II</strong></td>
+                                            <td>At least one hypomanic episode and one major depressive episode; no manic episode</td>
+                                            <td>Hypomania: same symptoms as mania but ≥4 days, not severe enough to cause marked impairment or psychosis.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Cyclothymic Disorder</strong></td>
+                                            <td>≥2 years of numerous hypomanic and depressive symptoms that do not meet full criteria</td>
+                                            <td>Chronic, mild fluctuation.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid: DIGFAST for Mania</h4>
+                                    <div class="body-text">
+                                        Distractibility, Indiscretion (risky), Grandiosity, Flight of ideas, Activity increase, Sleep deficit (decreased need), Talkativeness (pressured speech).
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '3.3 Suicide Risk',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Risk Factors:</strong> Male gender, older age, white, unmarried, living alone, unemployment, prior attempts, family history, comorbid substance use, hopelessness, access to means.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Protective Factors:</strong> Social support, religious beliefs, children in home, effective treatment.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 3 Summary',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> Key Points</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> MDD: depressed mood or anhedonia + ≥4 other symptoms for 2 weeks</li>
+                                        <li><i class="fas fa-check"></i> Bipolar I: mania (≥1 week); Bipolar II: hypomania (≥4 days) + major depression</li>
+                                        <li><i class="fas fa-check"></i> Monoamine hypothesis: low 5-HT, NE, DA</li>
+                                        <li><i class="fas fa-check"></i> HPA axis: hypercortisolemia, DST non-suppression</li>
+                                        <li><i class="fas fa-check"></i> BDNF reduced; antidepressants increase BDNF</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 4. ANXIETY DISORDERS
+                anxiety: {
+                    title: 'Anxiety Disorders',
+                    icon: 'fa-fear',
+                    sections: [
+                        {
+                            heading: '4.1 Generalized Anxiety Disorder (GAD)',
+                            content: `
+                                <div class="body-text">
+                                    <strong>DSM-5:</strong> Excessive anxiety and worry about multiple events/activities for ≥6 months, plus ≥3 of: restlessness, fatigue, difficulty concentrating, irritability, muscle tension, sleep disturbance.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Pathophysiology:</strong> GABAergic deficits, noradrenergic hyperactivity, amygdala hyperactivation.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '4.2 Panic Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Recurrent unexpected panic attacks, with ≥1 month of persistent concern about more attacks or maladaptive change in behavior.
+                                </div>
+                                <div class="definition-box">
+                                    <h4><i class="fas fa-heartbeat"></i> Panic Attack Symptoms (≥4)</h4>
+                                    <div class="body-text">
+                                        Palpitations, sweating, trembling, shortness of breath, choking, chest pain, nausea, dizziness, chills/heat, paresthesias, derealization, fear of losing control, fear of dying.
+                                    </div>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Pathophysiology:</strong> Locus coeruleus overactivity (NE), amygdala hyperreactivity, conditioned fear responses.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '4.3 Social Anxiety Disorder (Social Phobia)',
+                            content: `
+                                <div class="body-text">
+                                    Marked fear of social situations where one might be scrutinized. Exposure almost always provokes anxiety; situations are avoided or endured with intense fear. Lasts ≥6 months.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '4.4 Specific Phobia',
+                            content: `
+                                <div class="body-text">
+                                    Marked fear of a specific object or situation (e.g., flying, heights, animals, blood). Immediate fear response; avoidance; recognized as excessive.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Blood-injection-injury phobia</strong> often causes vasovagal syncope (fainting) due to initial sympathetic surge followed by parasympathetic overdrive.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 4 Summary',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> Key Points</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> GAD: chronic worry + somatic symptoms (≥6 months)</li>
+                                        <li><i class="fas fa-check"></i> Panic disorder: recurrent panic attacks + worry about more attacks</li>
+                                        <li><i class="fas fa-check"></i> Agoraphobia: fear of places where escape might be difficult</li>
+                                        <li><i class="fas fa-check"></i> Social anxiety: fear of scrutiny/embarrassment</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 5. OCD & RELATED DISORDERS
+                ocd: {
+                    title: 'OCD & Related Disorders',
+                    icon: 'fa-repeat',
+                    sections: [
+                        {
+                            heading: '5.1 Obsessive-Compulsive Disorder',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Obsessions:</strong> Recurrent, persistent thoughts, urges, or images that are intrusive and unwanted. Individual attempts to ignore or neutralize them with compulsions.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Compulsions:</strong> Repetitive behaviors (e.g., hand washing, checking) or mental acts (e.g., praying, counting) that the person feels driven to perform in response to an obsession or according to rigid rules. Aimed at reducing anxiety or preventing a dreaded event, but not realistically connected.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Pathophysiology:</strong> Orbitofrontal cortex (OFC), anterior cingulate, and caudate nucleus hyperactivity. Implicated in cortico-striato-thalamo-cortical (CSTC) circuits. Serotonin dysfunction.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '5.2 Body Dysmorphic Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Preoccupation with one or more perceived defects or flaws in physical appearance that are not observable or appear slight to others. Repetitive behaviors (mirror checking, comparing, camouflaging) or mental acts. Insight is variable.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '5.3 Hoarding Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Persistent difficulty discarding possessions, regardless of their value, due to perceived need to save them and distress associated with discarding. Accumulation leads to cluttered living spaces.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 5 Summary',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> Key Points</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> OCD: obsessions (intrusive thoughts) + compulsions (repetitive behaviors)</li>
+                                        <li><i class="fas fa-check"></i> Common compulsions: cleaning, checking, ordering, counting</li>
+                                        <li><i class="fas fa-check"></i> Body dysmorphic: perceived appearance flaw</li>
+                                        <li><i class="fas fa-check"></i> Hoarding: difficulty discarding, clutter</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 6. TRAUMA & STRESSOR-RELATED
+                trauma: {
+                    title: 'Trauma & Stressor-Related Disorders',
+                    icon: 'fa-shield-halved',
+                    sections: [
+                        {
+                            heading: '6.1 PTSD',
+                            content: `
+                                <div class="body-text">
+                                    Exposure to actual or threatened death, serious injury, or sexual violence. Symptoms for >1 month:
+                                </div>
+                                <ul style="margin-left:2rem; margin-bottom:1.5rem;">
+                                    <li>Intrusion symptoms (flashbacks, nightmares)</li>
+                                    <li>Persistent avoidance of stimuli</li>
+                                    <li>Negative alterations in cognitions and mood (e.g., inability to recall details, negative beliefs, detachment)</li>
+                                    <li>Marked alterations in arousal and reactivity (irritability, hypervigilance, exaggerated startle)</li>
+                                </ul>
+                                <div class="body-text">
+                                    <strong>Pathophysiology:</strong> Hippocampal volume loss (chronic stress → cortisol → atrophy), amygdala hyperreactivity, medial PFC hypoactivity (failure to extinguish fear).
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '6.2 Acute Stress Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Similar to PTSD but symptoms last 3 days to 1 month, occur within 1 month of trauma.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '6.3 Adjustment Disorders',
+                            content: `
+                                <div class="body-text">
+                                    Emotional or behavioral symptoms in response to an identifiable stressor, occurring within 3 months of onset of stressor. Symptoms do not meet criteria for another disorder and resolve within 6 months after stressor ends.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 6 Summary',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> Key Points</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> PTSD: re-experiencing, avoidance, negative mood, hyperarousal >1 month</li>
+                                        <li><i class="fas fa-check"></i> Acute stress disorder: 3 days–1 month</li>
+                                        <li><i class="fas fa-check"></i> Adjustment disorder: reaction to stressor within 3 months, resolves in 6 months</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 7. DISSOCIATIVE DISORDERS
+                dissociative: {
+                    title: 'Dissociative Disorders',
+                    icon: 'fa-person-walking',
+                    sections: [
+                        {
+                            heading: '7.1 Dissociative Identity Disorder (DID)',
+                            content: `
+                                <div class="body-text">
+                                    Disruption of identity characterized by two or more distinct personality states. Recurrent gaps in recall of everyday events, important personal information, or traumatic events. Often associated with severe childhood trauma.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.2 Depersonalization/Derealization Disorder',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Depersonalization:</strong> Feeling detached from one's own mind or body (like an outside observer). <strong>Derealization:</strong> Feeling that the external world is unreal or distorted. Symptoms cause distress or impairment.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '7.3 Dissociative Amnesia',
+                            content: `
+                                <div class="body-text">
+                                    Inability to recall important autobiographical information, usually of a traumatic or stressful nature, inconsistent with ordinary forgetting. May be localized (specific events), selective, or generalized.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 8. SOMATIC SYMPTOM DISORDERS
+                somatic: {
+                    title: 'Somatic Symptom Disorders',
+                    icon: 'fa-stethoscope',
+                    sections: [
+                        {
+                            heading: '8.1 Somatic Symptom Disorder',
+                            content: `
+                                <div class="body-text">
+                                    One or more somatic symptoms that are distressing or disrupt daily life. Excessive thoughts, feelings, or behaviors related to the symptoms (disproportionate and persistent thoughts, high anxiety, excessive time/energy). At least one symptom may or may not be medically explained.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '8.2 Illness Anxiety Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Preoccupation with having or acquiring a serious illness. Somatic symptoms are not present or mild. High health anxiety, easily alarmed, excessive health-related behaviors (checking, seeking reassurance) or maladaptive avoidance.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '8.3 Conversion Disorder (Functional Neurological Symptom Disorder)',
+                            content: `
+                                <div class="body-text">
+                                    One or more symptoms of altered voluntary motor or sensory function (e.g., weakness, paralysis, seizures, sensory loss) that are incompatible with recognized neurological or medical conditions. Not feigned; associated with psychological stress.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Examples:</strong> Functional weakness (hemiparesis with Hoover sign positive), psychogenic non-epileptic seizures (PNES), globus sensation.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '8.4 Factitious Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Falsification of physical or psychological signs or symptoms, or induction of injury or disease, associated with identified deception. The individual presents themselves as ill (factitious disorder imposed on self) or another (factitious disorder imposed on another, previously Munchausen by proxy). Motivation is to assume the sick role, not external incentives (like money or drugs). Malingering has external incentives.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 9. EATING DISORDERS
+                eating: {
+                    title: 'Eating Disorders',
+                    icon: 'fa-utensils',
+                    sections: [
+                        {
+                            heading: '9.1 Anorexia Nervosa',
+                            content: `
+                                <div class="body-text">
+                                    <strong>DSM-5 Criteria:</strong>
+                                    <ul style="margin-left:2rem;">
+                                        <li>Restriction of energy intake leading to significantly low body weight (less than minimally normal)</li>
+                                        <li>Intense fear of gaining weight or becoming fat, or persistent behavior that interferes with weight gain</li>
+                                        <li>Disturbance in the way one's body weight or shape is experienced, undue influence of weight/shape on self-evaluation, or denial of seriousness of low body weight</li>
+                                    </ul>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Subtypes:</strong> Restricting type (no binge/purge) and binge-eating/purging type.
+                                </div>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-stethoscope"></i> Medical Complications</h4>
+                                    <div class="body-text">
+                                        Bradycardia, hypotension, lanugo, electrolyte disturbances (hypokalemia, metabolic alkalosis with purging), osteopenia, amenorrhea, ECG changes (QT prolongation), refeeding syndrome.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '9.2 Bulimia Nervosa',
+                            content: `
+                                <div class="body-text">
+                                    <strong>DSM-5 Criteria:</strong>
+                                    <ul style="margin-left:2rem;">
+                                        <li>Recurrent episodes of binge eating (eating large amount in discrete time with sense of lack of control)</li>
+                                        <li>Recurrent inappropriate compensatory behaviors to prevent weight gain (purging, laxatives, fasting, excessive exercise)</li>
+                                        <li>Both occur at least once weekly for 3 months</li>
+                                        <li>Self-evaluation unduly influenced by weight/shape</li>
+                                    </ul>
+                                </div>
+                                <div class="body-text">
+                                    <strong>Medical complications:</strong> Electrolyte disturbances (hypokalemia, hypochloremic alkalosis), dental erosion (perimylolysis), parotid enlargement, esophageal tears (Mallory-Weiss), Russell's sign (knuckle calluses).
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '9.3 Binge-Eating Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Recurrent binge eating without regular compensatory behaviors. Marked distress; occurs at least once weekly for 3 months.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 10. SLEEP DISORDERS (brief)
+                sleep: {
+                    title: 'Sleep Disorders',
+                    icon: 'fa-moon',
+                    sections: [
+                        {
+                            heading: '10.1 Insomnia Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Dissatisfaction with sleep quantity or quality, with difficulty initiating or maintaining sleep, early morning awakening, occurring ≥3 nights/week for ≥3 months, despite adequate opportunity for sleep, causing distress/impairment.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '10.2 Narcolepsy',
+                            content: `
+                                <div class="body-text">
+                                    Recurrent periods of need for sleep, lapsing into sleep, same day. Plus at least one of: cataplexy (sudden loss of bilateral muscle tone triggered by strong emotion), hypocretin deficiency, abnormal REM sleep latency (SOREMPs). Associated with loss of orexin/hypocretin neurons.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '10.3 Obstructive Sleep Apnea (OSA)',
+                            content: `
+                                <div class="body-text">
+                                    Repeated episodes of upper airway obstruction during sleep, leading to oxygen desaturation and arousals. Symptoms: snoring, witnessed apneas, daytime sleepiness. Associated with obesity, hypertension.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 11. PERSONALITY DISORDERS
+                personality: {
+                    title: 'Personality Disorders',
+                    icon: 'fa-user',
+                    sections: [
+                        {
+                            heading: '11.1 Cluster A (Odd/Eccentric)',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disorder</th>
+                                            <th>Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Paranoid</strong></td>
+                                            <td>Pervasive distrust and suspiciousness of others' motives, interprets as malevolent.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Schizoid</strong></td>
+                                            <td>Detachment from social relationships, restricted emotional expression, prefers solitary activities.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Schizotypal</strong></td>
+                                            <td>Acute discomfort with close relationships, cognitive/perceptual distortions, eccentric behavior, odd beliefs (magical thinking), ideas of reference.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '11.2 Cluster B (Dramatic/Emotional/Erratic)',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disorder</th>
+                                            <th>Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Antisocial</strong></td>
+                                            <td>Disregard for and violation of others' rights, lack of remorse, deceitfulness, impulsivity, irritability, consistent irresponsibility. Must have evidence of conduct disorder before age 15.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Borderline</strong></td>
+                                            <td>Instability of interpersonal relationships, self-image, and affects; marked impulsivity. Fear of abandonment, suicidal gestures, chronic emptiness, intense anger, transient stress-related paranoia/dissociation.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Histrionic</strong></td>
+                                            <td>Excessive emotionality and attention seeking, uncomfortable when not center of attention, seductive behavior, rapidly shifting emotions.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Narcissistic</strong></td>
+                                            <td>Grandiosity, need for admiration, lack of empathy, sense of entitlement, belief of being special, arrogant, envious.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="memory-aid">
+                                    <h4><i class="fas fa-lightbulb"></i> Memory Aid: "Weird, Wild, Worried"</h4>
+                                    <div class="body-text">
+                                        Cluster A (weird): Paranoid, Schizoid, Schizotypal<br>
+                                        Cluster B (wild): Antisocial, Borderline, Histrionic, Narcissistic<br>
+                                        Cluster C (worried): Avoidant, Dependent, Obsessive-Compulsive
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '11.3 Cluster C (Anxious/Fearful)',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Disorder</th>
+                                            <th>Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Avoidant</strong></td>
+                                            <td>Social inhibition, feelings of inadequacy, hypersensitivity to negative evaluation, avoids occupational/social activities due to fear of criticism.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Dependent</strong></td>
+                                            <td>Excessive need to be taken care of, submissive and clinging behavior, fears of separation, difficulty making daily decisions without reassurance.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Obsessive-Compulsive</strong></td>
+                                            <td>Preoccupation with orderliness, perfectionism, control at expense of flexibility. Not to be confused with OCD (no true obsessions/compulsions, just rigid traits).</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        }
+                    ]
+                },
+                // 12. NEUROCOGNITIVE DISORDERS
+                neurocognitive: {
+                    title: 'Neurocognitive Disorders',
+                    icon: 'fa-brain',
+                    sections: [
+                        {
+                            heading: '12.1 Delirium',
+                            content: `
+                                <div class="body-text">
+                                    Acute, fluctuating disturbance in attention and awareness, with change in cognition (memory, orientation, language) that develops over hours to days, caused by medical condition, substance intoxication/withdrawal, or medication side effect.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Risk factors:</strong> Elderly, dementia, polypharmacy, infection, surgery, sensory impairment.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '12.2 Major and Mild Neurocognitive Disorders (Dementia)',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Pathology</th>
+                                            <th>Features</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Alzheimer Disease</strong></td>
+                                            <td>Amyloid plaques, neurofibrillary tangles (tau), cerebral atrophy (hippocampus, temporoparietal)</td>
+                                            <td>Insidious onset, progressive memory impairment (early: short-term), aphasia, apraxia, agnosia. ApoE ε4 risk factor.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Vascular Dementia</strong></td>
+                                            <td>Multi-infarct or strategic infarcts, small vessel disease</td>
+                                            <td>Stepwise decline, focal neurological signs, history of strokes or vascular risk factors.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Lewy Body Dementia</strong></td>
+                                            <td>Lewy bodies (α-synuclein) in cortex and brainstem</td>
+                                            <td>Fluctuating cognition, visual hallucinations, parkinsonism, REM sleep behavior disorder, neuroleptic sensitivity.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Frontotemporal Dementia</strong></td>
+                                            <td>Frontotemporal atrophy, Pick bodies (tau) or TDP-43</td>
+                                            <td>Early behavioral changes (disinhibition, apathy) or language deficits (primary progressive aphasia).</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        }
+                    ]
+                },
+                // 13. SUBSTANCE USE DISORDERS
+                substance: {
+                    title: 'Substance Use Disorders',
+                    icon: 'fa-wine-bottle',
+                    sections: [
+                        {
+                            heading: '13.1 Core Criteria (DSM-5)',
+                            content: `
+                                <div class="body-text">
+                                    A problematic pattern of substance use leading to clinically significant impairment or distress, manifested by ≥2 of the following within 12 months:
+                                </div>
+                                <ul style="margin-left:2rem;">
+                                    <li>Taken in larger amounts/over longer period than intended</li>
+                                    <li>Persistent desire or unsuccessful attempts to cut down</li>
+                                    <li>Great deal of time spent obtaining, using, or recovering</li>
+                                    <li>Craving</li>
+                                    <li>Recurrent use resulting in failure to fulfill major role obligations</li>
+                                    <li>Continued use despite persistent social/interpersonal problems</li>
+                                    <li>Important activities given up or reduced</li>
+                                    <li>Recurrent use in physically hazardous situations</li>
+                                    <li>Continued use despite knowledge of physical/psychological problem caused by use</li>
+                                    <li>Tolerance</li>
+                                    <li>Withdrawal</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            heading: '13.2 Alcohol Use Disorder',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Intoxication:</strong> Slurred speech, incoordination, unsteady gait, nystagmus, impaired attention, stupor.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Withdrawal:</strong> Autonomic hyperactivity, tremor, insomnia, nausea, anxiety, seizures, hallucinations (alcoholic hallucinosis), delirium tremens (DTs) – onset 48-96 hours after cessation, with delirium, autonomic instability, and potential mortality.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Wernicke-Korsakoff Syndrome:</strong> Due to thiamine deficiency. Wernicke encephalopathy (triad: confusion, ataxia, ophthalmoplegia) – treat with IV thiamine. Korsakoff syndrome (chronic amnesia, confabulation) may follow.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '13.3 Opioid Use Disorder',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Intoxication:</strong> Euphoria, sedation, pupillary constriction (miosis), respiratory depression.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Withdrawal:</strong> Dysphoria, nausea, muscle aches, diarrhea, yawning, insomnia, pupillary dilation, piloerection, lacrimation, rhinorrhea. Not life-threatening.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '13.4 Stimulant Use Disorder (Cocaine, Amphetamines)',
+                            content: `
+                                <div class="body-text">
+                                    <strong>Intoxication:</strong> Euphoria, hypervigilance, anxiety, anger, tachycardia, hypertension, pupillary dilation, perspiration, chest pain, seizures.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Withdrawal:</strong> Dysphoria, fatigue, vivid unpleasant dreams, insomnia or hypersomnia, increased appetite, psychomotor retardation.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 14. CHILD & ADOLESCENT PSYCHIATRY
+                child: {
+                    title: 'Child & Adolescent Psychiatry',
+                    icon: 'fa-child',
+                    sections: [
+                        {
+                            heading: '14.1 Autism Spectrum Disorder',
+                            content: `
+                                <div class="body-text">
+                                    <strong>DSM-5 Criteria:</strong>
+                                    <ul style="margin-left:2rem;">
+                                        <li>Persistent deficits in social communication and social interaction across contexts (social-emotional reciprocity, nonverbal communication, developing/maintaining relationships)</li>
+                                        <li>Restricted, repetitive patterns of behavior, interests, or activities (stereotyped movements, insistence on sameness, fixated interests, hyper/hyporeactivity to sensory input)</li>
+                                        <li>Symptoms present in early developmental period, cause clinically significant impairment, not better explained by intellectual disability</li>
+                                    </ul>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '14.2 Attention-Deficit/Hyperactivity Disorder (ADHD)',
+                            content: `
+                                <div class="body-text">
+                                    <strong>DSM-5 Criteria:</strong> ≥6 symptoms of inattention and/or ≥6 symptoms of hyperactivity-impulsivity for ≥6 months, present before age 12, in ≥2 settings, interfering with functioning.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Inattention:</strong> Fails to give close attention, careless mistakes, difficulty sustaining attention, does not listen, fails to finish, difficulty organizing, avoids tasks requiring sustained mental effort, loses things, easily distracted, forgetful.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Hyperactivity/Impulsivity:</strong> Fidgets, leaves seat, runs/climbs inappropriately, unable to play quietly, "on the go," talks excessively, blurts answers, difficulty waiting turn, interrupts.
+                                </div>
+                                <div class="body-text">
+                                    <strong>Neurobiology:</strong> Prefrontal cortex dysfunction, dopamine/norepinephrine deficits.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '14.3 Oppositional Defiant Disorder (ODD)',
+                            content: `
+                                <div class="body-text">
+                                    Pattern of angry/irritable mood, argumentative/defiant behavior, or vindictiveness lasting ≥6 months.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '14.4 Conduct Disorder (CD)',
+                            content: `
+                                <div class="body-text">
+                                    Repetitive, persistent pattern of behavior violating basic rights of others or major age-appropriate societal norms: aggression to people/animals, destruction of property, deceitfulness or theft, serious rule violations. Onset before 10 years indicates poorer prognosis.
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '14.5 Separation Anxiety Disorder',
+                            content: `
+                                <div class="body-text">
+                                    Developmentally inappropriate and excessive fear or anxiety concerning separation from attachment figures, lasting ≥4 weeks in children.
+                                </div>
+                            `
+                        }
+                    ]
+                },
+                // 15. PSYCHOPHARMACOLOGY
+                psychopharm: {
+                    title: 'Psychopharmacology',
+                    icon: 'fa-pills',
+                    sections: [
+                        {
+                            heading: '15.1 Antipsychotics',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Class</th>
+                                            <th>Examples</th>
+                                            <th>Mechanism</th>
+                                            <th>Side Effects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>First-Generation (Typical)</strong></td>
+                                            <td>Haloperidol, chlorpromazine, fluphenazine</td>
+                                            <td>D2 antagonists</td>
+                                            <td>EPS (dystonia, parkinsonism, akathisia, tardive dyskinesia), hyperprolactinemia, NMS. Low potency (e.g., chlorpromazine) more sedating, anticholinergic, hypotensive.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Second-Generation (Atypical)</strong></td>
+                                            <td>Risperidone, olanzapine, quetiapine, aripiprazole, ziprasidone, clozapine, lurasidone</td>
+                                            <td>D2 + 5-HT2A antagonism (except aripiprazole: partial agonist)</td>
+                                            <td>Less EPS, but metabolic syndrome (weight gain, diabetes, dyslipidemia) especially with clozapine and olanzapine. Clozapine: agranulocytosis (monitor ANC), myocarditis, seizures.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '15.2 Antidepressants',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Class</th>
+                                            <th>Examples</th>
+                                            <th>Mechanism</th>
+                                            <th>Side Effects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>SSRIs</strong></td>
+                                            <td>Fluoxetine, sertraline, paroxetine, citalopram, escitalopram</td>
+                                            <td>Selective serotonin reuptake inhibition</td>
+                                            <td>Nausea, headache, sexual dysfunction (delayed ejaculation, anorgasmia), insomnia, serotonin syndrome (when combined with MAOIs).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SNRIs</strong></td>
+                                            <td>Venlafaxine, duloxetine, desvenlafaxine</td>
+                                            <td>Serotonin and norepinephrine reuptake inhibition</td>
+                                            <td>Similar to SSRIs + dose-dependent hypertension (venlafaxine).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>TCAs</strong></td>
+                                            <td>Amitriptyline, nortriptyline, imipramine, clomipramine</td>
+                                            <td>Block 5-HT/NE reuptake; also block histamine, ACh, α1</td>
+                                            <td>Sedation, dry mouth, constipation, urinary retention, orthostatic hypotension, cardiac toxicity (prolonged QRS, arrhythmias) in overdose.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>MAOIs</strong></td>
+                                            <td>Phenelzine, tranylcypromine, selegiline (patch)</td>
+                                            <td>Irreversible inhibition of MAO (MAO-A & B)</td>
+                                            <td>Hypertensive crisis with tyramine (aged cheese, wine), serotonin syndrome; dietary restrictions required. Selegiline patch at low doses avoids dietary restrictions (selective MAO-B).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Others</strong></td>
+                                            <td>Bupropion (NDRI), mirtazapine (NaSSA), trazodone (SARI), vortioxetine</td>
+                                            <td>Varied</td>
+                                            <td>Bupropion: no sexual side effects, seizure risk; mirtazapine: sedation, weight gain; trazodone: priapism.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="clinical-correlation">
+                                    <h4><i class="fas fa-exclamation-triangle"></i> Serotonin Syndrome</h4>
+                                    <div class="body-text">
+                                        Triad: mental status changes (agitation, confusion), autonomic instability (hyperthermia, tachycardia, diaphoresis), neuromuscular abnormalities (hyperreflexia, clonus, rigidity). Can be life-threatening. Treatment: cyproheptadine, supportive care.
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            heading: '15.3 Mood Stabilizers',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Drug</th>
+                                            <th>Mechanism</th>
+                                            <th>Indications</th>
+                                            <th>Monitoring</th>
+                                            <th>Side Effects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Lithium</strong></td>
+                                            <td>Modulates inositol, GSK-3, etc.</td>
+                                            <td>Acute mania, maintenance bipolar, reduces suicide risk</td>
+                                            <td>Serum levels (0.6-1.2 mEq/L maintenance; 1.0-1.5 acute mania), renal, thyroid, calcium, ECG</td>
+                                            <td>Polyuria (nephrogenic DI), tremor, hypothyroidism, hyperparathyroidism, teratogenicity (Ebstein anomaly), toxicity (ataxia, confusion, seizures).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Valproate (Valproic acid)</strong></td>
+                                            <td>GABA enhancement, sodium channels</td>
+                                            <td>Acute mania, mixed episodes, rapid cycling</td>
+                                            <td>LFTs, CBC (thrombocytopenia), serum levels (50-125 µg/mL)</td>
+                                            <td>Hepatotoxicity, pancreatitis, thrombocytopenia, weight gain, tremor, PCOS, neural tube defects.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Carbamazepine</strong></td>
+                                            <td>Sodium channels</td>
+                                            <td>Acute mania, especially in mixed/rapid cycling; second-line</td>
+                                            <td>CBC (agranulocytosis, aplastic anemia), LFTs, electrolytes (SIADH), serum level (4-12 µg/mL)</td>
+                                            <td>SIADH, rash (including SJS), agranulocytosis, hepatotoxicity, CYP450 inducer (drug interactions).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Lamotrigine</strong></td>
+                                            <td>Sodium channels</td>
+                                            <td>Bipolar depression (maintenance)</td>
+                                            <td>Slow titration to avoid rash</td>
+                                            <td>Benign rash, Stevens-Johnson syndrome (rare, dose-related), headache, nausea.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '15.4 Anxiolytics/Hypnotics',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Class</th>
+                                            <th>Examples</th>
+                                            <th>Mechanism</th>
+                                            <th>Use</th>
+                                            <th>Side Effects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Benzodiazepines</strong></td>
+                                            <td>Alprazolam, lorazepam, clonazepam, diazepam</td>
+                                            <td>Positive allosteric modulator at GABA<sub>A</sub> (increase frequency of Cl⁻ channel opening)</td>
+                                            <td>Anxiety, panic, seizures, alcohol withdrawal, muscle spasm, sedation</td>
+                                            <td>Sedation, ataxia, tolerance, dependence, withdrawal, anterograde amnesia, respiratory depression (especially with alcohol/opioids).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Buspirone</strong></td>
+                                            <td>Buspirone</td>
+                                            <td>5-HT1A partial agonist</td>
+                                            <td>GAD (less effective for panic)</td>
+                                            <td>Dizziness, nausea; no abuse potential, no sedation.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Z-drugs</strong></td>
+                                            <td>Zolpidem, zaleplon, eszopiclone</td>
+                                            <td>GABA<sub>A</sub> α1 subunit selective</td>
+                                            <td>Insomnia</td>
+                                            <td>Sedation, dependence, parasomnias (sleepwalking, eating).</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: '15.5 Stimulants and ADHD Medications',
+                            content: `
+                                <table class="premium-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Drug</th>
+                                            <th>Mechanism</th>
+                                            <th>Side Effects</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Methylphenidate</td>
+                                            <td>DA and NE reuptake inhibitor</td>
+                                            <td>Insomnia, decreased appetite, headache, growth delay, tachycardia, risk of abuse.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Amphetamine salts (Adderall)</td>
+                                            <td>Increase DA/NE release, block reuptake</td>
+                                            <td>Same as above.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Atomoxetine</td>
+                                            <td>Selective NE reuptake inhibitor</td>
+                                            <td>Nausea, somnolence, hepatotoxicity (rare), no abuse potential.</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Clonidine, Guanfacine</td>
+                                            <td>α2-adrenergic agonists</td>
+                                            <td>Sedation, dry mouth, hypotension.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            `
+                        },
+                        {
+                            heading: 'Chapter 15 Summary',
+                            content: `
+                                <div class="key-points">
+                                    <h4><i class="fas fa-check-circle"></i> Key Points</h4>
+                                    <ul>
+                                        <li><i class="fas fa-check"></i> Antipsychotics: typical → EPS; atypical → metabolic syndrome</li>
+                                        <li><i class="fas fa-check"></i> Clozapine: refractory schizophrenia, agranulocytosis (monitor ANC)</li>
+                                        <li><i class="fas fa-check"></i> SSRIs: first-line for depression/anxiety, sexual side effects</li>
+                                        <li><i class="fas fa-check"></i> Lithium: monitor levels, renal, thyroid; Ebstein anomaly</li>
+                                        <li><i class="fas fa-check"></i> Valproate: hepatotoxicity, neural tube defects</li>
+                                        <li><i class="fas fa-check"></i> Benzodiazepines: avoid in substance abuse, taper slowly</li>
+                                    </ul>
+                                </div>
+                            `
+                        }
+                    ]
+                }
+            };
+
+            // Render function
+            function renderChapter(chapterId) {
+                const chap = chapters[chapterId];
+                if (!chap) return;
+
+                let html = `<div class="chapter-content">`;
+                html += `<div class="chapter-title"><i class="fas ${chap.icon}"></i> ${chap.title}</div>`;
+
+                chap.sections.forEach((section, idx) => {
+                    html += `<div class="section-card">`;
+                    html += `<div class="section-heading"><i class="fas ${section.icon || 'fa-book-open'}"></i> ${section.heading}</div>`;
+                    
+                    if (section.content) {
+                        html += section.content;
+                    }
+
+                    // Smaller progress checkbox
+                    html += `<div class="progress-checkbox" onclick="toggleProgressHandler(event, this)">`;
+                    html += `<input type="checkbox" class="progress-input" data-key="${chapterId}-${idx}" onclick="event.stopPropagation()"> <span>Mark read</span>`;
+                    html += `</div>`;
+
+                    html += `</div>`;
+                });
+
+                html += `<div class="footer-note"><i class="fas fa-feather"></i> Abubakar Sadeeq · Premium Psychiatry Textbook</div>`;
+                html += `</div>`;
+
+                document.getElementById('readerPanel').innerHTML = html;
+
+                // Restore progress
+                document.querySelectorAll('.progress-input').forEach(cb => {
+                    const key = cb.dataset.key;
+                    const saved = localStorage.getItem(`progress-${key}`);
+                    if (saved === 'true') cb.checked = true;
+                });
+            }
+
+            // Progress handler
+            window.toggleProgressHandler = function(event, container) {
+                const cb = container.querySelector('.progress-input');
+                cb.checked = !cb.checked;
+                localStorage.setItem(`progress-${cb.dataset.key}`, cb.checked);
+                event.stopPropagation();
+            };
+
+            // Chapter switching
+            const chapterItems = document.querySelectorAll('.chapter-item');
+            chapterItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    chapterItems.forEach(ci => ci.classList.remove('active'));
+                    this.classList.add('active');
+                    renderChapter(this.dataset.chapter);
+                });
+            });
+
+            // Collapsible sidebar
+            const toggleBtn = document.getElementById('toggleSidebarBtn');
+            const bookContainer = document.getElementById('bookContainer');
+            toggleBtn.addEventListener('click', function() {
+                bookContainer.classList.toggle('sidebar-collapsed');
+            });
+
+            // Load first chapter
+            renderChapter('neurobiology');
+        })();
+    </script>
+</body>
+</html>

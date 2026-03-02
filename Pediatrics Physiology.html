@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatrics · Physiology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-child"></i>
+        <h1>Pediatrics · Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>GROWTH & DEVELOPMENT</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#growth"><i class="fas fa-chart-line"></i> 1. Physical Growth</a></li>
+                <li class="chapter-item"><a href="#developmental-milestones"><i class="fas fa-baby"></i> 2. Developmental Milestones</a></li>
+                <li class="chapter-item"><a href="#nutrition"><i class="fas fa-apple-alt"></i> 3. Nutrition & Feeding</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>NEONATAL PHYSIOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#fetal-neonatal"><i class="fas fa-fetus"></i> 4. Fetal to Neonatal Transition</a></li>
+                <li class="chapter-item"><a href="#respiratory-neonate"><i class="fas fa-lungs"></i> 5. Neonatal Respiratory System</a></li>
+                <li class="chapter-item"><a href="#cardiovascular-neonate"><i class="fas fa-heart"></i> 6. Neonatal Cardiovascular System</a></li>
+                <li class="chapter-item"><a href="#renal-neonate"><i class="fas fa-kidney"></i> 7. Neonatal Renal Function</a></li>
+                <li class="chapter-item"><a href="#hepatic-neonate"><i class="fas fa-liver"></i> 8. Neonatal Hepatic Function</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SYSTEMS PHYSIOLOGY IN CHILDREN</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#respiratory"><i class="fas fa-lungs"></i> 9. Respiratory System</a></li>
+                <li class="chapter-item"><a href="#cardiovascular"><i class="fas fa-heart"></i> 10. Cardiovascular System</a></li>
+                <li class="chapter-item"><a href="#renal"><i class="fas fa-kidney"></i> 11. Renal System</a></li>
+                <li class="chapter-item"><a href="#gi"><i class="fas fa-stomach"></i> 12. Gastrointestinal System</a></li>
+                <li class="chapter-item"><a href="#endocrine"><i class="fas fa-hormone"></i> 13. Endocrine System</a></li>
+                <li class="chapter-item"><a href="#immune"><i class="fas fa-shield-alt"></i> 14. Immune System</a></li>
+                <li class="chapter-item"><a href="#nervous"><i class="fas fa-brain"></i> 15. Nervous System</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>FLUIDS & ELECTROLYTES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#fluids"><i class="fas fa-water"></i> 16. Fluid Balance</a></li>
+                <li class="chapter-item"><a href="#electrolytes"><i class="fas fa-flask"></i> 17. Electrolyte Requirements</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== GROWTH & DEVELOPMENT ==================== -->
+        <section id="growth" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 1. Physical Growth</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Patterns of Growth:</strong> Growth velocity is highest in infancy and during puberty. Weight, length/height, and head circumference are key parameters.
+                </div>
+                <ul>
+                    <li><strong>Weight:</strong> Birth weight doubles by 5 months, triples by 1 year, quadruples by 2 years. Average birth weight ~3.5 kg.</li>
+                    <li><strong>Length:</strong> Increases by 50% in first year (average birth length 50 cm → 75 cm at 1 year).</li>
+                    <li><strong>Head circumference:</strong> Increases rapidly in first year (35 cm at birth → 47 cm at 1 year). Reflects brain growth.</li>
+                </ul>
+                <div class="memory-aid">
+                    <i class="fas fa-lightbulb"></i> Rule of thumb: weight at 1 year = 3× birth weight; at 2 years = 4×.
+                </div>
+            </div>
+        </section>
+
+        <section id="developmental-milestones" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-baby"></i> 2. Developmental Milestones</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Age</th><th>Gross Motor</th><th>Fine Motor</th><th>Language</th><th>Social</th></tr></thead>
+                    <tbody>
+                        <tr><td>2 months</td><td>Lifts head in prone</td><td>Follows past midline</td><td>Coos</td><td>Social smile</td></tr>
+                        <tr><td>4 months</td><td>Rolls over (front → back)</td><td>Grasps rattle</td><td>Laughs, squeals</td><td>Enjoys looking around</td></tr>
+                        <tr><td>6 months</td><td>Sits with support</td><td>Transfers objects</td><td>Babbles (consonants)</td><td>Recognizes familiar faces</td></tr>
+                        <tr><td>9 months</td><td>Pulls to stand, crawls</td><td>Pincer grasp developing</td><td>“Mama”/“Dada” nonspecific</td><td>Stranger anxiety</td></tr>
+                        <tr><td>12 months</td><td>Stands alone, first steps</td><td>Mature pincer grasp</td><td>1‑2 words, follows 1‑step command</td><td>Separation anxiety</td></tr>
+                        <tr><td>18 months</td><td>Walks up stairs with help</td><td>Scribbles</td><td>10‑25 words, points to body parts</td><td>Parallel play</td></tr>
+                        <tr><td>2 years</td><td>Kicks ball, runs</td><td>Turns pages, builds tower of 6 cubes</td><td>2‑word sentences, 50+ words</td><td>Parallel play, imitates</td></tr>
+                        <tr><td>3 years</td><td>Pedals tricycle</td><td>Copies circle, draws person with 3 parts</td><td>3‑word sentences, knows age/gender</td><td>Cooperative play</td></tr>
+                        <tr><td>4 years</td><td>Hops on one foot</td><td>Copies cross, buttons clothes</td><td>4‑word sentences, tells stories</td><td>Imaginative play</td></tr>
+                        <tr><td>5 years</td><td>Skips, walks backward</td><td>Copies triangle, ties shoes</td><td>Speaks fluently, knows address</td><td>Plays with rules</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="nutrition" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-apple-alt"></i> 3. Nutrition & Feeding</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Breastfeeding:</strong> Recommended exclusively for first 6 months. Contains IgA, lactoferrin, lysozyme, oligosaccharides.</li>
+                    <li><strong>Formula:</strong> Cow‑milk based, iron‑fortified. Standard 20 kcal/oz.</li>
+                    <li><strong>Caloric requirements:</strong> Infants ~100‑120 kcal/kg/day, decreases with age.</li>
+                    <li><strong>Vitamin supplements:</strong> Vitamin D (400 IU/day) for breastfed infants; iron supplementation after 4‑6 months if exclusively breastfed.</li>
+                    <li><strong>Introduction of solids:</strong> Around 6 months; first foods iron‑fortified cereals, then pureed fruits/vegetables.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NEONATAL PHYSIOLOGY ==================== -->
+        <section id="fetal-neonatal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fetus"></i> 4. Fetal to Neonatal Transition</div>
+            <div class="section-card">
+                <div class="body-text">
+                    At birth, critical changes occur:
+                </div>
+                <ul>
+                    <li><strong>Pulmonary:</strong> First breath → lung expansion → decreased pulmonary vascular resistance → increased pulmonary blood flow.</li>
+                    <li><strong>Cardiovascular:</strong> Closure of foramen ovale (increased left atrial pressure), ductus arteriosus (increased O2, decreased PGE), ductus venosus.</li>
+                    <li><strong>Endocrine:</strong> Surge in catecholamines, cortisol, thyroid hormones.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Persistent pulmonary hypertension of newborn (PPHN):</strong> Failure of pulmonary vascular resistance to decrease → right‑to‑left shunting through PDA/PFO → hypoxemia.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="respiratory-neonate" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 5. Neonatal Respiratory System</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Surfactant:</strong> Produced by type II pneumocytes from ~24 weeks, sufficient by 34‑36 weeks. Deficiency causes respiratory distress syndrome (RDS).</li>
+                    <li><strong>Lung volumes:</strong> Higher respiratory rate (30‑60/min), tidal volume ~6 mL/kg, dead space proportionally larger.</li>
+                    <li><strong>Oxygen consumption:</strong> Higher per kg than adults.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cardiovascular-neonate" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 6. Neonatal Cardiovascular System</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Heart rate:</strong> 120‑160 bpm at rest.</li>
+                    <li><strong>Blood pressure:</strong> Increases with age; at birth ~60/40 mmHg, reaches 90/60 by 1 month.</li>
+                    <li><strong>Fetal shunts:</strong> Functional closure of ductus arteriosus occurs by 24‑48 hours (permanent fibrosis by 2‑3 weeks). Foramen ovale closes when left atrial pressure exceeds right.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="renal-neonate" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-kidney"></i> 7. Neonatal Renal Function</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Glomerular filtration rate (GFR):</strong> Low at birth (~20 mL/min/1.73m²), doubles by 2 weeks, reaches adult levels by 1‑2 years.</li>
+                    <li><strong>Concentrating ability:</strong> Limited (max urine osmolality ~500 mOsm/kg) due to immaturity of loop of Henle and low medullary tonicity.</li>
+                    <li><strong>Sodium handling:</strong> Preterm infants may waste sodium; term infants generally conserve well.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hepatic-neonate" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-liver"></i> 8. Neonatal Hepatic Function</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Bilirubin metabolism:</strong> Immature UDP‑glucuronosyltransferase → physiological jaundice (unconjugated hyperbilirubinemia) peaks at 3‑5 days.</li>
+                    <li><strong>Clotting factors:</strong> Vitamin K dependent factors low at birth → vitamin K prophylaxis to prevent hemorrhagic disease.</li>
+                    <li><strong>Glycogen stores:</strong> Limited; risk of hypoglycemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SYSTEMS PHYSIOLOGY ==================== -->
+        <section id="respiratory" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 9. Respiratory System</div>
+            <div class="section-card">
+                <ul>
+                    <li>Lung development continues until early adulthood (alveoli increase until 2‑8 years).</li>
+                    <li>Infants are preferential nose breathers (until 4‑6 months).</li>
+                    <li>Smaller airways → more susceptible to obstruction (e.g., bronchiolitis).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cardiovascular" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 10. Cardiovascular System</div>
+            <div class="section-card">
+                <ul>
+                    <li>Cardiac output is heart‑rate dependent (limited stroke volume reserve).</li>
+                    <li>Myocardial compliance is lower, so preload reserve limited.</li>
+                    <li>Blood pressure norms increase with age.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="renal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-kidney"></i> 11. Renal System</div>
+            <div class="section-card">
+                <ul>
+                    <li>GFR increases with age; formula for estimating creatinine clearance in children: Schwartz formula (eGFR = k × height / serum creatinine).</li>
+                    <li>Acid excretion limited → prone to metabolic acidosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="gi" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 12. Gastrointestinal System</div>
+            <div class="section-card">
+                <ul>
+                    <li>Gastric acid secretion low at birth, increases by 1 month.</li>
+                    <li>Pancreatic enzymes (lipase, amylase) mature by 6‑9 months.</li>
+                    <li>Liver glycogen stores limited; gluconeogenesis immature.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="endocrine" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hormone"></i> 13. Endocrine System</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Growth hormone:</strong> High levels in infancy; pulsatile secretion; mediates linear growth.</li>
+                    <li><strong>Thyroid:</strong> TSH surge at birth; thyroxine essential for brain development.</li>
+                    <li><strong>Puberty:</strong> Gonadarche (activation of HPG axis) and adrenarche (adrenal androgens).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="immune" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 14. Immune System</div>
+            <div class="section-card">
+                <ul>
+                    <li>Passive immunity from maternal IgG crosses placenta (mainly third trimester). IgA in breast milk.</li>
+                    <li>Neonatal T cells are naïve, Th2‑skewed; impaired Th1 responses.</li>
+                    <li>Complement levels lower than adult.</li>
+                    <li>Delayed response to polysaccharide antigens (<2 years explains susceptibility to encapsulated bacteria).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="nervous" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 15. Nervous System</div>
+            <div class="section-card">
+                <ul>
+                    <li>Brain weight doubles by 1 year, triples by 3 years.</li>
+                    <li>Synaptogenesis and myelination continue through childhood.</li>
+                    <li>Primitive reflexes (Moro, rooting, grasp) disappear by 4‑6 months.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== FLUIDS & ELECTROLYTES ==================== -->
+        <section id="fluids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 16. Fluid Balance</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Age</th><th>Daily Fluid Requirement (mL/kg)</th></tr></thead>
+                    <tbody>
+                        <tr><td>First day</td><td>60‑80</td></tr>
+                        <tr><td>Day 2‑7</td><td>80‑120</td></tr>
+                        <tr><td>1‑6 months</td><td>120‑150</td></tr>
+                        <tr><td>6‑12 months</td><td>100‑120</td></tr>
+                        <tr><td>1‑3 years</td><td>90‑100</td></tr>
+                        <tr><td>4‑8 years</td><td>70‑85</td></tr>
+                        <tr><td>9‑13 years</td><td>50‑65</td></tr>
+                        <tr><td>Adolescent</td><td>40‑50</td></tr>
+                    </tbody>
+                </table>
+                <div class="body-text">
+                    Holliday‑Segar method: 100 mL/kg for first 10 kg, 50 mL/kg for next 10 kg, 20 mL/kg for each additional kg.
+                </div>
+            </div>
+        </section>
+
+        <section id="electrolytes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 17. Electrolyte Requirements</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Sodium:</strong> 2‑4 mEq/kg/day</li>
+                    <li><strong>Potassium:</strong> 1‑3 mEq/kg/day</li>
+                    <li><strong>Chloride:</strong> 2‑4 mEq/kg/day</li>
+                </ul>
+                <p>Maintenance IV fluids typically D5 1/4NS or D5 1/2NS with added KCl (except neonates).</p>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Pediatrics Physiology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toxicology · Pharmacology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-skull-crossbones"></i>
+        <h1>Toxicology · Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PRINCIPLES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#intro-pharma"><i class="fas fa-book-open"></i> 1. Principles of Toxicological Pharmacology</a></li>
+                <li class="chapter-item"><a href="#decontamination"><i class="fas fa-broom"></i> 2. Decontamination & Enhanced Elimination</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SPECIFIC TOXICANTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acetaminophen-ph"><i class="fas fa-pills"></i> 3. Acetaminophen</a></li>
+                <li class="chapter-item"><a href="#opioids-ph"><i class="fas fa-capsules"></i> 4. Opioids</a></li>
+                <li class="chapter-item"><a href="#benzodiazepines"><i class="fas fa-capsules"></i> 5. Benzodiazepines</a></li>
+                <li class="chapter-item"><a href="#organophosphates-ph"><i class="fas fa-bug"></i> 6. Organophosphates & Carbamates</a></li>
+                <li class="chapter-item"><a href="#cyanide-ph"><i class="fas fa-flask"></i> 7. Cyanide</a></li>
+                <li class="chapter-item"><a href="#methanol-eg"><i class="fas fa-flask"></i> 8. Methanol & Ethylene Glycol</a></li>
+                <li class="chapter-item"><a href="#heavy-metals-ph"><i class="fas fa-weight-hanging"></i> 9. Heavy Metals</a></li>
+                <li class="chapter-item"><a href="#carbon-monoxide"><i class="fas fa-smog"></i> 10. Carbon Monoxide</a></li>
+                <li class="chapter-item"><a href="#tricyclics"><i class="fas fa-heart"></i> 11. Tricyclic Antidepressants</a></li>
+                <li class="chapter-item"><a href="#salicylates"><i class="fas fa-capsules"></i> 12. Salicylates</a></li>
+                <li class="chapter-item"><a href="#beta-blockers-ccb"><i class="fas fa-heart"></i> 13. Beta‑Blockers & Calcium Channel Blockers</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIDOTES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antidotes-table"><i class="fas fa-table"></i> 14. Antidotes Summary</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SUPPORTIVE CARE</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#supportive"><i class="fas fa-hand-holding-heart"></i> 15. Supportive Care & Monitoring</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== PRINCIPLES ==================== -->
+        <section id="intro-pharma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-book-open"></i> 1. Principles of Toxicological Pharmacology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Toxicological pharmacology focuses on the mechanisms by which xenobiotics produce toxicity and the therapeutic interventions (antidotes, supportive care) used to manage poisoning.
+                </div>
+                <div class="subsection-heading">General Approach to the Poisoned Patient</div>
+                <ul>
+                    <li><strong>Resuscitation:</strong> Airway, breathing, circulation (ABCs).</li>
+                    <li><strong>Risk assessment:</strong> Identify substance, dose, time, and patient factors.</li>
+                    <li><strong>Decontamination:</strong> Limit absorption (e.g., activated charcoal).</li>
+                    <li><strong>Antidote administration:</strong> Specific reversal agents.</li>
+                    <li><strong>Enhanced elimination:</strong> Hemodialysis, urinary alkalinization, multiple‑dose activated charcoal.</li>
+                </ul>
+                <div class="definition-box">
+                    <h4><i class="fas fa-flask"></i> Antidote Categories</h4>
+                    <ul>
+                        <li><strong>Functional antagonists:</strong> Reverse toxic effect (e.g., naloxone for opioids).</li>
+                        <li><strong>Chemical antagonists:</strong> Bind and inactivate toxin (e.g., chelators).</li>
+                        <li><strong>Metabolic modulators:</strong> Alter biotransformation (e.g., fomepizole).</li>
+                        <li><strong>Receptor blockers:</strong> e.g., atropine for organophosphates.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="decontamination" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-broom"></i> 2. Decontamination & Enhanced Elimination</div>
+            <div class="section-card">
+                <div class="subsection-heading">Gastrointestinal Decontamination</div>
+                <ul>
+                    <li><strong>Activated charcoal:</strong> Binds many toxins; dose 1 g/kg; most effective within 1‑2 hours. Not for heavy metals, iron, lithium, alcohols.</li>
+                    <li><strong>Gastric lavage:</strong> Only if life‑threatening overdose within 1 hour and airway protected; rarely used.</li>
+                    <li><strong>Whole bowel irrigation:</strong> Polyethylene glycol for sustained‑release or iron, lithium.</li>
+                </ul>
+                <div class="subsection-heading">Enhanced Elimination</div>
+                <ul>
+                    <li><strong>Hemodialysis:</strong> For alcohols, lithium, salicylates, valproate, theophylline.</li>
+                    <li><strong>Urinary alkalinization:</strong> Salicylates, phenobarbital – IV bicarbonate to increase urine pH, promoting ion trapping.</li>
+                    <li><strong>Multiple‑dose activated charcoal:</strong> For drugs with enterohepatic recirculation (e.g., carbamazepine, theophylline, dapsone).</li>
+                    <li><strong>Lipid emulsion therapy:</strong> For lipophilic drug toxicity (local anesthetics, some calcium channel blockers).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SPECIFIC TOXICANTS ==================== -->
+        <section id="acetaminophen-ph" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 3. Acetaminophen (Paracetamol)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxic mechanism:</strong> CYP2E1 metabolizes to NAPQI, depleted glutathione → hepatotoxicity.</li>
+                    <li><strong>Antidote:</strong> N‑acetylcysteine (NAC) – replenishes glutathione, binds NAPQI. Best if started within 8 hours, but effective later.</li>
+                    <li><strong>Dosing:</strong> IV or oral (loading 140 mg/kg, then 70 mg/kg q4h x 17 doses).</li>
+                    <li><strong>Rumack‑Matthew nomogram:</strong> Guides need for NAC based on level and time.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="opioids-ph" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 4. Opioids</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Respiratory depression, miosis, coma.</li>
+                    <li><strong>Antidote:</strong> Naloxone (competitive antagonist).</li>
+                    <li><strong>Dosing:</strong> 0.04‑0.4 mg IV/IM/SC, repeated as needed; may require continuous infusion for long‑acting opioids.</li>
+                    <li>Caution: can precipitate withdrawal; duration shorter than many opioids, so monitor for re‑sedation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="benzodiazepines" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 5. Benzodiazepines</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Sedation, ataxia, respiratory depression (rare alone, synergistic with other CNS depressants).</li>
+                    <li><strong>Antidote:</strong> Flumazenil (competitive antagonist).</li>
+                    <li><strong>Indications:</strong> Reversal of procedural sedation; not routinely used in overdose due to risk of seizures (in mixed overdose or benzodiazepine‑dependent).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="organophosphates-ph" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bug"></i> 6. Organophosphates & Carbamates</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Acetylcholinesterase inhibition → cholinergic excess (SLUDGE syndrome, muscle fasciculations, paralysis).</li>
+                    <li><strong>Antidote:</strong> Atropine (muscarinic antagonist) + pralidoxime (reactivates AChE).</li>
+                    <li><strong>Atropine:</strong> Initially 1‑2 mg IV, double dose every 5 minutes until drying of secretions.</li>
+                    <li><strong>Pralidoxime:</strong> 1‑2 g IV over 30 minutes, then infusion; effective if given early.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cyanide-ph" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 7. Cyanide</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Inhibits cytochrome oxidase (complex IV), causing histotoxic hypoxia.</li>
+                    <li><strong>Antidote kits:</strong> 
+                        <ul>
+                            <li><strong>Nitrite‑thiosulfate:</strong> Sodium nitrite induces methemoglobinemia (binds cyanide), sodium thiosulfate converts to thiocyanate.</li>
+                            <li><strong>Hydroxocobalamin (Cyanokit):</strong> Directly binds cyanide to form cyanocobalamin; fewer adverse effects, first‑line.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="methanol-eg" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 8. Methanol & Ethylene Glycol</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Metabolized by alcohol dehydrogenase (ADH) to toxic acids (formic acid, oxalic acid).</li>
+                    <li><strong>Antidote:</strong> Fomepizole (4‑methylpyrazole) – inhibits ADH. Also ethanol infusion (competitive substrate).</li>
+                    <li><strong>Fomepizole dosing:</strong> 15 mg/kg load, then 10 mg/kg q12h.</li>
+                    <li><strong>Hemodialysis:</strong> For severe acidosis, renal failure, high levels.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="heavy-metals-ph" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight-hanging"></i> 9. Heavy Metals</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Metal</th><th>Chelator</th><th>Notes</th></tr></thead>
+                    <tbody>
+                        <tr><td>Lead</td><td>Succimer (DMSA), EDTA, dimercaprol</td><td>DMSA oral, less toxic; EDTA IV; dimercaprol IM for severe encephalopathy</td></tr>
+                        <tr><td>Mercury</td><td>Dimercaprol (BAL), succimer (organic)</td><td>Inorganic mercury (acute) – BAL; methylmercury – DMSA? (limited evidence)</td></tr>
+                        <tr><td>Arsenic</td><td>Dimercaprol, succimer</td><td>Dimercaprol for acute severe; succimer for chronic</td></tr>
+                        <tr><td>Iron</td><td>Deferoxamine</td><td>IV infusion; urine turns “vin rosé” color</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="carbon-monoxide" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-smog"></i> 10. Carbon Monoxide</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Binds hemoglobin with high affinity → carboxyhemoglobin (COHb) → impaired oxygen delivery.</li>
+                    <li><strong>Treatment:</strong> 100% oxygen (shortens half‑life from 4‑6 hours to 90 minutes). Hyperbaric oxygen for severe poisoning (neurologic symptoms, COHb >25%).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="tricyclics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 11. Tricyclic Antidepressants (TCA)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Sodium channel blockade → QRS widening, arrhythmias; anticholinergic effects; seizures.</li>
+                    <li><strong>Treatment:</strong> IV sodium bicarbonate – corrects acidosis, increases serum sodium to overcome channel blockade. Goal QRS <100 ms.</li>
+                    <li><strong>Supportive:</strong> Benzodiazepines for seizures; lipid emulsion may be used in refractory cases.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="salicylates" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 12. Salicylates (Aspirin)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxicity:</strong> Respiratory alkalosis (early) → mixed acidosis, tinnitus, hyperthermia, pulmonary edema.</li>
+                    <li><strong>Treatment:</strong> Activated charcoal; urinary alkalinization (bicarbonate infusion) to enhance excretion; hemodialysis for severe toxicity (levels >100 mg/dL, acidosis, CNS symptoms).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="beta-blockers-ccb" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 13. Beta‑Blockers & Calcium Channel Blockers</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Beta‑blocker toxicity:</strong> Bradycardia, hypotension, bronchospasm. Glucagon (bypasses receptor, increases cAMP) is first‑line: 5‑10 mg IV.</li>
+                    <li><strong>CCB toxicity:</strong> Bradycardia, hypotension, hyperglycemia. Treatment: IV calcium (calcium gluconate/chloride), high‑dose insulin euglycemia therapy (insulin + dextrose).</li>
+                    <li>Lipid emulsion may be used for refractory cases.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTIDOTES TABLE ==================== -->
+        <section id="antidotes-table" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-table"></i> 14. Antidotes Summary</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Poison</th><th>Antidote</th></tr></thead>
+                    <tbody>
+                        <tr><td>Acetaminophen</td><td>N‑acetylcysteine</td></tr>
+                        <tr><td>Opioids</td><td>Naloxone</td></tr>
+                        <tr><td>Benzodiazepines</td><td>Flumazenil</td></tr>
+                        <tr><td>Organophosphates / carbamates</td><td>Atropine + pralidoxime</td></tr>
+                        <tr><td>Anticholinergics</td><td>Physostigmine</td></tr>
+                        <tr><td>Beta‑blockers</td><td>Glucagon</td></tr>
+                        <tr><td>Calcium channel blockers</td><td>Calcium, high‑dose insulin</td></tr>
+                        <tr><td>Digoxin</td><td>Digoxin‑specific Fab fragments</td></tr>
+                        <tr><td>Cyanide</td><td>Hydroxocobalamin, sodium nitrite + sodium thiosulfate</td></tr>
+                        <tr><td>Methanol / ethylene glycol</td><td>Fomepizole, ethanol</td></tr>
+                        <tr><td>Lead</td><td>Succimer (DMSA), EDTA, dimercaprol</td></tr>
+                        <tr><td>Iron</td><td>Deferoxamine</td></tr>
+                        <tr><td>Arsenic / mercury</td><td>Dimercaprol, succimer</td></tr>
+                        <tr><td>Isoniazid</td><td>Pyridoxine (vitamin B6)</td></tr>
+                        <tr><td>Methemoglobinemia</td><td>Methylene blue</td></tr>
+                        <tr><td>Warfarin / superwarfarins</td><td>Vitamin K, fresh frozen plasma</td></tr>
+                        <tr><td>Heparin</td><td>Protamine sulfate</td></tr>
+                        <tr><td>Local anesthetic systemic toxicity</td><td>Lipid emulsion</td></tr>
+                        <tr><td>Tricyclic antidepressants</td><td>Sodium bicarbonate</td></tr>
+                        <tr><td>Carbon monoxide</td><td>100% oxygen, hyperbaric oxygen</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== SUPPORTIVE CARE ==================== -->
+        <section id="supportive" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand-holding-heart"></i> 15. Supportive Care & Monitoring</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>ABCs:</strong> Intubation if airway compromised, mechanical ventilation.</li>
+                    <li><strong>Cardiovascular:</strong> IV fluids, vasopressors (norepinephrine) for hypotension.</li>
+                    <li><strong>Seizures:</strong> Benzodiazepines first‑line; barbiturates if refractory.</li>
+                    <li><strong>Hypothermia/hyperthermia:</strong> Temperature control (antipyretics ineffective in drug‑induced hyperthermia; cooling measures).</li>
+                    <li><strong>Monitoring:</strong> ECG, pulse oximetry, end‑tidal CO₂, serial labs (electrolytes, drug levels, liver/renal function).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Toxicology Pharmacology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

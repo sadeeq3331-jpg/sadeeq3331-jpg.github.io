@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ophthalmology & ENT · Physiology MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-eye"></i><i class="fas fa-ear-listen"></i>
+        <h1>Ophtho/ENT · Physiology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ OPHTHALMOLOGY/ENT PHYSIOLOGY QUESTIONS
+    const questions = [
+        { q: "The transparent anterior portion of the fibrous tunic of the eye is the:",
+          opts: ["Sclera", "Cornea", "Conjunctiva", "Iris", "Lens"],
+          correct: 1,
+          exp: "The cornea is the transparent anterior part of the fibrous tunic; the sclera is opaque." },
+        { q: "Which structure produces aqueous humor?",
+          opts: ["Lens", "Ciliary body", "Corneal endothelium", "Trabecular meshwork", "Retina"],
+          correct: 1,
+          exp: "The ciliary body (ciliary processes) produces aqueous humor." },
+        { q: "The point of highest visual acuity is the:",
+          opts: ["Optic disc", "Macula lutea", "Fovea centralis", "Pars plana", "Ora serrata"],
+          correct: 2,
+          exp: "The fovea centralis, within the macula, contains only cones and provides highest acuity." },
+        { q: "Which photoreceptor is responsible for scotopic (dim light) vision?",
+          opts: ["Rods", "Cones", "Ganglion cells", "Bipolar cells", "Horizontal cells"],
+          correct: 0,
+          exp: "Rods are sensitive to low light and do not mediate color vision." },
+        { q: "The blind spot of the eye corresponds to the:",
+          opts: ["Fovea", "Macula", "Optic disc", "Lens", "Cornea"],
+          correct: 2,
+          exp: "The optic disc has no photoreceptors; it's where the optic nerve exits." },
+        { q: "Accommodation for near vision involves:",
+          opts: ["Contraction of ciliary muscle, relaxation of zonules, lens becomes more convex", "Relaxation of ciliary muscle, tightening of zonules, lens flattens", "Constriction of pupil only", "Dilation of pupil", "No change in lens"],
+          correct: 0,
+          exp: "Ciliary muscle contracts → zonules relax → lens becomes rounder (increased refractive power)." },
+        { q: "Presbyopia is due to:",
+          opts: ["Loss of lens elasticity with age", "Irregular corneal curvature", "Excessive axial length", "Increased intraocular pressure", "Cataract formation"],
+          correct: 0,
+          exp: "Aging causes lens hardening, reducing accommodation ability." },
+        { q: "The main refractive power of the eye (about 2/3) comes from:",
+          opts: ["Lens", "Cornea", "Aqueous humor", "Vitreous humor", "Tears"],
+          correct: 1,
+          exp: "The cornea provides about 40-44 diopters, the lens provides variable additional power." },
+        { q: "In the dark, photoreceptors are:",
+          opts: ["Depolarized", "Hyperpolarized", "At resting potential", "Unresponsive", "Firing action potentials"],
+          correct: 0,
+          exp: "In darkness, cGMP levels are high, keeping Na⁺ channels open (depolarized). Light causes hyperpolarization." },
+        { q: "Light adaptation involves:",
+          opts: ["Rapid decrease in retinal sensitivity", "Rapid increase in sensitivity", "Pupillary constriction only", "Shift from cone to rod vision", "No change"],
+          correct: 0,
+          exp: "Light adaptation reduces sensitivity quickly to prevent saturation." },
+        { q: "The Eustachian tube connects the:",
+          opts: ["Middle ear to nasopharynx", "Inner ear to throat", "External ear to middle ear", "Nasal cavity to sinus", "Pharynx to larynx"],
+          correct: 0,
+          exp: "The Eustachian tube equalizes pressure between middle ear and nasopharynx." },
+        { q: "Which ossicle is attached to the tympanic membrane?",
+          opts: ["Stapes", "Incus", "Malleus", "All three", "None"],
+          correct: 2,
+          exp: "The malleus is attached to the tympanic membrane; it articulates with incus, which connects to stapes." },
+        { q: "The organ of Corti is located in the:",
+          opts: ["Vestibule", "Semicircular canals", "Cochlear duct (scala media)", "Scala vestibuli", "Scala tympani"],
+          correct: 2,
+          exp: "The organ of Corti sits on the basilar membrane within the cochlear duct." },
+        { q: "Hair cells for hearing are located on the:",
+          opts: ["Basilar membrane", "Tectorial membrane", "Reissner's membrane", "Oval window", "Round window"],
+          correct: 0,
+          exp: "Hair cells rest on the basilar membrane; their stereocilia contact the tectorial membrane." },
+        { q: "High-frequency sounds are detected near the:",
+          opts: ["Apex of cochlea", "Base of cochlea", "Helicotrema", "Saccule", "Utricle"],
+          correct: 1,
+          exp: "The basilar membrane is stiff near the base, so high frequencies resonate there." },
+        { q: "The vestibular apparatus detects:",
+          opts: ["Linear acceleration (utricle/saccule) and angular acceleration (semicircular canals)", "Only sound", "Only gravity", "Only rotation", "All of the above"],
+          correct: 0,
+          exp: "Utricle senses horizontal acceleration, saccule vertical; semicircular canals sense rotation." },
+        { q: "The crista ampullaris detects:",
+          opts: ["Angular acceleration", "Linear acceleration", "Static tilt", "Sound", "Pressure"],
+          correct: 0,
+          exp: "Crista ampullaris in semicircular canal ampulla responds to rotational movement." },
+        { q: "Otoliths (otoconia) are found in the:",
+          opts: ["Semicircular canals", "Utricle and saccule", "Cochlea", "Organ of Corti", "Tectorial membrane"],
+          correct: 1,
+          exp: "Otoliths are calcium carbonate crystals in the utricle and saccule that add inertia for linear acceleration detection." },
+        { q: "The tensor tympani muscle dampens sound by:",
+          opts: ["Pulling the malleus medially", "Pulling the stapes outward", "Tensing the tympanic membrane", "Relaxing the incus", "Opening Eustachian tube"],
+          correct: 0,
+          exp: "Tensor tympani contracts in response to loud sounds, pulling malleus to increase stiffness and reduce transmission." },
+        { q: "The stapedius muscle is innervated by:",
+          opts: ["Trigeminal nerve (CN V)", "Facial nerve (CN VII)", "Glossopharyngeal nerve (CN IX)", "Vagus nerve (CN X)", "Accessory nerve (CN XI)"],
+          correct: 1,
+          exp: "Stapedius is innervated by the facial nerve; paralysis causes hyperacusis." },
+        { q: "Which cranial nerve carries sound information from the cochlea?",
+          opts: ["CN V", "CN VII", "CN VIII", "CN IX", "CN X"],
+          correct: 2,
+          exp: "Vestibulocochlear nerve (CN VIII) carries both hearing and balance signals." },
+        { q: "The olfactory epithelium is located in the:",
+          opts: ["Superior nasal concha", "Middle nasal concha", "Inferior nasal concha", "Nasopharynx", "Frontal sinus"],
+          correct: 0,
+          exp: "Olfactory epithelium lines the superior nasal concha and adjacent septum." },
+        { q: "Taste buds for bitter are concentrated at the:",
+          opts: ["Tip of tongue", "Lateral edges", "Posterior part (circumvallate papillae)", "Soft palate", "Epiglottis"],
+          correct: 2,
+          exp: "Bitter sensitivity is highest at the back of the tongue (circumvallate papillae)." },
+        { q: "The lacrimal gland is innervated by:",
+          opts: ["Parasympathetic fibers via CN VII (through pterygopalatine ganglion)", "Sympathetic fibers only", "CN V", "CN III", "CN IX"],
+          correct: 0,
+          exp: "Parasympathetic from facial nerve (via greater petrosal) stimulates tear production." },
+        { q: "Aqueous humor drains primarily through the:",
+          opts: ["Pupil", "Trabecular meshwork into Schlemm's canal", "Vitreous body", "Choroid", "Scleral veins"],
+          correct: 1,
+          exp: "Aqueous flows from posterior chamber through pupil into anterior chamber, then out via trabecular meshwork and Schlemm's canal." },
+        { q: "Intraocular pressure is normally:",
+          opts: ["10-21 mmHg", "5-10 mmHg", "20-30 mmHg", "30-40 mmHg", "0-5 mmHg"],
+          correct: 0,
+          exp: "Normal IOP range is 10-21 mmHg; higher suggests glaucoma." },
+        { q: "Which cells are responsible for the blood‑retina barrier?",
+          opts: ["Retinal pigment epithelium and endothelial cells of retinal vessels", "Ganglion cells", "Müller cells", "Photoreceptors", "Bipolar cells"],
+          correct: 0,
+          exp: "The outer barrier is at the RPE; the inner barrier at retinal capillary endothelium." },
+        { q: "The visual pathway from retina to cortex involves:",
+          opts: ["Optic nerve → optic chiasm → optic tract → LGN → optic radiations → primary visual cortex", "Optic nerve → superior colliculus → pulvinar → cortex", "Optic nerve → hypothalamus → cortex", "Optic nerve → lateral geniculate → superior colliculus → cortex", "None"],
+          correct: 0,
+          exp: "Retinal ganglion cell axons synapse in LGN of thalamus; then project to V1." },
+        { q: "Lesion of the right optic tract causes:",
+          opts: ["Left homonymous hemianopia", "Right homonymous hemianopia", "Bitemporal hemianopia", "Left monocular blindness", "Right monocular blindness"],
+          correct: 0,
+          exp: "Tract lesions produce contralateral homonymous hemianopia." },
+        { q: "Bitemporal hemianopia results from a lesion at the:",
+          opts: ["Optic chiasm", "Right optic nerve", "Left optic nerve", "Optic radiation", "Visual cortex"],
+          correct: 0,
+          exp: "Chiasmal lesions (e.g., pituitary tumor) affect crossing fibers from nasal retinas." },
+        { q: "The corneal reflex involves which nerves?",
+          opts: ["CN V (afferent) and CN VII (efferent)", "CN V and CN III", "CN II and CN VII", "CN II and CN III", "CN VII and CN IX"],
+          correct: 0,
+          exp: "Corneal touch sensed by ophthalmic division of trigeminal; motor response is blink via facial nerve." },
+        { q: "The pupillary light reflex involves:",
+          opts: ["CN II (afferent) and CN III (efferent)", "CN II and CN VII", "CN III and CN V", "CN II and CN VI", "CN III only"],
+          correct: 0,
+          exp: "Optic nerve carries afferent signal; oculomotor (parasympathetic) causes constriction." },
+        { q: "Accommodation reflex includes:",
+          opts: ["Convergence, lens accommodation, pupillary constriction", "Only lens changes", "Only pupillary dilation", "Only convergence", "Divergence"],
+          correct: 0,
+          exp: "Near triad: convergence (medial recti), accommodation (ciliary muscle), miosis (sphincter pupillae)." },
+        { q: "Which neurotransmitter is released by rod bipolar cells onto ganglion cells?",
+          opts: ["Glutamate", "GABA", "Dopamine", "Acetylcholine", "Glycine"],
+          correct: 0,
+          exp: "Photoreceptors and bipolar cells release glutamate; it inhibits off‑center cells and excites on‑center cells." },
+        { q: "The endolymph in the cochlear duct has high concentration of:",
+          opts: ["K⁺", "Na⁺", "Cl⁻", "Ca²⁺", "Mg²⁺"],
+          correct: 0,
+          exp: "Endolymph is K⁺-rich (like intracellular fluid), perilymph is Na⁺-rich (like extracellular fluid)." },
+        { q: "Sound transmission through the middle ear is most efficient at frequencies:",
+          opts: ["250-4000 Hz", "20-200 Hz", ">10,000 Hz", "All frequencies equally", "<100 Hz"],
+          correct: 0,
+          exp: "Human speech frequencies (250-4000 Hz) are transmitted best." },
+        { q: "The function of the round window is to:",
+          opts: ["Allow pressure relief for cochlear fluid displacement", "Transmit sound to oval window", "Produce endolymph", "Secrete perilymph", "Anchor the basilar membrane"],
+          correct: 0,
+          exp: "As stapes pushes oval window, round window bulges outward to allow fluid movement." },
+        { q: "The amplitude of basilar membrane vibration determines:",
+          opts: ["Loudness perception", "Pitch perception", "Timbre", "Direction of sound", "None"],
+          correct: 0,
+          exp: "Larger amplitude → more hair cell stimulation → louder sound." },
+        { q: "The frequency of sound is encoded by:",
+          opts: ["Place of maximal basilar membrane vibration", "Rate of firing of auditory nerve fibers", "Both place and rate (rate for low frequencies)", "Only rate", "Only phase locking"],
+          correct: 2,
+          exp: "Low frequencies use rate and phase locking; high frequencies use place coding." },
+        { q: "The medial olivocochlear bundle exerts:",
+          opts: ["Inhibition on outer hair cells (efferent)", "Excitation on inner hair cells", "Control of middle ear muscles", "Vasodilation of cochlear vessels", "None"],
+          correct: 0,
+          exp: "Efferent fibers from superior olive synapse on outer hair cells, reducing their motility and modulating sensitivity." },
+        { q: "Which muscle is responsible for protruding the tongue?",
+          opts: ["Genioglossus", "Hyoglossus", "Styloglossus", "Palatoglossus", "Superior longitudinal"],
+          correct: 0,
+          exp: "Genioglossus protrudes the tongue; damage causes deviation toward weak side." },
+        { q: "The soft palate is elevated by which muscle?",
+          opts: ["Levator veli palatini", "Tensor veli palatini", "Palatopharyngeus", "Palatoglossus", "Musculus uvulae"],
+          correct: 0,
+          exp: "Levator veli palatini (CN X) elevates soft palate during swallowing." },
+        { q: "The gag reflex involves CN IX (afferent) and CN X (efferent).",
+          opts: ["True", "False", "Only CN IX", "Only CN X", "CN V and CN VII"],
+          correct: 0,
+          exp: "Afferent from pharynx via glossopharyngeal; efferent motor via vagus." },
+        { q: "Cilia in the respiratory epithelium of nasal cavity beat toward the:",
+          opts: ["Nasopharynx", "Nasal vestibule", "Sinuses", "Frontal lobe", "Oral cavity"],
+          correct: 0,
+          exp: "Mucociliary clearance moves mucus posteriorly toward nasopharynx." },
+        { q: "The sense of smell adapts:",
+          opts: ["Rapidly (within seconds to minutes)", "Very slowly", "Not at all", "Only in children", "After hours"],
+          correct: 0,
+          exp: "Olfactory adaptation is rapid due to neural and receptor mechanisms." },
+        { q: "Which cranial nerve carries taste from the anterior two‑thirds of the tongue?",
+          opts: ["Facial (CN VII) via chorda tympani", "Glossopharyngeal (CN IX)", "Vagus (CN X)", "Trigeminal (CN V)", "Hypoglossal (CN XII)"],
+          correct: 0,
+          exp: "Chorda tympani branch of facial nerve carries taste from anterior 2/3 (except circumvallate)." },
+        { q: "Taste from the posterior one‑third (including circumvallate) is via CN IX.",
+          opts: ["True", "False", "CN X", "CN V", "CN VII"],
+          correct: 0,
+          exp: "Glossopharyngeal nerve supplies taste and sensation to posterior tongue." },
+        { q: "The sense of umami is mediated by receptors for:",
+          opts: ["Glutamate", "Sweet", "Salt", "Sour", "Bitter"],
+          correct: 0,
+          exp: "Umami detects glutamate (MSG) via T1R1+T1R3 receptors." },
+        { q: "The external auditory meatus is innervated by:",
+          opts: ["Trigeminal (V3), facial, vagus", "Only trigeminal", "Only facial", "Only vagus", "Glossopharyngeal"],
+          correct: 0,
+          exp: "Sensation from ear canal involves auriculotemporal (V3), facial, and auricular branch of vagus (Arnold's nerve)." },
+        { q: "The stapes footplate vibrates against the:",
+          opts: ["Oval window", "Round window", "Basilar membrane", "Tectorial membrane", "Tympanic membrane"],
+          correct: 0,
+          exp: "Stapes transmits vibration to oval window of cochlea." },
+        { q: "The pinna funnels sound and provides:",
+          opts: ["Directional cues via spectral filtering", "Amplification of all frequencies", "Attenuation of loud sounds", "Equalization of pressure", "None"],
+          correct: 0,
+          exp: "Pinna shape modifies sound spectrum to help localize elevation." }
+    ];
+    // Add extra 15 to reach 65+
+    const extra = [
+        { q: "The lacrimal puncta drain tears into the:",
+          opts: ["Nasolacrimal duct", "Nasal cavity", "Inferior meatus", "Lacrimal sac", "All of the above (sequence)"],
+          correct: 3,
+          exp: "Tears enter puncta → canaliculi → lacrimal sac → nasolacrimal duct → inferior meatus." },
+        { q: "The refractive index of the cornea is approximately:",
+          opts: ["1.38", "1.00", "1.52", "1.25", "1.70"],
+          correct: 0,
+          exp: "Corneal refractive index ~1.376, lens ~1.40." },
+        { q: "Which muscle rotates the eye upward and outward?",
+          opts: ["Inferior oblique", "Superior oblique", "Inferior rectus", "Superior rectus", "Lateral rectus"],
+          correct: 0,
+          exp: "Inferior oblique elevates, abducts, and extorts; superior oblique depresses, abducts, intorts." },
+        { q: "The ciliary ganglion contains parasympathetic fibers from CN III for:",
+          opts: ["Sphincter pupillae and ciliary muscle", "Dilator pupillae", "Lacrimal gland", "Extraocular muscles", "None"],
+          correct: 0,
+          exp: "Preganglionic parasympathetic from Edinger‑Westphal nucleus synapse in ciliary ganglion; postganglionic fibers innervate sphincter and ciliary muscle." },
+        { q: "Dark current in photoreceptors refers to:",
+          opts: ["Inward Na⁺ current in the dark", "Outward K⁺ current", "Ca²⁺ influx", "Cl⁻ efflux", "No current"],
+          correct: 0,
+          exp: "In dark, cGMP keeps Na⁺ channels open, causing depolarizing current (dark current)." },
+        { q: "The recovery of photopigments after bleaching is called:",
+          opts: ["Regeneration", "Adaptation", "Transduction", "Amplification", "Quenching"],
+          correct: 0,
+          exp: "Regeneration involves isomerization of all‑trans retinal to 11‑cis retinal in RPE." },
+        { q: "Which enzyme is crucial for phototransduction amplification?",
+          opts: ["Phosphodiesterase (PDE)", "Adenylate cyclase", "Guanylate cyclase", "Protein kinase A", "Phospholipase C"],
+          correct: 0,
+          exp: "Activated transducin activates PDE, which hydrolyzes cGMP, reducing Na⁺ current." },
+        { q: "The auditory tube is opened by which muscle during swallowing?",
+          opts: ["Tensor veli palatini", "Levator veli palatini", "Salpingopharyngeus", "Palatopharyngeus", "Stylopharyngeus"],
+          correct: 0,
+          exp: "Tensor veli palatini (CN V) pulls on cartilage to open Eustachian tube." },
+        { q: "The traveling wave in the cochlea is:",
+          opts: ["From base to apex", "From apex to base", "Simultaneous everywhere", "Random", "Only at base"],
+          correct: 0,
+          exp: "Sound causes wave that travels from base (stiff) to apex (floppy)." },
+        { q: "Which cells are primarily responsible for frequency selectivity and amplification in the cochlea?",
+          opts: ["Outer hair cells", "Inner hair cells", "Supporting cells", "Spiral ganglion cells", "Fibrocytes"],
+          correct: 0,
+          exp: "Outer hair cells contract and elongate (electromotility) to amplify vibrations." },
+        { q: "The medial geniculate body is part of which sensory pathway?",
+          opts: ["Auditory", "Visual", "Somatosensory", "Vestibular", "Olfactory"],
+          correct: 0,
+          exp: "Medial geniculate nucleus of thalamus relays auditory information to cortex." },
+        { q: "Primary auditory cortex (A1) is located in:",
+          opts: ["Heschl's gyrus (superior temporal)", "Planum temporale", "Angular gyrus", "Supramarginal gyrus", "Insula"],
+          correct: 0,
+          exp: "Primary auditory cortex is in the transverse temporal gyrus (Heschl's)." },
+        { q: "The olfactory pathway does NOT synapse in the thalamus before cortex.",
+          opts: ["True", "False", "Only in some species", "It goes to mediodorsal nucleus", "It goes to pulvinar"],
+          correct: 0,
+          exp: "Olfaction is unique: olfactory bulb → olfactory tract → primary olfactory cortex (uncus, entorhinal) without thalamic relay." },
+        { q: "The ability to localize sound in the horizontal plane depends on:",
+          opts: ["Interaural time and intensity differences", "Pinna filtering", "Head shadow", "All of the above", "Only interaural time"],
+          correct: 0,
+          exp: "Low frequencies use time differences; high frequencies use intensity differences." },
+        { q: "Sound localization in the vertical plane uses:",
+          opts: ["Spectral cues from pinna", "Interaural time differences", "Interaural intensity differences", "Head movements", "None"],
+          correct: 0,
+          exp: "Pinna modifies spectrum based on elevation, providing vertical cues." }
+    ];
+    const allQuestions = questions.concat(extra); // 50 + 15 = 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

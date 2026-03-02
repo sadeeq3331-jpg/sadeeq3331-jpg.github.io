@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatrics · Pathology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-child"></i>
+        <h1>Pediatrics · Pathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PERINATAL & NEONATAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#perinatal-asphyxia"><i class="fas fa-birthday-cake"></i> 1. Perinatal Asphyxia</a></li>
+                <li class="chapter-item"><a href="#intracranial-hemorrhage"><i class="fas fa-brain"></i> 2. Intracranial Hemorrhage</a></li>
+                <li class="chapter-item"><a href="#necrotizing-enterocolitis"><i class="fas fa-intestine"></i> 3. Necrotizing Enterocolitis</a></li>
+                <li class="chapter-item"><a href="#rds"><i class="fas fa-lungs"></i> 4. Respiratory Distress Syndrome</a></li>
+                <li class="chapter-item"><a href="#bpd"><i class="fas fa-lungs"></i> 5. Bronchopulmonary Dysplasia</a></li>
+                <li class="chapter-item"><a href="#retinopathy-prematurity"><i class="fas fa-eye"></i> 6. Retinopathy of Prematurity</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CONGENITAL ANOMALIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#cardiac-defects"><i class="fas fa-heart"></i> 7. Congenital Heart Defects</a></li>
+                <li class="chapter-item"><a href="#gi-anomalies"><i class="fas fa-stomach"></i> 8. Gastrointestinal Anomalies</a></li>
+                <li class="chapter-item"><a href="#renal-anomalies"><i class="fas fa-kidney"></i> 9. Renal & Urinary Tract Anomalies</a></li>
+                <li class="chapter-item"><a href="#cns-anomalies"><i class="fas fa-brain"></i> 10. CNS Anomalies</a></li>
+                <li class="chapter-item"><a href="#cleft-lip"><i class="fas fa-lips"></i> 11. Cleft Lip & Palate</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PEDIATRIC INFECTIONS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#congenital-infections"><i class="fas fa-virus"></i> 12. Congenital Infections (TORCH)</a></li>
+                <li class="chapter-item"><a href="#meningitis"><i class="fas fa-brain"></i> 13. Meningitis</a></li>
+                <li class="chapter-item"><a href="#pneumonia"><i class="fas fa-lungs"></i> 14. Pneumonia</a></li>
+                <li class="chapter-item"><a href="#otitis-media"><i class="fas fa-ear-deaf"></i> 15. Otitis Media</a></li>
+                <li class="chapter-item"><a href="#viral-exanthems"><i class="fas fa-allergies"></i> 16. Viral Exanthems</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>GENETIC DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#down-syndrome"><i class="fas fa-dna"></i> 17. Down Syndrome</a></li>
+                <li class="chapter-item"><a href="#turner"><i class="fas fa-venus"></i> 18. Turner Syndrome</a></li>
+                <li class="chapter-item"><a href="#klinefelter"><i class="fas fa-mars"></i> 19. Klinefelter Syndrome</a></li>
+                <li class="chapter-item"><a href="#fragilex"><i class="fas fa-dna"></i> 20. Fragile X Syndrome</a></li>
+                <li class="chapter-item"><a href="#cystic-fibrosis"><i class="fas fa-lungs"></i> 21. Cystic Fibrosis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SYSTEM‑BASED PATHOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#respiratory-path"><i class="fas fa-lungs"></i> 22. Respiratory Pathology</a></li>
+                <li class="chapter-item"><a href="#cardiac-path"><i class="fas fa-heart"></i> 23. Cardiac Pathology</a></li>
+                <li class="chapter-item"><a href="#gi-path"><i class="fas fa-stomach"></i> 24. GI Pathology</a></li>
+                <li class="chapter-item"><a href="#renal-path"><i class="fas fa-kidney"></i> 25. Renal Pathology</a></li>
+                <li class="chapter-item"><a href="#endocrine-path"><i class="fas fa-hormone"></i> 26. Endocrine Pathology</a></li>
+                <li class="chapter-item"><a href="#neuro-path"><i class="fas fa-brain"></i> 27. Neurologic Pathology</a></li>
+                <li class="chapter-item"><a href="#musculoskeletal-path"><i class="fas fa-bone"></i> 28. Musculoskeletal Pathology</a></li>
+                <li class="chapter-item"><a href="#hematology"><i class="fas fa-blood"></i> 29. Hematologic Pathology</a></li>
+                <li class="chapter-item"><a href="#pediatric-tumors"><i class="fas fa-tumor"></i> 30. Pediatric Tumors</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== PERINATAL & NEONATAL ==================== -->
+        <section id="perinatal-asphyxia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-birthday-cake"></i> 1. Perinatal Asphyxia</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Definition:</strong> Impairment of gas exchange leading to hypoxemia, hypercapnia, and metabolic acidosis. May result in hypoxic‑ischemic encephalopathy (HIE).
+                </div>
+                <ul>
+                    <li><strong>Causes:</strong> Umbilical cord compression, placental abruption, maternal hypotension, prolonged labor.</li>
+                    <li><strong>Pathology:</strong> Selective neuronal necrosis (hippocampus, Purkinje cells, basal ganglia), cerebral edema, infarction.</li>
+                    <li><strong>Outcome:</strong> Long‑term neurologic deficits, cerebral palsy, epilepsy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="intracranial-hemorrhage" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 2. Intracranial Hemorrhage</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Location</th><th>Risk factors</th></tr></thead>
+                    <tbody>
+                        <tr><td>Germinal matrix hemorrhage (GMH)</td><td>Subependymal germinal matrix (preterm)</td><td>Prematurity, respiratory distress, fluctuating BP</td></tr>
+                        <tr><td>Intraventricular hemorrhage (IVH)</td><td>Extends into ventricles</td><td>Sequelae of GMH</td></tr>
+                        <tr><td>Subdural hemorrhage</td><td>Between dura and arachnoid</td><td>Birth trauma, vacuum/forceps</td></tr>
+                        <tr><td>Subarachnoid hemorrhage</td><td>Within subarachnoid space</td><td>Trauma, asphyxia</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="necrotizing-enterocolitis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-intestine"></i> 3. Necrotizing Enterocolitis (NEC)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Definition:</strong> Ischemic necrosis of intestinal mucosa, mainly in preterm infants. Associated with formula feeding, bacterial colonization, hypoxia.
+                </div>
+                <ul>
+                    <li><strong>Pathology:</strong> Coagulative necrosis, pneumatosis intestinalis (gas in bowel wall), perforation, peritonitis.</li>
+                    <li><strong>Clinical:</strong> Abdominal distension, bloody stools, lethargy; X‑ray shows portal venous gas, pneumoperitoneum if perforated.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="rds" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 4. Respiratory Distress Syndrome (RDS)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Cause:</strong> Surfactant deficiency (type II pneumocyte immaturity) in preterm infants. Hyaline membranes line alveoli (hyaline membrane disease).
+                </div>
+                <ul>
+                    <li><strong>Pathology:</strong> Atelectasis, eosinophilic hyaline membranes, capillary congestion.</li>
+                    <li><strong>Prevention:</strong> Antenatal corticosteroids accelerate surfactant production.</li>
+                    <li><strong>Treatment:</strong> Exogenous surfactant, CPAP.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="bpd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 5. Bronchopulmonary Dysplasia (BPD)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Chronic lung disease of prematurity due to oxygen toxicity, barotrauma, inflammation. Pathology: alveolar simplification, fibrosis, smooth muscle hypertrophy.
+                </div>
+            </div>
+        </section>
+
+        <section id="retinopathy-prematurity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 6. Retinopathy of Prematurity (ROP)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Abnormal retinal vascular development in preterm infants exposed to high oxygen. Vaso‑obliteration followed by neovascularization. Can lead to retinal detachment and blindness.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CONGENITAL ANOMALIES ==================== -->
+        <section id="cardiac-defects" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 7. Congenital Heart Defects</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Defect</th><th>Pathology</th><th>Clinical</th></tr></thead>
+                    <tbody>
+                        <tr><td>Ventricular septal defect (VSD)</td><td>Opening in interventricular septum</td><td>Left‑to‑right shunt, murmur, pulmonary hypertension</td></tr>
+                        <tr><td>Atrial septal defect (ASD)</td><td>Opening in interatrial septum</td><td>Usually asymptomatic in childhood, later arrhythmias</td></tr>
+                        <tr><td>Patent ductus arteriosus (PDA)</td><td>Failure of ductus to close</td><td>Continuous murmur, widened pulse pressure</td></tr>
+                        <tr><td>Tetralogy of Fallot</td><td>VSD, pulmonary stenosis, overriding aorta, RVH</td><td>“Tet spells”, cyanosis, squatting</td></tr>
+                        <tr><td>Transposition of great arteries</td><td>Aorta from RV, pulmonary artery from LV</td><td>Cyanosis at birth, requires mixing (PDA/ASD)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="gi-anomalies" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 8. Gastrointestinal Anomalies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Tracheoesophageal fistula (TEF):</strong> Esophageal atresia with distal fistula → polyhydramnios, coughing/cyanosis with feeding.</li>
+                    <li><strong>Pyloric stenosis:</strong> Hypertrophy of pyloric muscle → projectile vomiting at 3‑6 weeks, olive‑shaped mass.</li>
+                    <li><strong>Duodenal atresia:</strong> Double bubble sign on X‑ray; associated with Down syndrome.</li>
+                    <li><strong>Hirschsprung disease:</strong> Aganglionosis of distal colon → failure to pass meconium, explosive stools after rectal exam.</li>
+                    <li><strong>Meckel diverticulum:</strong> Persistent vitelline duct; rule of 2s (2% population, 2 inches long, 2 feet from ileocecal valve, 2 types of ectopic tissue (gastric, pancreatic), presents by age 2).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="renal-anomalies" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-kidney"></i> 9. Renal & Urinary Tract Anomalies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Renal agenesis:</strong> Unilateral (often asymptomatic) or bilateral (Potter sequence – oligohydramnios, pulmonary hypoplasia, characteristic facies).</li>
+                    <li><strong>Multicystic dysplastic kidney:</strong> Non‑functional cystic kidney; usually unilateral.</li>
+                    <li><strong>Polycystic kidney disease:</strong> Autosomal recessive (infantile) – enlarged cystic kidneys, hepatic fibrosis; autosomal dominant (adult) – later onset.</li>
+                    <li><strong>Posterior urethral valves:</strong> Obstructive uropathy in males → hydronephrosis, bladder wall thickening.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cns-anomalies" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 10. CNS Anomalies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Neural tube defects:</strong> Spina bifida (meningocele, myelomeningocele), anencephaly. Folic acid deficiency prevention.</li>
+                    <li><strong>Hydrocephalus:</strong> Impaired CSF circulation; aqueductal stenosis (X‑linked), Dandy‑Walker malformation.</li>
+                    <li><strong>Holoprosencephaly:</strong> Failure of forebrain division; associated with trisomy 13, maternal diabetes.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cleft-lip" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lips"></i> 11. Cleft Lip & Palate</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Failure of fusion of maxillary and medial nasal processes (lip) or palatal shelves (palate). Syndromic or isolated. Associated with Pierre Robin sequence (cleft palate, micrognathia, glossoptosis).
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PEDIATRIC INFECTIONS ==================== -->
+        <section id="congenital-infections" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-virus"></i> 12. Congenital Infections (TORCH)</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Pathogen</th><th>Key Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Toxoplasmosis</td><td>Chorioretinitis, intracranial calcifications (diffuse), hydrocephalus</td></tr>
+                        <tr><td>Rubella</td><td>Sensorineural hearing loss, cataracts, PDA, “blueberry muffin” rash</td></tr>
+                        <tr><td>CMV</td><td>Microcephaly, periventricular calcifications, sensorineural hearing loss, petechiae</td></tr>
+                        <tr><td>HSV</td><td>Skin vesicles, encephalitis, microcephaly, hepatitis</td></tr>
+                        <tr><td>Syphilis</td><td>Snuffles, maculopapular rash, periostitis, Hutchinson teeth, saddle nose</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="meningitis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 13. Meningitis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Neonates:</strong> Group B Streptococcus, E. coli, Listeria monocytogenes.</li>
+                    <li><strong>Infants/children:</strong> S. pneumoniae, Neisseria meningitidis, H. influenzae type b (vaccine has reduced incidence).</li>
+                    <li><strong>Pathology:</strong> Purulent exudate in subarachnoid space; complications: hydrocephalus, hearing loss, brain infarction.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pneumonia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 14. Pneumonia</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Neonatal:</strong> Group B Strep, E. coli (early onset); Chlamydia trachomatis (late onset, afebrile, staccato cough).</li>
+                    <li><strong>Infants/children:</strong> Respiratory syncytial virus (RSV – bronchiolitis), S. pneumoniae, Mycoplasma pneumoniae (older children).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="otitis-media" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ear-deaf"></i> 15. Otitis Media</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Common in infants due to short, horizontal Eustachian tube. Organisms: S. pneumoniae, H. influenzae, M. catarrhalis. Pathology: middle ear effusion, inflammation, possible perforation.
+                </div>
+            </div>
+        </section>
+
+        <section id="viral-exanthems" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-allergies"></i> 16. Viral Exanthems</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Measles (rubeola):</strong> Prodrome (cough, coryza, conjunctivitis), Koplik spots, maculopapular rash head to toe.</li>
+                    <li><strong>Rubella (German measles):</strong> Mild prodrome, postauricular lymphadenopathy, rash spreads quickly.</li>
+                    <li><strong>Varicella (chickenpox):</strong> Vesicular rash (“dew drops on a rose petal”), pruritic, may become secondarily infected.</li>
+                    <li><strong>Erythema infectiosum (fifth disease):</strong> Parvovirus B19; slapped cheek rash, lacy reticular rash on extremities.</li>
+                    <li><strong>Roseola infantum (sixth disease):</strong> HHV‑6; high fever then rash after defervescence.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== GENETIC DISORDERS ==================== -->
+        <section id="down-syndrome" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 17. Down Syndrome (Trisomy 21)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Features:</strong> Hypotonia, flat facies, upslanting palpebral fissures, simian crease, Brushfield spots, duodenal atresia, AVSD.</li>
+                    <li><strong>Risk:</strong> Advanced maternal age.</li>
+                    <li><strong>Complications:</strong> Intellectual disability, Alzheimer disease (by 40‑50 years), leukemia (AML, ALL), atlantoaxial instability.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="turner" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-venus"></i> 18. Turner Syndrome (45,X)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Features:</strong> Short stature, webbed neck, low posterior hairline, broad chest (shield chest), cubitus valgus, lymphedema of hands/feet in newborn.</li>
+                    <li><strong>Complications:</strong> Coarctation of aorta, bicuspid aortic valve, ovarian dysgenesis (streak ovaries), infertility, normal intelligence.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="klinefelter" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-mars"></i> 19. Klinefelter Syndrome (47,XXY)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Features:</strong> Tall stature, hypogonadism, small testes, gynecomastia, decreased facial/body hair.</li>
+                    <li><strong>Complications:</strong> Infertility, learning disabilities, increased risk of breast cancer, osteoporosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="fragilex" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 20. Fragile X Syndrome</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Genetics:</strong> CGG repeat expansion in FMR1 gene → silencing → lack of FMRP.</li>
+                    <li><strong>Features:</strong> Intellectual disability, long face, prominent ears, macroorchidism (after puberty), autistic features.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cystic-fibrosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 21. Cystic Fibrosis (CF)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Genetics:</strong> AR, CFTR mutation (ΔF508 most common).</li>
+                    <li><strong>Pathology:</strong> Defective chloride channel → thick secretions → meconium ileus, pancreatic insufficiency (malabsorption, steatorrhea), chronic lung infections (Pseudomonas, S. aureus), infertility (males).</li>
+                    <li><strong>Diagnosis:</strong> Sweat chloride test >60 mmol/L.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SYSTEM‑BASED PATHOLOGY ==================== -->
+        <section id="respiratory-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 22. Respiratory Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Croup (laryngotracheobronchitis):</strong> Parainfluenza virus; subglottic edema → barking cough, stridor.</li>
+                    <li><strong>Epiglottitis:</strong> H. influenzae type b (now rare due to vaccine); rapid onset, high fever, drooling, “tripod” position.</li>
+                    <li><strong>Bronchiolitis:</strong> RSV; small airway inflammation, wheezing, air trapping.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cardiac-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 23. Cardiac Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Kawasaki disease:</strong> Acute systemic vasculitis (medium vessels); fever >5 days, conjunctival injection, strawberry tongue, rash, cervical lymphadenopathy; can cause coronary artery aneurysms.</li>
+                    <li><strong>Rheumatic fever:</strong> Post‑streptococcal; pancarditis, subcutaneous nodules, erythema marginatum, chorea, arthritis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="gi-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 24. GI Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Intussusception:</strong> Telescoping of bowel (ileocolic); “currant jelly” stool, intermittent abdominal pain; lead point (Peyer's patch, Meckel diverticulum).</li>
+                    <li><strong>Appendicitis:</strong> Inflammation of appendix; peak incidence 10‑20 years.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="renal-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-kidney"></i> 25. Renal Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Post‑streptococcal glomerulonephritis:</strong> Immune complex mediated after GAS infection; hematuria, hypertension, edema.</li>
+                    <li><strong>Minimal change disease (nil disease):</strong> Most common nephrotic syndrome in children; fusion of podocytes; responds to steroids.</li>
+                    <li><strong>Hemolytic uremic syndrome (HUS):</strong> Usually post‑diarrheal (E. coli O157:H7); triad: microangiopathic hemolytic anemia, thrombocytopenia, acute renal failure.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="endocrine-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hormone"></i> 26. Endocrine Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Congenital adrenal hyperplasia (CAH):</strong> 21‑hydroxylase deficiency most common; salt‑wasting, ambiguous genitalia (46,XX virilized), hyperkalemia, hypotension.</li>
+                    <li><strong>Type 1 diabetes:</strong> Autoimmune destruction of pancreatic beta cells; presents with polyuria, polydipsia, weight loss, DKA.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="neuro-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 27. Neurologic Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Neural tube defects (covered earlier).</strong></li>
+                    <li><strong>Hydrocephalus.</strong></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="musculoskeletal-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 28. Musculoskeletal Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Developmental dysplasia of the hip (DDH):</strong> Abnormal acetabulum; Barlow/Ortolani tests, risk factors: breech, family history.</li>
+                    <li><strong>Legg‑Calvé‑Perthes disease:</strong> Avascular necrosis of femoral head (4‑8 years).</li>
+                    <li><strong>Slipped capital femoral epiphysis (SCFE):</strong> Adolescent, obese, limping, hip/knee pain.</li>
+                    <li><strong>Osteogenesis imperfecta:</strong> Collagen defect; brittle bones, blue sclera, hearing loss.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hematology" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 29. Hematologic Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Iron deficiency anemia:</strong> Most common anemia in children; microcytic, hypochromic; pica, pallor.</li>
+                    <li><strong>Sickle cell disease:</strong> HbS; vaso‑occlusive crises, splenic infarction (autosplenectomy), increased infection risk.</li>
+                    <li><strong>Thalassemia:</strong> Microcytic anemia; alpha or beta globin chain defects.</li>
+                    <li><strong>Hemophilia A:</strong> Factor VIII deficiency; X‑linked; joint bleeds.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pediatric-tumors" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tumor"></i> 30. Pediatric Tumors</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Tumor</th><th>Origin</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Neuroblastoma</td><td>Neural crest (adrenal medulla, sympathetic chain)</td><td>Most common extracranial solid tumor in children; abdominal mass, periorbital ecchymoses (raccoon eyes); N‑myc amplification; Homer‑Wright rosettes</td></tr>
+                        <tr><td>Wilms tumor (nephroblastoma)</td><td>Kidney (metanephric blastema)</td><td>Large abdominal mass, associated with WAGR, Beckwith‑Wiedemann; favorable histology (triphasic)</td></tr>
+                        <tr><td>Retinoblastoma</td><td>Retina</td><td>Leukocoria, strabismus; RB1 mutation; bilateral/trilateral</td></tr>
+                        <tr><td>Rhabdomyosarcoma</td><td>Skeletal muscle (head/neck, GU, extremities)</td><td>Embryonal (better prognosis) and alveolar (PAX‑FOXO fusion, worse); cross‑striations</td></tr>
+                        <tr><td>Osteosarcoma</td><td>Bone (metaphysis, around knee)</td><td>Codman triangle, sunburst appearance; teenagers</td></tr>
+                        <tr><td>Ewing sarcoma</td><td>Bone (diaphysis) or soft tissue</td><td>t(11;22)(EWSR1‑FLI1); small round blue cells, CD99+, onion skin periosteal reaction</td></tr>
+                        <tr><td>Leukemia</td><td>ALL (most common), AML</td><td>Bone marrow failure, hepatosplenomegaly, CNS involvement</td></tr>
+                        <tr><td>Lymphoma</td><td>Hodgkin (Reed‑Sternberg cells) vs non‑Hodgkin (Burkitt – t(8;14), starry sky pattern)</td><td>Lymphadenopathy, B symptoms</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Pediatrics Pathology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

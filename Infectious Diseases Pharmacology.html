@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infectious Diseases Pharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-pills"></i>
+        <h1>Infectious Diseases Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Principles of Antimicrobial Therapy</a></li>
+                <li><a href="#ch2"><i class="fas fa-biohazard"></i> 2. Cell Wall Synthesis Inhibitors</a></li>
+                <li><a href="#ch3"><i class="fas fa-dna"></i> 3. Protein Synthesis Inhibitors</a></li>
+                <li><a href="#ch4"><i class="fas fa-dna"></i> 4. DNA/RNA Synthesis Inhibitors</a></li>
+                <li><a href="#ch5"><i class="fas fa-flask"></i> 5. Antimycobacterial Drugs</a></li>
+                <li><a href="#ch6"><i class="fas fa-virus"></i> 6. Antiviral Drugs</a></li>
+                <li><a href="#ch7"><i class="fas fa-mushroom"></i> 7. Antifungal Drugs</a></li>
+                <li><a href="#ch8"><i class="fas fa-bug"></i> 8. Antiparasitic Drugs</a></li>
+                <li><a href="#ch9"><i class="fas fa-shield-alt"></i> 9. Antibiotic Resistance Mechanisms</a></li>
+                <li><a href="#ch10"><i class="fas fa-syringe"></i> 10. Immunomodulators & Vaccines</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: PRINCIPLES OF ANTIMICROBIAL THERAPY -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Principles of Antimicrobial Therapy</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Antimicrobial drugs target specific microbial structures or metabolic pathways while minimizing toxicity to host cells. Key concepts include selective toxicity, bacteriostatic vs. bactericidal activity, spectrum of activity, and mechanisms of resistance.</p>
+                </div>
+                <ul>
+                    <li><strong>Selective toxicity:</strong> Exploit differences between pathogen and human cells (e.g., bacterial cell wall, ribosomes).</li>
+                    <li><strong>Bacteriostatic:</strong> Inhibit growth; host immune system clears infection (e.g., tetracyclines, sulfonamides).</li>
+                    <li><strong>Bactericidal:</strong> Kill bacteria directly (e.g., beta‑lactams, aminoglycosides, fluoroquinolones).</li>
+                    <li><strong>Spectrum:</strong> Narrow (e.g., penicillin G) vs. broad (e.g., carbapenems, tetracyclines).</li>
+                    <li><strong>MIC (minimum inhibitory concentration):</strong> Lowest drug concentration that prevents visible growth.</li>
+                    <li><strong>MBC (minimum bactericidal concentration):</strong> Lowest concentration that kills 99.9% of inoculum.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Combination therapy may be used for synergy (e.g., beta‑lactam + aminoglycoside) or to prevent resistance (e.g., tuberculosis).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: CELL WALL SYNTHESIS INHIBITORS -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-biohazard"></i> 2. Cell Wall Synthesis Inhibitors</div>
+            <div class="section-card">
+                <div class="subsection-heading">Beta‑Lactams</div>
+                <ul>
+                    <li><strong>Penicillins:</strong> Natural (penicillin G, V) – active against Gram‑positives, some Gram‑negatives; penicillinase‑resistant (methicillin, nafcillin) – anti‑staphylococcal; aminopenicillins (ampicillin, amoxicillin) – extended spectrum; anti‑pseudomonal (ticarcillin, piperacillin).</li>
+                    <li><strong>Cephalosporins:</strong> 1st generation (cefazolin, cephalexin) – Gram‑positives; 2nd (cefoxitin, cefuroxime) – some anaerobes; 3rd (ceftriaxone, cefotaxime) – Gram‑negatives, meningitis; 4th (cefepime) – broader, anti‑pseudomonal; 5th (ceftaroline) – MRSA.</li>
+                    <li><strong>Carbapenems:</strong> Imipenem, meropenem, ertapenem – very broad spectrum, including anaerobes.</li>
+                    <li><strong>Monobactams:</strong> Aztreonam – only active against Gram‑negatives (no cross‑allergy with penicillins).</li>
+                </ul>
+                <div class="subsection-heading">Other Cell Wall Inhibitors</div>
+                <ul>
+                    <li><strong>Vancomycin:</strong> Glycopeptide, inhibits cell wall synthesis by binding D‑Ala‑D‑Ala. Active against Gram‑positives (MRSA, <em>C. difficile</em>). IV for systemic infections; oral for <em>C. difficile</em>. Adverse effects: red man syndrome (infusion reaction), nephrotoxicity, ototoxicity.</li>
+                    <li><strong>Bacitracin:</strong> Topical, inhibits cell wall synthesis.</li>
+                    <li><strong>Fosfomycin:</strong> Inhibits peptidoglycan synthesis, used for uncomplicated UTIs.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Beta‑lactam allergy: cross‑reactivity between penicillins and cephalosporins is low (≈2‑10%). Avoid in severe reactions.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: PROTEIN SYNTHESIS INHIBITORS -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 3. Protein Synthesis Inhibitors</div>
+            <div class="section-card">
+                <div class="subsection-heading">30S Subunit Inhibitors</div>
+                <ul>
+                    <li><strong>Aminoglycosides:</strong> Gentamicin, tobramycin, amikacin, streptomycin. Bactericidal, require oxygen for uptake; active against Gram‑negatives, synergy with beta‑lactams. Adverse effects: nephrotoxicity, ototoxicity, neuromuscular blockade.</li>
+                    <li><strong>Tetracyclines:</strong> Doxycycline, minocycline, tigecycline. Bacteriostatic, inhibit protein synthesis by binding 30S. Broad spectrum (including atypicals, intracellular). Contraindicated in pregnancy, children (teeth staining).</li>
+                </ul>
+                <div class="subsection-heading">50S Subunit Inhibitors</div>
+                <ul>
+                    <li><strong>Macrolides:</strong> Erythromycin, clarithromycin, azithromycin. Bacteriostatic, active against respiratory pathogens, atypicals. GI side effects (motilin agonist), QT prolongation.</li>
+                    <li><strong>Clindamycin:</strong> Active against anaerobes, Gram‑positives; risk of <em>C. difficile</em> colitis.</li>
+                    <li><strong>Chloramphenicol:</strong> Broad spectrum, but causes dose‑dependent bone marrow suppression, aplastic anemia (rare).</li>
+                    <li><strong>Linezolid:</strong> Oxazolidinone, active against MRSA, VRE. Myelosuppression, serotonin syndrome (MAOI effect).</li>
+                    <li><strong>Streptogramins:</strong> Quinupristin/dalfopristin – for VRE, MRSA.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: DNA/RNA SYNTHESIS INHIBITORS -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 4. DNA/RNA Synthesis Inhibitors</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Fluoroquinolones:</strong> Ciprofloxacin, levofloxacin, moxifloxacin. Inhibit DNA gyrase (topo II) and topo IV. Broad spectrum, but resistance increasing. Adverse effects: tendonitis, QT prolongation, CNS effects.</li>
+                    <li><strong>Sulfonamides:</strong> Sulfamethoxazole (with trimethoprim – TMP‑SMX). Inhibit folate synthesis. Used for UTIs, MRSA, <em>Pneumocystis jirovecii</em>. Adverse effects: rash, Stevens‑Johnson syndrome, hemolysis in G6PD deficiency.</li>
+                    <li><strong>Metronidazole:</strong> Prodrug, activated in anaerobic organisms, damages DNA. Active against anaerobes, protozoa (<em>Giardia</em>, <em>Trichomonas</em>). Disulfiram‑like reaction with alcohol.</li>
+                    <li><strong>Rifampin:</strong> Inhibits RNA polymerase (bacterial). Used in TB, prophylaxis of meningococcal/Hib infection. Potent CYP inducer, orange discoloration of body fluids.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: ANTIMYCOBACTERIAL DRUGS -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 5. Antimycobacterial Drugs</div>
+            <div class="section-card">
+                <div class="subsection-heading">First‑line Agents for TB</div>
+                <ul>
+                    <li><strong>Isoniazid (INH):</strong> Inhibits mycolic acid synthesis. Hepatotoxicity, peripheral neuropathy (give B6).</li>
+                    <li><strong>Rifampin (RIF):</strong> Inhibits RNA polymerase; potent CYP inducer.</li>
+                    <li><strong>Pyrazinamide (PZA):</strong> Active in acidic environment (macrophages); hepatotoxicity, hyperuricemia.</li>
+                    <li><strong>Ethambutol (EMB):</strong> Inhibits arabinosyl transferase; optic neuritis (dose‑dependent).</li>
+                </ul>
+                <div class="subsection-heading">Second‑line Agents</div>
+                <ul>
+                    <li>Streptomycin, fluoroquinolones, bedaquiline, linezolid, etc. Used for drug‑resistant TB.</li>
+                </ul>
+                <div class="subsection-heading">Leprosy</div>
+                <ul>
+                    <li>Dapsone, rifampin, clofazimine.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: ANTIVIRAL DRUGS -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-virus"></i> 6. Antiviral Drugs</div>
+            <div class="section-card">
+                <div class="subsection-heading">Anti‑Herpes</div>
+                <ul>
+                    <li><strong>Acyclovir, valacyclovir, famciclovir:</strong> Inhibit viral DNA polymerase. Used for HSV, VZV. Well tolerated.</li>
+                </ul>
+                <div class="subsection-heading">Anti‑Influenza</div>
+                <ul>
+                    <li><strong>Oseltamivir, zanamivir:</strong> Neuraminidase inhibitors. Reduce duration if started early.</li>
+                </ul>
+                <div class="subsection-heading">Anti‑HIV</div>
+                <ul>
+                    <li><strong>NRTIs:</strong> Zidovudine, tenofovir, emtricitabine – inhibit reverse transcriptase.</li>
+                    <li><strong>NNRTIs:</strong> Efavirenz, nevirapine – non‑competitive inhibitors.</li>
+                    <li><strong>Protease inhibitors:</strong> Lopinavir/ritonavir, atazanavir – inhibit viral maturation.</li>
+                    <li><strong>Integrase inhibitors:</strong> Raltegravir, dolutegravir.</li>
+                    <li><strong>Entry inhibitors:</strong> Enfuvirtide, maraviroc.</li>
+                </ul>
+                <div class="subsection-heading">Anti‑Hepatitis</div>
+                <ul>
+                    <li><strong>HBV:</strong> Tenofovir, entecavir, peginterferon.</li>
+                    <li><strong>HCV:</strong> Direct‑acting antivirals (sofosbuvir, ledipasvir, glecaprevir/pibrentasvir).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> HIV requires combination ART to prevent resistance.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: ANTIFUNGAL DRUGS -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-mushroom"></i> 7. Antifungal Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Polyenes:</strong> Amphotericin B – binds ergosterol, forms pores. Broad spectrum, but nephrotoxic, infusion reactions.</li>
+                    <li><strong>Azoles:</strong> Fluconazole (good for Candida, Cryptococcus), itraconazole, voriconazole (Aspergillus), posaconazole. Inhibit ergosterol synthesis (lanosterol 14α‑demethylase). Drug interactions, hepatotoxicity.</li>
+                    <li><strong>Echinocandins:</strong> Caspofungin, micafungin, anidulafungin – inhibit β‑glucan synthase. Active against Candida, Aspergillus. Well tolerated.</li>
+                    <li><strong>Flucytosine:</strong> Inhibits DNA/RNA synthesis; used with amphotericin for Cryptococcus.</li>
+                    <li><strong>Griseofulvin:</strong> For dermatophytes; deposits in keratin.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: ANTIPARASITIC DRUGS -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bug"></i> 8. Antiparasitic Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Antimalarials:</strong> Chloroquine (resistance widespread), quinine, artemisinin derivatives (artemether, artesunate), mefloquine, doxycycline, atovaquone‑proguanil.</li>
+                    <li><strong>Antiamoebic:</strong> Metronidazole, tinidazole, iodoquinol, paromomycin.</li>
+                    <li><strong>Anthelmintics:</strong> Albendazole, mebendazole (broad spectrum), ivermectin (strongyloides, onchocerciasis, scabies), praziquantel (schistosomiasis, cestodes), diethylcarbamazine (filariasis).</li>
+                    <li><strong>Other:</strong> Pentamidine (Pneumocystis, leishmania), nifurtimox (Chagas), suramin (African trypanosomiasis).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: ANTIBIOTIC RESISTANCE MECHANISMS -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 9. Antibiotic Resistance Mechanisms</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Enzymatic inactivation:</strong> Beta‑lactamases (penicillinases, cephalosporinases, carbapenemases), aminoglycoside‑modifying enzymes, chloramphenicol acetyltransferase.</li>
+                    <li><strong>Target modification:</strong> Altered penicillin‑binding proteins (MRSA), ribosome methylation (macrolides, clindamycin – MLS<sub>B</sub>), DNA gyrase mutations (fluoroquinolones).</li>
+                    <li><strong>Efflux pumps:</strong> Tetracyclines, macrolides, fluoroquinolones.</li>
+                    <li><strong>Reduced permeability:</strong> Loss of porins (Gram‑negatives).</li>
+                    <li><strong>Metabolic bypass:</strong> Alternative pathway (e.g., vancomycin resistance – D‑Ala‑D‑Lac).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> ESBL (extended‑spectrum beta‑lactamase) producers are resistant to penicillins and most cephalosporins; treat with carbapenems.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: IMMUNOMODULATORS & VACCINES -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 10. Immunomodulators & Vaccines</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Vaccines:</strong> Live‑attenuated (MMR, varicella, yellow fever), inactivated (IPV, influenza), subunit (HepB, HPV), toxoid (tetanus, diphtheria), conjugate (Hib, pneumococcal).</li>
+                    <li><strong>Immune globulins:</strong> Passive immunity (IVIG, HBIG, rabies Ig).</li>
+                    <li><strong>Interferons:</strong> Peginterferon for HBV/HCV.</li>
+                    <li><strong>Cytokines:</strong> GM‑CSF, G‑CSF for neutropenia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Infectious Diseases Pharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

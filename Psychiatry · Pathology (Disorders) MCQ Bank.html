@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatry · Pathology (Disorders) MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-diagnoses"></i>
+        <h1>Psychiatry · Pathology (Disorders) MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ PSYCHIATRY PATHOLOGY (DISORDERS) QUESTIONS
+    const questions = [
+        { q: "A 22‑year‑old presents with delusions, hallucinations, disorganized speech, and negative symptoms for 6 months. The most likely diagnosis is:",
+          opts: ["Schizophrenia", "Schizophreniform disorder", "Brief psychotic disorder", "Schizoaffective disorder", "Delusional disorder"],
+          correct: 0,
+          exp: "Schizophrenia requires ≥6 months of symptoms (including prodrome/residual)." },
+        { q: "A 30‑year‑old has auditory hallucinations and delusions for 3 weeks after giving birth. No prior psychiatric history. Diagnosis?",
+          opts: ["Brief psychotic disorder", "Schizophreniform disorder", "Postpartum psychosis", "Major depressive disorder with psychotic features", "Schizophrenia"],
+          correct: 2,
+          exp: "Postpartum psychosis is a medical emergency, often within 2 weeks of delivery." },
+        { q: "A patient with schizophrenia exhibits fixed, false beliefs despite evidence to the contrary. This is called:",
+          opts: ["Delusion", "Hallucination", "Illusion", "Obsession", "Phobia"],
+          correct: 0,
+          exp: "Delusions are fixed false beliefs; hallucinations are sensory perceptions without external stimulus." },
+        { q: "A 45‑year‑old man believes his wife is poisoning his food. This is an example of:",
+          opts: ["Persecutory delusion", "Grandiose delusion", "Somatic delusion", "Erotomanic delusion", "Delusion of reference"],
+          correct: 0,
+          exp: "Persecutory delusions: belief of being harmed or conspired against." },
+        { q: "A 28‑year‑old woman believes she is the Virgin Mary and can perform miracles. This is a:",
+          opts: ["Grandiose delusion", "Persecutory delusion", "Delusion of reference", "Somatic delusion", "Nihilistic delusion"],
+          correct: 0,
+          exp: "Grandiose delusions involve inflated worth, power, or identity." },
+        { q: "A patient reports hearing two voices discussing him in the third person. This type of hallucination is characteristic of:",
+          opts: ["Schizophrenia", "Bipolar disorder", "Dementia", "Substance abuse", "Anxiety"],
+          correct: 0,
+          exp: "Auditory hallucinations, especially commenting voices, are common in schizophrenia." },
+        { q: "Apathy, social withdrawal, and lack of motivation are examples of:",
+          opts: ["Negative symptoms of schizophrenia", "Positive symptoms", "Cognitive symptoms", "Mood symptoms", "Extrapyramidal symptoms"],
+          correct: 0,
+          exp: "Negative symptoms include alogia, avolition, anhedonia, asociality." },
+        { q: "The lifetime risk of schizophrenia in the general population is approximately:",
+          opts: ["0.3‑0.7%", "1‑2%", "5%", "10%", "15%"],
+          correct: 0,
+          exp: "Lifetime prevalence about 0.5‑1%." },
+        { q: "Which of the following is a disorganized symptom of schizophrenia?",
+          opts: ["Loose associations", "Delusions", "Hallucinations", "Blunted affect", "Avolition"],
+          correct: 0,
+          exp: "Disorganized speech (derailment, tangentiality) and behavior are key." },
+        { q: "A patient with schizophrenia shows almost no movement and is mute. This is:",
+          opts: ["Catatonia", "Stupor", "Negativism", "Echopraxia", "Waxy flexibility"],
+          correct: 0,
+          exp: "Catatonia can include stupor, mutism, negativism, or excitement." },
+        { q: "A 50‑year‑old man with Parkinson disease develops visual hallucinations of small animals. Most likely cause:",
+          opts: ["Parkinson's psychosis (dopaminergic medication)", "Schizophrenia", "Delirium", "Lewy body dementia", "Substance abuse"],
+          correct: 0,
+          exp: "Dopamine agonists can cause hallucinations in Parkinson's." },
+        { q: "A 70‑year‑old with fluctuating cognition, visual hallucinations, and parkinsonism likely has:",
+          opts: ["Dementia with Lewy bodies", "Alzheimer disease", "Vascular dementia", "Frontotemporal dementia", "Parkinson disease dementia"],
+          correct: 0,
+          exp: "Lewy body dementia: core features of visual hallucinations, fluctuation, parkinsonism." },
+        { q: "Major depressive disorder is diagnosed when a patient has depressed mood or anhedonia for at least:",
+          opts: ["2 weeks", "1 month", "6 months", "1 year", "2 years"],
+          correct: 0,
+          exp: "MDD requires ≥2 weeks of symptoms." },
+        { q: "A patient with 5 or more depressive symptoms for 2 years without remission is diagnosed with:",
+          opts: ["Persistent depressive disorder (dysthymia)", "Major depressive disorder", "Double depression", "Cyclothymia", "Adjustment disorder"],
+          correct: 0,
+          exp: "Dysthymia = chronic (≥2 years) low‑grade depression." },
+        { q: "A 35‑year‑old woman has episodes of elevated mood, grandiosity, decreased need for sleep, and pressured speech lasting 5 days. This is:",
+          opts: ["Hypomanic episode", "Manic episode", "Mixed episode", "Cyclothymia", "Bipolar II"],
+          correct: 0,
+          exp: "Hypomania: ≥4 days, not severe enough to cause marked impairment." },
+        { q: "A manic episode lasting 1 week with psychosis is diagnostic of:",
+          opts: ["Bipolar I disorder", "Bipolar II disorder", "Schizoaffective disorder", "Cyclothymic disorder", "Substance‑induced mood disorder"],
+          correct: 0,
+          exp: "Bipolar I requires at least one manic episode (usually ≥1 week, hospitalization, or psychosis)." },
+        { q: "A patient has recurrent major depressive episodes and hypomanic episodes. This is:",
+          opts: ["Bipolar II disorder", "Bipolar I disorder", "Cyclothymia", "Major depressive disorder", "Schizoaffective disorder"],
+          correct: 0,
+          exp: "Bipolar II: hypomania + major depression, never full mania." },
+        { q: "The lifetime suicide risk in bipolar disorder is approximately:",
+          opts: ["15‑20%", "5%", "1%", "30%", "50%"],
+          correct: 0,
+          exp: "Bipolar has high suicide rate, up to 20% attempt suicide." },
+        { q: "A 28‑year‑old with panic attacks, fear of future attacks, and avoidance behaviors for 1 month likely has:",
+          opts: ["Panic disorder", "Agoraphobia", "Generalized anxiety disorder", "Social anxiety disorder", "PTSD"],
+          correct: 0,
+          exp: "Panic disorder: recurrent unexpected panic attacks with worry about more attacks." },
+        { q: "Agoraphobia is fear of:",
+          opts: ["Being in situations where escape might be difficult", "Open spaces", "Crowds", "Heights", "Social situations"],
+          correct: 0,
+          exp: "Agoraphobia involves fear of public transportation, open spaces, etc." },
+        { q: "Generalized anxiety disorder (GAD) requires excessive worry for at least:",
+          opts: ["6 months", "1 month", "3 months", "2 weeks", "1 year"],
+          correct: 0,
+          exp: "GAD: worry more days than not for ≥6 months about multiple events." },
+        { q: "A specific phobia is characterized by:",
+          opts: ["Marked fear of a specific object or situation, with avoidance", "Recurrent panic attacks", "Obsessions and compulsions", "Flashbacks", "Generalized worry"],
+          correct: 0,
+          exp: "Phobias: immediate fear upon exposure to the phobic stimulus." },
+        { q: "Social anxiety disorder (social phobia) involves fear of:",
+          opts: ["Social situations where scrutiny is possible", "Open spaces", "Panic attacks", "Dirt or contamination", "Being alone"],
+          correct: 0,
+          exp: "Fear of embarrassment or negative evaluation in social settings." },
+        { q: "A patient with recurrent, intrusive thoughts (obsessions) and repetitive behaviors (compulsions) has:",
+          opts: ["Obsessive‑compulsive disorder (OCD)", "OCPD", "Generalized anxiety", "Panic disorder", "Phobia"],
+          correct: 0,
+          exp: "OCD: obsessions and/or compulsions, time‑consuming, distressing." },
+        { q: "Common compulsions in OCD include:",
+          opts: ["Checking, washing, counting, repeating", "Panic attacks", "Avoidance", "Worry", "Flashbacks"],
+          correct: 0,
+          exp: "Compulsions are aimed at reducing anxiety from obsessions." },
+        { q: "Body dysmorphic disorder involves preoccupation with:",
+          opts: ["Perceived flaws in physical appearance", "Weight", "Illness", "Being followed", "Germs"],
+          correct: 0,
+          exp: "BDD: repetitive behaviors (mirror checking) in response to appearance concerns." },
+        { q: "Hoarding disorder is characterized by:",
+          opts: ["Persistent difficulty discarding possessions, regardless of value", "Collecting items", "Clutter", "Shopping addiction", "All"],
+          correct: 0,
+          exp: "Hoarding causes distress and impairment, not better explained by another disorder." },
+        { q: "PTSD requires exposure to actual or threatened death, serious injury, or sexual violence, plus:",
+          opts: ["Intrusion symptoms, avoidance, negative alterations in cognition/mood, and arousal for >1 month", "Only intrusion", "Only avoidance", "Symptoms for 1 week", "Flashbacks only"],
+          correct: 0,
+          exp: "PTSD symptoms last >1 month and cause functional impairment." },
+        { q: "Acute stress disorder is diagnosed when symptoms last:",
+          opts: ["3 days to 1 month", ">1 month", "<3 days", ">6 months", ">1 year"],
+          correct: 0,
+          exp: "ASD: 3 days to 4 weeks post‑trauma." },
+        { q: "Adjustment disorder is characterized by:",
+          opts: ["Emotional or behavioral symptoms in response to an identifiable stressor, within 3 months, lasting ≤6 months after stressor ends", "Symptoms >6 months", "No stressor", "Psychosis", "Only physical symptoms"],
+          correct: 0,
+          exp: "Adjustment disorder is less severe than ASD/PTSD and remits when stressor resolves." },
+        { q: "A 16‑year‑old refuses to eat, has intense fear of gaining weight, and amenorrhea. Likely diagnosis:",
+          opts: ["Anorexia nervosa", "Bulimia nervosa", "Binge‑eating disorder", "Avoidant/restrictive food intake disorder", "Body dysmorphic disorder"],
+          correct: 0,
+          exp: "Anorexia: restriction leading to low body weight, fear of weight gain, body image disturbance." },
+        { q: "Bulimia nervosa involves recurrent binge eating followed by compensatory behaviors (purging, fasting, exercise) at least:",
+          opts: ["Once a week for 3 months", "Daily", "Twice a week for 6 months", "Monthly", "Only during stress"],
+          correct: 0,
+          exp: "DSM‑5: binge eating and compensatory behaviors ≥1/week for 3 months." },
+        { q: "Binge‑eating disorder differs from bulimia by:",
+          opts: ["No regular compensatory behaviors", "More frequent binges", "Less guilt", "Higher weight", "Occurs only at night"],
+          correct: 0,
+          exp: "BED: recurrent binges without purging." },
+        { q: "A 25‑year‑old man has a history of multiple somatic complaints without medical explanation, beginning before age 30. Likely:",
+          opts: ["Somatic symptom disorder", "Illness anxiety disorder", "Conversion disorder", "Factitious disorder", "Malingering"],
+          correct: 0,
+          exp: "Somatic symptom disorder: one or more distressing somatic symptoms with excessive thoughts/behaviors." },
+        { q: "A patient presents with blindness after witnessing a traumatic event, but exam and tests are normal. This suggests:",
+          opts: ["Conversion disorder (functional neurological symptom disorder)", "Malingering", "Factitious disorder", "Somatic symptom disorder", "Illness anxiety"],
+          correct: 0,
+          exp: "Conversion: neurological symptoms incompatible with medical conditions." },
+        { q: "A patient with excessive preoccupation with having a serious illness, despite normal evaluations, has:",
+          opts: ["Illness anxiety disorder", "Somatic symptom disorder", "Hypochondriasis (old term)", "Both A and C", "None"],
+          correct: 3,
+          exp: "Illness anxiety disorder = high health anxiety, minimal somatic symptoms." },
+        { q: "Factitious disorder imposed on self (Munchausen syndrome) involves:",
+          opts: ["Intentional production of symptoms to assume sick role", "External incentives (financial gain)", "Unconscious motivation", "Only physical symptoms", "Only psychological symptoms"],
+          correct: 0,
+          exp: "Factitious: deliberate deception without external reward." },
+        { q: "Malingering differs from factitious disorder by:",
+          opts: ["External incentive (e.g., money, drugs)", "Unconscious motivation", "No deception", "Only psychological symptoms", "More common in women"],
+          correct: 0,
+          exp: "Malingering is intentional for secondary gain." },
+        { q: "A 40‑year‑old man with persistent, excessive worry about being dirty and resultant hand washing. This is:",
+          opts: ["OCD", "Phobia", "GAD", "Schizophrenia", "Delusional disorder"],
+          correct: 0,
+          exp: "Contamination obsessions and washing compulsions are classic OCD." },
+        { q: "A 60‑year‑old with progressive memory loss, aphasia, and apraxia most likely has:",
+          opts: ["Alzheimer disease", "Vascular dementia", "Frontotemporal dementia", "Lewy body dementia", "Huntington disease"],
+          correct: 0,
+          exp: "Alzheimer: insidious onset, memory impairment, cortical signs." },
+        { q: "Vascular dementia is characterized by:",
+          opts: ["Stepwise decline, focal neurological signs, history of strokes", "Gradual decline", "Personality changes early", "Visual hallucinations", "Parkinsonism"],
+          correct: 0,
+          exp: "Vascular dementia: abrupt onset, fluctuating course." },
+        { q: "Frontotemporal dementia (Pick's disease) presents early with:",
+          opts: ["Personality changes, disinhibition, language problems", "Memory loss", "Visual hallucinations", "Motor symptoms", "Delusions"],
+          correct: 0,
+          exp: "FTD: behavioral variant or primary progressive aphasia." },
+        { q: "A 70‑year‑old with delirium typically has:",
+          opts: ["Acute onset, fluctuating course, inattention, altered level of consciousness", "Gradual onset, stable", "Memory loss without attention deficit", "Hallucinations only", "Depression"],
+          correct: 0,
+          exp: "Delirium is acute, often due to medical condition, medication, or infection." },
+        { q: "The most common cause of delirium in hospitalized elderly is:",
+          opts: ["Infection (UTI, pneumonia)", "Medications", "Electrolyte imbalance", "Hypoxia", "Sensory deprivation"],
+          correct: 0,
+          exp: "Infection is a frequent trigger; often multifactorial." },
+        { q: "A 25‑year‑old with recurrent, intrusive thoughts of harming her baby, causing distress, but no intent. Likely:",
+          opts: ["OCD (aggressive obsessions)", "Postpartum psychosis", "Schizophrenia", "Delusional disorder", "Specific phobia"],
+          correct: 0,
+          exp: "Harm obsessions are common in OCD, ego‑dystonic." },
+        { q: "Tourette disorder is characterized by:",
+          opts: ["Multiple motor tics and at least one vocal tic for >1 year", "Only motor tics", "Only vocal tics", "Tics for <1 year", "Coprolalia required"],
+          correct: 0,
+          exp: "Tourette: both motor and vocal tics, onset before 18, >1 year." },
+        { q: "ADHD diagnosis requires:",
+          opts: ["Inattention and/or hyperactivity‑impulsivity symptoms before age 12, in ≥2 settings", "Symptoms only at school", "Onset after 18", "IQ <70", "Only hyperactivity"],
+          correct: 0,
+          exp: "ADHD: persistent pattern of inattention/hyperactivity interfering with functioning." },
+        { q: "Autism spectrum disorder is characterized by:",
+          opts: ["Persistent deficits in social communication and restricted, repetitive behaviors", "Only language delay", "Only social anxiety", "Only motor stereotypes", "Intellectual disability required"],
+          correct: 0,
+          exp: "Autism: deficits in social reciprocity, nonverbal communication, relationships, plus repetitive patterns." },
+        { q: "Intellectual disability is defined by IQ approximately:",
+          opts: ["Below 70", "Below 80", "Below 90", "Below 100", "Below 50"],
+          correct: 0,
+          exp: "IQ <70 plus deficits in adaptive functioning, onset during developmental period." },
+        { q: "A 35‑year‑old has a pattern of unstable relationships, impulsivity, fear of abandonment, and suicidal gestures. Likely:",
+          opts: ["Borderline personality disorder", "Antisocial personality disorder", "Histrionic personality", "Narcissistic personality", "Dependent personality"],
+          correct: 0,
+          exp: "BPD: emotional dysregulation, unstable self‑image, impulsivity." },
+        { q: "A 40‑year‑old man with a history of violating others' rights, lack of remorse, and deceitfulness since age 15. Diagnosis:",
+          opts: ["Antisocial personality disorder", "Conduct disorder", "Narcissistic personality", "Psychopathy", "Intermittent explosive disorder"],
+          correct: 0,
+          exp: "Antisocial: disregard for rights of others, onset before 15 as conduct disorder." },
+        { q: "A person with excessive emotionality, attention seeking, and provocative behavior likely has:",
+          opts: ["Histrionic personality disorder", "Narcissistic personality", "Borderline personality", "Dependent personality", "Avoidant personality"],
+          correct: 0,
+          exp: "Histrionic: dramatic, seductive, need to be center of attention." },
+        { q: "A grandiose sense of self‑importance, need for admiration, and lack of empathy suggests:",
+          opts: ["Narcissistic personality disorder", "Antisocial personality", "Histrionic personality", "Paranoid personality", "Schizoid personality"],
+          correct: 0,
+          exp: "Narcissistic: grandiosity, entitlement, exploitative." },
+        { q: "A patient with social withdrawal, detachment from social relationships, and restricted emotional expression has:",
+          opts: ["Schizoid personality disorder", "Schizotypal personality", "Avoidant personality", "Paranoid personality", "Autism"],
+          correct: 0,
+          exp: "Schizoid: no desire for close relationships, indifferent to praise/criticism." },
+        { q: "A person with odd beliefs, magical thinking, and eccentric appearance, but not psychotic, likely has:",
+          opts: ["Schizotypal personality disorder", "Schizoid personality", "Paranoid personality", "Schizophrenia", "Delusional disorder"],
+          correct: 0,
+          exp: "Schizotypal: odd beliefs (superstitious, paranormal), perceptual distortions, suspiciousness." },
+        { q: "A pervasive distrust and suspiciousness of others, interpreting motives as malevolent, describes:",
+          opts: ["Paranoid personality disorder", "Schizotypal", "Antisocial", "Borderline", "Narcissistic"],
+          correct: 0,
+          exp: "Paranoid: unjustified suspicion, bears grudges, questions loyalty." },
+        { q: "Substance use disorder criteria include:",
+          opts: ["Impaired control, social impairment, risky use, pharmacological criteria (tolerance, withdrawal)", "Only craving", "Only legal problems", "Only tolerance", "Only withdrawal"],
+          correct: 0,
+          exp: "DSM‑5 has 11 criteria across four categories." },
+        { q: "Alcohol withdrawal symptoms include:",
+          opts: ["Tremor, anxiety, autonomic hyperactivity, seizures, delirium tremens", "Sedation", "Bradycardia", "Hypotension", "Constipation"],
+          correct: 0,
+          exp: "Alcohol withdrawal is hyperadrenergic; can progress to DTs." },
+        { q: "Opioid withdrawal symptoms include:",
+          opts: ["Dysphoria, nausea, muscle aches, diarrhea, yawning, insomnia", "Seizures", "Hallucinations", "Hyperthermia", "Hypertension"],
+          correct: 0,
+          exp: "Opioid withdrawal is flu‑like, not life‑threatening but distressing." },
+        { q: "Cocaine intoxication presents with:",
+          opts: ["Euphoria, hypervigilance, tachycardia, hypertension, pupillary dilation", "Sedation", "Bradycardia", "Constipation", "Hypotension"],
+          correct: 0,
+          exp: "Cocaine is a stimulant; overdose can cause seizures, arrhythmias." }
+    ];
+    // Add extra 10 to reach 65+
+    const extra = [
+        { q: "Delirium tremens (DTs) typically occurs:",
+          opts: ["48‑96 hours after last drink", "Immediately", "Within 12 hours", "After 1 week", "Only in withdrawal from benzodiazepines"],
+          correct: 0,
+          exp: "DTs peak at 2‑4 days, with delirium, autonomic instability." },
+        { q: "Wernicke encephalopathy (triad: confusion, ataxia, ophthalmoplegia) is due to deficiency of:",
+          opts: ["Thiamine (vitamin B1)", "Niacin", "Vitamin B12", "Folate", "Pyridoxine"],
+          correct: 0,
+          exp: "Thiamine deficiency in alcoholics; give thiamine before glucose." },
+        { q: "Korsakoff syndrome (anterograde amnesia, confabulation) results from:",
+          opts: ["Chronic thiamine deficiency, often after Wernicke", "B12 deficiency", "Alcohol intoxication", "Head trauma", "Infection"],
+          correct: 0,
+          exp: "Wernicke‑Korsakoff syndrome: untreated Wernicke leads to Korsakoff." },
+        { q: "A patient with repeated episodes of binge eating, then vomiting, and has dental erosion and parotid swelling likely has:",
+          opts: ["Bulimia nervosa", "Anorexia nervosa", "Binge‑eating disorder", "GERD", "Rumination disorder"],
+          correct: 0,
+          exp: "Bulimia: purging can cause electrolyte imbalances, dental erosion, parotitis." },
+        { q: "A patient with delusions of infidelity (partner cheating) without other psychotic symptoms likely has:",
+          opts: ["Delusional disorder, jealous type", "Schizophrenia", "OCD", "Borderline personality", "Substance‑induced psychosis"],
+          correct: 0,
+          exp: "Delusional disorder: non‑bizarre delusions for ≥1 month, functioning not markedly impaired." },
+        { q: "A patient with a fixed belief that a famous person is in love with them, but no other symptoms, has:",
+          opts: ["Erotomanic delusion (de Clérambault syndrome)", "Grandiose delusion", "Persecutory delusion", "Somatic delusion", "Mixed delusion"],
+          correct: 0,
+          exp: "Erotomania: belief another (often higher status) is in love with the patient." },
+        { q: "Cotard delusion is the belief that:",
+          opts: ["One is dead or does not exist", "One's body is rotting", "One is being controlled", "Thoughts are being inserted", "A famous person is in love with them"],
+          correct: 0,
+          exp: "Cotard syndrome: nihilistic delusions." },
+        { q: "Capgras delusion is the belief that:",
+          opts: ["A familiar person has been replaced by an imposter", "One's thoughts are being broadcast", "One is being followed", "Events have personal significance", "One has superpowers"],
+          correct: 0,
+          exp: "Capgras: misidentification delusion, often in neurodegenerative disease or psychosis." },
+        { q: "Fregoli delusion is the belief that:",
+          opts: ["Different people are actually a single person in disguise", "One is being impersonated", "One's body is changing", "Aliens are controlling one", "One is famous"],
+          correct: 0,
+          exp: "Fregoli: hyperidentification, seeing familiar person in others." },
+        { q: "Intermetamorphosis is the belief that:",
+          opts: ["People swap identities", "One is dead", "One is being followed", "Thoughts are inserted", "Partner is unfaithful"],
+          correct: 0,
+          exp: "Rare delusion: people change into others physically and psychologically." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

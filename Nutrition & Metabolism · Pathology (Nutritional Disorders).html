@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition & Metabolism · Pathology (Nutritional Disorders)</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-apple-alt"></i>
+        <h1>Nutrition & Metabolism · Pathology (Nutritional Disorders)</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PROTEIN‑ENERGY MALNUTRITION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#marasmus"><i class="fas fa-child"></i> 1. Marasmus</a></li>
+                <li class="chapter-item"><a href="#kwashiorkor"><i class="fas fa-child"></i> 2. Kwashiorkor</a></li>
+                <li class="chapter-item"><a href="#marasmic-kwashiorkor"><i class="fas fa-child"></i> 3. Marasmic‑Kwashiorkor</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>VITAMIN DEFICIENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#vitamin-a"><i class="fas fa-eye"></i> 4. Vitamin A</a></li>
+                <li class="chapter-item"><a href="#vitamin-d"><i class="fas fa-bone"></i> 5. Vitamin D</a></li>
+                <li class="chapter-item"><a href="#vitamin-e"><i class="fas fa-leaf"></i> 6. Vitamin E</a></li>
+                <li class="chapter-item"><a href="#vitamin-k"><i class="fas fa-droplet"></i> 7. Vitamin K</a></li>
+                <li class="chapter-item"><a href="#thiamine"><i class="fas fa-brain"></i> 8. Thiamine (B1)</a></li>
+                <li class="chapter-item"><a href="#riboflavin"><i class="fas fa-flask"></i> 9. Riboflavin (B2)</a></li>
+                <li class="chapter-item"><a href="#niacin"><i class="fas fa-sun"></i> 10. Niacin (B3)</a></li>
+                <li class="chapter-item"><a href="#pyridoxine"><i class="fas fa-dna"></i> 11. Pyridoxine (B6)</a></li>
+                <li class="chapter-item"><a href="#folate"><i class="fas fa-dna"></i> 12. Folate (B9)</a></li>
+                <li class="chapter-item"><a href="#cobalamin"><i class="fas fa-dna"></i> 13. Cobalamin (B12)</a></li>
+                <li class="chapter-item"><a href="#vitamin-c"><i class="fas fa-lemon"></i> 14. Vitamin C</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>MINERAL DEFICIENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#iron"><i class="fas fa-tint"></i> 15. Iron</a></li>
+                <li class="chapter-item"><a href="#iodine"><i class="fas fa-flask"></i> 16. Iodine</a></li>
+                <li class="chapter-item"><a href="#zinc"><i class="fas fa-flask"></i> 17. Zinc</a></li>
+                <li class="chapter-item"><a href="#copper"><i class="fas fa-flask"></i> 18. Copper</a></li>
+                <li class="chapter-item"><a href="#selenium"><i class="fas fa-flask"></i> 19. Selenium</a></li>
+                <li class="chapter-item"><a href="#magnesium"><i class="fas fa-flask"></i> 20. Magnesium</a></li>
+                <li class="chapter-item"><a href="#calcium"><i class="fas fa-bone"></i> 21. Calcium</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>EATING DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#anorexia"><i class="fas fa-weight-scale"></i> 22. Anorexia Nervosa</a></li>
+                <li class="chapter-item"><a href="#bulimia"><i class="fas fa-poop"></i> 23. Bulimia Nervosa</a></li>
+                <li class="chapter-item"><a href="#binge-eating"><i class="fas fa-utensils"></i> 24. Binge‑Eating Disorder</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>OBESITY & METABOLIC SYNDROME</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#obesity"><i class="fas fa-weight"></i> 25. Obesity</a></li>
+                <li class="chapter-item"><a href="#metabolic-syndrome"><i class="fas fa-heart"></i> 26. Metabolic Syndrome</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>MALABSORPTION SYNDROMES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#celiac"><i class="fas fa-wheat-alt"></i> 27. Celiac Disease</a></li>
+                <li class="chapter-item"><a href="#cystic-fibrosis"><i class="fas fa-lungs"></i> 28. Cystic Fibrosis</a></li>
+                <li class="chapter-item"><a href="#tropical-sprue"><i class="fas fa-umbrella"></i> 29. Tropical Sprue</a></li>
+                <li class="chapter-item"><a href="#whipple"><i class="fas fa-bacteria"></i> 30. Whipple Disease</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== PROTEIN‑ENERGY MALNUTRITION ==================== -->
+        <section id="marasmus" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> 1. Marasmus</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Marasmus is a form of protein‑energy malnutrition resulting from chronic deficiency of both calories and protein. It typically occurs in infants and young children (6‑18 months) in settings of poverty, famine, or chronic illness.
+                </div>
+                <ul>
+                    <li><strong>Etiology:</strong> Inadequate intake of both macronutrients (energy and protein).</li>
+                    <li><strong>Pathology:</strong> Severe wasting of muscle and subcutaneous fat; growth retardation; preserved appetite; no edema.</li>
+                    <li><strong>Clinical features:</strong>
+                        <ul>
+                            <li>Severe weight loss (<60% expected weight‑for‑age)</li>
+                            <li>Muscle wasting, loss of subcutaneous fat ("skin and bones")</li>
+                            <li>Hair thinning, loose skin (baggy pants appearance)</li>
+                            <li>Alert and irritable child</li>
+                            <li>No edema, normal serum albumin (initially)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Laboratory:</strong> Low weight‑for‑height, low BMI, normal or slightly low albumin, normal transferrin.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="kwashiorkor" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> 2. Kwashiorkor</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Kwashiorkor results from protein deficiency despite relatively adequate calorie intake. It is common in older infants and toddlers after weaning to a low‑protein diet (e.g., cassava, maize).
+                </div>
+                <ul>
+                    <li><strong>Pathophysiology:</strong> Protein deficiency → reduced synthesis of albumin, transferrin, lipoproteins → hypoalbuminemia → edema. Also reduced antioxidant enzymes (glutathione peroxidase) → oxidative stress.</li>
+                    <li><strong>Clinical features:</strong>
+                        <ul>
+                            <li>Edema (pitting, starting in lower extremities)</li>
+                            <li>Moon face, potbelly (due to hepatomegaly and ascites)</li>
+                            <li>Dermatosis (flaky paint, desquamation)</li>
+                            <li>Hair changes (dyspigmentation, easy pluckability)</li>
+                            <li>Apathy, irritability</li>
+                            <li>Hepatomegaly (fatty liver)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Laboratory:</strong> Hypoalbuminemia (<2.5 g/dL), low transferrin, elevated liver enzymes, anemia, electrolyte disturbances.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="marasmic-kwashiorkor" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> 3. Marasmic‑Kwashiorkor</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Mixed picture with features of both marasmus and kwashiorkor: severe wasting <60% expected weight‑for‑age plus edema.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VITAMIN DEFICIENCIES ==================== -->
+        <section id="vitamin-a" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 4. Vitamin A Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Inadequate dietary intake (common in developing countries), fat malabsorption, liver disease.</li>
+                    <li><strong>Clinical features:</strong>
+                        <ul>
+                            <li>Night blindness (nyctalopia) – earliest symptom</li>
+                            <li>Xerophthalmia: conjunctival xerosis, Bitot spots, corneal xerosis, keratomalacia (corneal softening and ulceration → blindness)</li>
+                            <li>Impaired immunity (increased infection risk)</li>
+                            <li>Follicular hyperkeratosis</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pathology:</strong> Squamous metaplasia of epithelial tissues (conjunctiva, respiratory tract, etc.).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vitamin-d" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 5. Vitamin D Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Rickets (children):</strong>
+                        <ul>
+                            <li>Failure of bone mineralization → softening and weakening of bones.</li>
+                            <li>Clinical: bowing of legs, widening of wrists, rachitic rosary (beading of costochondral junctions), craniotabes (soft skull), delayed fontanelle closure, hypotonia.</li>
+                            <li>Radiology: cupping, fraying, widening of growth plates.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Osteomalacia (adults):</strong>
+                        <ul>
+                            <li>Inadequate mineralization of osteoid → bone pain, muscle weakness, fractures (pseudofractures, Looser zones).</li>
+                            <li>Radiology: Looser zones (pseudofractures).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Laboratory:</strong> Low serum calcium (may be low), low phosphate, elevated alkaline phosphatase, low 25‑OH vitamin D, secondary hyperparathyroidism (high PTH).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vitamin-e" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-leaf"></i> 6. Vitamin E Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Fat malabsorption, abetalipoproteinemia, preterm infants.</li>
+                    <li><strong>Clinical:</strong> Peripheral neuropathy, ataxia, muscle weakness, retinopathy, hemolytic anemia.</li>
+                    <li>Pathology: axonal degeneration, spinocerebellar tract degeneration.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vitamin-k" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 7. Vitamin K Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Malabsorption, liver disease, antibiotics (gut sterilization), newborn (hemorrhagic disease of the newborn).</li>
+                    <li><strong>Clinical:</strong> Bleeding tendency (ecchymoses, mucosal bleeding, intracranial hemorrhage in newborns).</li>
+                    <li><strong>Laboratory:</strong> Prolonged PT (INR) > PTT; normal platelet count and bleeding time.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="thiamine" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 8. Thiamine (B1) Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Alcoholism, malnutrition, polished rice diet, hyperemesis gravidarum.</li>
+                    <li><strong>Wet beriberi:</strong> High‑output heart failure, edema, tachycardia.</li>
+                    <li><strong>Dry beriberi:</strong> Peripheral neuropathy (polyneuritis), muscle wasting, sensory and motor deficits.</li>
+                    <li><strong>Wernicke encephalopathy:</strong> Triad of confusion, ataxia, ophthalmoplegia (nystagmus). Due to acute deficiency.</li>
+                    <li><strong>Korsakoff syndrome:</strong> Irreversible memory loss, confabulation (chronic sequelae of Wernicke).</li>
+                    <li><strong>Pathology:</strong> Petechial hemorrhages in mamillary bodies, thalamus, periaqueductal gray.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="riboflavin" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 9. Riboflavin (B2) Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clinical:</strong> Cheilosis (angular stomatitis), glossitis (magenta tongue), seborrheic dermatitis, corneal vascularization.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="niacin" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-sun"></i> 10. Niacin (B3) Deficiency – Pellagra</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Triad (the 4 D's):</strong> Dermatitis (photosensitive, symmetric), Diarrhea, Dementia, Death.</li>
+                    <li><strong>Etiology:</strong> Maize‑based diet (niacin bound, low tryptophan), carcinoid syndrome (tryptophan diverted), isoniazid therapy.</li>
+                    <li><strong>Pathology:</strong> Atrophy and inflammation of skin, GI mucosa, CNS.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pyridoxine" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 11. Pyridoxine (B6) Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Isoniazid, oral contraceptives, alcoholism.</li>
+                    <li><strong>Clinical:</strong> Peripheral neuropathy, seborrheic dermatitis, glossitis, microcytic anemia (sideroblastic), confusion, seizures (infants).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="folate" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 12. Folate (B9) Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Poor intake (elderly, alcoholics), malabsorption (celiac), pregnancy, antifolate drugs (methotrexate, phenytoin).</li>
+                    <li><strong>Clinical:</strong> Megaloblastic anemia (MCV >100), glossitis, neural tube defects in pregnancy.</li>
+                    <li><strong>Laboratory:</strong> Macrocytic anemia, hypersegmented neutrophils, low serum folate, normal B12.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cobalamin" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 13. Cobalamin (B12) Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Pernicious anemia (autoimmune gastritis), gastrectomy, ileal resection, Crohn disease, vegan diet (rare), malabsorption, fish tapeworm.</li>
+                    <li><strong>Clinical:</strong>
+                        <ul>
+                            <li>Hematologic: Megaloblastic anemia (identical to folate deficiency).</li>
+                            <li>Neurologic: Subacute combined degeneration of spinal cord (dorsal columns and corticospinal tracts) → paresthesia, loss of vibration and proprioception, weakness, ataxia.</li>
+                            <li>Neuropsychiatric: Irritability, memory loss, dementia.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pathology:</strong> Demyelination of dorsal columns, lateral corticospinal tracts, and spinocerebellar tracts.</li>
+                    <li><strong>Laboratory:</strong> Low serum B12, elevated methylmalonic acid and homocysteine.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vitamin-c" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lemon"></i> 14. Vitamin C Deficiency – Scurvy</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Etiology:</strong> Lack of fresh fruits/vegetables; seen in elderly, alcoholics, food faddists.</li>
+                    <li><strong>Clinical:</strong>
+                        <ul>
+                            <li>Gingival swelling, bleeding, tooth loss</li>
+                            <li>Petechiae, ecchymoses, perifollicular hemorrhages</li>
+                            <li>Poor wound healing</li>
+                            <li>Hemarthrosis, subperiosteal hemorrhage (pain)</li>
+                            <li>Hair changes (corkscrew hairs)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pathology:</strong> Defective collagen synthesis (hydroxylation of proline and lysine) → weakened capillaries, impaired wound healing.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== MINERAL DEFICIENCIES ==================== -->
+        <section id="iron" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 15. Iron Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Most common nutritional deficiency worldwide.</strong></li>
+                    <li><strong>Etiology:</strong> Blood loss (GI, menstrual), inadequate intake, malabsorption, pregnancy.</li>
+                    <li><strong>Clinical:</strong> Microcytic hypochromic anemia, fatigue, pallor, koilonychia (spoon nails), pica (pagophagia – ice craving), glossitis.</li>
+                    <li><strong>Laboratory:</strong> Low ferritin, low serum iron, high TIBC, low transferrin saturation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="iodine" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 16. Iodine Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Most common cause of preventable intellectual disability worldwide.</strong></li>
+                    <li><strong>Clinical:</strong>
+                        <ul>
+                            <li>Goiter (enlarged thyroid gland).</li>
+                            <li>Hypothyroidism (cretinism in infants: intellectual disability, short stature, coarse features).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pathology:</strong> Thyroid follicular cell hyperplasia, colloid depletion.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="zinc" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 17. Zinc Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clinical:</strong> Growth retardation, hypogonadism, alopecia, dermatitis (acrodermatitis enteropathica – periorificial and acral), impaired wound healing, diarrhea, immune dysfunction.</li>
+                    <li><strong>Etiology:</strong> Malabsorption, acrodermatitis enteropathica (autosomal recessive zinc transporter defect), vegetarian diet.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="copper" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 18. Copper Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clinical:</strong> Anemia (microcytic or normocytic), neutropenia, osteoporosis, neurologic symptoms (ataxia, neuropathy).</li>
+                    <li><strong>Etiology:</strong> Malabsorption, Menkes disease (X‑linked copper transport defect), excessive zinc supplementation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="selenium" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 19. Selenium Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clinical:</strong> Keshan disease (cardiomyopathy), Kashin‑Beck disease (osteoarthropathy), myopathy, immune dysfunction.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="magnesium" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 20. Magnesium Deficiency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clinical:</strong> Neuromuscular irritability (tetany, Chvostek sign, Trousseau sign), weakness, seizures, cardiac arrhythmias (prolonged QT).</li>
+                    <li><strong>Etiology:</strong> Malabsorption, alcoholism, diuretics, Gitelman syndrome.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="calcium" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 21. Calcium Deficiency (Hypocalcemia)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clinical:</strong> Paresthesia, tetany, carpopedal spasm, laryngospasm, seizures, prolonged QT interval.</li>
+                    <li><strong>Etiology:</strong> Vitamin D deficiency, hypoparathyroidism, renal failure, malabsorption.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== EATING DISORDERS ==================== -->
+        <section id="anorexia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight-scale"></i> 22. Anorexia Nervosa</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>DSM‑5 criteria:</strong> Restriction of energy intake leading to significantly low body weight (< minimally normal), intense fear of gaining weight, disturbance in body weight/shape experience.</li>
+                    <li><strong>Subtypes:</strong> Restricting type; binge‑eating/purging type.</li>
+                    <li><strong>Medical complications:</strong>
+                        <ul>
+                            <li>Bradycardia, hypotension, hypothermia</li>
+                            <li>Electrolyte abnormalities (hypokalemia, metabolic alkalosis with purging)</li>
+                            <li>Osteopenia, osteoporosis</li>
+                            <li>Lanugo hair, yellow skin (hypercarotenemia)</li>
+                            <li>Amenorrhea, infertility</li>
+                            <li>Refeeding syndrome (hypophosphatemia) on nutritional rehabilitation</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="bulimia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-poop"></i> 23. Bulimia Nervosa</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>DSM‑5:</strong> Recurrent binge eating (large amount, sense of loss of control) + recurrent compensatory behaviors (purging, laxatives, fasting, exercise) at least weekly for 3 months; self‑evaluation unduly influenced by weight/shape.</li>
+                    <li><strong>Medical complications:</strong>
+                        <ul>
+                            <li>Electrolyte disturbances: hypokalemia, hypochloremic metabolic alkalosis (vomiting), diarrhea (laxative abuse)</li>
+                            <li>Dental erosion (perimylolysis), parotid enlargement, esophageal tears (Mallory‑Weiss), aspiration, pancreatitis</li>
+                            <li>Russell sign: calluses on knuckles from self‑induced vomiting</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="binge-eating" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-utensils"></i> 24. Binge‑Eating Disorder</div>
+            <div class="section-card">
+                <ul>
+                    <li>Recurrent binge eating without compensatory behaviors. Associated with obesity, metabolic syndrome.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== OBESITY & METABOLIC SYNDROME ==================== -->
+        <section id="obesity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight"></i> 25. Obesity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Definition:</strong> BMI ≥30 kg/m² (World Health Organization).</li>
+                    <li><strong>Pathophysiology:</strong> Energy imbalance (intake > expenditure), genetic predisposition, endocrine factors (leptin resistance), environmental.</li>
+                    <li><strong>Types:</strong>
+                        <ul>
+                            <li>Android (central) – higher cardiometabolic risk.</li>
+                            <li>Gynoid (peripheral) – lower risk.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Complications:</strong>
+                        <ul>
+                            <li>Cardiovascular: hypertension, CAD, heart failure.</li>
+                            <li>Metabolic: type 2 diabetes, dyslipidemia, metabolic syndrome.</li>
+                            <li>Respiratory: obstructive sleep apnea, obesity hypoventilation syndrome.</li>
+                            <li>Gastrointestinal: GERD, non‑alcoholic fatty liver disease (NAFLD), gallstones.</li>
+                            <li>Musculoskeletal: osteoarthritis, back pain.</li>
+                            <li>Reproductive: PCOS, infertility.</li>
+                            <li>Malignancy: endometrial, breast, colon, esophageal.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pathology:</strong> Adipocyte hypertrophy and hyperplasia, inflammation (macrophage infiltration, cytokines), adipose tissue dysfunction.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="metabolic-syndrome" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 26. Metabolic Syndrome</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Diagnostic criteria (any 3 of 5):</strong>
+                        <ul>
+                            <li>Increased waist circumference (>102 cm men, >88 cm women)</li>
+                            <li>Elevated triglycerides (≥150 mg/dL) or on drug treatment</li>
+                            <li>Reduced HDL (<40 men, <50 women) or on drug treatment</li>
+                            <li>Elevated blood pressure (≥130/85) or antihypertensive therapy</li>
+                            <li>Elevated fasting glucose (≥100 mg/dL) or on drug treatment</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pathophysiology:</strong> Insulin resistance, central obesity, inflammation, endothelial dysfunction.</li>
+                    <li><strong>Consequences:</strong> Increased risk of type 2 diabetes, cardiovascular disease, and all‑cause mortality.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== MALABSORPTION SYNDROMES ==================== -->
+        <section id="celiac" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wheat-alt"></i> 27. Celiac Disease</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Autoimmune enteropathy triggered by gluten (gliadin) in genetically predisposed (HLA‑DQ2/DQ8).</strong></li>
+                    <li><strong>Pathology:</strong> Villous atrophy, crypt hyperplasia, intraepithelial lymphocytes (IELs).</li>
+                    <li><strong>Clinical:</strong> Chronic diarrhea, steatorrhea, weight loss, failure to thrive (children), anemia, osteoporosis, dermatitis herpetiformis (itchy vesicular rash).</li>
+                    <li><strong>Serology:</strong> Anti‑tissue transglutaminase (tTG) IgA, anti‑endomysial IgA, anti‑deamidated gliadin IgG.</li>
+                    <li><strong>Treatment:</strong> Strict gluten‑free diet.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cystic-fibrosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 28. Cystic Fibrosis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Autosomal recessive CFTR mutation.</strong></li>
+                    <li><strong>Pancreatic insufficiency:</strong> Malabsorption of fat and protein → steatorrhea, failure to thrive, fat‑soluble vitamin deficiencies (A, D, E, K).</li>
+                    <li><strong>Diagnosis:</strong> Sweat chloride test (>60 mmol/L).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="tropical-sprue" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-umbrella"></i> 29. Tropical Sprue</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Malabsorption syndrome of unclear etiology (likely infectious) in tropical regions.</strong></li>
+                    <li><strong>Pathology:</strong> Partial villous atrophy, chronic inflammation.</li>
+                    <li><strong>Clinical:</strong> Chronic diarrhea, weight loss, megaloblastic anemia (B12 and folate deficiency).</li>
+                    <li><strong>Treatment:</strong> Tetracycline and folate.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="whipple" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 30. Whipple Disease</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Rare systemic infection caused by Tropheryma whipplei (Gram‑positive actinomycete).</strong></li>
+                    <li><strong>Pathology:</strong> PAS‑positive macrophages in lamina propria (foamy macrophages).</li>
+                    <li><strong>Clinical:</strong> Malabsorption, weight loss, diarrhea, arthralgia, lymphadenopathy, neurologic symptoms.</li>
+                    <li><strong>Treatment:</strong> Long‑term antibiotics (ceftriaxone then TMP‑SMX).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Nutrition & Metabolism · Pathology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

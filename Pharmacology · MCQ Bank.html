@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-pills"></i>
+        <h1>Pharmacology · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ PHARMACOLOGY MCQ QUESTIONS (high‑yield)
+    const questions = [
+        { q: "A drug that binds to receptors and produces a submaximal response even at high doses is called a(n):",
+          opts: ["Partial agonist", "Full agonist", "Competitive antagonist", "Non‑competitive antagonist", "Inverse agonist"],
+          correct: 0,
+          exp: "Partial agonists have less than maximal efficacy even at full receptor occupancy." },
+        { q: "The volume of distribution (Vd) of a drug is 40 L. This indicates that the drug:",
+          opts: ["Distributes into total body water", "Remains mainly in plasma", "Concentrates in tissues", "Has high protein binding", "Is not absorbed"],
+          correct: 0,
+          exp: "Vd ≈ 40 L suggests distribution into total body water (42 L in 70 kg adult)." },
+        { q: "Which route of administration is most likely to result in complete (100%) bioavailability?",
+          opts: ["Intravenous", "Oral", "Sublingual", "Intramuscular", "Transdermal"],
+          correct: 0,
+          exp: "IV injection bypasses absorption and first‑pass metabolism, giving 100% bioavailability." },
+        { q: "The half‑life of a drug is 8 hours. Approximately how many hours are needed to reach steady state?",
+          opts: ["32 hours", "8 hours", "16 hours", "24 hours", "40 hours"],
+          correct: 0,
+          exp: "Steady state is reached in about 4‑5 half‑lives (4 × 8 = 32 hours)." },
+        { q: "A drug that undergoes extensive first‑pass metabolism will have:",
+          opts: ["Low oral bioavailability", "High oral bioavailability", "Rapid renal excretion", "Large volume of distribution", "Long half‑life"],
+          correct: 0,
+          exp: "First‑pass metabolism reduces the amount reaching systemic circulation, decreasing oral bioavailability." },
+        { q: "Competitive antagonism can be overcome by:",
+          opts: ["Increasing the agonist concentration", "Decreasing the agonist concentration", "Adding an allosteric modulator", "Increasing the antagonist concentration", "Decreasing the antagonist concentration"],
+          correct: 0,
+          exp: "Competitive antagonists shift the dose‑response curve right; high agonist doses can surmount them." },
+        { q: "The therapeutic index (TI) of a drug is defined as:",
+          opts: ["TD₅₀ / ED₅₀", "ED₅₀ / TD₅₀", "LD₅₀ × ED₅₀", "LD₅₀ / ED₅₀ (or TD₅₀/ED₅₀)", "ED₅₀ / LD₅₀"],
+          correct: 3,
+          exp: "Therapeutic index = toxic dose (TD₅₀) / effective dose (ED₅₀) or LD₅₀/ED₅₀." },
+        { q: "Phase I clinical trials primarily assess:",
+          opts: ["Safety and pharmacokinetics in healthy volunteers", "Efficacy in patients", "Large‑scale efficacy and safety", "Post‑marketing surveillance", "Drug interactions"],
+          correct: 0,
+          exp: "Phase I: small number of healthy subjects; evaluate safety, tolerability, PK." },
+        { q: "Acetaminophen toxicity is treated with:",
+          opts: ["N‑acetylcysteine", "Flumazenil", "Naloxone", "Deferoxamine", "Vitamin K"],
+          correct: 0,
+          exp: "N‑acetylcysteine replenishes glutathione to detoxify NAPQI." },
+        { q: "Which drug is used to reverse the effects of benzodiazepines?",
+          opts: ["Flumazenil", "Naloxone", "Physostigmine", "Atropine", "Protamine"],
+          correct: 0,
+          exp: "Flumazenil is a competitive antagonist at the benzodiazepine binding site on GABAₐ receptors." },
+        { q: "Atropine is used in organophosphate poisoning to:",
+          opts: ["Block muscarinic receptors", "Reactivate acetylcholinesterase", "Stimulate nicotinic receptors", "Reduce secretions", "Both A and D"],
+          correct: 4,
+          exp: "Atropine antagonizes muscarinic effects (SLUDGE) but does not reactivate AChE (pralidoxime does)." },
+        { q: "Which drug is a first‑line treatment for anaphylaxis?",
+          opts: ["Epinephrine", "Diphenhydramine", "Methylprednisolone", "Albuterol", "Ephedrine"],
+          correct: 0,
+          exp: "Epinephrine IM is the drug of choice for anaphylaxis." },
+        { q: "Lidocaine is classified as which class antiarrhythmic?",
+          opts: ["Class Ib", "Class Ia", "Class Ic", "Class II", "Class III"],
+          correct: 0,
+          exp: "Lidocaine is a class Ib antiarrhythmic (Na⁺ channel blocker, mild, short duration)." },
+        { q: "Warfarin exerts its anticoagulant effect by inhibiting:",
+          opts: ["Vitamin K epoxide reductase", "Factor Xa", "Thrombin", "Antithrombin III", "Cyclooxygenase"],
+          correct: 0,
+          exp: "Warfarin inhibits vitamin K‑dependent synthesis of factors II, VII, IX, X." },
+        { q: "The anticoagulant effect of heparin is monitored by:",
+          opts: ["aPTT", "PT/INR", "Thrombin time", "Bleeding time", "Platelet count"],
+          correct: 0,
+          exp: "Heparin effect is monitored by aPTT; warfarin by PT/INR." },
+        { q: "Which drug is used to reverse heparin overdose?",
+          opts: ["Protamine sulfate", "Vitamin K", "Fresh frozen plasma", "Tranexamic acid", "Aminocaproic acid"],
+          correct: 0,
+          exp: "Protamine binds heparin and neutralizes it." },
+        { q: "A 55‑year‑old man with hypertension is started on lisinopril. He develops a dry cough. The most likely mechanism is:",
+          opts: ["Increased bradykinin levels", "Bronchospasm", "Pulmonary edema", "Allergic reaction", "Increased prostaglandins"],
+          correct: 0,
+          exp: "ACE inhibitors prevent bradykinin breakdown, leading to cough and angioedema." },
+        { q: "Which of the following is a contraindication to beta‑blocker use?",
+          opts: ["Severe asthma", "Hypertension", "Angina", "Heart failure", "Atrial fibrillation"],
+          correct: 0,
+          exp: "Non‑selective beta‑blockers can cause bronchospasm and are contraindicated in severe asthma." },
+        { q: "Metformin is the first‑line oral agent for type 2 diabetes. Its primary mechanism is:",
+          opts: ["Decreased hepatic gluconeogenesis", "Increased insulin secretion", "Delayed carbohydrate absorption", "Increased insulin sensitivity", "Increased glucose excretion"],
+          correct: 0,
+          exp: "Metformin activates AMPK, reducing hepatic glucose output and increasing peripheral insulin sensitivity." },
+        { q: "Sulfonylureas stimulate insulin secretion by:",
+          opts: ["Closing K‑ATP channels on β‑cells", "Opening K‑ATP channels", "Activating PPAR‑γ", "Increasing cAMP", "Inhibiting DPP‑4"],
+          correct: 0,
+          exp: "Sulfonylureas block K‑ATP channels, depolarizing β‑cells and triggering insulin release." },
+        { q: "Which antidiabetic drug can cause lactic acidosis and is contraindicated in renal failure?",
+          opts: ["Metformin", "Glipizide", "Pioglitazone", "Sitagliptin", "Empagliflozin"],
+          correct: 0,
+          exp: "Metformin accumulates in renal impairment, increasing risk of lactic acidosis." },
+        { q: "A patient on warfarin is started on rifampin. The INR is expected to:",
+          opts: ["Decrease (rifampin induces CYP450)", "Increase", "Stay the same", "Initially increase then decrease", "None"],
+          correct: 0,
+          exp: "Rifampin induces CYP450, increasing warfarin metabolism and decreasing INR." },
+        { q: "Digoxin toxicity is exacerbated by:",
+          opts: ["Hypokalemia", "Hyperkalemia", "Hypocalcemia", "Hypercalcemia", "Hypomagnesemia"],
+          correct: 0,
+          exp: "Hypokalemia increases digoxin binding to Na/K‑ATPase, increasing toxicity." },
+        { q: "Treatment of digoxin toxicity includes:",
+          opts: ["Digoxin‑specific Fab fragments", "Lidocaine", "Potassium", "Atropine", "All of the above"],
+          correct: 4,
+          exp: "Fab fragments are specific; lidocaine for arrhythmias, K⁺ for hypokalemia, atropine for bradycardia." },
+        { q: "Which of the following is a prodrug that requires activation by CYP2D6 to produce its active metabolite?",
+          opts: ["Codeine", "Morphine", "Fentanyl", "Methadone", "Naloxone"],
+          correct: 0,
+          exp: "Codeine is converted to morphine by CYP2D6; ultrarapid metabolizers risk toxicity." },
+        { q: "The most common cause of statin intolerance is:",
+          opts: ["Myalgia / myopathy", "Hepatotoxicity", "Nephrotoxicity", "Rhabdomyolysis", "Neuropathy"],
+          correct: 0,
+          exp: "Statins commonly cause myalgia; myopathy and rhabdomyolysis are less common but serious." },
+        { q: "Which diuretic acts in the thick ascending limb of the loop of Henle?",
+          opts: ["Furosemide", "Hydrochlorothiazide", "Spironolactone", "Acetazolamide", "Mannitol"],
+          correct: 0,
+          exp: "Loop diuretics inhibit Na‑K‑2Cl cotransporter in thick ascending limb." },
+        { q: "Spironolactone is a potassium‑sparing diuretic that acts by:",
+          opts: ["Antagonizing aldosterone receptors", "Blocking ENaC channels", "Inhibiting carbonic anhydrase", "Blocking Na‑K‑2Cl cotransporter", "Osmotic effect"],
+          correct: 0,
+          exp: "Spironolactone is an aldosterone antagonist; amiloride blocks ENaC." },
+        { q: "Lithium toxicity is associated with all EXCEPT:",
+          opts: ["Hypothyroidism", "Nephrogenic diabetes insipidus", "Tremor", "Hyperthyroidism", "Seizures"],
+          correct: 3,
+          exp: "Lithium causes hypothyroidism, not hyperthyroidism; also tremor, polyuria, seizures." },
+        { q: "The drug of choice for absence seizures (petit mal) is:",
+          opts: ["Ethosuximide", "Phenytoin", "Carbamazepine", "Valproate", "Levetiracetam"],
+          correct: 0,
+          exp: "Ethosuximide is first‑line for absence seizures (T‑type Ca²⁺ channel blocker)." },
+        { q: "Which anticonvulsant is associated with gingival hyperplasia?",
+          opts: ["Phenytoin", "Carbamazepine", "Valproate", "Lamotrigine", "Levetiracetam"],
+          correct: 0,
+          exp: "Phenytoin commonly causes gingival overgrowth." },
+        { q: "Carbamazepine is the drug of choice for:",
+          opts: ["Trigeminal neuralgia", "Neuropathic pain", "Bipolar disorder", "Epilepsy", "All of the above"],
+          correct: 0,
+          exp: "Carbamazepine is first‑line for trigeminal neuralgia and also used for epilepsy and bipolar." },
+        { q: "Valproate is associated with which serious adverse effect?",
+          opts: ["Hepatotoxicity (especially in children)", "Nephrotoxicity", "Cardiotoxicity", "Pulmonary fibrosis", "Agranulocytosis"],
+          correct: 0,
+          exp: "Valproate can cause fatal hepatotoxicity, especially in children under 2 years on polytherapy." },
+        { q: "Levodopa is always combined with carbidopa to:",
+          opts: ["Prevent peripheral conversion to dopamine", "Increase CNS penetration", "Reduce nausea", "Prolong half‑life", "All of the above"],
+          correct: 0,
+          exp: "Carbidopa inhibits peripheral dopa decarboxylase, reducing side effects and increasing levodopa availability to brain." },
+        { q: "Which of the following is a dopamine agonist used in Parkinson disease?",
+          opts: ["Pramipexole", "Selegiline", "Entacapone", "Amantadine", "Benztropine"],
+          correct: 0,
+          exp: "Pramipexole and ropinirole are dopamine agonists; selegiline is MAO‑B inhibitor; entacapone is COMT inhibitor." },
+        { q: "The mechanism of action of SSRIs is:",
+          opts: ["Inhibition of serotonin reuptake", "Inhibition of serotonin and norepinephrine reuptake", "MAO inhibition", "5‑HT2 receptor antagonism", "α2 antagonism"],
+          correct: 0,
+          exp: "SSRIs selectively block serotonin transporter (SERT)." },
+        { q: "A patient on phenelzine (MAOI) ingests aged cheese. Which reaction is most likely?",
+          opts: ["Hypertensive crisis (tyramine reaction)", "Serotonin syndrome", "Hypotension", "Stroke", "Myocardial infarction"],
+          correct: 0,
+          exp: "MAOIs inhibit tyramine metabolism, leading to norepinephrine release and hypertensive crisis." },
+        { q: "Bupropion is an antidepressant that is also used for:",
+          opts: ["Smoking cessation", "Anxiety disorders", "Bipolar depression", "OCD", "PTSD"],
+          correct: 0,
+          exp: "Bupropion (Zyban) is used for smoking cessation; it inhibits dopamine and norepinephrine reuptake." },
+        { q: "Tricyclic antidepressant (TCA) overdose is characterized by all EXCEPT:",
+          opts: ["Hypertension", "QRS widening", "Seizures", "Coma", "Arrhythmias"],
+          correct: 0,
+          exp: "TCA overdose causes hypotension (not hypertension) due to Na⁺ channel blockade." },
+        { q: "First‑line treatment for bipolar disorder (mania) is often:",
+          opts: ["Lithium or valproate", "Carbamazepine", "Lamotrigine", "Atypical antipsychotics", "All of the above"],
+          correct: 4,
+          exp: "Lithium, valproate, and atypical antipsychotics are first‑line for acute mania." },
+        { q: "Clozapine is reserved for treatment‑resistant schizophrenia because of the risk of:",
+          opts: ["Agranulocytosis", "Seizures", "Myocarditis", "Metabolic syndrome", "All of the above"],
+          correct: 4,
+          exp: "Clozapine requires regular ANC monitoring due to agranulocytosis risk." },
+        { q: "Which atypical antipsychotic has the highest risk of metabolic syndrome (weight gain, diabetes)?",
+          opts: ["Olanzapine and clozapine", "Risperidone", "Aripiprazole", "Ziprasidone", "Lurasidone"],
+          correct: 0,
+          exp: "Olanzapine and clozapine cause most weight gain and metabolic disturbances." },
+        { q: "Haloperidol is a high‑potency typical antipsychotic that often causes:",
+          opts: ["Extrapyramidal symptoms (EPS)", "Sedation", "Hypotension", "Anticholinergic effects", "Weight gain"],
+          correct: 0,
+          exp: "High‑potency typicals (haloperidol) cause more EPS, fewer anticholinergic side effects." },
+        { q: "Benzodiazepines enhance GABAergic transmission by:",
+          opts: ["Increasing frequency of Cl⁻ channel opening", "Increasing duration of opening", "Blocking reuptake", "Directly activating GABA receptors", "Inhibiting GABA transaminase"],
+          correct: 0,
+          exp: "Benzodiazepines increase frequency; barbiturates increase duration." },
+        { q: "Flumazenil is contraindicated in patients with:",
+          opts: ["Benzodiazepine dependence (risk of withdrawal seizures)", "Opioid overdose", "Alcohol intoxication", "Hepatic encephalopathy", "All of the above"],
+          correct: 0,
+          exp: "Flumazenil can precipitate withdrawal seizures in benzodiazepine‑dependent patients." },
+        { q: "Zolpidem is a non‑benzodiazepine hypnotic that selectively binds to:",
+          opts: ["α1 subunit of GABAₐ receptor", "α2 subunit", "γ subunit", "β subunit", "Benzodiazepine receptor"],
+          correct: 0,
+          exp: "Zolpidem has selectivity for α1 subunit, explaining its hypnotic effect." },
+        { q: "The drug of choice for neuroleptic malignant syndrome (NMS) is:",
+          opts: ["Dantrolene or bromocriptine", "Benztropine", "Diphenhydramine", "Lorazepam", "Haloperidol"],
+          correct: 0,
+          exp: "Dantrolene (muscle relaxant) and bromocriptine (dopamine agonist) are used in NMS." },
+        { q: "Caffeine citrate is used to treat:",
+          opts: ["Apnea of prematurity", "Migraine", "Post‑dural puncture headache", "Neonatal seizures", "Asthma"],
+          correct: 0,
+          exp: "Caffeine stimulates respiratory drive and is used in neonatal apnea." },
+        { q: "Misoprostol, a prostaglandin E1 analog, is used to:",
+          opts: ["Prevent NSAID‑induced gastric ulcers", "Induce labor", "Treat postpartum hemorrhage", "All of the above", "None"],
+          correct: 3,
+          exp: "Misoprostol has multiple uses: gastric protection, labor induction, postpartum hemorrhage." },
+        { q: "Sildenafil (Viagra) acts by inhibiting:",
+          opts: ["PDE‑5, increasing cGMP", "PDE‑3, increasing cAMP", "Guanylyl cyclase", "Phospholipase C", "Adenylyl cyclase"],
+          correct: 0,
+          exp: "PDE‑5 inhibition increases cGMP, enhancing smooth muscle relaxation in corpus cavernosum." },
+        { q: "The most common adverse effect of inhaled corticosteroids is:",
+          opts: ["Oral candidiasis and dysphonia", "Adrenal suppression", "Osteoporosis", "Cataracts", "Growth suppression"],
+          correct: 0,
+          exp: "Local effects (oral thrush, hoarseness) are common; systemic effects occur with high doses." },
+        { q: "Ipratropium bromide is an anticholinergic bronchodilator used in COPD. Its mechanism is:",
+          opts: ["Muscarinic receptor antagonist", "β2 agonist", "Phosphodiesterase inhibitor", "Leukotriene antagonist", "Mast cell stabilizer"],
+          correct: 0,
+          exp: "Ipratropium blocks muscarinic receptors (M3) in airways." },
+        { q: "Ondansetron is an antiemetic that works by blocking:",
+          opts: ["5‑HT3 receptors", "Dopamine D2 receptors", "Histamine H1 receptors", "Muscarinic receptors", "NK1 receptors"],
+          correct: 0,
+          exp: "Ondansetron is a 5‑HT3 antagonist used for chemotherapy‑induced nausea." },
+        { q: "Aprepitant is an antiemetic that blocks:",
+          opts: ["NK1 receptors (substance P)", "5‑HT3 receptors", "Dopamine receptors", "Cannabinoid receptors", "GABA receptors"],
+          correct: 0,
+          exp: "Aprepitant is an NK1 antagonist used for delayed CINV." },
+        { q: "Furosemide can cause ototoxicity, which is:",
+          opts: ["Dose‑related and often reversible", "Irreversible", "Unrelated to dose", "More common with oral use", "Prevented by potassium"],
+          correct: 0,
+          exp: "High‑dose furosemide can cause reversible ototoxicity; ethacrynic acid may cause permanent damage." },
+        { q: "Which of the following is a prodrug that is converted to its active form by the liver?",
+          opts: ["Enalapril", "Captopril", "Lisinopril", "Ramipril", "Both A and D"],
+          correct: 4,
+          exp: "Enalapril is converted to enalaprilat; ramipril to ramiprilat; captopril and lisinopril are active." },
+        { q: "Nitroglycerin causes venodilation primarily through:",
+          opts: ["Release of nitric oxide (NO)", "Direct smooth muscle relaxation", "Beta‑adrenergic stimulation", "Calcium channel blockade", "Adenosine release"],
+          correct: 0,
+          exp: "Nitrates are prodrugs that release NO, activating guanylyl cyclase." },
+        { q: "Tetracyclines are contraindicated in children under 8 years because they cause:",
+          opts: ["Tooth discoloration and enamel hypoplasia", "Growth suppression", "Photosensitivity", "GI bleeding", "Nephrotoxicity"],
+          correct: 0,
+          exp: "Tetracyclines bind calcium in developing teeth, causing permanent discoloration." },
+        { q: "Fluoroquinolones are generally avoided in children due to concern for:",
+          opts: ["Arthropathy (cartilage damage)", "Hepatotoxicity", "Nephrotoxicity", "Ototoxicity", "Seizures"],
+          correct: 0,
+          exp: "Fluoroquinolones can damage growing cartilage in animal studies." },
+        { q: "Gentamicin is an aminoglycoside antibiotic that can cause:",
+          opts: ["Nephrotoxicity and ototoxicity", "Hepatotoxicity", "Cardiotoxicity", "Peripheral neuropathy", "Bone marrow suppression"],
+          correct: 0,
+          exp: "Aminoglycosides are nephrotoxic and ototoxic; monitor levels." },
+        { q: "Clindamycin is associated with a risk of:",
+          opts: ["Clostridioides difficile colitis", "Pseudomembranous colitis", "Antibiotic‑associated diarrhea", "All of the above", "None"],
+          correct: 3,
+          exp: "Clindamycin strongly predisposes to C. diff colitis." },
+        { q: "Vancomycin is often monitored to prevent:",
+          opts: ["Nephrotoxicity and ototoxicity", "Red man syndrome", "Thrombophlebitis", "Neutropenia", "All of the above"],
+          correct: 0,
+          exp: "Vancomycin levels are monitored to avoid renal toxicity and ototoxicity." },
+        { q: "Which antifungal drug is fungicidal and works by inhibiting squalene epoxidase?",
+          opts: ["Terbinafine", "Fluconazole", "Amphotericin B", "Caspofungin", "Griseofulvin"],
+          correct: 0,
+          exp: "Terbinafine inhibits squalene epoxidase, leading to ergosterol deficiency." },
+        { q: "Amphotericin B is associated with which infusion‑related reaction?",
+          opts: ["Fever, chills, rigors", "Anaphylaxis", "Hypotension", "Bradycardia", "All of the above"],
+          correct: 0,
+          exp: "Amphotericin often causes infusion‑related fever and chills; premedication with antipyretics is common." },
+        { q: "Acyclovir is most effective against:",
+          opts: ["HSV and VZV", "CMV", "EBV", "Influenza", "Hepatitis B"],
+          correct: 0,
+          exp: "Acyclovir is a nucleoside analog with activity against HSV and VZV." },
+        { q: "Which antiretroviral drug class inhibits viral entry by blocking CCR5?",
+          opts: ["Maraviroc", "Enfuvirtide", "Raltegravir", "Zidovudine", "Efavirenz"],
+          correct: 0,
+          exp: "Maraviroc is a CCR5 antagonist; enfuvirtide is a fusion inhibitor." },
+        { q: "Isoniazid can cause peripheral neuropathy, which is prevented by:",
+          opts: ["Pyridoxine (vitamin B6)", "Folic acid", "Thiamine", "Riboflavin", "Cobalamin"],
+          correct: 0,
+          exp: "Isoniazid depletes pyridoxine; supplementation prevents neuropathy." },
+        { q: "Rifampin is a potent inducer of CYP450 enzymes. This can cause:",
+          opts: ["Decreased efficacy of oral contraceptives", "Increased warfarin effect", "Increased cyclosporine levels", "Decreased isoniazid levels", "All of the above"],
+          correct: 0,
+          exp: "Rifampin induces CYP enzymes, reducing levels of many drugs, including oral contraceptives." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "The most common cause of antibiotic‑associated diarrhea is:",
+          opts: ["Clostridioides difficile", "Staphylococcus aureus", "Candida albicans", "Klebsiella", "E. coli"],
+          correct: 0,
+          exp: "C. difficile is the leading cause of antibiotic‑associated colitis." },
+        { q: "Which of the following is a P2Y12 inhibitor used in acute coronary syndrome?",
+          opts: ["Clopidogrel", "Prasugrel", "Ticagrelor", "All of the above", "None"],
+          correct: 3,
+          exp: "Clopidogrel, prasugrel, and ticagrelor are all P2Y12 inhibitors." },
+        { q: "A patient taking simvastatin is started on diltiazem. What is the major concern?",
+          opts: ["Increased risk of myopathy (CYP3A4 inhibition)", "Decreased statin efficacy", "Hypotension", "Bradycardia", "Hyperkalemia"],
+          correct: 0,
+          exp: "Diltiazem inhibits CYP3A4, increasing simvastatin levels and myopathy risk." },
+        { q: "Which of the following is a direct thrombin inhibitor?",
+          opts: ["Dabigatran", "Rivaroxaban", "Apixaban", "Edoxaban", "Enoxaparin"],
+          correct: 0,
+          exp: "Dabigatran directly inhibits thrombin; rivaroxaban, apixaban, edoxaban inhibit factor Xa." },
+        { q: "The mechanism of action of metoclopramide includes:",
+          opts: ["Dopamine D2 antagonism and 5‑HT3 antagonism", "5‑HT3 agonism", "Muscarinic agonism", "Histamine H1 antagonism", "NK1 antagonism"],
+          correct: 0,
+          exp: "Metoclopramide blocks D2 receptors (prokinetic) and at high doses also 5‑HT3." },
+        { q: "Which drug is used to prevent NSAID‑induced ulcers and is a prostaglandin analog?",
+          opts: ["Misoprostol", "Sucralfate", "Omeprazole", "Ranitidine", "Bismuth subsalicylate"],
+          correct: 0,
+          exp: "Misoprostol (PGE1 analog) replaces prostaglandins depleted by NSAIDs." },
+        { q: "The drug of choice for acute gout attack is:",
+          opts: ["NSAIDs or colchicine", "Allopurinol", "Febuxostat", "Probenecid", "Pegloticase"],
+          correct: 0,
+          exp: "Acute gout: NSAIDs, colchicine, or corticosteroids; urate‑lowering therapy is for chronic management." },
+        { q: "Allopurinol inhibits:",
+          opts: ["Xanthine oxidase", "HGPRT", "PRPP synthetase", "Uricase", "Adenosine deaminase"],
+          correct: 0,
+          exp: "Allopurinol inhibits xanthine oxidase, reducing uric acid production." },
+        { q: "The major toxicity of methotrexate at high doses (e.g., in cancer) is:",
+          opts: ["Myelosuppression and mucositis", "Hepatotoxicity", "Pulmonary fibrosis", "Nephrotoxicity", "Neurotoxicity"],
+          correct: 0,
+          exp: "High‑dose methotrexate causes myelosuppression, stomatitis; leucovorin rescue is used." },
+        { q: "Which of the following is a monoclonal antibody used for rheumatoid arthritis that inhibits IL‑6?",
+          opts: ["Tocilizumab", "Adalimumab", "Etanercept", "Rituximab", "Abatacept"],
+          correct: 0,
+          exp: "Tocilizumab (anti‑IL‑6 receptor); adalimumab (anti‑TNF); rituximab (anti‑CD20)." },
+        { q: "The drug of choice for malignant hyperthermia is:",
+          opts: ["Dantrolene", "Succinylcholine", "Propofol", "Midazolam", "Mannitol"],
+          correct: 0,
+          exp: "Dantrolene inhibits calcium release from sarcoplasmic reticulum." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatry · Pharmacology (Psychopharmacology) MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-pills"></i>
+        <h1>Psychiatry · Pharmacology (Psychopharmacology) MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ PSYCHIATRY PHARMACOLOGY QUESTIONS
+    const questions = [
+        { q: "First‑line pharmacological treatment for schizophrenia is:",
+          opts: ["Antipsychotics", "Benzodiazepines", "Mood stabilizers", "Antidepressants", "Psychostimulants"],
+          correct: 0,
+          exp: "Antipsychotics (dopamine D2 antagonists) are the mainstay." },
+        { q: "Typical (first‑generation) antipsychotics primarily block which receptor?",
+          opts: ["Dopamine D2", "Serotonin 5‑HT2A", "Histamine H1", "Muscarinic M1", "Alpha‑1 adrenergic"],
+          correct: 0,
+          exp: "All antipsychotics block D2 receptors; typical ones have high D2 affinity." },
+        { q: "Extrapyramidal symptoms (EPS) caused by antipsychotics are due to:",
+          opts: ["D2 blockade in nigrostriatal pathway", "D2 blockade in mesolimbic", "5‑HT2A blockade", "Anticholinergic effects", "Alpha‑1 blockade"],
+          correct: 0,
+          exp: "EPS (dystonia, parkinsonism, akathisia) result from striatal D2 blockade." },
+        { q: "Which antipsychotic has the highest risk of EPS?",
+          opts: ["Haloperidol", "Clozapine", "Quetiapine", "Olanzapine", "Risperidone (low dose)"],
+          correct: 0,
+          exp: "High‑potency typicals like haloperidol cause more EPS." },
+        { q: "Atypical (second‑generation) antipsychotics have lower EPS risk due to:",
+          opts: ["5‑HT2A antagonism (increasing dopamine in striatum)", "D2 partial agonism", "Lower D2 affinity", "All of the above", "None"],
+          correct: 0,
+          exp: "5‑HT2A blockade enhances dopamine release in striatum, reducing EPS." },
+        { q: "Clozapine is reserved for treatment‑resistant schizophrenia because of risk of:",
+          opts: ["Agranulocytosis", "Seizures", "Myocarditis", "Metabolic syndrome", "All of the above"],
+          correct: 4,
+          exp: "Clozapine requires regular ANC monitoring due to agranulocytosis risk." },
+        { q: "Which atypical antipsychotic has the highest risk of weight gain and metabolic syndrome?",
+          opts: ["Clozapine and olanzapine", "Risperidone", "Aripiprazole", "Ziprasidone", "Lurasidone"],
+          correct: 0,
+          exp: "Clozapine and olanzapine cause most weight gain and dyslipidemia." },
+        { q: "Aripiprazole is a:",
+          opts: ["Dopamine D2 partial agonist", "Full D2 antagonist", "5‑HT2A antagonist", "D2 antagonist + 5‑HT2A antagonist", "MAO inhibitor"],
+          correct: 0,
+          exp: "Aripiprazole is a partial agonist at D2 and 5‑HT1A, antagonist at 5‑HT2A." },
+        { q: "Neuroleptic malignant syndrome (NMS) is characterized by:",
+          opts: ["Fever, rigidity, autonomic instability, elevated CK", "Tardive dyskinesia", "Akathisia", "Dystonia", "Parkinsonism"],
+          correct: 0,
+          exp: "NMS is a medical emergency; treat with dantrolene or bromocriptine." },
+        { q: "Tardive dyskinesia (TD) is a late‑onset side effect of antipsychotics presenting as:",
+          opts: ["Involuntary choreoathetoid movements (oral‑buccal‑lingual)", "Muscle rigidity", "Tremor", "Akathisia", "Dystonia"],
+          correct: 0,
+          exp: "TD due to supersensitivity of D2 receptors; may be irreversible." },
+        { q: "First‑line antidepressants for moderate‑severe major depression are:",
+          opts: ["SSRIs", "TCAs", "MAOIs", "SNRIs", "Bupropion"],
+          correct: 0,
+          exp: "SSRIs are first‑line due to safety and tolerability." },
+        { q: "SSRIs work by:",
+          opts: ["Inhibiting serotonin reuptake", "Inhibiting norepinephrine reuptake", "Blocking 5‑HT2 receptors", "MAO inhibition", "Dopamine reuptake inhibition"],
+          correct: 0,
+          exp: "SSRIs selectively block serotonin transporter (SERT)." },
+        { q: "The most common initial side effects of SSRIs include:",
+          opts: ["Nausea, headache, sexual dysfunction", "Sedation, weight gain", "Hypertension", "Seizures", "Agranulocytosis"],
+          correct: 0,
+          exp: "GI symptoms common early; sexual dysfunction often persists." },
+        { q: "Serotonin syndrome is caused by excessive serotonergic activity, often from combining:",
+          opts: ["SSRI + MAOI", "SSRI + aspirin", "TCA + SSRI", "Lithium + SSRI", "Benzodiazepine + SSRI"],
+          correct: 0,
+          exp: "Serotonin syndrome: agitation, hyperthermia, clonus, hyperreflexia." },
+        { q: "Which SNRI is commonly used for depression and anxiety?",
+          opts: ["Venlafaxine", "Fluoxetine", "Sertraline", "Paroxetine", "Citalopram"],
+          correct: 0,
+          exp: "Venlafaxine inhibits both serotonin and norepinephrine reuptake." },
+        { q: "Bupropion is an antidepressant that inhibits reuptake of:",
+          opts: ["Dopamine and norepinephrine", "Serotonin only", "Serotonin and norepinephrine", "Norepinephrine only", "Dopamine only"],
+          correct: 0,
+          exp: "Bupropion (Wellbutrin) is a NDRI; it does not affect serotonin." },
+        { q: "Bupropion is particularly useful for:",
+          opts: ["Smoking cessation and patients with sexual dysfunction from SSRIs", "Anxiety disorders", "Bipolar depression", "OCD", "PTSD"],
+          correct: 0,
+          exp: "Bupropion has no sexual side effects and helps smoking cessation." },
+        { q: "Mirtazapine is a noradrenergic and specific serotonergic antidepressant that causes:",
+          opts: ["Sedation and weight gain (antihistamine effect)", "Insomnia", "Weight loss", "Sexual dysfunction", "Hypertension"],
+          correct: 0,
+          exp: "Mirtazapine blocks H1, α2, and 5‑HT2/3 receptors; good for sleep and appetite." },
+        { q: "Tricyclic antidepressants (TCAs) are associated with which potentially fatal side effect in overdose?",
+          opts: ["Cardiac arrhythmias (QT prolongation, Na channel blockade)", "Seizures", "Serotonin syndrome", "Hepatotoxicity", "Agranulocytosis"],
+          correct: 0,
+          exp: "TCA overdose causes wide QRS, arrhythmias, hypotension." },
+        { q: "Which TCA is most commonly used for neuropathic pain?",
+          opts: ["Amitriptyline", "Imipramine", "Nortriptyline", "Doxepin", "Clomipramine"],
+          correct: 0,
+          exp: "Amitriptyline is often used off‑label for pain." },
+        { q: "MAOIs (e.g., phenelzine) require dietary restriction of:",
+          opts: ["Tyramine‑rich foods (aged cheese, cured meats)", "Tryptophan", "Caffeine", "Alcohol", "Gluten"],
+          correct: 0,
+          exp: "Tyramine can cause hypertensive crisis with MAOIs." },
+        { q: "Lithium is a first‑line mood stabilizer for:",
+          opts: ["Bipolar disorder (mania and maintenance)", "Unipolar depression", "Schizophrenia", "Anxiety", "Insomnia"],
+          correct: 0,
+          exp: "Lithium reduces suicide risk and is effective for mania and prophylaxis." },
+        { q: "The therapeutic serum level of lithium for maintenance is approximately:",
+          opts: ["0.6‑1.2 mEq/L", "1.5‑2.0 mEq/L", "0.2‑0.5 mEq/L", "2.0‑3.0 mEq/L", "3.0‑4.0 mEq/L"],
+          correct: 0,
+          exp: "Maintenance 0.6‑1.2; acute mania 1.0‑1.5." },
+        { q: "Common side effects of lithium include:",
+          opts: ["Polyuria, polydipsia, tremor, hypothyroidism", "Weight loss", "Hypertension", "Tachycardia", "Agranulocytosis"],
+          correct: 0,
+          exp: "Lithium causes nephrogenic diabetes insipidus, tremor, and hypothyroidism." },
+        { q: "Lithium toxicity (level >1.5) can cause:",
+          opts: ["Ataxia, slurred speech, confusion, seizures", "Hyperthermia", "Diarrhea only", "Tinnitus", "Nystagmus"],
+          correct: 0,
+          exp: "Severe toxicity: neurological symptoms, renal failure, cardiac arrhythmias." },
+        { q: "Valproate (valproic acid) is a mood stabilizer used in bipolar disorder. Its mechanism involves:",
+          opts: ["Increasing GABA, blocking sodium channels", "Blocking dopamine receptors", "Inhibiting serotonin reuptake", "Blocking calcium channels", "Antagonizing NMDA"],
+          correct: 0,
+          exp: "Valproate enhances GABA and has multiple other actions." },
+        { q: "A serious side effect of valproate is:",
+          opts: ["Hepatotoxicity, pancreatitis, thrombocytopenia", "Agranulocytosis", "Nephrotoxicity", "Cardiotoxicity", "Stevens‑Johnson syndrome"],
+          correct: 0,
+          exp: "Valproate can cause fatal hepatotoxicity, especially in children." },
+        { q: "Carbamazepine is an anticonvulsant used as a mood stabilizer. It can cause:",
+          opts: ["SIADH, agranulocytosis, Stevens‑Johnson syndrome", "Hypothyroidism", "Nephrogenic DI", "Tardive dyskinesia", "Serotonin syndrome"],
+          correct: 0,
+          exp: "Carbamazepine induces CYP450, has many drug interactions." },
+        { q: "Lamotrigine is a mood stabilizer particularly effective for:",
+          opts: ["Bipolar depression (maintenance)", "Acute mania", "Rapid cycling", "Mixed episodes", "All phases"],
+          correct: 0,
+          exp: "Lamotrigine is more effective for preventing depression than mania." },
+        { q: "A serious side effect of lamotrigine is:",
+          opts: ["Stevens‑Johnson syndrome (rash)", "Agranulocytosis", "Hepatotoxicity", "Pancreatitis", "Cardiac arrhythmias"],
+          correct: 0,
+          exp: "Slow titration reduces risk of severe rash." },
+        { q: "Benzodiazepines enhance the effect of GABA by:",
+          opts: ["Increasing frequency of Cl⁻ channel opening", "Increasing duration of opening", "Blocking reuptake", "Directly activating GABA receptors", "Inhibiting GABA transaminase"],
+          correct: 0,
+          exp: "Benzodiazepines bind to GABAₐ receptor and increase channel opening frequency." },
+        { q: "A long‑acting benzodiazepine used for alcohol withdrawal is:",
+          opts: ["Chlordiazepoxide", "Lorazepam", "Alprazolam", "Triazolam", "Midazolam"],
+          correct: 0,
+          exp: "Chlordiazepoxide and diazepam have long half‑lives, allowing smooth withdrawal." },
+        { q: "Benzodiazepines should be avoided in patients with:",
+          opts: ["History of substance abuse, sleep apnea, or severe respiratory insufficiency", "Mild anxiety", "Insomnia", "Muscle spasm", "Seizure disorders"],
+          correct: 0,
+          exp: "They have abuse potential and can worsen respiratory depression." },
+        { q: "Flumazenil is a:",
+          opts: ["Benzodiazepine receptor antagonist", "GABA agonist", "Serotonin antagonist", "Dopamine agonist", "Opioid antagonist"],
+          correct: 0,
+          exp: "Flumazenil reverses benzodiazepine overdose (caution in mixed OD)." },
+        { q: "Psychostimulants (methylphenidate, amphetamine) are first‑line for:",
+          opts: ["ADHD", "Depression", "Anxiety", "Bipolar disorder", "Schizophrenia"],
+          correct: 0,
+          exp: "They increase dopamine and norepinephrine in prefrontal cortex." },
+        { q: "The most common side effects of stimulants in children include:",
+          opts: ["Insomnia, decreased appetite, headache", "Weight gain", "Sedation", "Bradycardia", "Hypotension"],
+          correct: 0,
+          exp: "Stimulants can cause growth delay; monitor height and weight." },
+        { q: "Atomoxetine is a non‑stimulant medication for ADHD that works by:",
+          opts: ["Selective norepinephrine reuptake inhibition", "Dopamine reuptake inhibition", "α2‑adrenergic agonism", "Nicotinic agonism", "Serotonin modulation"],
+          correct: 0,
+          exp: "Atomoxetine inhibits NET, increasing norepinephrine and dopamine in PFC." },
+        { q: "Clonidine and guanfacine are used in ADHD as:",
+          opts: ["α2‑adrenergic agonists (reduce hyperactivity/impulsivity)", "Stimulants", "Antidepressants", "Antipsychotics", "Mood stabilizers"],
+          correct: 0,
+          exp: "They act on presynaptic α2 receptors in PFC." },
+        { q: "Which medication is used to treat nightmares and hyperarousal in PTSD?",
+          opts: ["Prazosin (α1‑antagonist)", "Propranolol", "Clonidine", "SSRI", "Benzodiazepine"],
+          correct: 0,
+          exp: "Prazosin reduces nightmares by blocking central α1 receptors." },
+        { q: "Antihistamines (e.g., hydroxyzine) are used for:",
+          opts: ["Mild anxiety and pruritus", "Depression", "Psychosis", "Mania", "ADHD"],
+          correct: 0,
+          exp: "Hydroxyzine has anxiolytic and sedative properties." },
+        { q: "Buspirone is a non‑benzodiazepine anxiolytic that acts as a:",
+          opts: ["5‑HT1A partial agonist", "GABA agonist", "Dopamine antagonist", "β‑blocker", "MAOI"],
+          correct: 0,
+          exp: "Buspirone has delayed onset (2‑4 weeks), no abuse potential." },
+        { q: "Beta‑blockers (e.g., propranolol) are used in psychiatry for:",
+          opts: ["Performance anxiety (social phobia)", "Generalized anxiety", "Panic disorder", "OCD", "PTSD"],
+          correct: 0,
+          exp: "Propranolol blocks peripheral sympathetic symptoms of anxiety." },
+        { q: "Naltrexone is used in alcohol use disorder to:",
+          opts: ["Reduce craving and reward (blocks opioid receptors)", "Cause aversion", "Reduce withdrawal", "Prevent relapse", "All"],
+          correct: 0,
+          exp: "Naltrexone reduces euphoria from alcohol." },
+        { q: "Disulfiram (Antabuse) works by:",
+          opts: ["Inhibiting acetaldehyde dehydrogenase, causing aversive reaction", "Blocking opioid receptors", "Reducing craving", "Stabilizing mood", "Antagonizing NMDA"],
+          correct: 0,
+          exp: "Disulfiram causes flushing, nausea if alcohol consumed." },
+        { q: "Acamprosate is used for alcohol dependence to:",
+          opts: ["Reduce cravings and stabilize glutamate system", "Cause aversion", "Reduce withdrawal", "Block opioid receptors", "Inhibit aldehyde dehydrogenase"],
+          correct: 0,
+          exp: "Acamprosate modulates NMDA receptors." },
+        { q: "Methadone and buprenorphine are used for:",
+          opts: ["Opioid maintenance therapy", "Alcohol dependence", "Nicotine dependence", "Cocaine addiction", "Benzodiazepine withdrawal"],
+          correct: 0,
+          exp: "They are long‑acting opioid agonists/partial agonists." },
+        { q: "Naloxone is an opioid antagonist used for:",
+          opts: ["Reversing opioid overdose", "Maintenance therapy", "Alcohol aversion", "Smoking cessation", "Pain relief"],
+          correct: 0,
+          exp: "Naloxone rapidly reverses respiratory depression." },
+        { q: "Varenicline is a smoking cessation aid that acts as:",
+          opts: ["Partial nicotinic receptor agonist", "Nicotine replacement", "Antidepressant", "α2 agonist", "Dopamine antagonist"],
+          correct: 0,
+          exp: "Varenicline reduces cravings and withdrawal." },
+        { q: "Cholinesterase inhibitors (donepezil, rivastigmine) are used in:",
+          opts: ["Alzheimer disease (mild‑moderate)", "Vascular dementia", "Frontotemporal dementia", "Lewy body dementia", "All dementias"],
+          correct: 0,
+          exp: "They increase acetylcholine; modest benefit in Alzheimer's." },
+        { q: "Memantine is an NMDA receptor antagonist used for:",
+          opts: ["Moderate‑severe Alzheimer disease", "Mild Alzheimer", "Vascular dementia", "Parkinson dementia", "All"],
+          correct: 0,
+          exp: "Memantine reduces excitotoxicity." },
+        { q: "Antipsychotics are used in dementia for:",
+          opts: ["Severe agitation or psychosis (but with black box warning for increased mortality)", "Cognitive enhancement", "Prevention of decline", "Mood stabilization", "Sleep"],
+          correct: 0,
+          exp: "Antipsychotics increase mortality in elderly with dementia." },
+        { q: "Trazodone is an antidepressant often used at low doses for:",
+          opts: ["Insomnia (due to antihistamine/α1 blockade)", "Depression", "Anxiety", "OCD", "Bipolar maintenance"],
+          correct: 0,
+          exp: "Trazodone is sedating; risk of priapism." },
+        { q: "The most common cause of sexual dysfunction among antidepressants is:",
+          opts: ["SSRIs", "Bupropion", "Mirtazapine", "TCAs", "MAOIs"],
+          correct: 0,
+          exp: "SSRIs frequently cause decreased libido, delayed orgasm." },
+        { q: "Which antidepressant is associated with a higher risk of seizures?",
+          opts: ["Bupropion (especially high doses)", "Sertraline", "Fluoxetine", "Venlafaxine", "Mirtazapine"],
+          correct: 0,
+          exp: "Bupropion lowers seizure threshold; avoid in epilepsy." },
+        { q: "SSRI discontinuation syndrome is more common with:",
+          opts: ["Paroxetine (short half‑life)", "Fluoxetine (long half‑life)", "Sertraline", "Citalopram", "Escitalopram"],
+          correct: 0,
+          exp: "Paroxetine has a short half‑life, causing more withdrawal symptoms." }
+    ];
+    // Add extra 10 to reach 65+
+    const extra = [
+        { q: "Sodium oxybate (GHB) is used for:",
+          opts: ["Narcolepsy with cataplexy", "Insomnia", "Anxiety", "Depression", "Alcohol withdrawal"],
+          correct: 0,
+          exp: "GHB improves nighttime sleep and reduces cataplexy." },
+        { q: "Modafinil is a wakefulness‑promoting agent used for:",
+          opts: ["Narcolepsy, shift work sleep disorder, OSA", "ADHD", "Depression", "Fatigue in MS", "All"],
+          correct: 0,
+          exp: "Modafinil has low abuse potential." },
+        { q: "Ramelteon is a melatonin receptor agonist used for:",
+          opts: ["Sleep onset insomnia", "Circadian rhythm disorders", "Depression", "Anxiety", "Narcolepsy"],
+          correct: 0,
+          exp: "Ramelteon has no abuse potential." },
+        { q: "Suvorexant is an orexin receptor antagonist used for:",
+          opts: ["Insomnia", "Narcolepsy", "Depression", "Anxiety", "Schizophrenia"],
+          correct: 0,
+          exp: "It blocks orexin, promoting sleep." },
+        { q: "Lurasidone is an atypical antipsychotic approved for:",
+          opts: ["Schizophrenia and bipolar depression", "Only schizophrenia", "Only bipolar mania", "Major depression", "Alzheimer agitation"],
+          correct: 0,
+          exp: "Lurasidone has a favorable metabolic profile." },
+        { q: "Brexpiprazole and cariprazine are:",
+          opts: ["Dopamine D2 partial agonists (like aripiprazole)", "Full D2 antagonists", "5‑HT2A antagonists", "D2 antagonists + 5‑HT2A antagonists", "MAOIs"],
+          correct: 0,
+          exp: "They are newer partial agonists with activity at serotonin receptors." },
+        { q: "Paliperidone is the active metabolite of:",
+          opts: ["Risperidone", "Olanzapine", "Quetiapine", "Aripiprazole", "Ziprasidone"],
+          correct: 0,
+          exp: "Paliperidone (9‑OH risperidone) is available as long‑acting injectable." },
+        { q: "Asenapine is an antipsychotic administered:",
+          opts: ["Sublingually", "Orally", "Intramuscularly", "Intravenously", "Transdermally"],
+          correct: 0,
+          exp: "Asenapine is sublingual for bioavailability; not to be swallowed." },
+        { q: "Iloperidone is an antipsychotic that requires:",
+          opts: ["Dose titration due to alpha‑1 blockade (hypotension)", "No titration", "CYP2D6 testing", "ECG monitoring", "Liver function monitoring"],
+          correct: 0,
+          exp: "Iloperidone can cause orthostatic hypotension; slow titration." },
+        { q: "Pimavanserin is a:",
+          opts: ["Selective 5‑HT2A inverse agonist used for Parkinson disease psychosis", "Dopamine agonist", "Anticholinergic", "MAOI", "SSRI"],
+          correct: 0,
+          exp: "Pimavanserin reduces psychosis without blocking dopamine receptors." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

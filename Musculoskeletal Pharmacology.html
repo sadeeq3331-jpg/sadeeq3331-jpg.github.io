@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musculoskeletal Pharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-pills"></i>
+        <h1>Musculoskeletal Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Introduction to Musculoskeletal Pharmacology</a></li>
+                <li><a href="#ch2"><i class="fas fa-capsules"></i> 2. NSAIDs & Acetaminophen</a></li>
+                <li><a href="#ch3"><i class="fas fa-syringe"></i> 3. Disease‑Modifying Antirheumatic Drugs (DMARDs)</a></li>
+                <li><a href="#ch4"><i class="fas fa-dna"></i> 4. Biologics in Rheumatology</a></li>
+                <li><a href="#ch5"><i class="fas fa-droplet"></i> 5. Drugs for Gout & Hyperuricemia</a></li>
+                <li><a href="#ch6"><i class="fas fa-bone"></i> 6. Osteoporosis Medications</a></li>
+                <li><a href="#ch7"><i class="fas fa-dumbbell"></i> 7. Muscle Relaxants</a></li>
+                <li><a href="#ch8"><i class="fas fa-bolt"></i> 8. Corticosteroids in Musculoskeletal Disease</a></li>
+                <li><a href="#ch9"><i class="fas fa-flask"></i> 9. Drugs for Osteoarthritis & Topical Agents</a></li>
+                <li><a href="#ch10"><i class="fas fa-heart"></i> 10. Miscellaneous Agents (Bisphosphonates, Calcitonin, etc.)</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: INTRODUCTION -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Introduction to Musculoskeletal Pharmacology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Musculoskeletal pharmacology encompasses drugs used to treat pain, inflammation, autoimmune arthritis, gout, osteoporosis, and muscle spasms. Therapeutic approaches include symptomatic relief (analgesics, NSAIDs), disease modification (DMARDs, biologics), and management of metabolic bone diseases.</p>
+                </div>
+                <div class="key-points">
+                    <ul>
+                        <li><i class="fas fa-check"></i> NSAIDs: Anti‑inflammatory, analgesic, antipyretic.</li>
+                        <li><i class="fas fa-check"></i> DMARDs: Slow progression of rheumatoid arthritis.</li>
+                        <li><i class="fas fa-check"></i> Gout drugs: Urate‑lowering, anti‑inflammatory.</li>
+                        <li><i class="fas fa-check"></i> Osteoporosis: Antiresorptive and anabolic agents.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: NSAIDs & ACETAMINOPHEN -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 2. NSAIDs & Acetaminophen</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Nonsteroidal anti‑inflammatory drugs (NSAIDs) inhibit cyclooxygenase (COX‑1 and/or COX‑2), reducing prostaglandin synthesis. They provide analgesic, anti‑inflammatory, and antipyretic effects.</p>
+                </div>
+                <div class="subsection-heading">Non‑selective COX Inhibitors</div>
+                <ul>
+                    <li><strong>Ibuprofen, naproxen, ketoprofen:</strong> OTC, short‑acting.</li>
+                    <li><strong>Indomethacin:</strong> Potent, used for ankylosing spondylitis, gout; high CNS side effects.</li>
+                    <li><strong>Piroxicam:</strong> Long half‑life.</li>
+                    <li><strong>Diclofenac:</strong> Available as topical gel.</li>
+                </ul>
+                <div class="subsection-heading">COX‑2 Selective Inhibitors</div>
+                <ul>
+                    <li><strong>Celecoxib:</strong> Less GI toxicity; sulfonamide, may increase cardiovascular risk.</li>
+                    <li><strong>Rofecoxib, valdecoxib:</strong> Withdrawn due to CV events.</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects of NSAIDs</div>
+                <ul>
+                    <li><strong>GI:</strong> Gastritis, ulcers, bleeding (COX‑1 inhibition).</li>
+                    <li><strong>Renal:</strong> Decreased GFR, Na⁺ retention, papillary necrosis.</li>
+                    <li><strong>CV:</strong> Increased risk of thrombotic events (especially COX‑2 inhibitors).</li>
+                    <li><strong>Other:</strong> Asthma exacerbation (aspirin‑sensitive), hepatotoxicity.</li>
+                </ul>
+                <div class="subsection-heading">Acetaminophen (Paracetamol)</div>
+                <ul>
+                    <li>Weak anti‑inflammatory, analgesic, antipyretic. Mechanism unclear (may involve COX inhibition in CNS).</li>
+                    <li><strong>Advantage:</strong> No GI ulcers, no antiplatelet effect.</li>
+                    <li><strong>Toxicity:</strong> Overdose causes hepatotoxicity (N‑acetylcysteine antidote).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> NSAIDs increase cardiovascular risk; use lowest effective dose. Acetaminophen is safe for patients with GI or bleeding risk.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: DISEASE‑MODIFYING ANTIRHEUMATIC DRUGS (DMARDs) -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 3. Disease‑Modifying Antirheumatic Drugs (DMARDs)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>DMARDs slow progression of rheumatoid arthritis and other inflammatory arthritides. They are classified as conventional synthetic (csDMARDs) and targeted synthetic (tsDMARDs).</p>
+                </div>
+                <div class="subsection-heading">Methotrexate</div>
+                <ul>
+                    <li><strong>First‑line csDMARD for RA.</strong> Inhibits dihydrofolate reductase, increases adenosine.</li>
+                    <li>Given weekly (oral or SC). Supplement with folic acid to reduce side effects.</li>
+                    <li><strong>Adverse effects:</strong> Hepatotoxicity, bone marrow suppression, pulmonary fibrosis, stomatitis.</li>
+                </ul>
+                <div class="subsection-heading">Leflunomide</div>
+                <ul>
+                    <li>Inhibits pyrimidine synthesis (dihydroorotate dehydrogenase).</li>
+                    <li>Hepatotoxicity, diarrhea, teratogenic (washout with cholestyramine).</li>
+                </ul>
+                <div class="subsection-heading">Sulfasalazine</div>
+                <ul>
+                    <li>Used in RA and inflammatory bowel disease. Metabolized to 5‑ASA and sulfapyridine.</li>
+                    <li>GI upset, rash, oligospermia (reversible).</li>
+                </ul>
+                <div class="subsection-heading">Hydroxychloroquine</div>
+                <ul>
+                    <li>Antimalarial; used in mild RA, SLE. Retinal toxicity (dose‑dependent) – baseline and annual eye exams.</li>
+                </ul>
+                <div class="subsection-heading">Targeted Synthetic DMARDs</div>
+                <ul>
+                    <li><strong>Tofacitinib, baricitinib, upadacitinib:</strong> JAK inhibitors. Oral; risk of infections, thrombosis, lipid changes.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: BIOLOGICS IN RHEUMATOLOGY -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 4. Biologics in Rheumatology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Biologics target specific inflammatory cytokines or cells. They are used in moderate‑to‑severe RA, ankylosing spondylitis, psoriatic arthritis, etc.</p>
+                </div>
+                <div class="subsection-heading">TNF‑α Inhibitors</div>
+                <ul>
+                    <li><strong>Infliximab (chimeric), adalimumab (human), etanercept (receptor fusion), certolizumab (PEGylated Fab), golimumab (human).</strong></li>
+                    <li>Injection site reactions, increased risk of infections (TB reactivation – screen before use), demyelinating disorders, heart failure.</li>
+                </ul>
+                <div class="subsection-heading">IL‑1 Inhibitors</div>
+                <ul>
+                    <li><strong>Anakinra:</strong> Recombinant IL‑1 receptor antagonist; used in RA, cryopyrin‑associated periodic syndromes (CAPS).</li>
+                </ul>
+                <div class="subsection-heading">IL‑6 Inhibitors</div>
+                <ul>
+                    <li><strong>Tocilizumab, sarilumab:</strong> Block IL‑6 receptor. Can cause neutropenia, elevated LFTs, lipid changes.</li>
+                </ul>
+                <div class="subsection-heading">T‑Cell Co‑stimulation Modulator</div>
+                <ul>
+                    <li><strong>Abatacept:</strong> CTLA‑4 fusion protein; inhibits T‑cell activation.</li>
+                </ul>
+                <div class="subsection-heading">B‑Cell Depleting Agent</div>
+                <ul>
+                    <li><strong>Rituximab:</strong> Anti‑CD20; used in RA (after TNF failure). Risk of PML, infusion reactions.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Screen for latent TB before starting biologics. Do not combine biologics (high infection risk).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: DRUGS FOR GOUT & HYPERURICEMIA -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 5. Drugs for Gout & Hyperuricemia</div>
+            <div class="section-card">
+                <div class="subsection-heading">Acute Gout Therapy</div>
+                <ul>
+                    <li><strong>NSAIDs:</strong> Indomethacin, naproxen – first‑line for acute attacks.</li>
+                    <li><strong>Colchicine:</strong> Inhibits microtubule polymerization, reduces neutrophil chemotaxis. Best if started early. GI toxicity (diarrhea, nausea), myelosuppression.</li>
+                    <li><strong>Corticosteroids:</strong> Oral, intra‑articular, or IM for patients intolerant to NSAIDs/colchicine.</li>
+                </ul>
+                <div class="subsection-heading">Urate‑Lowering Therapy (Chronic)</div>
+                <ul>
+                    <li><strong>Xanthine oxidase inhibitors:</strong>
+                        <ul>
+                            <li><strong>Allopurinol:</strong> First‑line; inhibits uric acid synthesis. Start low, titrate. Risk of allopurinol hypersensitivity syndrome (rash, fever, hepatitis, eosinophilia – especially in renal impairment and thiazide use).</li>
+                            <li><strong>Febuxostat:</strong> Non‑purine xanthine oxidase inhibitor; used in allopurinol intolerance. Cardiovascular risk (higher mortality vs allopurinol).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Uricosuric agents:</strong>
+                        <ul>
+                            <li><strong>Probenecid:</strong> Inhibits renal urate reabsorption (URAT1). Ineffective if CrCl <30. Avoid with aspirin (blocks effect).</li>
+                            <li><strong>Lesinurad:</strong> URAT1 inhibitor; used in combination with allopurinol/febuxostat.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Recombinant uricase:</strong>
+                        <ul>
+                            <li><strong>Rasburicase:</strong> For tumor lysis syndrome; can cause hemolysis in G6PD deficiency.</li>
+                            <li><strong>Pegloticase:</strong> Pegylated uricase for refractory chronic gout; infusion reactions, anaphylaxis.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Do not start urate‑lowering during acute attack (can prolong flare). Start low, go slow, and use prophylaxis (colchicine or NSAID) for first 3‑6 months.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: OSTEOPOROSIS MEDICATIONS -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 6. Osteoporosis Medications</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Osteoporosis drugs are classified as antiresorptive (inhibit bone breakdown) or anabolic (stimulate bone formation).</p>
+                </div>
+                <div class="subsection-heading">Antiresorptive Agents</div>
+                <ul>
+                    <li><strong>Bisphosphonates:</strong>
+                        <ul>
+                            <li><strong>Alendronate, risedronate, ibandronate, zoledronic acid.</strong> Inhibit osteoclast activity. Oral bisphosphonates require strict dosing (empty stomach, upright, with water).</li>
+                            <li><strong>Adverse effects:</strong> Esophagitis, hypocalcemia, ONJ (osteonecrosis of jaw), atypical femur fractures.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Denosumab:</strong> RANKL inhibitor (monoclonal antibody); SC every 6 months. Risk of hypocalcemia, ONJ, atypical fractures. Rebound bone loss if discontinued.</li>
+                    <li><strong>Raloxifene (SERM):</strong> Estrogen agonist in bone, antagonist in breast/uterus; reduces vertebral fractures, but not hip. Hot flashes, DVT risk.</li>
+                    <li><strong>Hormone replacement therapy (estrogen):</strong> Used in menopause; increases risk of breast cancer, thrombosis.</li>
+                    <li><strong>Calcitonin:</strong> Nasal spray or SC; weak effect, used for pain in vertebral fractures.</li>
+                </ul>
+                <div class="subsection-heading">Anabolic Agents</div>
+                <ul>
+                    <li><strong>Teriparatide (PTH 1‑34):</strong> Daily SC injection; stimulates bone formation. Black box for osteosarcoma (rodent). Use limited to 2 years. Follow with antiresorptive.</li>
+                    <li><strong>Abaloparatide:</strong> PTH‑related protein analog; similar to teriparatide.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Ensure adequate calcium and vitamin D intake with any osteoporosis therapy.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: MUSCLE RELAXANTS -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dumbbell"></i> 7. Muscle Relaxants</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Muscle relaxants are used for acute musculoskeletal spasms, spasticity (CNS lesions), and chronic pain.</p>
+                </div>
+                <ul>
+                    <li><strong>Cyclobenzaprine:</strong> Centrally acting, related to tricyclics; sedation, dry mouth.</li>
+                    <li><strong>Baclofen:</strong> GABA<sub>B</sub> agonist; used for spasticity (MS, spinal cord injury). Can cause sedation, weakness; abrupt withdrawal can cause hallucinations, seizures.</li>
+                    <li><strong>Tizanidine:</strong> α₂‑adrenergic agonist; reduces spasticity. Sedation, hypotension, hepatotoxicity (monitor LFTs).</li>
+                    <li><strong>Dantrolene:</strong> Directly acts on skeletal muscle ryanodine receptor, inhibiting Ca²⁺ release. Used for spasticity and malignant hyperthermia. Hepatotoxicity risk.</li>
+                    <li><strong>Carisoprodol, methocarbamol, metaxalone:</strong> Centrally acting; sedation, abuse potential (carisoprodol metabolized to meprobamate).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: CORTICOSTEROIDS IN MUSCULOSKELETAL DISEASE -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 8. Corticosteroids in Musculoskeletal Disease</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Corticosteroids are potent anti‑inflammatories used in RA, PMR, vasculitis, and gout (local injection).</p>
+                </div>
+                <ul>
+                    <li><strong>Examples:</strong> Prednisone, methylprednisolone, triamcinolone (intra‑articular).</li>
+                    <li><strong>Mechanism:</strong> Inhibit cytokines, adhesion molecules, and inflammatory cell migration.</li>
+                    <li><strong>Adverse effects (long‑term):</strong> Osteoporosis, avascular necrosis, weight gain, hyperglycemia, cataracts, immunosuppression.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: DRUGS FOR OSTEOARTHRITIS & TOPICAL AGENTS -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 9. Drugs for Osteoarthritis & Topical Agents</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Topical NSAIDs:</strong> Diclofenac gel, patch; fewer systemic effects.</li>
+                    <li><strong>Capsaicin:</strong> Depletes substance P from sensory neurons; burning sensation initially.</li>
+                    <li><strong>Intra‑articular injections:</strong>
+                        <ul>
+                            <li><strong>Hyaluronic acid:</strong> Viscosupplementation for knee OA; questionable efficacy.</li>
+                            <li><strong>Corticosteroids:</strong> For flare of OA.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Acetaminophen:</strong> First‑line for mild OA pain.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: MISCELLANEOUS AGENTS -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 10. Miscellaneous Agents</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Bisphosphonates</strong> (covered in osteoporosis).</li>
+                    <li><strong>Strontium ranelate:</strong> Dual action (increases bone formation, decreases resorption). Now limited due to cardiovascular risk.</li>
+                    <li><strong>Vitamin D and calcium:</strong> Essential for bone health.</li>
+                    <li><strong>Glucosamine and chondroitin:</strong> Popular supplements for OA; evidence weak.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Musculoskeletal Pharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

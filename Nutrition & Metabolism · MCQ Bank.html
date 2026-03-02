@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition & Metabolism · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-apple-alt"></i>
+        <h1>Nutrition & Metabolism · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ NUTRITION & METABOLISM MCQ QUESTIONS
+    const questions = [
+        { q: "Which of the following is an essential amino acid?",
+          opts: ["Lysine", "Alanine", "Asparagine", "Glutamic acid", "Serine"],
+          correct: 0,
+          exp: "Essential amino acids: PVT TIM HALL (Phenylalanine, Valine, Threonine, Tryptophan, Isoleucine, Methionine, Histidine, Arginine (conditionally essential), Leucine, Lysine)." },
+        { q: "Kwashiorkor is characterized by all of the following EXCEPT:",
+          opts: ["Severe muscle wasting with preservation of subcutaneous fat", "Edema", "Fatty liver", "Dermatitis", "Hypoalbuminemia"],
+          correct: 0,
+          exp: "Kwashiorkor has edema, fatty liver, dermatitis, hypoalbuminemia, but muscle wasting is less severe than marasmus; subcutaneous fat is often preserved." },
+        { q: "Marasmus results from deficiency of:",
+          opts: ["Both calories and protein", "Protein only", "Calories only", "Vitamins only", "Minerals only"],
+          correct: 0,
+          exp: "Marasmus is total calorie and protein deficiency; kwashiorkor is protein deficiency with adequate calories." },
+        { q: "The earliest clinical manifestation of vitamin A deficiency is:",
+          opts: ["Night blindness (nyctalopia)", "Bitot spots", "Xerophthalmia", "Keratomalacia", "Follicular hyperkeratosis"],
+          correct: 0,
+          exp: "Night blindness is the earliest symptom due to impaired rhodopsin regeneration." },
+        { q: "Bitot spots are associated with deficiency of:",
+          opts: ["Vitamin A", "Vitamin B2", "Vitamin B3", "Vitamin C", "Zinc"],
+          correct: 0,
+          exp: "Bitot spots (foamy, white patches on conjunctiva) are pathognomonic of vitamin A deficiency." },
+        { q: "Rickets is caused by deficiency of:",
+          opts: ["Vitamin D", "Calcium", "Phosphate", "All of the above", "None"],
+          correct: 3,
+          exp: "Rickets results from inadequate mineralization of bone due to deficiency of vitamin D, calcium, or phosphate." },
+        { q: "The classic triad of pellagra includes all EXCEPT:",
+          opts: ["Arthritis", "Dermatitis", "Diarrhea", "Dementia", "Death (fourth D)"],
+          correct: 0,
+          exp: "Pellagra (niacin deficiency) presents with the 4 D's: Dermatitis, Diarrhea, Dementia, Death." },
+        { q: "Wernicke encephalopathy is caused by deficiency of:",
+          opts: ["Thiamine (vitamin B1)", "Niacin", "Pyridoxine", "Cobalamin", "Folate"],
+          correct: 0,
+          exp: "Wernicke encephalopathy (confusion, ataxia, ophthalmoplegia) is due to thiamine deficiency." },
+        { q: "Which of the following is a feature of vitamin B12 deficiency?",
+          opts: ["Subacute combined degeneration of the spinal cord", "Microcytic anemia", "Glossitis alone", "Photosensitive dermatitis", "Peripheral neuropathy without spinal cord involvement"],
+          correct: 0,
+          exp: "B12 deficiency causes megaloblastic anemia and neurologic symptoms: subacute combined degeneration (dorsal columns, corticospinal tracts)." },
+        { q: "Pernicious anemia is caused by deficiency of:",
+          opts: ["Intrinsic factor", "Vitamin B12", "Folate", "Iron", "Both A and B"],
+          correct: 4,
+          exp: "Pernicious anemia is autoimmune gastritis → lack of intrinsic factor → B12 malabsorption." },
+        { q: "Folate deficiency during pregnancy is associated with:",
+          opts: ["Neural tube defects", "Cleft lip", "Congenital heart disease", "Limb abnormalities", "Down syndrome"],
+          correct: 0,
+          exp: "Folate supplementation before conception and in early pregnancy reduces risk of neural tube defects (spina bifida, anencephaly)." },
+        { q: "Scurvy is caused by deficiency of:",
+          opts: ["Vitamin C", "Vitamin A", "Vitamin K", "Iron", "Zinc"],
+          correct: 0,
+          exp: "Vitamin C deficiency impairs collagen hydroxylation, causing bleeding gums, petechiae, poor wound healing." },
+        { q: "Which mineral deficiency causes microcytic hypochromic anemia?",
+          opts: ["Iron", "Zinc", "Copper", "Magnesium", "Iodine"],
+          correct: 0,
+          exp: "Iron deficiency is the most common cause of microcytic anemia; copper deficiency can also cause anemia." },
+        { q: "Koilonychia (spoon nails) is a sign of:",
+          opts: ["Iron deficiency anemia", "Zinc deficiency", "Vitamin B12 deficiency", "Protein malnutrition", "Iodine deficiency"],
+          correct: 0,
+          exp: "Koilonychia is associated with chronic iron deficiency." },
+        { q: "The most common cause of preventable intellectual disability worldwide is:",
+          opts: ["Iodine deficiency", "Iron deficiency", "Vitamin A deficiency", "Folate deficiency", "Protein‑energy malnutrition"],
+          correct: 0,
+          exp: "Iodine deficiency causes cretinism (intellectual disability, short stature, coarse features)." },
+        { q: "Acrodermatitis enteropathica is caused by deficiency of:",
+          opts: ["Zinc", "Copper", "Iron", "Biotin", "Essential fatty acids"],
+          correct: 0,
+          exp: "Acrodermatitis enteropathica can be inherited (autosomal recessive zinc transporter defect) or acquired due to zinc deficiency; presents with periorificial and acral dermatitis, alopecia, diarrhea." },
+        { q: "Keshan disease (cardiomyopathy) is associated with deficiency of:",
+          opts: ["Selenium", "Vitamin E", "Copper", "Magnesium", "Thiamine"],
+          correct: 0,
+          exp: "Keshan disease is a cardiomyopathy seen in selenium‑deficient regions of China." },
+        { q: "Which of the following is a feature of magnesium deficiency?",
+          opts: ["Tetany, Chvostek sign, prolonged QT", "Muscle weakness only", "Hyporeflexia", "Hypertension", "Bradycardia"],
+          correct: 0,
+          exp: "Hypomagnesemia causes neuromuscular irritability (tetany, seizures) and cardiac arrhythmias (prolonged QT)." },
+        { q: "The 'flaky paint' dermatosis is characteristic of:",
+          opts: ["Kwashiorkor", "Marasmus", "Pellagra", "Vitamin A deficiency", "Zinc deficiency"],
+          correct: 0,
+          exp: "Kwashiorkor often presents with desquamating, flaky paint dermatosis." },
+        { q: "Which vitamin is a cofactor for transaminases and decarboxylases?",
+          opts: ["Vitamin B6 (pyridoxine)", "Vitamin B1", "Vitamin B2", "Vitamin B3", "Vitamin B12"],
+          correct: 0,
+          exp: "Pyridoxal phosphate (B6) is a cofactor for transaminases, decarboxylases (neurotransmitter synthesis)." },
+        { q: "Isoniazid‑induced neuropathy is prevented by supplementation with:",
+          opts: ["Pyridoxine (B6)", "Thiamine", "Niacin", "Riboflavin", "Folate"],
+          correct: 0,
+          exp: "Isoniazid inhibits pyridoxine metabolism; B6 prevents peripheral neuropathy." },
+        { q: "The treatment for Wernicke encephalopathy is:",
+          opts: ["Thiamine IV before glucose", "Glucose IV", "Niacin", "Pyridoxine", "Folate"],
+          correct: 0,
+          exp: "Thiamine must be given before glucose to prevent Wernicke encephalopathy." },
+        { q: "Which vitamin is essential for blood clotting as a cofactor for γ‑carboxylation?",
+          opts: ["Vitamin K", "Vitamin A", "Vitamin D", "Vitamin E", "Vitamin C"],
+          correct: 0,
+          exp: "Vitamin K is required for carboxylation of glutamic acid residues on factors II, VII, IX, X, protein C, protein S." },
+        { q: "Warfarin overdose can be reversed with:",
+          opts: ["Vitamin K", "Protamine sulfate", "Fresh frozen plasma", "Both A and C", "None"],
+          correct: 3,
+          exp: "Vitamin K reverses warfarin over hours; fresh frozen plasma provides clotting factors immediately." },
+        { q: "Hypervitaminosis A can cause:",
+          opts: ["Pseudotumor cerebri, hepatotoxicity, teratogenicity", "Hypercalcemia", "Bleeding", "Flushing", "Dermatitis"],
+          correct: 0,
+          exp: "Vitamin A toxicity causes increased ICP (pseudotumor cerebri), liver damage, bone pain, and is teratogenic." },
+        { q: "Hypervitaminosis D causes:",
+          opts: ["Hypercalcemia, nephrocalcinosis", "Hypocalcemia", "Bleeding", "Night blindness", "Dermatitis"],
+          correct: 0,
+          exp: "Vitamin D toxicity → hypercalcemia → nausea, weakness, confusion, nephrocalcinosis." },
+        { q: "Orlistat promotes weight loss by:",
+          opts: ["Inhibiting gastric and pancreatic lipase", "Suppressing appetite", "Increasing thermogenesis", "Blocking fat absorption in the intestine", "Both A and D"],
+          correct: 4,
+          exp: "Orlistat inhibits lipase, reducing fat absorption by ~30%. Side effects: oily stools, flatulence." },
+        { q: "Liraglutide, used for weight loss and type 2 diabetes, acts as a(n):",
+          opts: ["GLP‑1 receptor agonist", "DPP‑4 inhibitor", "SGLT2 inhibitor", "Amylin analog", "Insulin sensitizer"],
+          correct: 0,
+          exp: "Liraglutide (Saxenda, Victoza) is a GLP‑1 agonist; it delays gastric emptying and increases satiety." },
+        { q: "Phentermine is a sympathomimetic amine used for short‑term weight loss. Its mechanism is:",
+          opts: ["Increasing norepinephrine in hypothalamus", "Inhibiting serotonin reuptake", "Blocking cannabinoid receptors", "Inhibiting lipase", "Activating melanocortin receptors"],
+          correct: 0,
+          exp: "Phentermine increases norepinephrine release, suppressing appetite." },
+        { q: "The combination naltrexone/bupropion (Contrave) acts on:",
+          opts: ["Hypothalamic appetite centers (POMC neurons)", "Gut lipase", "Serotonin receptors", "Cannabinoid receptors", "Thyroid hormone receptors"],
+          correct: 0,
+          exp: "Naltrexone (opioid antagonist) + bupropion (dopamine/NE reuptake inhibitor) act on POMC neurons in hypothalamus to reduce appetite." },
+        { q: "Which anti‑obesity drug can cause malabsorption of fat‑soluble vitamins?",
+          opts: ["Orlistat", "Phentermine", "Liraglutide", "Naltrexone/bupropion", "Topiramate"],
+          correct: 0,
+          exp: "Orlistat reduces fat absorption, which can lead to deficiencies of vitamins A, D, E, K." },
+        { q: "Megestrol acetate is used to stimulate appetite in cachexia. Its mechanism is:",
+          opts: ["Unknown, but likely progestin effects", "Serotonin antagonism", "Cannabinoid receptor agonism", "Leptin agonism", "Ghrelin agonism"],
+          correct: 0,
+          exp: "Megestrol acetate is a progestin that increases appetite; mechanism unclear." },
+        { q: "Dronabinol (synthetic THC) is used for appetite stimulation in:",
+          opts: ["AIDS‑related anorexia and chemotherapy‑induced nausea", "Anorexia nervosa", "Bulimia", "Obesity", "Cachexia in heart failure"],
+          correct: 0,
+          exp: "Dronabinol is a cannabinoid approved for AIDS‑related anorexia and chemotherapy‑induced nausea." },
+        { q: "Which medication is FDA‑approved for binge‑eating disorder?",
+          opts: ["Lisdexamfetamine (Vyvanse)", "Fluoxetine", "Topiramate", "Naltrexone/bupropion", "Liraglutide"],
+          correct: 0,
+          exp: "Lisdexamfetamine is FDA‑approved for moderate‑severe binge‑eating disorder." },
+        { q: "Fluoxetine is FDA‑approved for which eating disorder?",
+          opts: ["Bulimia nervosa", "Anorexia nervosa", "Binge‑eating disorder", "All of the above", "None"],
+          correct: 0,
+          exp: "Fluoxetine (high dose 60 mg/day) is FDA‑approved for bulimia nervosa." },
+        { q: "Refeeding syndrome is characterized by severe:",
+          opts: ["Hypophosphatemia, hypokalemia, hypomagnesemia", "Hyperphosphatemia, hyperkalemia, hypermagnesemia", "Hyperglycemia", "Hypocalcemia", "Metabolic alkalosis"],
+          correct: 0,
+          exp: "Refeeding syndrome occurs with rapid feeding after starvation; insulin surge causes intracellular shift of phosphate, potassium, magnesium." },
+        { q: "To prevent refeeding syndrome, which electrolytes should be monitored and supplemented?",
+          opts: ["Phosphate, potassium, magnesium", "Sodium, chloride, bicarbonate", "Calcium, iron, zinc", "Copper, selenium, iodine", "All of the above"],
+          correct: 0,
+          exp: "Hypophosphatemia is hallmark; also monitor K⁺, Mg²⁺, and thiamine." },
+        { q: "In parenteral nutrition, which component can cause cholestasis with long‑term use?",
+          opts: ["Lipids (soybean oil)", "Dextrose", "Amino acids", "Electrolytes", "Trace elements"],
+          correct: 0,
+          exp: "Long‑term PN, especially with soybean oil‑based lipids, can cause PN‑associated cholestasis." },
+        { q: "The most common electrolyte abnormality in refeeding syndrome is:",
+          opts: ["Hypophosphatemia", "Hypokalemia", "Hypomagnesemia", "Hypernatremia", "Hypocalcemia"],
+          correct: 0,
+          exp: "Severe hypophosphatemia is the hallmark of refeeding syndrome." },
+        { q: "Which vitamin is always given before feeding in at‑risk patients to prevent Wernicke encephalopathy?",
+          opts: ["Thiamine (B1)", "Niacin", "Pyridoxine", "Folate", "Vitamin C"],
+          correct: 0,
+          exp: "Thiamine must be administered before glucose to prevent Wernicke encephalopathy." },
+        { q: "In celiac disease, which histological finding is characteristic?",
+          opts: ["Villous atrophy, crypt hyperplasia, intraepithelial lymphocytes", "Neutrophilic infiltrate", "Granulomas", "Eosinophilic infiltrate", "Pseudomembranes"],
+          correct: 0,
+          exp: "Celiac disease shows villous atrophy, crypt hyperplasia, and increased intraepithelial lymphocytes." },
+        { q: "Dermatitis herpetiformis is associated with:",
+          opts: ["Celiac disease", "Crohn disease", "Ulcerative colitis", "Whipple disease", "Tropical sprue"],
+          correct: 0,
+          exp: "Dermatitis herpetiformis is the cutaneous manifestation of celiac disease (IgA deposition)." },
+        { q: "Whipple disease is caused by:",
+          opts: ["Tropheryma whipplei", "Mycobacterium avium complex", "Clostridioides difficile", "Yersinia enterocolitica", "Campylobacter jejuni"],
+          correct: 0,
+          exp: "Whipple disease is a rare infection by Tropheryma whipplei, characterized by PAS‑positive macrophages in lamina propria." },
+        { q: "Which serum marker is most specific for celiac disease?",
+          opts: ["Anti‑tissue transglutaminase (tTG) IgA", "Anti‑gliadin IgA", "Anti‑endomysial IgA", "Anti‑deamidated gliadin IgG", "Total IgA"],
+          correct: 0,
+          exp: "Anti‑tTG IgA is the first‑line serologic test for celiac disease (high sensitivity and specificity)." },
+        { q: "Metabolic syndrome is diagnosed when a patient has at least three of the following EXCEPT:",
+          opts: ["Elevated LDL cholesterol", "Increased waist circumference", "Elevated triglycerides", "Low HDL", "Elevated fasting glucose"],
+          correct: 0,
+          exp: "Metabolic syndrome includes increased waist circumference, elevated triglycerides, low HDL, elevated blood pressure, elevated fasting glucose." },
+        { q: "In obesity, which adipokine is reduced and associated with insulin resistance?",
+          opts: ["Adiponectin", "Leptin", "Resistin", "TNF‑α", "IL‑6"],
+          correct: 0,
+          exp: "Adiponectin is anti‑inflammatory and insulin‑sensitizing; levels are decreased in obesity." },
+        { q: "Leptin resistance is a feature of:",
+          opts: ["Obesity", "Anorexia nervosa", "Lipodystrophy", "Type 1 diabetes", "Cushing syndrome"],
+          correct: 0,
+          exp: "In obesity, high leptin levels but leptin resistance impairs satiety signaling." },
+        { q: "Which trace element is a component of glutathione peroxidase?",
+          opts: ["Selenium", "Zinc", "Copper", "Manganese", "Iron"],
+          correct: 0,
+          exp: "Selenium is a cofactor for glutathione peroxidase, an antioxidant enzyme." },
+        { q: "Copper deficiency can cause:",
+          opts: ["Anemia, neutropenia, osteoporosis", "Microcytic anemia alone", "Peripheral neuropathy", "Cardiomyopathy", "Alopecia"],
+          correct: 0,
+          exp: "Copper deficiency causes anemia (microcytic or normocytic), neutropenia, and bone demineralization." },
+        { q: "Zinc toxicity can lead to deficiency of:",
+          opts: ["Copper", "Iron", "Selenium", "Magnesium", "Calcium"],
+          correct: 0,
+          exp: "Excess zinc induces metallothionein, which binds copper and reduces its absorption." },
+        { q: "Which vitamin is essential for the conversion of homocysteine to methionine?",
+          opts: ["Vitamin B12", "Vitamin B6", "Folate", "Both A and C", "All of the above"],
+          correct: 3,
+          exp: "Methionine synthase requires B12 (as methylcobalamin) and methyl‑THF (folate)." },
+        { q: "Iodine deficiency in pregnancy causes:",
+          opts: ["Cretinism in the offspring", "Goiter in mother", "Spontaneous abortion", "All of the above", "None"],
+          correct: 3,
+          exp: "Severe iodine deficiency during pregnancy leads to cretinism (intellectual disability, growth retardation)." },
+        { q: "The treatment for acute iron overdose is:",
+          opts: ["Deferoxamine", "Activated charcoal", "Gastric lavage", "Whole bowel irrigation", "N‑acetylcysteine"],
+          correct: 0,
+          exp: "Deferoxamine chelates iron; urine turns vin rosé." },
+        { q: "Which of the following is a feature of protein‑energy malnutrition in children?",
+          opts: ["Growth retardation, muscle wasting, edema", "Obesity", "Hyperactivity", "Precocious puberty", "Macrocephaly"],
+          correct: 0,
+          exp: "PEM presents with growth failure, muscle wasting, and in kwashiorkor, edema." },
+        { q: "The recommended daily protein intake for a healthy adult is approximately:",
+          opts: ["0.8 g/kg body weight", "1.2 g/kg", "1.5 g/kg", "2.0 g/kg", "0.5 g/kg"],
+          correct: 0,
+          exp: "The RDA for protein is 0.8 g/kg for healthy adults." },
+        { q: "Which essential fatty acid is an omega‑3 fatty acid?",
+          opts: ["α‑linolenic acid", "Linoleic acid", "Oleic acid", "Arachidonic acid", "Palmitic acid"],
+          correct: 0,
+          exp: "α‑linolenic acid (ALA) is an omega‑3 essential fatty acid; linoleic acid is omega‑6." },
+        { q: "Carnitine is required for:",
+          opts: ["Transport of long‑chain fatty acids into mitochondria", "Transport of medium‑chain fatty acids", "Ketogenesis", "Glycogen synthesis", "Protein synthesis"],
+          correct: 0,
+          exp: "Carnitine shuttle (CPT1, CACT, CPT2) transports long‑chain fatty acids into mitochondria for β‑oxidation." },
+        { q: "Medium‑chain triglycerides (MCTs) are absorbed directly into the:",
+          opts: ["Portal vein (not lymph)", "Lymphatics", "Systemic circulation via chylomicrons", "Thoracic duct", "Splanchnic circulation"],
+          correct: 0,
+          exp: "MCTs are water‑soluble and absorbed directly into portal circulation; used in fat malabsorption." },
+        { q: "The thermic effect of food is highest for:",
+          opts: ["Protein", "Carbohydrate", "Fat", "Alcohol", "Fiber"],
+          correct: 0,
+          exp: "Protein has the highest thermic effect (20‑30%), followed by carbs (5‑10%), fat (0‑3%)." },
+        { q: "Basal metabolic rate (BMR) is primarily determined by:",
+          opts: ["Lean body mass", "Fat mass", "Age", "Gender", "Physical activity"],
+          correct: 0,
+          exp: "BMR correlates most strongly with lean body mass (muscle, organs)." },
+        { q: "Which hormone increases basal metabolic rate?",
+          opts: ["Thyroid hormone (T3/T4)", "Insulin", "Cortisol", "Estrogen", "Testosterone"],
+          correct: 0,
+          exp: "Thyroid hormones increase cellular metabolism and BMR." },
+        { q: "The major storage form of carbohydrates in the human body is:",
+          opts: ["Glycogen", "Glucose", "Starch", "Cellulose", "Fructose"],
+          correct: 0,
+          exp: "Glycogen is stored in liver and muscle; liver glycogen maintains blood glucose." },
+        { q: "Which lipoprotein transports dietary triglycerides from the intestine?",
+          opts: ["Chylomicrons", "VLDL", "LDL", "HDL", "IDL"],
+          correct: 0,
+          exp: "Chylomicrons carry exogenous (dietary) lipids; VLDL carries endogenous triglycerides." },
+        { q: "Familial hypercholesterolemia is caused by defects in the gene for:",
+          opts: ["LDL receptor", "ApoB‑100", "PCSK9", "All of the above", "None"],
+          correct: 3,
+          exp: "LDL receptor mutations are most common; also ApoB‑100 and PCSK9 mutations." },
+        { q: "Phenylketonuria (PKU) is caused by deficiency of:",
+          opts: ["Phenylalanine hydroxylase", "Tyrosine hydroxylase", "Branched‑chain α‑ketoacid dehydrogenase", "Homogentisate oxidase", "Cystathionine β‑synthase"],
+          correct: 0,
+          exp: "PAH deficiency → phenylalanine accumulation; treatment is low‑phenylalanine diet." },
+        { q: "Maple syrup urine disease (MSUD) affects metabolism of:",
+          opts: ["Leucine, isoleucine, valine", "Phenylalanine, tyrosine", "Methionine, cysteine", "Lysine, arginine", "Tryptophan, histidine"],
+          correct: 0,
+          exp: "MSUD is due to deficiency of branched‑chain α‑ketoacid dehydrogenase." },
+        { q: "Galactosemia (classic) is due to deficiency of:",
+          opts: ["Galactose‑1‑phosphate uridylyltransferase (GALT)", "Galactokinase", "UDP‑galactose‑4‑epimerase", "Aldolase B", "Fructokinase"],
+          correct: 0,
+          exp: "GALT deficiency causes galactosemia; presents with jaundice, cataracts, E. coli sepsis." },
+        { q: "Hereditary fructose intolerance is caused by deficiency of:",
+          opts: ["Aldolase B", "Fructokinase", "Phosphofructokinase", "Pyruvate kinase", "Glucokinase"],
+          correct: 0,
+          exp: "Aldolase B deficiency → fructose‑1‑phosphate accumulation → hypoglycemia, liver failure." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Which vitamin deficiency causes cheilosis and angular stomatitis?",
+          opts: ["Riboflavin (B2)", "Niacin", "Pyridoxine", "Folate", "Vitamin A"],
+          correct: 0,
+          exp: "Riboflavin deficiency causes cheilosis, glossitis, seborrheic dermatitis." },
+        { q: "Vitamin C is essential for:",
+          opts: ["Hydroxylation of proline and lysine in collagen synthesis", "Carboxylation of glutamate", "Transamination", "Decarboxylation", "Methylation"],
+          correct: 0,
+          exp: "Vitamin C is a cofactor for prolyl and lysyl hydroxylases in collagen synthesis." },
+        { q: "Which mineral is a cofactor for superoxide dismutase (SOD)?",
+          opts: ["Zinc and copper", "Selenium", "Manganese", "Iron", "Magnesium"],
+          correct: 0,
+          exp: "Cytosolic SOD contains copper and zinc; mitochondrial SOD contains manganese." },
+        { q: "Acrodermatitis enteropathica is treated with:",
+          opts: ["Zinc supplementation", "Copper supplementation", "Iron supplementation", "Vitamin C", "Essential fatty acids"],
+          correct: 0,
+          exp: "Zinc supplementation (pharmacologic doses) treats acrodermatitis enteropathica." },
+        { q: "Which drug used for gout can cause aplastic anemia and should be used with caution in renal impairment?",
+          opts: ["Colchicine", "Allopurinol", "Probenecid", "Febuxostat", "Pegloticase"],
+          correct: 0,
+          exp: "Colchicine toxicity causes bone marrow suppression; dose adjustment in renal/hepatic disease." },
+        { q: "The flushing caused by niacin is mediated by:",
+          opts: ["Prostaglandin D2 (via EP2/EP4 receptors)", "Histamine", "Serotonin", "Nitric oxide", "Bradykinin"],
+          correct: 0,
+          exp: "Niacin flush is mediated by prostaglandin D2; can be reduced by aspirin." },
+        { q: "Which vitamin is used to treat hyperhomocysteinemia?",
+          opts: ["Folate, B12, B6", "Vitamin C", "Vitamin E", "Vitamin A", "Niacin"],
+          correct: 0,
+          exp: "Folate, B12, and B6 are cofactors in homocysteine metabolism." },
+        { q: "Orlistat can cause deficiency of which vitamins?",
+          opts: ["A, D, E, K", "B‑complex", "Vitamin C", "Folate", "B12"],
+          correct: 0,
+          exp: "Orlistat reduces fat absorption, potentially depleting fat‑soluble vitamins." },
+        { q: "The active form of vitamin D is:",
+          opts: ["1,25‑dihydroxycholecalciferol (calcitriol)", "25‑hydroxycholecalciferol", "Cholecalciferol", "Ergocalciferol", "7‑dehydrocholesterol"],
+          correct: 0,
+          exp: "Calcitriol (1,25‑(OH)₂D₃) is the active form produced in kidney." },
+        { q: "In chronic kidney disease, which vitamin D analog is often used to treat secondary hyperparathyroidism?",
+          opts: ["Calcitriol", "Cholecalciferol", "Ergocalciferol", "Calcipotriene", "Doxercalciferol"],
+          correct: 0,
+          exp: "Calcitriol (or its analogs) is used because renal 1α‑hydroxylase is impaired." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

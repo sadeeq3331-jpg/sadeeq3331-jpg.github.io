@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Methodology & Biostatistics · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-chart-bar"></i>
+        <h1>Research Methodology & Biostatistics · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ RESEARCH METHODOLOGY & BIOSTATISTICS MCQ QUESTIONS
+    const questions = [
+        { q: "The mnemonic 'FINER' for a good research question stands for:",
+          opts: ["Feasible, Interesting, Novel, Ethical, Relevant", "Focused, Interpretable, Novel, Ethical, Reproducible", "Feasible, Innovative, Necessary, Explicit, Replicable", "Focused, Inclusive, Novel, Ethical, Relevant", "Feasible, Interesting, Neutral, Ethical, Reliable"],
+          correct: 0,
+          exp: "FINER: Feasible, Interesting, Novel, Ethical, Relevant." },
+        { q: "In the PICO framework, the 'C' stands for:",
+          opts: ["Comparison", "Control", "Confounder", "Cohort", "Clinical outcome"],
+          correct: 0,
+          exp: "PICO: Population, Intervention, Comparison, Outcome." },
+        { q: "The null hypothesis (H₀) typically states:",
+          opts: ["No effect or no difference", "There is an effect", "The effect is large", "The alternative is true", "The sample is representative"],
+          correct: 0,
+          exp: "The null hypothesis assumes no difference or no association." },
+        { q: "A type I error (α) is:",
+          opts: ["Rejecting a true null hypothesis", "Failing to reject a false null hypothesis", "Accepting a true null hypothesis", "Rejecting a false null hypothesis", "Failing to reject a true null hypothesis"],
+          correct: 0,
+          exp: "Type I error = false positive; probability α (usually 0.05)." },
+        { q: "A type II error (β) is:",
+          opts: ["Failing to reject a false null hypothesis", "Rejecting a true null hypothesis", "Accepting a true null hypothesis", "Rejecting a false null hypothesis", "Failing to reject a true null hypothesis"],
+          correct: 0,
+          exp: "Type II error = false negative; power = 1 – β." },
+        { q: "Statistical power is defined as:",
+          opts: ["1 – β", "α", "1 – α", "β", "p‑value"],
+          correct: 0,
+          exp: "Power = probability of correctly rejecting a false null hypothesis." },
+        { q: "In a cross‑sectional study, which measure of disease frequency can be directly calculated?",
+          opts: ["Prevalence", "Incidence", "Relative risk", "Odds ratio", "Attributable risk"],
+          correct: 0,
+          exp: "Cross‑sectional studies measure prevalence (existing cases at a point in time)." },
+        { q: "In a cohort study, which measure of association is directly calculated?",
+          opts: ["Relative risk (risk ratio)", "Odds ratio", "Prevalence ratio", "Attributable fraction", "Hazard ratio"],
+          correct: 0,
+          exp: "Cohort studies can calculate incidence and relative risk." },
+        { q: "In a case‑control study, which measure of association is used?",
+          opts: ["Odds ratio", "Relative risk", "Risk difference", "Incidence rate", "Prevalence"],
+          correct: 0,
+          exp: "Case‑control studies use odds ratio as the measure of association." },
+        { q: "A randomized controlled trial (RCT) is considered the gold standard for:",
+          opts: ["Establishing causality (efficacy of interventions)", "Studying rare diseases", "Estimating prevalence", "Generating hypotheses", "Assessing diagnostic tests"],
+          correct: 0,
+          exp: "RCTs minimize bias through randomization and blinding, providing strongest evidence for causality." },
+        { q: "The purpose of randomization in an RCT is to:",
+          opts: ["Balance known and unknown confounders between groups", "Ensure equal sample sizes", "Guarantee blinding", "Increase external validity", "Reduce sampling error"],
+          correct: 0,
+          exp: "Randomization distributes confounders equally, reducing selection bias." },
+        { q: "In a double‑blind study, who is blinded?",
+          opts: ["Participants and investigators", "Only participants", "Only investigators", "Data analysts only", "Everyone except the sponsor"],
+          correct: 0,
+          exp: "Double‑blind means both participants and investigators are unaware of treatment assignment." },
+        { q: "Intention‑to‑treat (ITT) analysis means:",
+          opts: ["Analyzing participants in the groups they were randomized to, regardless of adherence", "Analyzing only those who completed the study", "Analyzing only those who adhered to protocol", "Excluding dropouts", "Performing per‑protocol analysis"],
+          correct: 0,
+          exp: "ITT preserves the benefit of randomization and reflects real‑world effectiveness." },
+        { q: "Per‑protocol analysis may introduce bias because:",
+          opts: ["It excludes non‑adherent participants, breaking randomization", "It includes all participants", "It uses intention‑to‑treat", "It increases power", "It is always unbiased"],
+          correct: 0,
+          exp: "Per‑protocol analysis can overestimate efficacy by excluding those who did not adhere." },
+        { q: "Selection bias occurs when:",
+          opts: ["The study groups differ systematically due to how participants were selected", "Measurements are inaccurate", "A confounder is present", "Data are missing", "Sample size is small"],
+          correct: 0,
+          exp: "Selection bias arises from systematic differences in selection or follow‑up." },
+        { q: "Recall bias is a type of:",
+          opts: ["Information bias", "Selection bias", "Confounding", "Ecological fallacy", "Measurement error"],
+          correct: 0,
+          exp: "Recall bias occurs when cases remember exposures differently than controls." },
+        { q: "Lead‑time bias is most relevant in:",
+          opts: ["Screening studies (early detection falsely prolongs survival)", "Cohort studies", "Case‑control studies", "RCTs", "Cross‑sectional studies"],
+          correct: 0,
+          exp: "Lead‑time bias makes survival appear longer if diagnosis is earlier, even without real benefit." },
+        { q: "Publication bias refers to:",
+          opts: ["Positive results more likely to be published than negative", "Studies published in English only", "Only high‑impact journals considered", "Biased reporting within a paper", "Selective outcome reporting"],
+          correct: 0,
+          exp: "Publication bias inflates effect estimates in meta‑analyses because negative studies are missing." },
+        { q: "A confounder is a variable that:",
+          opts: ["Is associated with both exposure and outcome and is not an intermediate", "Is on the causal pathway", "Is caused by the exposure", "Is randomly distributed", "Has no association with exposure"],
+          correct: 0,
+          exp: "A confounder must be related to exposure and outcome, and not an intermediate." },
+        { q: "Which method can control confounding in the design phase?",
+          opts: ["Randomization, restriction, matching", "Stratification", "Multivariable regression", "Standardization", "Sensitivity analysis"],
+          correct: 0,
+          exp: "Randomization, restriction, and matching are design‑phase methods; others are analysis‑phase." },
+        { q: "Effect modification (interaction) means:",
+          opts: ["The effect of exposure on outcome differs across levels of another variable", "The association is confounded", "There is no association", "The exposure causes the outcome", "The variable is on the causal pathway"],
+          correct: 0,
+          exp: "Effect modification is a real phenomenon to be reported, not a bias." },
+        { q: "Sensitivity of a diagnostic test is defined as:",
+          opts: ["True positives / (True positives + False negatives)", "True negatives / (True negatives + False positives)", "True positives / (True positives + False positives)", "True negatives / (True negatives + False negatives)", "True positives / Total population"],
+          correct: 0,
+          exp: "Sensitivity = TP/(TP+FN) – proportion of diseased who test positive." },
+        { q: "Specificity of a diagnostic test is defined as:",
+          opts: ["True negatives / (True negatives + False positives)", "True positives / (True positives + False negatives)", "True positives / (True positives + False positives)", "True negatives / (True negatives + False negatives)", "True negatives / Total population"],
+          correct: 0,
+          exp: "Specificity = TN/(TN+FP) – proportion of non‑diseased who test negative." },
+        { q: "A test with high sensitivity is useful for:",
+          opts: ["Ruling out disease (SnOUT)", "Ruling in disease (SpIN)", "Confirming diagnosis", "Screening in low‑prevalence populations", "Monitoring treatment response"],
+          correct: 0,
+          exp: "High sensitivity → few false negatives → negative test rules out disease." },
+        { q: "A test with high specificity is useful for:",
+          opts: ["Ruling in disease (SpIN)", "Ruling out disease", "Screening", "Detecting all cases", "Excluding healthy individuals"],
+          correct: 0,
+          exp: "High specificity → few false positives → positive test rules in disease." },
+        { q: "Positive predictive value (PPV) depends on:",
+          opts: ["Prevalence of the disease", "Sensitivity only", "Specificity only", "Test reproducibility", "Observer variability"],
+          correct: 0,
+          exp: "PPV = TP/(TP+FP) and increases with disease prevalence." },
+        { q: "If disease prevalence is very low, PPV tends to be:",
+          opts: ["Low (many false positives)", "High", "Unaffected", "Equal to sensitivity", "Equal to specificity"],
+          correct: 0,
+          exp: "In low prevalence, even a highly specific test yields many false positives." },
+        { q: "A positive likelihood ratio (LR+) is calculated as:",
+          opts: ["Sensitivity / (1 – Specificity)", "(1 – Sensitivity) / Specificity", "Sensitivity × Specificity", "1 – (Sensitivity × Specificity)", "Specificity / (1 – Sensitivity)"],
+          correct: 0,
+          exp: "LR+ = sensitivity/(1‑specificity); >10 indicates large increase in post‑test probability." },
+        { q: "A negative likelihood ratio (LR‑) is calculated as:",
+          opts: ["(1 – Sensitivity) / Specificity", "Sensitivity / (1 – Specificity)", "Specificity / (1 – Sensitivity)", "1 – (Sensitivity × Specificity)", "Sensitivity × Specificity"],
+          correct: 0,
+          exp: "LR‑ = (1‑sensitivity)/specificity; <0.1 indicates large decrease in post‑test probability." },
+        { q: "In a 2×2 table, the odds ratio approximates relative risk when:",
+          opts: ["The disease is rare (prevalence <10%)", "The sample size is large", "The exposure is rare", "The study is cross‑sectional", "The outcome is continuous"],
+          correct: 0,
+          exp: "When disease is rare, OR ≈ RR because odds approximate risk." },
+        { q: "Number Needed to Treat (NNT) is calculated as:",
+          opts: ["1 / Absolute risk reduction (ARR)", "1 / Relative risk reduction", "1 / Odds ratio", "1 / (Risk exposed – Risk unexposed)", "Both A and D"],
+          correct: 4,
+          exp: "NNT = 1 / ARR; ARR = risk in control – risk in treatment." },
+        { q: "Number Needed to Harm (NNH) is:",
+          opts: ["1 / Attributable risk (if harmful)", "1 / Relative risk", "1 / Odds ratio", "1 / Risk in exposed", "1 / Risk difference (positive)"],
+          correct: 0,
+          exp: "NNH = 1 / AR (if AR >0)." },
+        { q: "In a normal distribution, approximately 95% of values lie within:",
+          opts: ["Mean ± 2 SD", "Mean ± 1 SD", "Mean ± 3 SD", "Median ± IQR", "Mode ± range"],
+          correct: 0,
+          exp: "68% within 1 SD, 95% within 2 SD, 99.7% within 3 SD." },
+        { q: "Which measure of central tendency is most affected by outliers?",
+          opts: ["Mean", "Median", "Mode", "Geometric mean", "Midrange"],
+          correct: 0,
+          exp: "Mean is sensitive to extreme values." },
+        { q: "Which measure of dispersion is in the same units as the original data?",
+          opts: ["Standard deviation", "Variance", "Range", "IQR", "Mean"],
+          correct: 0,
+          exp: "SD is square root of variance, expressed in original units." },
+        { q: "The standard error of the mean (SEM) is calculated as:",
+          opts: ["SD / √n", "SD × √n", "SD / n", "√(SD/n)", "SD² / n"],
+          correct: 0,
+          exp: "SEM = SD / √n; it measures precision of sample mean." },
+        { q: "A 95% confidence interval for a mean means:",
+          opts: ["If the study were repeated many times, 95% of such intervals would contain the true population mean", "There is a 95% probability the true mean lies within the interval", "The interval contains 95% of sample means", "95% of data falls within the interval", "The mean is valid 95% of the time"],
+          correct: 0,
+          exp: "This is the correct frequentist interpretation of a confidence interval." },
+        { q: "The p‑value is defined as:",
+          opts: ["Probability of obtaining results at least as extreme as observed, assuming H₀ is true", "Probability that H₀ is true", "Probability that H₁ is false", "1 – power", "Effect size"],
+          correct: 0,
+          exp: "P‑value is a measure of evidence against H₀, not the probability that H₀ is true." },
+        { q: "If a p‑value is less than 0.05, we typically say the result is:",
+          opts: ["Statistically significant", "Clinically significant", "Null", "Due to chance", "Meaningful"],
+          correct: 0,
+          exp: "p < 0.05 indicates statistical significance at conventional level." },
+        { q: "Which test is used to compare means between two independent groups with normal distribution?",
+          opts: ["Independent t‑test", "Paired t‑test", "Mann‑Whitney U test", "Wilcoxon signed‑rank test", "ANOVA"],
+          correct: 0,
+          exp: "Independent t‑test for two independent groups." },
+        { q: "Which test is used to compare means from the same subjects before and after an intervention (paired data)?",
+          opts: ["Paired t‑test", "Independent t‑test", "Mann‑Whitney U test", "Chi‑square test", "Fisher's exact test"],
+          correct: 0,
+          exp: "Paired t‑test is for dependent (matched) samples." },
+        { q: "Which test is the non‑parametric alternative to the independent t‑test?",
+          opts: ["Mann‑Whitney U test", "Wilcoxon signed‑rank test", "Kruskal‑Wallis test", "Spearman's rank correlation", "Friedman test"],
+          correct: 0,
+          exp: "Mann‑Whitney U compares distributions of two independent groups." },
+        { q: "Which test is the non‑parametric alternative to the paired t‑test?",
+          opts: ["Wilcoxon signed‑rank test", "Mann‑Whitney U test", "Kruskal‑Wallis test", "Sign test", "Friedman test"],
+          correct: 0,
+          exp: "Wilcoxon signed‑rank test for paired non‑normal data." },
+        { q: "Which test is used to compare means among three or more independent groups (parametric)?",
+          opts: ["One‑way ANOVA", "t‑test", "Mann‑Whitney U", "Kruskal‑Wallis", "Chi‑square"],
+          correct: 0,
+          exp: "ANOVA (analysis of variance) compares means of ≥3 groups." },
+        { q: "Which test is the non‑parametric alternative to one‑way ANOVA?",
+          opts: ["Kruskal‑Wallis test", "Friedman test", "Mann‑Whitney U", "Wilcoxon", "Jonckheere‑Terpstra"],
+          correct: 0,
+          exp: "Kruskal‑Wallis for ≥3 independent groups." },
+        { q: "Which test is used to assess association between two categorical variables (e.g., 2×2 table)?",
+          opts: ["Chi‑square test", "t‑test", "ANOVA", "Correlation", "Regression"],
+          correct: 0,
+          exp: "Chi‑square test for independence of categorical variables." },
+        { q: "When expected cell count in a 2×2 table is <5, the preferred test is:",
+          opts: ["Fisher's exact test", "Chi‑square test with Yates correction", "Mantel‑Haenszel test", "McNemar's test", "Log‑linear model"],
+          correct: 0,
+          exp: "Fisher's exact test is used for small expected frequencies." },
+        { q: "McNemar's test is used for:",
+          opts: ["Paired categorical data (e.g., before‑after on same subjects)", "Independent categorical data", "Comparing two means", "Comparing three groups", "Survival analysis"],
+          correct: 0,
+          exp: "McNemar's test compares paired proportions (e.g., discordant pairs)." },
+        { q: "Pearson correlation coefficient (r) measures:",
+          opts: ["Linear relationship between two continuous variables", "Causal association", "Difference between groups", "Agreement between raters", "Non‑linear association"],
+          correct: 0,
+          exp: "r ranges -1 to +1; 0 = no linear correlation." },
+        { q: "Spearman's rank correlation is used when:",
+          opts: ["Data are ordinal or not normally distributed", "Data are continuous and normal", "Comparing two groups", "Assessing causality", "Measuring agreement"],
+          correct: 0,
+          exp: "Spearman's is non‑parametric, based on ranks." },
+        { q: "Cohen's kappa measures:",
+          opts: ["Agreement between two raters beyond chance", "Correlation", "Internal consistency", "Reliability over time", "Predictive validity"],
+          correct: 0,
+          exp: "Kappa = (observed agreement – expected agreement) / (1 – expected agreement)." },
+        { q: "A kappa of 0.6‑0.8 indicates:",
+          opts: ["Substantial agreement", "Slight agreement", "Fair agreement", "Moderate agreement", "Almost perfect"],
+          correct: 0,
+          exp: "Kappa: 0‑0.2 slight, 0.2‑0.4 fair, 0.4‑0.6 moderate, 0.6‑0.8 substantial, 0.8‑1 almost perfect." },
+        { q: "In linear regression, the coefficient β₁ represents:",
+          opts: ["Change in outcome per unit change in predictor", "Correlation coefficient", "P‑value", "Intercept", "R²"],
+          correct: 0,
+          exp: "β₁ is the slope; it quantifies the effect of predictor on outcome." },
+        { q: "In logistic regression, the exponentiated coefficient (e^β) gives:",
+          opts: ["Odds ratio", "Relative risk", "Hazard ratio", "Risk difference", "Correlation"],
+          correct: 0,
+          exp: "Logistic regression coefficients are log‑odds; exponentiation yields odds ratio." },
+        { q: "In Cox proportional hazards regression, the exponentiated coefficient (e^β) gives:",
+          opts: ["Hazard ratio", "Odds ratio", "Relative risk", "Risk difference", "Survival probability"],
+          correct: 0,
+          exp: "Cox model gives hazard ratio, comparing instantaneous risk." },
+        { q: "The proportional hazards assumption in Cox regression means:",
+          opts: ["The hazard ratio is constant over time", "The hazard function is linear", "The baseline hazard is zero", "Survival times are normal", "No censoring"],
+          correct: 0,
+          exp: "Proportional hazards: effect of covariates does not change with time." },
+        { q: "In survival analysis, censoring occurs when:",
+          opts: ["The event time is unknown for some participants (lost to follow‑up or end of study)", "The event occurs", "Data are missing", "The participant withdraws consent", "All of the above"],
+          correct: 0,
+          exp: "Censoring is a key feature of survival data; participants without event contribute partial information." },
+        { q: "Kaplan‑Meier curves are used to:",
+          opts: ["Estimate survival probabilities over time", "Compare means", "Test for association", "Calculate odds ratios", "Perform regression"],
+          correct: 0,
+          exp: "Kaplan‑Meier method estimates survival function, accounts for censoring." },
+        { q: "The log‑rank test compares:",
+          opts: ["Survival distributions between two or more groups", "Means", "Proportions", "Correlations", "Rates"],
+          correct: 0,
+          exp: "Log‑rank test tests whether survival curves differ." },
+        { q: "A forest plot in meta‑analysis displays:",
+          opts: ["Effect estimates and confidence intervals from each study, plus pooled estimate", "Publication bias", "Heterogeneity", "Risk of bias", "Funnel plot"],
+          correct: 0,
+          exp: "Forest plot visually summarizes individual study results and overall estimate." },
+        { q: "A funnel plot is used to assess:",
+          opts: ["Publication bias (small‑study effects)", "Heterogeneity", "Overall effect", "Quality of studies", "Sensitivity"],
+          correct: 0,
+          exp: "Asymmetry in funnel plot suggests publication bias." },
+        { q: "Heterogeneity in meta‑analysis is often quantified using:",
+          opts: ["I² statistic", "Q statistic", "p‑value for heterogeneity", "Cochran's Q", "All of the above"],
+          correct: 4,
+          exp: "I² (0‑100%) describes percentage of variation due to heterogeneity rather than chance." },
+        { q: "External validity (generalizability) refers to:",
+          opts: ["How well results apply to other populations", "Freedom from bias", "Correctness of results for the study population", "Precision of estimates", "Sample size adequacy"],
+          correct: 0,
+          exp: "Internal validity: study is correct for its participants; external: applicability to others." },
+        { q: "The CONSORT statement provides guidelines for reporting:",
+          opts: ["Randomized controlled trials", "Observational studies", "Systematic reviews", "Diagnostic accuracy studies", "Animal studies"],
+          correct: 0,
+          exp: "CONSORT for RCTs; STROBE for observational; PRISMA for reviews; STARD for diagnostic." },
+        { q: "In a systematic review, the PRISMA flowchart shows:",
+          opts: ["Study selection process (identification, screening, eligibility, included)", "Risk of bias", "Forest plot", "Funnel plot", "Heterogeneity"],
+          correct: 0,
+          exp: "PRISMA flowchart documents the number of studies at each stage." },
+        { q: "The Declaration of Helsinki outlines ethical principles for:",
+          opts: ["Medical research involving human subjects", "Animal research", "Data sharing", "Publication ethics", "Informed consent only"],
+          correct: 0,
+          exp: "Declaration of Helsinki is a key ethics document for human research." },
+        { q: "Institutional Review Board (IRB) approval is required for:",
+          opts: ["Research involving human subjects", "All research", "Only federally funded research", "Only clinical trials", "Only interventional studies"],
+          correct: 0,
+          exp: "IRB reviews research protocols to protect human subjects." },
+        { q: "Informed consent must include:",
+          opts: ["Purpose, procedures, risks, benefits, alternatives, confidentiality, voluntary participation", "Only risks and benefits", "Only the procedure", "Only signature", "Only study duration"],
+          correct: 0,
+          exp: "Informed consent requires full disclosure and comprehension." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "A study that follows a group of exposed and non‑exposed individuals forward in time to see who develops disease is a:",
+          opts: ["Cohort study", "Case‑control study", "Cross‑sectional study", "Ecological study", "RCT"],
+          correct: 0,
+          exp: "Cohort studies are longitudinal, starting with exposure and following for outcome." },
+        { q: "A study that compares individuals with and without disease, looking back at past exposures, is a:",
+          opts: ["Case‑control study", "Cohort study", "Cross‑sectional study", "Ecological study", "RCT"],
+          correct: 0,
+          exp: "Case‑control studies are retrospective, starting with outcome and looking back." },
+        { q: "A study that collects data at a single point in time to examine association between exposure and outcome is a:",
+          opts: ["Cross‑sectional study", "Cohort study", "Case‑control study", "Ecological study", "RCT"],
+          correct: 0,
+          exp: "Cross‑sectional studies assess prevalence and associations at one time." },
+        { q: "In which study design is ecological fallacy a potential problem?",
+          opts: ["Ecological study (group‑level data)", "Cross‑sectional study", "Cohort study", "Case‑control study", "RCT"],
+          correct: 0,
+          exp: "Ecological fallacy: assuming group‑level associations apply to individuals." },
+        { q: "Which design is most susceptible to recall bias?",
+          opts: ["Case‑control study", "Cohort study", "RCT", "Cross‑sectional study", "Ecological study"],
+          correct: 0,
+          exp: "Cases may recall exposures differently than controls." },
+        { q: "Which design is most susceptible to loss to follow‑up?",
+          opts: ["Cohort study (prospective)", "Case‑control study", "RCT", "Cross‑sectional study", "Ecological study"],
+          correct: 0,
+          exp: "Prospective cohort studies require long follow‑up, risking attrition bias." },
+        { q: "A study where neither participants nor investigators know treatment assignment is:",
+          opts: ["Double‑blind", "Single‑blind", "Open‑label", "Triple‑blind", "Quadruple‑blind"],
+          correct: 0,
+          exp: "Double‑blind reduces bias from both sides." },
+        { q: "In a placebo‑controlled trial, the placebo effect is controlled by:",
+          opts: ["Using an inert substance that looks like the active treatment", "Randomization", "Blinding", "Intention‑to‑treat analysis", "All of the above"],
+          correct: 3,
+          exp: "Placebo controls for psychological effects and natural history." },
+        { q: "The 'healthy worker effect' is a type of:",
+          opts: ["Selection bias", "Information bias", "Confounding", "Effect modification", "Recall bias"],
+          correct: 0,
+          exp: "Workers are healthier than general population, biasing occupational studies." },
+        { q: "Berkson bias (admission rate bias) occurs in:",
+          opts: ["Hospital‑based case‑control studies", "Population‑based cohort studies", "RCTs", "Cross‑sectional surveys", "Ecological studies"],
+          correct: 0,
+          exp: "Hospitalized cases and controls may have different exposure rates." },
+        { q: "Misclassification that is equal between groups is called:",
+          opts: ["Non‑differential misclassification", "Differential misclassification", "Recall bias", "Observer bias", "Confounding"],
+          correct: 0,
+          exp: "Non‑differential misclassification biases toward the null." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

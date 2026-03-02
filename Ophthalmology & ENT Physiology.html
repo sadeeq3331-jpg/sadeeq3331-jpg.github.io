@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ophthalmology & ENT · Physiology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-eye"></i><i class="fas fa-ear-listen" style="margin-left:-0.5rem;"></i>
+        <h1>Ophthalmology & ENT · Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>OPHTHALMOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#eye-anatomy"><i class="fas fa-eye"></i> 1. Anatomy of the Eye</a></li>
+                <li class="chapter-item"><a href="#refraction"><i class="fas fa-lightbulb"></i> 2. Refraction & Accommodation</a></li>
+                <li class="chapter-item"><a href="#photoreceptors"><i class="fas fa-sun"></i> 3. Photoreceptors & Phototransduction</a></li>
+                <li class="chapter-item"><a href="#visual-pathway"><i class="fas fa-project-diagram"></i> 4. Visual Pathway</a></li>
+                <li class="chapter-item"><a href="#aqueous"><i class="fas fa-tint"></i> 5. Aqueous Humor Dynamics</a></li>
+                <li class="chapter-item"><a href="#pupil"><i class="fas fa-circle"></i> 6. Pupillary Reflexes</a></li>
+                <li class="chapter-item"><a href="#lacrimal"><i class="fas fa-water"></i> 7. Lacrimal System</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENT – HEARING</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#ear-anatomy"><i class="fas fa-ear-deaf"></i> 8. Anatomy of the Ear</a></li>
+                <li class="chapter-item"><a href="#sound-transmission"><i class="fas fa-volume-up"></i> 9. Sound Transmission</a></li>
+                <li class="chapter-item"><a href="#cochlea"><i class="fas fa-wave-square"></i> 10. Cochlear Mechanics & Hair Cells</a></li>
+                <li class="chapter-item"><a href="#auditory-pathway"><i class="fas fa-brain"></i> 11. Auditory Pathway</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENT – BALANCE</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#vestibular"><i class="fas fa-balance-scale"></i> 12. Vestibular System</a></li>
+                <li class="chapter-item"><a href="#vestibular-reflexes"><i class="fas fa-arrows-alt"></i> 13. Vestibular Reflexes</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENT – OLFACTION & TASTE</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#olfaction"><i class="fas fa-nose"></i> 14. Olfaction</a></li>
+                <li class="chapter-item"><a href="#taste"><i class="fas fa-utensils"></i> 15. Taste</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== OPHTHALMOLOGY ==================== -->
+        <section id="eye-anatomy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 1. Anatomy of the Eye</div>
+            <div class="section-card">
+                <div class="section-heading">Layers of the Eyeball</div>
+                <div class="body-text">
+                    The eye has three concentric layers:
+                    <ul>
+                        <li><strong>Fibrous tunic (outer):</strong> Sclera (opaque, protective) and cornea (transparent, refractive).</li>
+                        <li><strong>Vascular tunic (uvea):</strong> Iris, ciliary body, choroid.</li>
+                        <li><strong>Nervous tunic (inner):</strong> Retina.</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">Anterior Segment</div>
+                <div class="body-text">
+                    <strong>Cornea:</strong> Avascular, 5 layers: epithelium, Bowman's layer, stroma, Descemet's membrane, endothelium. Endothelium maintains corneal dehydration via Na⁺/K⁺ ATPase pumps.
+                </div>
+                <div class="body-text">
+                    <strong>Anterior chamber:</strong> Between cornea and iris. <strong>Posterior chamber:</strong> Between iris and lens. Both filled with aqueous humor.
+                </div>
+                <div class="body-text">
+                    <strong>Iris:</strong> Two muscles: sphincter pupillae (parasympathetic, miosis) and dilator pupillae (sympathetic, mydriasis).
+                </div>
+                <div class="body-text">
+                    <strong>Ciliary body:</strong> Consists of ciliary processes (produce aqueous humor) and ciliary muscle (accommodation).
+                </div>
+                <div class="body-text">
+                    <strong>Lens:</strong> Biconvex, transparent, avascular. Suspended by zonules from ciliary body.
+                </div>
+                <div class="subsection-heading">Posterior Segment</div>
+                <div class="body-text">
+                    <strong>Vitreous humor:</strong> Gel filling the posterior cavity, attached to retina.
+                </div>
+                <div class="body-text">
+                    <strong>Retina:</strong> Composed of pigment epithelium and neural retina. Layers: photoreceptors (rods/cones) → bipolar cells → ganglion cells. Macula (central) contains fovea with highest cone density.
+                </div>
+                <div class="body-text">
+                    <strong>Optic disc:</strong> Where ganglion cell axons exit; no photoreceptors → blind spot.
+                </div>
+            </div>
+        </section>
+
+        <section id="refraction" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lightbulb"></i> 2. Refraction & Accommodation</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Refraction is the bending of light rays to focus on the retina. The cornea provides about 2/3 of refractive power (~43 diopters); the lens provides variable power (~15-30 D).
+                </div>
+                <div class="subsection-heading">Accommodation</div>
+                <div class="body-text">
+                    For near vision: Ciliary muscle contracts → zonules relax → lens becomes more convex (increased refractive power). Pupil constricts (miosis) to increase depth of focus. Convergence of eyes also occurs.
+                </div>
+                <div class="clinical-correlation">
+                    <strong>Presbyopia:</strong> Age‑related loss of lens elasticity, decreasing accommodative amplitude. Near point recedes; corrected with reading glasses.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Refractive Error</th><th>Focus</th><th>Correction</th></tr></thead>
+                    <tbody>
+                        <tr><td>Myopia (nearsighted)</td><td>Image in front of retina</td><td>Concave (diverging) lens</td></tr>
+                        <tr><td>Hyperopia (farsighted)</td><td>Image behind retina</td><td>Convex (converging) lens</td></tr>
+                        <tr><td>Astigmatism</td><td>Irregular corneal curvature</td><td>Cylindrical lens</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="photoreceptors" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-sun"></i> 3. Photoreceptors & Phototransduction</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Two types: <strong>Rods</strong> (dim light, scotopic, monochrome) and <strong>Cones</strong> (bright light, photopic, color). Cones are concentrated in fovea; rods in periphery.
+                </div>
+                <div class="subsection-heading">Phototransduction</div>
+                <div class="body-text">
+                    In dark: high cGMP keeps Na⁺ channels open (depolarized, glutamate release). Light isomerizes 11‑cis retinal to all‑trans retinal, activating opsin → transducin → phosphodiesterase → cGMP hydrolysis → channels close → hyperpolarization → less glutamate release. This is opposite to most neurons.
+                </div>
+                <div class="definition-box">
+                    <strong>Dark current:</strong> Inward Na⁺ current in dark. Light reduces it.
+                </div>
+                <div class="memory-aid">
+                    <i class="fas fa-lightbulb"></i> Light hyperpolarizes photoreceptors; dark depolarizes.
+                </div>
+            </div>
+        </section>
+
+        <section id="visual-pathway" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-project-diagram"></i> 4. Visual Pathway</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Retinal ganglion cell axons form optic nerve. At optic chiasm, fibers from nasal retina cross. Optic tract synapses in lateral geniculate nucleus (LGN) of thalamus. Geniculocalcarine tract (optic radiation) projects to primary visual cortex (V1) in occipital lobe.
+                </div>
+                <div class="clinical-correlation">
+                    <strong>Lesion effects:</strong>
+                    <ul>
+                        <li>Optic nerve: unilateral blindness.</li>
+                        <li>Optic chiasm: bitemporal hemianopia (pituitary tumor).</li>
+                        <li>Optic tract: contralateral homonymous hemianopia.</li>
+                        <li>Meyer's loop (temporal radiation): superior quadrantanopia.</li>
+                        <li>Dorsal radiation (parietal): inferior quadrantanopia.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="aqueous" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 5. Aqueous Humor Dynamics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Aqueous humor is produced by ciliary processes (active secretion and ultrafiltration). It flows from posterior chamber through pupil into anterior chamber, then drains via trabecular meshwork into Schlemm's canal (conventional outflow) and uveoscleral pathway (unconventional). Intraocular pressure (IOP) normally 10-21 mmHg.
+                </div>
+            </div>
+        </section>
+
+        <section id="pupil" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-circle"></i> 6. Pupillary Reflexes</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Light reflex:</strong> Afferent: optic nerve; efferent: parasympathetic via oculomotor nerve to sphincter pupillae. Direct and consensual responses.
+                </div>
+                <div class="body-text">
+                    <strong>Near reflex (accommodation triad):</strong> Convergence, lens accommodation, pupillary constriction. Mediated by higher cortical pathways.
+                </div>
+                <div class="clinical-correlation">
+                    <strong>Marcus Gunn pupil (relative afferent pupillary defect):</strong> In optic nerve disease, light in affected eye causes less constriction, but consensual response normal.
+                </div>
+            </div>
+        </section>
+
+        <section id="lacrimal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 7. Lacrimal System</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Lacrimal gland (orbital and palpebral parts) produces tears. Parasympathetic innervation (CN VII via pterygopalatine ganglion) stimulates secretion. Tears drain via puncta → canaliculi → lacrimal sac → nasolacrimal duct → inferior meatus.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== EAR ==================== -->
+        <section id="ear-anatomy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ear-deaf"></i> 8. Anatomy of the Ear</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>External ear:</strong> Pinna, external auditory canal (cerumen glands). Tympanic membrane separates external and middle ear.
+                </div>
+                <div class="body-text">
+                    <strong>Middle ear:</strong> Air‑filled cavity with ossicles (malleus, incus, stapes). Stapes footplate fits into oval window. Tensor tympani (CN V) and stapedius (CN VII) muscles dampen sound. Eustachian tube connects to nasopharynx, equalizes pressure.
+                </div>
+                <div class="body-text">
+                    <strong>Inner ear:</strong> Bony labyrinth (perilymph) and membranous labyrinth (endolymph). Cochlea (hearing), vestibule (utricle/saccule), semicircular canals (balance).
+                </div>
+            </div>
+        </section>
+
+        <section id="sound-transmission" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-volume-up"></i> 9. Sound Transmission</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Sound waves → tympanic membrane → ossicles amplify (lever action, area ratio) → stapes pushes oval window → pressure wave in perilymph of scala vestibuli → travels through helicotrema to scala tympani → round window bulges. Basilar membrane vibrates according to frequency (tonotopy).
+                </div>
+                <div class="definition-box">
+                    <strong>Impedance matching:</strong> Middle ear overcomes air‑fluid impedance; without it, most sound energy would reflect.
+                </div>
+            </div>
+        </section>
+
+        <section id="cochlea" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wave-square"></i> 10. Cochlear Mechanics & Hair Cells</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Organ of Corti sits on basilar membrane. Inner hair cells (IHCs) are primary sensory cells; outer hair cells (OHCs) amplify vibrations via electromotility. Stereocilia deflection opens mechanotransduction channels → depolarization → neurotransmitter release.
+                </div>
+                <div class="body-text">
+                    Endolymph has high K⁺, low Na⁺ (like intracellular fluid). Perilymph has high Na⁺, low K⁺. The endocochlear potential (+80 mV) drives K⁺ into hair cells.
+                </div>
+                <div class="memory-aid">
+                    <i class="fas fa-lightbulb"></i> "Endolymph is K‑rich (potassium), perilymph is Na‑rich (sodium)."
+                </div>
+            </div>
+        </section>
+
+        <section id="auditory-pathway" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 11. Auditory Pathway</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Spiral ganglion cells → cochlear nerve → cochlear nuclei (medulla) → superior olive → lateral lemniscus → inferior colliculus → medial geniculate body (thalamus) → primary auditory cortex (Heschl's gyrus). Bilateral representation.
+                </div>
+            </div>
+        </section>
+
+        <section id="vestibular" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-balance-scale"></i> 12. Vestibular System</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Semicircular canals:</strong> Detect angular acceleration. Crista ampullaris with hair cells embedded in cupula. Endolymph movement deflects cupula.
+                </div>
+                <div class="body-text">
+                    <strong>Otolith organs (utricle, saccule):</strong> Detect linear acceleration and gravity. Hair cells embedded in otolithic membrane with otoconia (calcium carbonate crystals). Utricle senses horizontal, saccule vertical.
+                </div>
+            </div>
+        </section>
+
+        <section id="vestibular-reflexes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrows-alt"></i> 13. Vestibular Reflexes</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Vestibulo‑ocular reflex (VOR):</strong> Maintains gaze during head movement. Signals from semicircular canals → vestibular nuclei → oculomotor nuclei → compensatory eye movement.
+                </div>
+                <div class="body-text">
+                    <strong>Vestibulospinal reflex:</strong> Maintains posture.
+                </div>
+            </div>
+        </section>
+
+        <section id="olfaction" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nose"></i> 14. Olfaction</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Olfactory epithelium in superior nasal cavity contains bipolar neurons with cilia bearing odorant receptors. Each receptor binds specific odorants, activating G‑protein (G<sub>olf</sub>) → adenylate cyclase → cAMP → Na⁺/Ca²⁺ influx. Axons project through cribriform plate to olfactory bulb → olfactory tract → primary olfactory cortex (uncus, entorhinal) without thalamic relay.
+                </div>
+            </div>
+        </section>
+
+        <section id="taste" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-utensils"></i> 15. Taste</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Taste buds on tongue, palate, epiglottis. Five basic tastes: sweet, sour, salty, bitter, umami (glutamate). Receptor cells synapse with afferent fibers:
+                    <ul>
+                        <li>Anterior 2/3 (fungiform, foliate) → chorda tympani (CN VII).</li>
+                        <li>Posterior 1/3 (circumvallate) → glossopharyngeal (CN IX).</li>
+                        <li>Epiglottis → vagus (CN X).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Ophthalmology & ENT Physiology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

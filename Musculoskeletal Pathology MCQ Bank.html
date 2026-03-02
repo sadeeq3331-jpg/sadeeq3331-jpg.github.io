@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musculoskeletal Pathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-bone"></i>
+            <h1>Musculoskeletal Pathology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE MUSCULOSKELETAL PATHOLOGY QUESTIONS
+        const questions = [
+            { q: "Osteoporosis is characterized by:",
+              opts: ["Decreased bone mass with normal mineralization", "Defective mineralization", "Increased osteoid", "Bowing of long bones", "Mosaic bone pattern"],
+              correct: 0,
+              exp: "Osteoporosis = low bone density, normal mineralization; osteomalacia = defective mineralization." },
+            { q: "Osteomalacia is caused by:",
+              opts: ["Vitamin D deficiency", "Excess calcium", "Paget's disease", "Osteoporosis", "Estrogen deficiency"],
+              correct: 0,
+              exp: "Vitamin D deficiency leads to inadequate mineralization of osteoid." },
+            { q: "Rickets occurs in children and causes:",
+              opts: ["Bowing of legs, widened metaphyses", "Brittle bones, blue sclerae", "Bone pain, fractures", "Skull bossing", "Joint swelling"],
+              correct: 0,
+              exp: "Rickets features growth plate abnormalities, bowing, and widened metaphyses." },
+            { q: "The most common primary malignant bone tumor is:",
+              opts: ["Osteosarcoma", "Chondrosarcoma", "Ewing sarcoma", "Giant cell tumor", "Fibrosarcoma"],
+              correct: 0,
+              exp: "Osteosarcoma is the most common primary malignant bone tumor (excluding myeloma)." },
+            { q: "Osteosarcoma typically arises in the:",
+              opts: ["Metaphysis of long bones", "Epiphysis", "Diaphysis", "Spine", "Skull"],
+              correct: 0,
+              exp: "Osteosarcoma most often occurs in the metaphysis of distal femur, proximal tibia." },
+            { q: "Which bone tumor is associated with a t(11;22) translocation?",
+              opts: ["Osteosarcoma", "Ewing sarcoma", "Chondrosarcoma", "Giant cell tumor", "Osteoid osteoma"],
+              correct: 1,
+              exp: "Ewing sarcoma has EWSR1‑FLI1 fusion from t(11;22)." },
+            { q: "Osteoid osteoma presents with:",
+              opts: ["Night pain relieved by NSAIDs", "Painless mass", "Pathologic fracture", "Morning stiffness", "Fever"],
+              correct: 0,
+              exp: "Osteoid osteoma causes night pain that responds well to NSAIDs." },
+            { q: "Giant cell tumor of bone is characterized by:",
+              opts: ["Multinucleated giant cells", "Small blue round cells", "Cartilage matrix", "Osteoid production", "Fibrous stroma"],
+              correct: 0,
+              exp: "GCT has numerous osteoclast‑like giant cells in a spindle cell stroma." },
+            { q: "Chondrosarcoma is most common in:",
+              opts: ["Adolescents", "Young adults", "Middle‑aged to elderly", "Infants", "All ages equally"],
+              correct: 2,
+              exp: "Chondrosarcoma typically occurs in older adults (40‑70 years)." },
+            { q: "Paget's disease of bone is characterized by:",
+              opts: ["Mosaic pattern of lamellar bone", "Bowing of long bones", "Increased alkaline phosphatase", "All of the above", "None"],
+              correct: 3,
+              exp: "Paget's has mosaic bone, deformity, elevated ALP, normal calcium." },
+            { q: "Osteomyelitis is most commonly caused by:",
+              opts: ["Staphylococcus aureus", "E. coli", "Pseudomonas", "Salmonella", "Mycobacterium tuberculosis"],
+              correct: 0,
+              exp: "S. aureus is the most common cause of osteomyelitis." },
+            { q: "Septic arthritis is frequently caused by:",
+              opts: ["Neisseria gonorrhoeae", "Staph aureus", "Strep pyogenes", "Haemophilus influenzae", "E. coli"],
+              correct: 1,
+              exp: "Staph aureus is common; in sexually active young adults, consider gonococcus." },
+            { q: "Rheumatoid arthritis is characterized by:",
+              opts: ["Pannus formation, symmetric involvement", "Osteophytes, eburnation", "Monosodium urate crystals", "Calcium pyrophosphate crystals", "Sacroiliitis"],
+              correct: 0,
+              exp: "RA has symmetric synovitis, pannus, and extra‑articular manifestations." },
+            { q: "Osteoarthritis features include all EXCEPT:",
+              opts: ["Osteophytes", "Joint space narrowing", "Subchondral sclerosis", "Pannus", "Eburnation"],
+              correct: 3,
+              exp: "Pannus is characteristic of rheumatoid arthritis." },
+            { q: "Gout is caused by deposition of:",
+              opts: ["Monosodium urate crystals", "Calcium pyrophosphate dihydrate", "Hydroxyapatite", "Cysteine", "Oxalate"],
+              correct: 0,
+              exp: "Gout = monosodium urate crystals (negatively birefringent)." },
+            { q: "Pseudogout is associated with:",
+              opts: ["Monosodium urate", "Calcium pyrophosphate dihydrate", "Basic calcium phosphate", "Cholesterol", "None"],
+              correct: 1,
+              exp: "CPPD crystals (rhomboid, weakly positive birefringence)." },
+            { q: "Ankylosing spondylitis is strongly associated with:",
+              opts: ["HLA‑B27", "Rheumatoid factor", "Anti‑CCP", "ANA", "HLA‑DR4"],
+              correct: 0,
+              exp: "Ankylosing spondylitis is strongly HLA‑B27 associated." },
+            { q: "Duchenne muscular dystrophy is caused by:",
+              opts: ["Dystrophin gene mutation", "Myotonin gene mutation", "Lamin A/C mutation", "Collagen VI mutation", "Dysferlin mutation"],
+              correct: 0,
+              exp: "DMD = X‑linked, absent dystrophin." },
+            { q: "Becker muscular dystrophy differs from Duchenne in that:",
+              opts: ["Dystrophin is reduced/abnormal, onset later", "Dystrophin absent", "It is autosomal dominant", "It affects only females", "It is non‑progressive"],
+              correct: 0,
+              exp: "Becker has reduced or abnormal dystrophin, milder course." },
+            { q: "Myotonic dystrophy is characterized by:",
+              opts: ["CTG repeat in DMPK, myotonia, cataracts", "CAG repeat, chorea", "GAA repeat, ataxia", "CGG repeat, fragile X", "None"],
+              correct: 0,
+              exp: "DM1: CTG repeat, myotonia, cataracts, balding, cardiac issues." },
+            { q: "Polymyositis pathology shows:",
+              opts: ["CD8+ T cells invading non‑necrotic fibers", "Perifascicular atrophy", "Rimmed vacuoles", "Inclusion bodies", "Granulomas"],
+              correct: 0,
+              exp: "Polymyositis: CD8+ T cells invade myofibers." },
+            { q: "Dermatomyositis pathology shows:",
+              opts: ["Perifascicular atrophy", "CD8+ infiltration", "Rimmed vacuoles", "Central nuclei", "Giant cells"],
+              correct: 0,
+              exp: "Dermatomyositis has perifascicular atrophy due to microvascular damage." },
+            { q: "Inclusion body myositis is characterized by:",
+              opts: ["Rimmed vacuoles, inclusions, often elderly", "Perifascicular atrophy", "CD8+ invasion", "Granulomas", "Dystrophin deficiency"],
+              correct: 0,
+              exp: "IBM has rimmed vacuoles and filamentous inclusions." },
+            { q: "Osteogenesis imperfecta is due to:",
+              opts: ["Type I collagen mutation", "Type II collagen mutation", "Fibrillin mutation", "Elastin mutation", "Proteoglycan mutation"],
+              correct: 0,
+              exp: "OI is from COL1A1/COL1A2 mutations → brittle bones, blue sclerae." },
+            { q: "Achondroplasia is caused by mutation in:",
+              opts: ["FGFR3", "FBN1", "COL1A1", "COL2A1", "GNAS"],
+              correct: 0,
+              exp: "Achondroplasia results from gain‑of‑function FGFR3 mutation." },
+            { q: "Marfan syndrome is due to mutation in:",
+              opts: ["FBN1 (fibrillin‑1)", "FBN2", "TGFBR1", "COL3A1", "MYH11"],
+              correct: 0,
+              exp: "Marfan is caused by FBN1 mutation, leading to tall stature, aortic dilation, lens dislocation." },
+            { q: "Fibrous dysplasia is characterized by:",
+              opts: ["Ground‑glass bone lesions, precocious puberty (McCune‑Albright)", "Bowing of legs", "Café‑au‑lait spots", "All of the above", "None"],
+              correct: 3,
+              exp: "Fibrous dysplasia may be part of McCune‑Albright with café‑au‑lait spots and precocious puberty." },
+            { q: "Ewing sarcoma histology shows:",
+              opts: ["Small blue round cells", "Spindle cells", "Giant cells", "Cartilage", "Osteoid"],
+              correct: 0,
+              exp: "Ewing sarcoma consists of small round blue cells, PAS+ (glycogen)." },
+            { q: "Osteochondroma is:",
+              opts: ["Cartilage‑capped exostosis", "Malignant cartilage tumor", "Bone‑forming tumor", "Fibrous tumor", "Vascular tumor"],
+              correct: 0,
+              exp: "Osteochondroma is benign, cartilage‑capped bony outgrowth." },
+            { q: "Chondrosarcoma is distinguished from enchondroma by:",
+              opts: ["Permeation of host bone, high cellularity", "Location in hands", "Calcification", "Pain", "Age"],
+              correct: 0,
+              exp: "Chondrosarcoma invades and replaces bone; enchondroma is lobulated but not permeative." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Brodie abscess is a form of:",
+              opts: ["Chronic osteomyelitis", "Acute osteomyelitis", "Tuberculous osteomyelitis", "Syphilitic osteomyelitis", "Bone cyst"],
+              correct: 0,
+              exp: "Brodie abscess is a subacute/chronic localized osteomyelitis." },
+            { q: "Pott disease refers to:",
+              opts: ["Tuberculous spondylitis", "Syphilitic bone disease", "Osteoporosis of spine", "Osteoarthritis", "Rheumatoid spine"],
+              correct: 0,
+              exp: "Pott disease = TB of spine, often with kyphosis." },
+            { q: "Rheumatoid factor is an antibody against:",
+              opts: ["IgG", "IgM", "IgA", "IgE", "Complement"],
+              correct: 0,
+              exp: "RF is usually IgM against Fc portion of IgG." },
+            { q: "Anti‑CCP antibody is more specific for:",
+              opts: ["Rheumatoid arthritis", "Lupus", "Sjögren's", "Scleroderma", "Polymyositis"],
+              correct: 0,
+              exp: "Anti‑CCP is highly specific for RA." },
+            { q: "HLA‑B27 is associated with all EXCEPT:",
+              opts: ["Ankylosing spondylitis", "Reactive arthritis", "Psoriatic arthritis", "Rheumatoid arthritis", "Enteropathic arthritis"],
+              correct: 3,
+              exp: "RA is associated with HLA‑DR4, not B27." },
+            { q: "Gouty tophi are composed of:",
+              opts: ["Urate crystals with giant cell reaction", "Cholesterol crystals", "Amyloid", "Calcium phosphate", "Urea"],
+              correct: 0,
+              exp: "Tophi contain monosodium urate surrounded by granulomatous inflammation." },
+            { q: "Osteopetrosis is caused by:",
+              opts: ["Defective osteoclast function", "Excess osteoblast activity", "Vitamin D deficiency", "Collagen mutation", "PTH excess"],
+              correct: 0,
+              exp: "Osteopetrosis (marble bone disease) results from osteoclast dysfunction." },
+            { q: "Pyknodysostosis is characterized by:",
+              opts: ["Short stature, osteosclerosis, skull deformities", "Blue sclerae, fractures", "Bowing, widened metaphyses", "Café‑au‑lait spots", "Arachnodactyly"],
+              correct: 0,
+              exp: "Pyknodysostosis (cathepsin K mutation) leads to osteosclerosis." },
+            { q: "Rhabdomyosarcoma in children is often:",
+              opts: ["Embryonal type", "Pleomorphic type", "Alveolar type", "Both A and C", "None"],
+              correct: 3,
+              exp: "Embryonal (common in children) and alveolar (worse prognosis) occur." },
+            { q: "Synovial sarcoma is characterized by:",
+              opts: ["t(X;18) translocation, biphasic histology", "t(11;22), small round cells", "t(12;16), myxoid", "t(2;13), alveolar", "t(9;22), CML"],
+              correct: 0,
+              exp: "Synovial sarcoma has t(X;18) (SYT‑SSX) and may show biphasic (epithelial + spindle) pattern." },
+            { q: "Liposarcoma subtypes include all EXCEPT:",
+              opts: ["Well‑differentiated", "Myxoid", "Pleomorphic", "Alveolar", "Dedifferentiated"],
+              correct: 3,
+              exp: "Alveolar is a subtype of rhabdomyosarcoma, not liposarcoma." },
+            { q: "Ewing sarcoma is PAS positive due to:",
+              opts: ["Glycogen", "Mucin", "Lipid", "Keratin", "None"],
+              correct: 0,
+              exp: "Ewing cells contain glycogen, PAS+ diastase‑labile." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

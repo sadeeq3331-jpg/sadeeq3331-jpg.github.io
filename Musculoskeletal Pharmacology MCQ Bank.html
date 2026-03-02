@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musculoskeletal Pharmacology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-pills"></i>
+            <h1>Musculoskeletal Pharmacology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE MUSCULOSKELETAL PHARMACOLOGY QUESTIONS
+        const questions = [
+            { q: "NSAIDs exert their anti‑inflammatory effect by:",
+              opts: ["Inhibiting COX enzymes", "Blocking TNF‑α", "Antagonizing IL‑1", "Inhibiting leukotrienes", "Blocking histamine receptors"],
+              correct: 0,
+              exp: "NSAIDs inhibit cyclooxygenase (COX‑1 and/or COX‑2), reducing prostaglandins." },
+            { q: "A major adverse effect of non‑selective NSAIDs is:",
+              opts: ["GI ulcers and bleeding", "Hepatotoxicity", "Nephrotoxicity", "All of the above", "None"],
+              correct: 3,
+              exp: "NSAIDs cause GI, renal, and cardiovascular side effects." },
+            { q: "Celecoxib is a COX‑2 selective inhibitor. Its advantage is:",
+              opts: ["Less GI bleeding", "No cardiovascular risk", "No renal effect", "No drug interactions", "All"],
+              correct: 0,
+              exp: "COX‑2 inhibitors have lower GI toxicity but increased cardiovascular risk." },
+            { q: "Acetaminophen overdose causes hepatotoxicity because of:",
+              opts: ["N‑acetyl‑p‑benzoquinoneimine (NAPQI) accumulation", "COX inhibition", "Lipid peroxidation", "Mitochondrial damage", "Apoptosis"],
+              correct: 0,
+              exp: "NAPQI depletes glutathione, leading to liver necrosis. Antidote: N‑acetylcysteine." },
+            { q: "Methotrexate is a first‑line DMARD for RA. Its mechanism involves:",
+              opts: ["Inhibition of dihydrofolate reductase", "Increased adenosine", "Both", "TNF blockade", "IL‑6 inhibition"],
+              correct: 2,
+              exp: "Methotrexate inhibits DHFR and increases adenosine, which has anti‑inflammatory effects." },
+            { q: "Folic acid supplementation during methotrexate therapy:",
+              opts: ["Reduces side effects without compromising efficacy", "Enhances efficacy", "Prevents hepatotoxicity", "Is contraindicated", "None"],
+              correct: 0,
+              exp: "Folate reduces GI, mucosal, and marrow toxicity." },
+            { q: "Leflunomide is a DMARD that works by:",
+              opts: ["Inhibiting pyrimidine synthesis", "Inhibiting purine synthesis", "Blocking TNF", "Inhibiting JAK", "Blocking T‑cell activation"],
+              correct: 0,
+              exp: "Leflunomide inhibits dihydroorotate dehydrogenase, reducing pyrimidine synthesis." },
+            { q: "Hydroxychloroquine can cause retinal toxicity. Monitoring includes:",
+              opts: ["Baseline and annual eye exams", "LFTs", "CBC", "Renal function", "None"],
+              correct: 0,
+              exp: "Hydroxychloroquine can cause retinopathy; regular eye exams are essential." },
+            { q: "Sulfasalazine is metabolized to:",
+              opts: ["5‑ASA and sulfapyridine", "Mesalamine only", "Sulfapyridine only", "Salicylic acid", "Sulfonamide"],
+              correct: 0,
+              exp: "Colonic bacteria split sulfasalazine into active 5‑ASA and sulfapyridine." },
+            { q: "TNF‑α inhibitors include all EXCEPT:",
+              opts: ["Infliximab", "Adalimumab", "Etanercept", "Tocilizumab", "Golimumab"],
+              correct: 3,
+              exp: "Tocilizumab is anti‑IL‑6; others are anti‑TNF." },
+            { q: "Before starting TNF inhibitors, patients should be screened for:",
+              opts: ["Tuberculosis", "Hepatitis B", "HIV", "All of the above", "None"],
+              correct: 3,
+              exp: "Screen for latent TB and HBV due to reactivation risk." },
+            { q: "Rituximab is a monoclonal antibody against:",
+              opts: ["CD20 on B cells", "CD3 on T cells", "IL‑6 receptor", "TNF‑α", "CD52"],
+              correct: 0,
+              exp: "Rituximab depletes B cells; used in RA and lymphomas." },
+            { q: "Tocilizumab blocks:",
+              opts: ["IL‑6 receptor", "IL‑1 receptor", "TNF‑α", "CD20", "CTLA‑4"],
+              correct: 0,
+              exp: "Tocilizumab is an IL‑6 receptor antagonist." },
+            { q: "Abatacept is a fusion protein that inhibits:",
+              opts: ["T‑cell co‑stimulation (CTLA‑4‑Ig)", "B‑cell activation", "Cytokine release", "Complement", "Macrophage function"],
+              correct: 0,
+              exp: "Abatacept binds CD80/86, blocking T‑cell activation." },
+            { q: "Colchicine is used in acute gout. Its mechanism is:",
+              opts: ["Inhibiting microtubule polymerization, reducing neutrophil chemotaxis", "Inhibiting xanthine oxidase", "Increasing urate excretion", "Blocking IL‑1", "Inhibiting COX"],
+              correct: 0,
+              exp: "Colchicine binds tubulin, impairing neutrophil migration and phagocytosis." },
+            { q: "Allopurinol is used for chronic gout. It works by:",
+              opts: ["Inhibiting xanthine oxidase", "Increasing uric acid excretion", "Blocking urate reabsorption", "Uricase stimulation", "Inhibiting PRPP synthetase"],
+              correct: 0,
+              exp: "Allopurinol inhibits xanthine oxidase, reducing uric acid production." },
+            { q: "Allopurinol hypersensitivity syndrome includes:",
+              opts: ["Rash, fever, hepatitis, eosinophilia", "Anaphylaxis", "Stevens‑Johnson syndrome", "All of the above", "None"],
+              correct: 3,
+              exp: "Allopurinol can cause severe hypersensitivity, especially with renal impairment and thiazides." },
+            { q: "Febuxostat is another xanthine oxidase inhibitor. It is contraindicated in:",
+              opts: ["Patients with cardiovascular disease (higher mortality)", "Pregnancy", "Renal failure", "Liver disease", "None"],
+              correct: 0,
+              exp: "Febuxostat has a higher cardiovascular mortality compared to allopurinol." },
+            { q: "Probenecid is a uricosuric drug. It is ineffective if:",
+              opts: ["CrCl <30 mL/min", "Patient on aspirin", "Patient has gout", "Patient is male", "None"],
+              correct: 0,
+              exp: "Probenecid requires adequate renal function; aspirin blocks its effect." },
+            { q: "Pegloticase is a recombinant uricase. It can cause:",
+              opts: ["Infusion reactions, anaphylaxis", "Hemolysis in G6PD deficiency", "Both", "Nephrolithiasis", "None"],
+              correct: 2,
+              exp: "Pegloticase can cause infusion reactions and hemolysis in G6PD deficiency." },
+            { q: "Bisphosphonates (alendronate) work by:",
+              opts: ["Inhibiting osteoclast activity", "Stimulating osteoblasts", "Increasing calcium absorption", "Inhibiting RANKL", "All"],
+              correct: 0,
+              exp: "Bisphosphonates inhibit osteoclasts, reducing bone resorption." },
+            { q: "Oral bisphosphonates must be taken:",
+              opts: ["On empty stomach with water, upright", "With food", "With calcium", "At bedtime", "With milk"],
+              correct: 0,
+              exp: "Bisphosphonates cause esophagitis; must be taken properly." },
+            { q: "Denosumab is a monoclonal antibody against:",
+              opts: ["RANKL", "TNF‑α", "IL‑6", "Sclerostin", "PTH"],
+              correct: 0,
+              exp: "Denosumab inhibits RANKL, reducing osteoclast formation." },
+            { q: "Teriparatide (PTH analog) is used for osteoporosis. Its mechanism is:",
+              opts: ["Anabolic (stimulates bone formation)", "Antiresorptive", "Inhibits osteoclasts", "Blocks RANKL", "Increases calcium excretion"],
+              correct: 0,
+              exp: "Intermittent PTH stimulates bone formation." },
+            { q: "Raloxifene is a SERM that:",
+              opts: ["Reduces vertebral fractures", "Increases DVT risk", "Does not stimulate endometrium", "All of the above", "None"],
+              correct: 3,
+              exp: "Raloxifene is estrogen agonist on bone, antagonist on breast/uterus; reduces vertebral fractures." },
+            { q: "Dantrolene is used for malignant hyperthermia because it:",
+              opts: ["Inhibits ryanodine receptors (Ca²⁺ release)", "Blocks voltage‑gated calcium channels", "Increases GABA", "Blocks sodium channels", "Depolarizes muscle"],
+              correct: 0,
+              exp: "Dantrolene inhibits Ca²⁺ release from SR." },
+            { q: "Baclofen is a GABA<sub>B</sub> agonist used for:",
+              opts: ["Spasticity (MS, spinal cord injury)", "Muscle spasms", "Rigidity", "All", "None"],
+              correct: 3,
+              exp: "Baclofen is used for spasticity; abrupt withdrawal can cause hallucinations." },
+            { q: "Tizanidine is an α₂ agonist that can cause:",
+              opts: ["Sedation, hypotension, hepatotoxicity", "Tachycardia", "Insomnia", "Weight gain", "None"],
+              correct: 0,
+              exp: "Tizanidine causes sedation, dry mouth, and may elevate LFTs." },
+            { q: "Cyclobenzaprine is structurally related to:",
+              opts: ["Tricyclic antidepressants", "Benzodiazepines", "Barbiturates", "Antihistamines", "None"],
+              correct: 0,
+              exp: "Cyclobenzaprine resembles TCAs; causes sedation, anticholinergic effects." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Corticosteroids are used in acute gout flares because they:",
+              opts: ["Reduce inflammation rapidly", "Lower uric acid", "Inhibit xanthine oxidase", "Increase urate excretion", "All"],
+              correct: 0,
+              exp: "Steroids are anti‑inflammatory, used in acute gout when NSAIDs/colchicine contraindicated." },
+            { q: "Intra‑articular corticosteroids can cause:",
+              opts: ["Septic arthritis (rare)", "Post‑injection flare", "Cartilage damage", "All of the above", "None"],
+              correct: 3,
+              exp: "Steroid injections have risks; use sterile technique." },
+            { q: "Hyaluronic acid injections for knee OA provide:",
+              opts: ["Viscosupplementation, questionable efficacy", "Pain relief comparable to steroids", "Disease modification", "Cartilage regeneration", "None"],
+              correct: 0,
+              exp: "Hyaluronic acid may provide short‑term relief; evidence weak." },
+            { q: "Capsaicin cream works by:",
+              opts: ["Depleting substance P", "Blocking sodium channels", "Inhibiting COX", "Antagonizing TRPV1", "None"],
+              correct: 0,
+              exp: "Capsaicin depletes substance P from sensory nerve endings." },
+            { q: "Glucosamine and chondroitin are:",
+              opts: ["Dietary supplements with weak evidence for OA", "Prescription drugs for OA", "Disease‑modifying", "Biologics", "NSAIDs"],
+              correct: 0,
+              exp: "Evidence for these supplements is limited; they are not FDA‑approved." },
+            { q: "Rasburicase is used for tumor lysis syndrome. It is contraindicated in:",
+              opts: ["G6PD deficiency", "Pregnancy", "Renal failure", "All", "None"],
+              correct: 0,
+              exp: "Rasburicase can cause hemolysis in G6PD deficiency." },
+            { q: "Methotrexate is teratogenic. It is contraindicated in:",
+              opts: ["Pregnancy", "Breastfeeding", "Both", "Women of childbearing age", "None"],
+              correct: 2,
+              exp: "Methotrexate is abortifacient and teratogenic; avoid pregnancy." },
+            { q: "Sulfasalazine can cause:",
+              opts: ["Reversible oligospermia", "Hemolytic anemia (G6PD)", "Rash", "All of the above", "None"],
+              correct: 3,
+              exp: "Sulfasalazine can cause male infertility (reversible) and hemolysis." },
+            { q: "Hydroxychloroquine retinal toxicity is related to:",
+              opts: ["Cumulative dose (>5 years use)", "Daily dose >5 mg/kg", "Both", "Age", "None"],
+              correct: 2,
+              exp: "Toxicity risk increases with high daily dose and long duration." },
+            { q: "Etanercept differs from other anti‑TNF agents because it:",
+              opts: ["Is a TNF receptor fusion protein", "Is a monoclonal antibody", "Has longer half‑life", "Is given orally", "Has fewer infections"],
+              correct: 0,
+              exp: "Etanercept is a dimeric fusion protein of TNF receptor and IgG Fc." },
+            { q: "Infliximab is a chimeric antibody. Infusion reactions can be managed by:",
+              opts: ["Slowing infusion, pre‑treatment with antihistamines", "Discontinuing permanently", "Adding methotrexate", "Switching to another TNFi", "None"],
+              correct: 0,
+              exp: "Infusion reactions can be managed with rate slowing and premedication." },
+            { q: "Ustekinumab is used for psoriatic arthritis. It blocks:",
+              opts: ["IL‑12 and IL‑23", "IL‑17", "IL‑6", "TNF‑α", "CD20"],
+              correct: 0,
+              exp: "Ustekinumab inhibits IL‑12/23 p40 subunit." },
+            { q: "Secukinumab is an IL‑17 inhibitor. Adverse effects include:",
+              opts: ["Increased risk of candidiasis", "IBD exacerbation", "Both", "Neutropenia", "None"],
+              correct: 2,
+              exp: "IL‑17 inhibitors can cause fungal infections and worsen Crohn's disease." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

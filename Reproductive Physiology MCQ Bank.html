@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductive Physiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-venus-mars"></i>
+            <h1>Reproductive Physiology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE REPRODUCTIVE PHYSIOLOGY QUESTIONS
+        const questions = [
+            { q: "Gonadotropin‑releasing hormone (GnRH) is secreted by the:",
+              opts: ["Anterior pituitary", "Posterior pituitary", "Hypothalamus", "Gonads", "Placenta"],
+              correct: 2,
+              exp: "GnRH is secreted by hypothalamic neurons in a pulsatile manner." },
+            { q: "LH acts on which cells in the testis to produce testosterone?",
+              opts: ["Sertoli cells", "Leydig cells", "Spermatogonia", "Germ cells", "Myoid cells"],
+              correct: 1,
+              exp: "LH stimulates Leydig cells (interstitial cells) to secrete testosterone." },
+            { q: "FSH in males acts on:",
+              opts: ["Leydig cells", "Sertoli cells", "Spermatids", "Epididymis", "Prostate"],
+              correct: 1,
+              exp: "FSH acts on Sertoli cells to support spermatogenesis." },
+            { q: "In females, FSH stimulates:",
+              opts: ["Ovulation", "Corpus luteum formation", "Follicular development", "Progesterone secretion", "Luteinization"],
+              correct: 2,
+              exp: "FSH promotes growth and maturation of ovarian follicles." },
+            { q: "The primary source of estrogen during the follicular phase is:",
+              opts: ["Corpus luteum", "Theca interna", "Granulosa cells (aromatization)", "Stroma", "Hilus cells"],
+              correct: 2,
+              exp: "Granulosa cells convert androstenedione from theca to estrogen via aromatase." },
+            { q: "Ovulation is triggered by a surge in:",
+              opts: ["FSH", "LH", "Estrogen", "Progesterone", "Inhibin"],
+              correct: 1,
+              exp: "The LH surge, stimulated by high estrogen, triggers ovulation." },
+            { q: "The corpus luteum secretes:",
+              opts: ["Estrogen only", "Progesterone only", "Estrogen and progesterone", "Androgens", "Inhibin"],
+              correct: 2,
+              exp: "Corpus luteum produces progesterone and estrogen." },
+            { q: "If fertilization does not occur, the corpus luteum regresses due to:",
+              opts: ["Falling LH", "Falling hCG", "Prostaglandins", "Estrogen withdrawal", "None"],
+              correct: 0,
+              exp: "Without hCG, LH declines, causing luteolysis." },
+            { q: "The menstrual phase is characterized by:",
+              opts: ["Low estrogen and progesterone", "High estrogen and progesterone", "High FSH only", "High LH only", "Low FSH and LH"],
+              correct: 0,
+              exp: "Menstruation occurs when estrogen and progesterone fall." },
+            { q: "The proliferative phase of the endometrium is stimulated by:",
+              opts: ["Progesterone", "Estrogen", "FSH", "LH", "hCG"],
+              correct: 1,
+              exp: "Estrogen causes endometrial proliferation." },
+            { q: "The secretory phase of the endometrium is stimulated by:",
+              opts: ["Estrogen", "Progesterone", "FSH", "LH", "Inhibin"],
+              correct: 1,
+              exp: "Progesterone induces secretory changes in endometrium." },
+            { q: "Inhibin selectively inhibits secretion of:",
+              opts: ["LH", "FSH", "GnRH", "Prolactin", "ACTH"],
+              correct: 1,
+              exp: "Inhibin from granulosa (female) and Sertoli (male) cells inhibits FSH." },
+            { q: "Human chorionic gonadotropin (hCG) is produced by:",
+              opts: ["Corpus luteum", "Syncytiotrophoblast", "Cytotrophoblast", "Endometrium", "Fetal pituitary"],
+              correct: 1,
+              exp: "hCG is secreted by syncytiotrophoblast; maintains corpus luteum." },
+            { q: "Prolactin secretion is tonically inhibited by:",
+              opts: ["Dopamine", "TRH", "Estrogen", "Progesterone", "Somatostatin"],
+              correct: 0,
+              exp: "Dopamine (PIF) inhibits prolactin." },
+            { q: "Oxytocin is released from the:",
+              opts: ["Anterior pituitary", "Posterior pituitary", "Hypothalamus (released from posterior pituitary)", "Uterus", "Placenta"],
+              correct: 2,
+              exp: "Oxytocin is synthesized in hypothalamus and released from posterior pituitary." },
+            { q: "Which hormone is responsible for milk ejection?",
+              opts: ["Prolactin", "Oxytocin", "Estrogen", "Progesterone", "hPL"],
+              correct: 1,
+              exp: "Oxytocin causes contraction of myoepithelial cells, ejecting milk." },
+            { q: "Testosterone is converted to dihydrotestosterone (DHT) by:",
+              opts: ["Aromatase", "5α‑reductase", "17β‑HSD", "3β‑HSD", "P450c17"],
+              correct: 1,
+              exp: "5α‑reductase converts testosterone to the more potent DHT." },
+            { q: "Aromatase converts androgens to:",
+              opts: ["Estrogens", "Progestins", "Corticosteroids", "DHT", "Aldosterone"],
+              correct: 0,
+              exp: "Aromatase converts testosterone to estradiol and androstenedione to estrone." },
+            { q: "The mid‑cycle LH surge is caused by:",
+              opts: ["Low estrogen", "High estrogen for 24‑36 hours", "High progesterone", "Low progesterone", "FSH"],
+              correct: 1,
+              exp: "Sustained high estrogen exerts positive feedback on LH release." },
+            { q: "Spermatogenesis takes approximately:",
+              opts: ["24 hours", "10 days", "30 days", "64‑72 days", "120 days"],
+              correct: 3,
+              exp: "Spermatogenesis takes about 64‑72 days." },
+            { q: "The acrosome reaction occurs when sperm encounters the:",
+              opts: ["Corona radiata", "Zona pellucida", "Oolemma", "Fallopian tube", "Cervical mucus"],
+              correct: 1,
+              exp: "Sperm bind to zona pellucida, triggering acrosome reaction." },
+            { q: "Capacitation of sperm occurs in the:",
+              opts: ["Testis", "Epididymis", "Female reproductive tract", "Vas deferens", "Seminal vesicles"],
+              correct: 2,
+              exp: "Capacitation occurs in the female tract; sperm become able to fertilize." },
+            { q: "The first meiotic division of oocyte is completed at:",
+              opts: ["Birth", "Puberty", "Ovulation", "Fertilization", "Implantation"],
+              correct: 2,
+              exp: "Meiosis I is completed just before ovulation, forming secondary oocyte." },
+            { q: "The second meiotic division of oocyte is completed at:",
+              opts: ["Birth", "Puberty", "Ovulation", "Fertilization", "Implantation"],
+              correct: 3,
+              exp: "Meiosis II is completed after sperm penetration." },
+            { q: "Which of the following is a function of Sertoli cells?",
+              opts: ["Secrete testosterone", "Nourish developing sperm", "Produce seminal fluid", "Produce alkaline fluid", "Secrete inhibin"],
+              correct: 1,
+              exp: "Sertoli cells support spermatogenesis, secrete inhibin, and form blood‑testis barrier." },
+            { q: "The blood‑testis barrier is formed by tight junctions between:",
+              opts: ["Leydig cells", "Sertoli cells", "Spermatogonia", "Myoid cells", "Endothelial cells"],
+              correct: 1,
+              exp: "Sertoli cells form tight junctions creating the blood‑testis barrier." },
+            { q: "Relaxin, produced during pregnancy, causes:",
+              opts: ["Uterine contractions", "Relaxation of pelvic ligaments and cervix", "Milk ejection", "Ovulation", "Luteolysis"],
+              correct: 1,
+              exp: "Relaxin softens cervix and relaxes pelvic ligaments for parturition." },
+            { q: "Human placental lactogen (hPL) acts to:",
+              opts: ["Increase maternal glucose uptake", "Decrease maternal lipolysis", "Increase maternal insulin sensitivity", "Decrease fetal growth", "Increase maternal protein synthesis"],
+              correct: 2,
+              exp: "hPL antagonizes insulin, raising maternal glucose for fetal use." },
+            { q: "The major estrogen produced by the placenta is:",
+              opts: ["Estradiol", "Estrone", "Estriol", "Estetrol", "Ethinyl estradiol"],
+              correct: 2,
+              exp: "Estriol is the principal placental estrogen, derived from fetal DHEA‑S." },
+            { q: "Progesterone during pregnancy is produced by:",
+              opts: ["Corpus luteum (first trimester) then placenta", "Placenta only", "Fetal adrenals", "Maternal ovaries", "Decidua"],
+              correct: 0,
+              exp: "Corpus luteum produces progesterone until ~8 weeks; then placenta takes over." },
+            { q: "Parturition is initiated by:",
+              opts: ["Fetal cortisol surge", "Maternal oxytocin", "Prostaglandins", "Estrogen rise", "Progesterone withdrawal"],
+              correct: 0,
+              exp: "Fetal cortisol stimulates placental estrogen synthesis and prostaglandin production." },
+            { q: "Müllerian inhibiting factor (MIF) is produced by:",
+              opts: ["Sertoli cells", "Leydig cells", "Granulosa cells", "Theca cells", "Oocytes"],
+              correct: 0,
+              exp: "Sertoli cells produce MIF (anti‑Müllerian hormone), causing regression of Müllerian ducts in males." },
+            { q: "In the absence of testosterone and MIF, the embryo develops:",
+              opts: ["Male reproductive tract", "Female reproductive tract", "Both", "Neither", "Ambiguous"],
+              correct: 1,
+              exp: "Female development is default; Wolffian ducts regress." },
+            { q: "5α‑reductase deficiency leads to:",
+              opts: ["Ambiguous genitalia at birth, virilization at puberty", "Complete feminization", "Male infertility", "Gynecomastia", "Precocious puberty"],
+              correct: 0,
+              exp: "Low DHT causes ambiguous genitalia; at puberty, testosterone causes virilization." },
+            { q: "Kallmann syndrome is characterized by:",
+              opts: ["Hypogonadotropic hypogonadism and anosmia", "Hypergonadotropic hypogonadism", "Delayed puberty and normal smell", "Precocious puberty", "Infertility and normal smell"],
+              correct: 0,
+              exp: "Kallmann syndrome = GnRH deficiency + anosmia (olfactory bulb agenesis)." },
+            { q: "In Klinefelter syndrome (XXY), the testes show:",
+              opts: ["Normal histology", "Hyalinization of seminiferous tubules", "Leydig cell hyperplasia", "Sertoli cell only", "Both B and C"],
+              correct: 4,
+              exp: "Hyalinized tubules, Leydig cell hyperplasia, but low testosterone." },
+            { q: "In Turner syndrome (XO), ovaries are:",
+              opts: ["Normal", "Polycystic", "Streak gonads (fibrous tissue)", "Enlarged with cysts", "Tumor‑prone"],
+              correct: 2,
+              exp: "Streak ovaries contain fibrous tissue, no follicles." },
+            { q: "The primary hormone responsible for follicular growth is:",
+              opts: ["LH", "FSH", "Estrogen", "Progesterone", "Inhibin"],
+              correct: 1,
+              exp: "FSH is essential for follicular growth." },
+            { q: "The corpus luteum of pregnancy is maintained by:",
+              opts: ["LH", "FSH", "hCG", "Progesterone", "Estrogen"],
+              correct: 2,
+              exp: "hCG from placenta stimulates corpus luteum to continue progesterone production." },
+            { q: "Which of the following hormones is not a steroid?",
+              opts: ["Estradiol", "Testosterone", "Progesterone", "LH", "Cortisol"],
+              correct: 3,
+              exp: "LH is a peptide hormone; the others are steroids." },
+            { q: "The binding protein for testosterone in plasma is:",
+              opts: ["Albumin", "SHBG (sex hormone‑binding globulin)", "CBG", "TBG", "Transferrin"],
+              correct: 1,
+              exp: "Testosterone binds mainly to SHBG and albumin." },
+            { q: "Puberty is initiated by:",
+              opts: ["Increased GnRH pulsatility", "Increased gonadotropins", "Increased sex steroids", "Adrenarche", "All of the above"],
+              correct: 4,
+              exp: "GnRH pulsatility increases, stimulating gonadotropins and sex steroids." },
+            { q: "Adrenarche refers to:",
+              opts: ["Increased adrenal androgen production", "Activation of HPG axis", "Growth spurt", "Breast development", "Pubic hair appearance"],
+              correct: 0,
+              exp: "Adrenarche is increased adrenal DHEA production before puberty." },
+            { q: "Thelarche is:",
+              opts: ["Breast development", "Pubic hair development", "First menstrual period", "Growth spurt", "Ovarian maturation"],
+              correct: 0,
+              exp: "Thelarche is breast budding, first sign of puberty in females." },
+            { q: "Menarche is:",
+              opts: ["Breast development", "First menstrual period", "Ovulation", "Growth spurt", "Peak bone mass"],
+              correct: 1,
+              exp: "Menarche is the first menstrual period." },
+            { q: "Menopause is defined as:",
+              opts: ["Cessation of menstruation for 6 months", "Cessation of menstruation for 12 months", "FSH <10 mIU/mL", "Estrogen >50 pg/mL", "No ovulation for 1 year"],
+              correct: 1,
+              exp: "Menopause: 12 months of amenorrhea; FSH >30 mIU/mL." },
+            { q: "In menopause, gonadotropin levels are:",
+              opts: ["Low", "Normal", "High", "Variable", "Unchanged"],
+              correct: 2,
+              exp: "Loss of estrogen negative feedback causes high FSH and LH." },
+            { q: "The primary source of estrogen after menopause is:",
+              opts: ["Ovaries", "Adrenals", "Adipose tissue (aromatization of androstenedione)", "Placenta", "Liver"],
+              correct: 2,
+              exp: "Peripheral aromatization of adrenal androstenedione to estrone." },
+            { q: "Which of the following is a sign of ovulation?",
+              opts: ["Rise in basal body temperature (progesterone effect)", "Fall in basal body temperature", "LH surge", "Both A and C", "None"],
+              correct: 3,
+              exp: "LH surge predicts ovulation; progesterone raises BBT after ovulation." },
+            { q: "The fertile window is approximately:",
+              opts: ["Day of ovulation only", "5 days before ovulation to day of ovulation", "Day after ovulation", "3 days after ovulation", "Whole cycle"],
+              correct: 1,
+              exp: "Sperm survive 5 days; ovum 24h; fertile window ~6 days ending on ovulation day." },
+            { q: "Cervical mucus at ovulation is:",
+              opts: ["Thick, sparse", "Watery, copious, elastic (spinnbarkeit)", "Scant, viscous", "Yellow, purulent", "Blood‑tinged"],
+              correct: 1,
+              exp: "Estrogen increases mucus volume and elasticity (spinnbarkeit)." },
+            { q: "Implantation typically occurs:",
+              opts: ["Day 1‑2 after fertilization", "Day 5‑6 after fertilization", "Day 6‑7 after fertilization", "Day 10‑12", "Day 14"],
+              correct: 2,
+              exp: "Blastocyst implants ~6‑7 days after fertilization." },
+            { q: "Decidualization of endometrium is induced by:",
+              opts: ["Estrogen", "Progesterone", "hCG", "Prolactin", "Oxytocin"],
+              correct: 1,
+              exp: "Progesterone transforms endometrium into decidua." },
+            { q: "Amniotic fluid volume is primarily determined by:",
+              opts: ["Fetal urine and lung fluid", "Maternal plasma filtration", "Fetal swallowing", "Placental secretion", "Amniotic membrane transport"],
+              correct: 0,
+              exp: "Fetal urine and lung secretions contribute; swallowed by fetus." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "The zona pellucida is formed by:",
+              opts: ["Oocyte", "Granulosa cells", "Theca cells", "Cumulus cells", "Oviduct"],
+              correct: 0,
+              exp: "Zona pellucida is secreted by the oocyte." },
+            { q: "The corpus luteum degenerates into:",
+              opts: ["Corpus albicans", "Corpus hemorrhagicum", "Atretic follicle", "Follicular cyst", "Theca lutein cyst"],
+              correct: 0,
+              exp: "Corpus luteum becomes corpus albicans." },
+            { q: "Theca interna cells under LH produce:",
+              opts: ["Estrogen", "Progesterone", "Androstenedione", "Inhibin", "Activin"],
+              correct: 2,
+              exp: "Theca cells produce androstenedione, which diffuses to granulosa cells for aromatization." },
+            { q: "Granulosa cells contain receptors for:",
+              opts: ["FSH", "LH", "Both", "Neither", "Prolactin"],
+              correct: 0,
+              exp: "Granulosa cells have FSH receptors; theca have LH receptors." },
+            { q: "After ovulation, granulosa cells luteinize and express:",
+              opts: ["FSH receptors", "LH receptors", "Prolactin receptors", "Oxytocin receptors", "Estrogen receptors"],
+              correct: 1,
+              exp: "Luteinized granulosa cells gain LH receptors and secrete progesterone." },
+            { q: "The enzyme responsible for converting cholesterol to pregnenolone is:",
+              opts: ["3β‑HSD", "17α‑hydroxylase", "CYP11A1 (side chain cleavage)", "Aromatase", "5α‑reductase"],
+              correct: 2,
+              exp: "CYP11A1 (P450scc) converts cholesterol to pregnenolone." },
+            { q: "The main source of relaxin in non‑pregnant women is:",
+              opts: ["Ovary", "Uterus", "Breast", "Placenta", "Pituitary"],
+              correct: 0,
+              exp: "Corpus luteum secretes relaxin." },
+            { q: "In males, inhibin B is produced by:",
+              opts: ["Leydig cells", "Sertoli cells", "Spermatocytes", "Epididymis", "Prostate"],
+              correct: 1,
+              exp: "Sertoli cells secrete inhibin B, regulating FSH." },
+            { q: "The most common cause of ambiguous genitalia in genetic females is:",
+              opts: ["21‑hydroxylase deficiency", "Androgen insensitivity", "5α‑reductase deficiency", "Gonadal dysgenesis", "Maternal androgen excess"],
+              correct: 0,
+              exp: "21‑hydroxylase deficiency causes female virilization due to excess adrenal androgens." },
+            { q: "Persistent Müllerian duct syndrome is due to deficiency of:",
+              opts: ["Testosterone", "MIF (anti‑Müllerian hormone)", "DHT", "LH", "FSH"],
+              correct: 1,
+              exp: "Lack of MIF leads to presence of uterus and tubes in males." },
+            { q: "The acrosome contains enzymes that digest:",
+              opts: ["Corona radiata", "Zona pellucida", "Oolemma", "Cervical mucus", "Endometrium"],
+              correct: 1,
+              exp: "Acrosome contains hyaluronidase and acrosin to penetrate zona." },
+            { q: "The cortical reaction prevents:",
+              opts: ["Fertilization by multiple sperm", "Implantation", "Oocyte activation", "Zona hardening", "Polyspermy"],
+              correct: 4,
+              exp: "Cortical granules release enzymes that modify zona pellucida, blocking polyspermy." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

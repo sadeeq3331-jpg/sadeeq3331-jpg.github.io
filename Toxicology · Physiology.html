@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toxicology · Physiology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-skull-crossbones"></i>
+        <h1>Toxicology · Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PRINCIPLES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#intro"><i class="fas fa-book-open"></i> 1. Introduction to Toxicology</a></li>
+                <li class="chapter-item"><a href="#toxicokinetics"><i class="fas fa-chart-line"></i> 2. Toxicokinetics</a></li>
+                <li class="chapter-item"><a href="#toxicodynamics"><i class="fas fa-dna"></i> 3. Toxicodynamics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ORGAN TOXICITY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#hepatotoxicity"><i class="fas fa-liver"></i> 4. Hepatotoxicity</a></li>
+                <li class="chapter-item"><a href="#nephrotoxicity"><i class="fas fa-kidney"></i> 5. Nephrotoxicity</a></li>
+                <li class="chapter-item"><a href="#neurotoxicity"><i class="fas fa-brain"></i> 6. Neurotoxicity</a></li>
+                <li class="chapter-item"><a href="#cardiotoxicity"><i class="fas fa-heart"></i> 7. Cardiotoxicity</a></li>
+                <li class="chapter-item"><a href="#pulmonary"><i class="fas fa-lungs"></i> 8. Pulmonary Toxicity</a></li>
+                <li class="chapter-item"><a href="#hematotoxicity"><i class="fas fa-blood"></i> 9. Hematotoxicity</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SPECIFIC AGENTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#heavy-metals"><i class="fas fa-weight-hanging"></i> 10. Heavy Metals</a></li>
+                <li class="chapter-item"><a href="#pesticides"><i class="fas fa-bug"></i> 11. Pesticides</a></li>
+                <li class="chapter-item"><a href="#solvents"><i class="fas fa-flask"></i> 12. Organic Solvents</a></li>
+                <li class="chapter-item"><a href="#natural-toxins"><i class="fas fa-leaf"></i> 13. Natural Toxins</a></li>
+                <li class="chapter-item"><a href="#drugs-abuse"><i class="fas fa-capsules"></i> 14. Drugs of Abuse</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIDOTES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antidotes"><i class="fas fa-syringe"></i> 15. Antidotes & Treatment</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== INTRODUCTION ==================== -->
+        <section id="intro" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-book-open"></i> 1. Introduction to Toxicology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Toxicology</strong> is the study of the adverse effects of chemical, physical, or biological agents on living organisms and the environment. It encompasses the detection, mechanisms, and treatment of poisoning.
+                </div>
+                <div class="definition-box">
+                    <h4><i class="fas fa-flask"></i> Key Definitions</h4>
+                    <ul>
+                        <li><strong>Toxin:</strong> A poison of biological origin (e.g., bacterial toxins, venom).</li>
+                        <li><strong>Toxicant:</strong> A synthetic or man‑made poison (e.g., industrial chemicals).</li>
+                        <li><strong>Xenobiotic:</strong> Any foreign substance entering the body.</li>
+                        <li><strong>LD₅₀ (median lethal dose):</strong> The dose required to kill 50% of a test population.</li>
+                        <li><strong>ED₅₀ (median effective dose):</strong> The dose producing a desired effect in 50%.</li>
+                        <li><strong>Therapeutic index:</strong> TD₅₀/ED₅₀ (or LD₅₀/ED₅₀); a measure of safety.</li>
+                    </ul>
+                </div>
+                <div class="body-text">
+                    Paracelsus (16th century) famously stated: “All things are poison, and nothing is without poison; the dose alone makes a thing not a poison.” This underscores the concept that toxicity is dose‑dependent.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TOXICOKINETICS ==================== -->
+        <section id="toxicokinetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 2. Toxicokinetics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Toxicokinetics describes how the body handles a toxicant: absorption, distribution, metabolism (biotransformation), and excretion (ADME).
+                </div>
+                <div class="subsection-heading">Absorption</div>
+                <ul>
+                    <li><strong>Oral (GI tract):</strong> Passive diffusion, active transport. First‑pass metabolism (liver) reduces bioavailability.</li>
+                    <li><strong>Inhalation:</strong> Rapid absorption via lungs (large surface area).</li>
+                    <li><strong>Dermal:</strong> Lipid‑soluble compounds penetrate skin.</li>
+                    <li><strong>Parenteral:</strong> IV, IM, SC – direct entry.</li>
+                </ul>
+                <div class="subsection-heading">Distribution</div>
+                <ul>
+                    <li>Depends on blood flow, protein binding (albumin, α₁‑acid glycoprotein), tissue affinity (e.g., lead in bone, lipophilic compounds in fat).</li>
+                    <li>Volume of distribution (Vd) – high Vd suggests extensive tissue binding.</li>
+                </ul>
+                <div class="subsection-heading">Metabolism (Biotransformation)</div>
+                <ul>
+                    <li><strong>Phase I:</strong> Oxidation, reduction, hydrolysis (cytochrome P450 enzymes) – often introduces or exposes a functional group.</li>
+                    <li><strong>Phase II:</strong> Conjugation (glucuronidation, sulfation, glutathione, acetylation) – increases water solubility for excretion.</li>
+                    <li>Some compounds undergo bioactivation (e.g., acetaminophen → NAPQI; methanol → formaldehyde → formic acid).</li>
+                </ul>
+                <div class="subsection-heading">Excretion</div>
+                <ul>
+                    <li><strong>Renal:</strong> Glomerular filtration, tubular secretion, passive reabsorption.</li>
+                    <li><strong>Biliary:</strong> For larger molecules (>300 Da), enterohepatic recirculation may occur.</li>
+                    <li><strong>Pulmonary:</strong> Gases and volatile compounds (e.g., ethanol, CO).</li>
+                    <li><strong>Other:</strong> Sweat, milk, saliva.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== TOXICODYNAMICS ==================== -->
+        <section id="toxicodynamics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 3. Toxicodynamics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Toxicodynamics refers to the mechanisms by which toxicants exert their effects at the molecular, cellular, or organ level.
+                </div>
+                <ul>
+                    <li><strong>Receptor‑mediated:</strong> Agonist/antagonist actions (e.g., organophosphates inhibit acetylcholinesterase).</li>
+                    <li><strong>Enzyme inhibition:</strong> Cyanide inhibits cytochrome oxidase; lead inhibits ALA dehydratase.</li>
+                    <li><strong>Interference with ion channels:</strong> Local anesthetics block Na⁺ channels; DDT alters Na⁺ channel kinetics.</li>
+                    <li><strong>Oxidative stress:</strong> Generation of reactive oxygen species (ROS), depletion of glutathione (e.g., acetaminophen).</li>
+                    <li><strong>Mitochondrial dysfunction:</strong> Uncoupling oxidative phosphorylation (e.g., dinitrophenol).</li>
+                    <li><strong>DNA damage:</strong> Alkylating agents, intercalators; may lead to carcinogenesis.</li>
+                    <li><strong>Protein synthesis inhibition:</strong> Ricin, diphtheria toxin.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== HEPATOTOXICITY ==================== -->
+        <section id="hepatotoxicity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-liver"></i> 4. Hepatotoxicity</div>
+            <div class="section-card">
+                <div class="body-text">
+                    The liver is especially vulnerable because of its role in xenobiotic metabolism and its portal blood supply. Injury can be:
+                </div>
+                <ul>
+                    <li><strong>Hepatocellular necrosis:</strong> Centrilobular (acetaminophen, carbon tetrachloride), midzonal, periportal.</li>
+                    <li><strong>Steatosis (fatty liver):</strong> Ethanol, methotrexate, valproate – due to impaired lipid metabolism.</li>
+                    <li><strong>Cholestasis:</strong> Bile duct injury (chlorpromazine, anabolic steroids).</li>
+                    <li><strong>Granulomatous hepatitis:</strong> Sulfonamides, allopurinol.</li>
+                    <li><strong>Vascular lesions:</strong> Veno‑occlusive disease (pyrrolizidine alkaloids).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Acetaminophen hepatotoxicity:</strong> CYP2E1 converts to NAPQI, which depletes glutathione. Overdose >4 g/day can cause centrilobular necrosis. N‑acetylcysteine is antidote.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== NEPHROTOXICITY ==================== -->
+        <section id="nephrotoxicity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-kidney"></i> 5. Nephrotoxicity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Proximal tubule injury:</strong> Heavy metals (mercury, cadmium), aminoglycosides, cisplatin.</li>
+                    <li><strong>Glomerular injury:</strong> NSAIDs, gold, penicillamine (membranous nephropathy).</li>
+                    <li><strong>Interstitial nephritis:</strong> NSAIDs, penicillin, proton pump inhibitors.</li>
+                    <li><strong>Osmotic nephrosis:</strong> IV contrast, mannitol.</li>
+                    <li><strong>Renal papillary necrosis:</strong> NSAIDs (especially phenacetin).</li>
+                </ul>
+                <p>Mechanisms often involve transport and accumulation (e.g., aminoglycosides are taken up by proximal tubular cells).</p>
+            </div>
+        </section>
+
+        <!-- ==================== NEUROTOXICITY ==================== -->
+        <section id="neurotoxicity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 6. Neurotoxicity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Neurotransmitter interference:</strong> Organophosphates (AChE inhibition), botulinum toxin (inhibits ACh release), amphetamines (monoamine release).</li>
+                    <li><strong>Ion channel blockade:</strong> Tetrodotoxin, saxitoxin (Na⁺ channel blockers) → paralysis.</li>
+                    <li><strong>Myelin damage:</strong> Hexachlorophene, lead, solvents.</li>
+                    <li><strong>Axonal degeneration:</strong> Acrylamide, organophosphates (delayed neuropathy), vinca alkaloids.</li>
+                    <li><strong>Neurotransmitter depletion:</strong> Reserpine (catecholamines), MPTP (dopamine neuron destruction).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CARDIOTOXICITY ==================== -->
+        <section id="cardiotoxicity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 7. Cardiotoxicity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Arrhythmogenesis:</strong> Digoxin (Na/K‑ATPase inhibition), tricyclic antidepressants (Na⁺ channel blockade → QRS widening), β‑agonists (tachycardia).</li>
+                    <li><strong>Myocardial ischemia:</strong> Cocaine (vasospasm), carbon monoxide (hypoxia).</li>
+                    <li><strong>Cardiomyopathy:</strong> Anthracyclines (doxorubicin – free radical damage), ethanol, cobalt.</li>
+                    <li><strong>QT prolongation:</strong> Class Ia/III antiarrhythmics, antipsychotics, methadone, fluoroquinolones – risk of torsade de pointes.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PULMONARY TOXICITY ==================== -->
+        <section id="pulmonary" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 8. Pulmonary Toxicity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Direct irritation:</strong> Chlorine, ammonia, phosgene → pulmonary edema.</li>
+                    <li><strong>Fibrosis:</strong> Bleomycin, amiodarone, asbestos, silica.</li>
+                    <li><strong>Asthma/ hypersensitivity:</strong> Toluene diisocyanate, plicatic acid (western red cedar).</li>
+                    <li><strong>ARDS:</strong> Paraquat (oxidative lung injury).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== HEMATOTOXICITY ==================== -->
+        <section id="hematotoxicity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 9. Hematotoxicity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Methemoglobinemia:</strong> Nitrites, nitrates, dapsone, benzocaine – Fe²⁺ oxidized to Fe³⁺ → hypoxia.</li>
+                    <li><strong>Hemolysis:</strong> G6PD deficiency triggered by oxidative drugs (primaquine, sulfonamides).</li>
+                    <li><strong>Bone marrow suppression:</strong> Benzene, alkylating agents, chloramphenicol (aplastic anemia).</li>
+                    <li><strong>Thrombocytopenia:</strong> Heparin (HIT), quinidine, gold.</li>
+                    <li><strong>Coagulopathy:</strong> Rodenticides (superwarfarins), salicylates.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== HEAVY METALS ==================== -->
+        <section id="heavy-metals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight-hanging"></i> 10. Heavy Metals</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Metal</th><th>Sources</th><th>Mechanism</th><th>Clinical Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Lead</strong></td><td>Old paint, batteries, contaminated water</td><td>Inhibits ALA dehydratase, ferrochelatase; interferes with Ca²⁺</td><td>Neurodevelopmental delay, abdominal pain, anemia (basophilic stippling), nephropathy</td></tr>
+                        <tr><td><strong>Mercury</strong></td><td>Fish (methylmercury), dental amalgam, industrial</td><td>Binds sulfhydryl groups, disrupts microtubules</td><td>Neurological (tremor, erethism), renal, acrodynia (pink disease)</td></tr>
+                        <tr><td><strong>Arsenic</strong></td><td>Well water, pesticides, wood preservatives</td><td>Inhibits pyruvate dehydrogenase, oxidative phosphorylation</td><td>GI distress, skin hyperpigmentation, neuropathy, Mee's lines, cancer</td></tr>
+                        <tr><td><strong>Cadmium</strong></td><td>Cigarette smoke, batteries, pigments</td><td>Oxidative stress, renal tubular injury</td><td>Itai‑itai disease (osteomalacia, renal failure), lung cancer</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== PESTICIDES ==================== -->
+        <section id="pesticides" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bug"></i> 11. Pesticides</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Mechanism</th><th>Clinical Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Organophosphates</strong></td><td>Irreversible AChE inhibition</td><td>SLUDGE syndrome (salivation, lacrimation, urination, defecation, GI upset, emesis), muscle fasciculations, paralysis, miosis</td></tr>
+                        <tr><td><strong>Carbamates</strong></td><td>Reversible AChE inhibition</td><td>Similar but shorter duration</td></tr>
+                        <tr><td><strong>Organochlorines (e.g., DDT)</strong></td><td>Na⁺ channel modulator, CNS stimulation</td><td>Tremor, seizures, paresthesia</td></tr>
+                        <tr><td><strong>Pyrethroids</strong></td><td>Na⁺ channel modulator (prolonged opening)</td><td>Paresthesia, tremor, salivation</td></tr>
+                        <tr><td><strong>Paraquat</strong></td><td>Oxidative stress, lipid peroxidation</td><td>Pulmonary fibrosis, renal failure</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== ORGANIC SOLVENTS ==================== -->
+        <section id="solvents" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 12. Organic Solvents</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toluene:</strong> Euphoria, CNS depression, peripheral neuropathy (chronic), renal tubular acidosis.</li>
+                    <li><strong>Benzene:</strong> Bone marrow suppression, aplastic anemia, leukemia.</li>
+                    <li><strong>Methanol:</strong> Metabolized to formic acid → metabolic acidosis, optic neuropathy.</li>
+                    <li><strong>Ethylene glycol:</strong> Metabolized to oxalic acid → metabolic acidosis, renal failure, calcium oxalate crystals.</li>
+                    <li><strong>Carbon tetrachloride:</strong> Hepatotoxicity, nephrotoxicity (via free radicals).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NATURAL TOXINS ==================== -->
+        <section id="natural-toxins" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-leaf"></i> 13. Natural Toxins</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Bacterial toxins:</strong> Botulinum (inhibits ACh release → flaccid paralysis); tetanospasmin (inhibits GABA/glycine release → spastic paralysis); cholera toxin (ADP‑ribosylates Gs → watery diarrhea).</li>
+                    <li><strong>Mycotoxins:</strong> Aflatoxin (hepatocarcinogen), ochratoxin (nephrotoxin).</li>
+                    <li><strong>Plant toxins:</strong> Ricin (ribosome inactivation), atropine (anticholinergic), digoxin (Na/K‑ATPase inhibition).</li>
+                    <li><strong>Animal venoms:</strong> Snake (neurotoxic, hemotoxic, myotoxic); scorpion; spider (e.g., latrodectus – α‑latrotoxin causes neurotransmitter release).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== DRUGS OF ABUSE ==================== -->
+        <section id="drugs-abuse" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 14. Drugs of Abuse</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Opioids:</strong> Respiratory depression, miosis, coma. Overdose reversed by naloxone.</li>
+                    <li><strong>Stimulants (cocaine, amphetamines):</strong> Tachycardia, hypertension, hyperthermia, seizures, myocardial ischemia.</li>
+                    <li><strong>Benzodiazepines/ethanol:</strong> CNS depression, respiratory depression in overdose.</li>
+                    <li><strong>Hallucinogens (LSD, psilocybin):</strong> Altered perception, tachycardia, hypertension; rarely lethal.</li>
+                    <li><strong>Cannabinoids:</strong> Tachycardia, conjunctival injection, anxiety, hyperemesis syndrome.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTIDOTES ==================== -->
+        <section id="antidotes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 15. Antidotes & Treatment</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Toxicant</th><th>Antidote</th><th>Mechanism</th></tr></thead>
+                    <tbody>
+                        <tr><td>Acetaminophen</td><td>N‑acetylcysteine (NAC)</td><td>Replenishes glutathione, conjugates NAPQI</td></tr>
+                        <tr><td>Opioids</td><td>Naloxone</td><td>μ‑opioid receptor antagonist</td></tr>
+                        <tr><td>Benzodiazepines</td><td>Flumazenil</td><td>GABA<sub>A</sub> receptor antagonist</td></tr>
+                        <tr><td>Organophosphates</td><td>Atropine + pralidoxime</td><td>Muscarinic blockade, reactivate AChE</td></tr>
+                        <tr><td>Cholinesterase inhibitors</td><td>Atropine, pralidoxime</td><td>Same</td></tr>
+                        <tr><td>Cyanide</td><td>Sodium nitrite + sodium thiosulfate; hydroxocobalamin</td><td>Induce methemoglobin, bind cyanide; direct binding</td></tr>
+                        <tr><td>Heavy metals (Pb, Hg, As)</td><td>Dimercaprol, succimer (DMSA), EDTA</td><td>Chelation</td></tr>
+                        <tr><td>Iron</td><td>Deferoxamine</td><td>Chelation</td></tr>
+                        <tr><td>Lead (severe)</td><td>Calcium disodium EDTA, dimercaprol</td><td>Chelation</td></tr>
+                        <tr><td>Methanol / Ethylene glycol</td><td>Fomepizole, ethanol</td><td>Alcohol dehydrogenase inhibition</td></tr>
+                        <tr><td>Warfarin / rodenticides</td><td>Vitamin K</td><td>Cofactor for clotting factor synthesis</td></tr>
+                        <tr><td>Heparin</td><td>Protamine sulfate</td><td>Binds heparin, neutralizes</td></tr>
+                        <tr><td>Local anesthetics (cardiotoxicity)</td><td>Lipid emulsion therapy</td><td>Lipid sink, fatty acid supply</td></tr>
+                        <tr><td>Methemoglobinemia</td><td>Methylene blue</td><td>Accelerates reduction of methemoglobin</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>General principles:</strong> Decontamination (activated charcoal, gastric lavage), supportive care, enhanced elimination (hemodialysis, urinary alkalinization).</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Toxicology Physiology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

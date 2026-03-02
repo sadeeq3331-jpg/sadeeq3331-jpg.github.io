@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ophthalmology & ENT · Pathology MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-eye"></i><i class="fas fa-ear-listen"></i>
+        <h1>Ophtho/ENT · Pathology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ OPHTHALMOLOGY/ENT PATHOLOGY QUESTIONS
+    const questions = [
+        { q: "The most common cause of blindness worldwide is:",
+          opts: ["Cataract", "Glaucoma", "Age‑related macular degeneration", "Diabetic retinopathy", "Trachoma"],
+          correct: 0,
+          exp: "Cataract is the leading cause of blindness globally, though it is reversible with surgery." },
+        { q: "Open‑angle glaucoma is characterized by:",
+          opts: ["Gradual visual field loss, increased cup‑to‑disc ratio, normal anterior chamber depth", "Acute eye pain, mid‑dilated pupil, shallow anterior chamber", "Sudden vision loss, cherry‑red spot", "Floaters and flashes", "Corneal edema and halos"],
+          correct: 0,
+          exp: "Primary open‑angle glaucoma is chronic, often asymptomatic until late, with optic disc cupping." },
+        { q: "Acute angle‑closure glaucoma presents with:",
+          opts: ["Severe eye pain, nausea, vomiting, cloudy cornea, mid‑dilated fixed pupil", "Gradual vision loss, increased cup‑to‑disc ratio", "Painless vision loss, drusen", "Floaters and photopsia", "Itchy, watery eyes"],
+          correct: 0,
+          exp: "Angle‑closure is an emergency with increased IOP, corneal edema, and fixed mid‑dilated pupil." },
+        { q: "The most common intraocular malignancy in adults is:",
+          opts: ["Choroidal melanoma", "Retinoblastoma", "Basal cell carcinoma of eyelid", "Squamous cell carcinoma", "Lymphoma"],
+          correct: 0,
+          exp: "Choroidal melanoma is the most common primary intraocular malignancy in adults." },
+        { q: "Retinoblastoma typically presents in children with:",
+          opts: ["Leukocoria (white pupillary reflex)", "Red eye", "Strabismus", "Proptosis", "All of the above"],
+          correct: 0,
+          exp: "Leukocoria is the classic sign; may also present with strabismus." },
+        { q: "Diabetic retinopathy is characterized by:",
+          opts: ["Microaneurysms, dot‑blot hemorrhages, hard exudates, neovascularization", "Drusen and geographic atrophy", "Optic disc cupping", "Corneal arcus", "Keratic precipitates"],
+          correct: 0,
+          exp: "Non‑proliferative DR has microaneurysms, hemorrhages, exudates; proliferative has neovascularization." },
+        { q: "Hard exudates in diabetic retinopathy are composed of:",
+          opts: ["Lipid and protein deposits", "Blood breakdown products", "Microinfarcts", "Hyaline material", "Amyloid"],
+          correct: 0,
+          exp: "Hard exudates are lipid‑rich exudates from leaking microaneurysms." },
+        { q: "Soft exudates (cotton‑wool spots) represent:",
+          opts: ["Retinal nerve fiber layer infarcts (microinfarcts)", "Lipid deposits", "Hemorrhages", "Neovascularization", "Drusen"],
+          correct: 0,
+          exp: "Cotton‑wool spots are due to ischemia of the nerve fiber layer." },
+        { q: "Age‑related macular degeneration (AMD) is characterized by:",
+          opts: ["Drusen, geographic atrophy (dry) or choroidal neovascularization (wet)", "Microaneurysms", "Optic disc cupping", "Corneal opacity", "Lens opacification"],
+          correct: 0,
+          exp: "Dry AMD has drusen and retinal pigment changes; wet AMD has CNV with leakage." },
+        { q: "Wet AMD is associated with which vision loss?",
+          opts: ["Sudden or rapid central vision loss due to hemorrhage/leakage", "Gradual peripheral loss", "Night blindness", "Painful vision loss", "Flashes and floaters"],
+          correct: 0,
+          exp: "Choroidal neovascularization leaks fluid/blood, causing rapid central distortion." },
+        { q: "Retinal detachment presents with:",
+          opts: ["Flashes of light, floaters, curtain over vision", "Painless gradual vision loss", "Red eye and pain", "Halos around lights", "Itching and tearing"],
+          correct: 0,
+          exp: "Photopsia and floaters precede detachment; curtain defect appears later." },
+        { q: "Central retinal artery occlusion causes:",
+          opts: ["Sudden, painless monocular vision loss with cherry‑red spot at macula", "Gradual vision loss, optic disc cupping", "Flashes and floaters", "Painful red eye", "Transient vision loss"],
+          correct: 0,
+          exp: "CRA occlusion causes retinal ischemia; the cherry‑red spot is due to preserved choroidal circulation at macula." },
+        { q: "Central retinal vein occlusion (CRVO) presents with:",
+          opts: ["Sudden vision loss, retinal hemorrhages ('blood and thunder'), cotton‑wool spots", "Cherry‑red spot", "Optic disc cupping", "Corneal edema", "Eyelid swelling"],
+          correct: 0,
+          exp: "CRVO causes extensive retinal hemorrhages and vision loss." },
+        { q: "Optic neuritis is commonly associated with:",
+          opts: ["Multiple sclerosis", "Hypertension", "Diabetes", "Glaucoma", "Trauma"],
+          correct: 0,
+          exp: "Optic neuritis is often an early sign of MS; presents with painful eye movement and vision loss." },
+        { q: "Papilledema refers to:",
+          opts: ["Optic disc swelling due to increased intracranial pressure", "Optic nerve inflammation", "Optic disc cupping", "Ischemic optic neuropathy", "Drusen of optic disc"],
+          correct: 0,
+          exp: "Papilledema is bilateral disc swelling from elevated ICP; vision is usually preserved early." },
+        { q: "Anterior uveitis (iritis) presents with:",
+          opts: ["Pain, photophobia, ciliary flush, small irregular pupil", "Painless vision loss", "Floaters only", "Itchy red eye", "Proptosis"],
+          correct: 0,
+          exp: "Uveitis symptoms include pain, redness, photophobia; pupil may be miotic." },
+        { q: "Hordeolum (stye) is an infection of:",
+          opts: ["Glands of Zeis or Moll (external) or meibomian gland (internal)", "Lacrimal gland", "Conjunctiva", "Cornea", "Eyelash follicle only"],
+          correct: 0,
+          exp: "External hordeolum is staphylococcal infection of eyelash follicle/glands; internal is meibomian gland." },
+        { q: "Chalazion is:",
+          opts: ["Granulomatous inflammation of meibomian gland", "Acute bacterial infection", "Viral conjunctivitis", "Seborrheic keratosis of eyelid", "Basal cell carcinoma"],
+          correct: 0,
+          exp: "Chalazion results from blocked meibomian gland, leading to lipogranulomatous inflammation." },
+        { q: "Basal cell carcinoma of the eyelid commonly occurs on the:",
+          opts: ["Lower eyelid, medial canthus", "Upper eyelid", "Lateral canthus", "Eyelid margin only", "Conjunctiva"],
+          correct: 0,
+          exp: "BCC is most common on lower lid, often nodular with telangiectasias and rolled borders." },
+        { q: "Squamous cell carcinoma of the conjunctiva is associated with:",
+          opts: ["UV exposure, HPV infection", "Smoking", "Alcohol", "Herpes simplex", "Bacterial conjunctivitis"],
+          correct: 0,
+          exp: "SCC of conjunctiva linked to UV and HPV; presents as leukoplakic lesion." },
+        { q: "Pterygium is:",
+          opts: ["Wing‑like fibrovascular growth from conjunctiva onto cornea", "Pinguecula with calcification", "Corneal opacity", "Conjunctival cyst", "Eyelid lesion"],
+          correct: 0,
+          exp: "Pterygium is conjunctival degeneration that grows onto cornea, associated with UV exposure." },
+        { q: "Corneal arcus in a young person suggests:",
+          opts: ["Hyperlipidemia", "Normal aging", "Wilson's disease", "Diabetes", "Hypothyroidism"],
+          correct: 0,
+          exp: "Arcus senilis in elderly is benign; in younger individuals (<50), it may indicate hyperlipidemia." },
+        { q: "Kayser‑Fleischer rings are seen in:",
+          opts: ["Wilson's disease (copper deposition in Descemet's membrane)", "Hypercalcemia", "Hyperlipidemia", "Amyloidosis", "Diabetes"],
+          correct: 0,
+          exp: "Kayser‑Fleischer rings are copper deposits in cornea, seen in Wilson's disease." },
+        { q: "Herpes simplex keratitis typically presents as:",
+          opts: ["Dendritic ulcer with fluorescein staining", "Corneal abscess", "Punctate epithelial erosions", "Disciform keratitis", "Corneal edema"],
+          correct: 0,
+          exp: "HSV causes branching dendritic lesions with terminal bulbs." },
+        { q: "Acanthamoeba keratitis is associated with:",
+          opts: ["Contact lens wear and contaminated water", "HSV infection", "Bacterial conjunctivitis", "Fungal infection", "Trauma"],
+          correct: 0,
+          exp: "Acanthamoeba is a protozoan that causes severe keratitis in contact lens users." },
+        { q: "Otitis media with effusion (OME) is characterized by:",
+          opts: ["Middle ear fluid without signs of acute infection", "Purulent discharge, fever, otalgia", "Ear canal inflammation", "Mastoid tenderness", "Tympanic membrane perforation"],
+          correct: 0,
+          exp: "OME is non‑infectious fluid; often follows acute otitis media or Eustachian tube dysfunction." },
+        { q: "Acute otitis media (AOM) is most commonly caused by:",
+          opts: ["Streptococcus pneumoniae, Haemophilus influenzae, Moraxella catarrhalis", "Staphylococcus aureus", "Pseudomonas aeruginosa", "Aspergillus", "Respiratory syncytial virus"],
+          correct: 0,
+          exp: "Bacterial AOM is typically due to these three organisms; viruses also common." },
+        { q: "Mastoiditis is a complication of:",
+          opts: ["Acute otitis media", "Otitis externa", "Sinusitis", "Pharyngitis", "Meningitis"],
+          correct: 0,
+          exp: "Mastoiditis results from extension of AOM into mastoid air cells." },
+        { q: "Cholesteatoma is:",
+          opts: ["Keratinizing squamous epithelium in middle ear/mastoid", "Cholesterol granuloma", "Benign tumor of middle ear", "Malignant neoplasm", "Congenital cyst"],
+          correct: 0,
+          exp: "Cholesteatoma is accumulation of desquamated keratin, often from retraction pocket or perforation." },
+        { q: "Otosclerosis involves:",
+          opts: ["Fixation of stapes footplate due to abnormal bone remodeling", "Facial nerve compression", "Cochlear hair cell loss", "Eustachian tube dysfunction", "Tympanic membrane perforation"],
+          correct: 0,
+          exp: "Otosclerosis causes conductive hearing loss; often bilateral, more common in women." },
+        { q: "Meniere's disease is characterized by:",
+          opts: ["Episodic vertigo, fluctuating hearing loss, tinnitus, aural fullness", "Constant vertigo", "Sudden hearing loss only", "Tinnitus only", "Recurrent otitis media"],
+          correct: 0,
+          exp: "Meniere's triad: vertigo, hearing loss, tinnitus; plus aural fullness." },
+        { q: "Benign paroxysmal positional vertigo (BPPV) is caused by:",
+          opts: ["Otoconia dislodged into semicircular canals", "Endolymphatic hydrops", "Vestibular neuritis", "Meniere's disease", "Cerebellar stroke"],
+          correct: 0,
+          exp: "BPPV results from canalithiasis (otoliths floating in canals), triggered by head movement." },
+        { q: "Vestibular neuritis presents with:",
+          opts: ["Acute onset of severe vertigo lasting days, no hearing loss, often after viral illness", "Recurrent vertigo with hearing loss", "Positional vertigo lasting seconds", "Vertigo with tinnitus and aural fullness", "Lightheadedness only"],
+          correct: 0,
+          exp: "Vestibular neuritis is inflammation of vestibular nerve, causing prolonged vertigo without auditory symptoms." },
+        { q: "Labyrinthitis involves:",
+          opts: ["Vertigo plus hearing loss (both cochlear and vestibular)", "Vertigo only", "Hearing loss only", "Tinnitus only", "Facial weakness"],
+          correct: 0,
+          exp: "Labyrinthitis affects both cochlear and vestibular portions; can be viral or bacterial." },
+        { q: "Allergic rhinitis is characterized by:",
+          opts: ["Sneezing, itching, rhinorrhea, nasal congestion, pale boggy turbinates", "Purulent nasal discharge, fever", "Unilateral nasal obstruction, epistaxis", "Crusting and atrophy of nasal mucosa", "Nasal polyps only"],
+          correct: 0,
+          exp: "Allergic rhinitis symptoms are IgE‑mediated; nasal mucosa appears pale and boggy." },
+        { q: "Nasal polyps are associated with:",
+          opts: ["Chronic inflammation, asthma, aspirin sensitivity (Samter's triad)", "Acute sinusitis", "Allergic rhinitis alone", "Cystic fibrosis (in children)", "Both A and D"],
+          correct: 4,
+          exp: "Nasal polyps occur in chronic rhinosinusitis, CF, and aspirin‑exacerbated respiratory disease." },
+        { q: "Acute bacterial sinusitis is most commonly caused by:",
+          opts: ["Streptococcus pneumoniae, Haemophilus influenzae, Moraxella catarrhalis", "Staphylococcus aureus", "Pseudomonas aeruginosa", "Anaerobes", "Viruses"],
+          correct: 0,
+          exp: "Same organisms as AOM; chronic sinusitis involves more anaerobes and Staph." },
+        { q: "Orbital cellulitis is a complication of:",
+          opts: ["Sinusitis (especially ethmoid)", "Conjunctivitis", "Chalazion", "Hordeolum", "Dacryocystitis"],
+          correct: 0,
+          exp: "Ethmoid sinusitis can spread through lamina papyracea to orbit, causing proptosis, ophthalmoplegia." },
+        { q: "Epistaxis (nosebleed) most commonly originates from:",
+          opts: ["Kiesselbach's plexus (Little's area) on anterior septum", "Sphenopalatine artery", "Anterior ethmoidal artery", "Posterior septal artery", "Greater palatine artery"],
+          correct: 0,
+          exp: "Most nosebleeds are anterior from Kiesselbach's plexus." },
+        { q: "Tonsillitis/pharyngitis caused by Group A Streptococcus requires treatment to prevent:",
+          opts: ["Rheumatic fever and post‑streptococcal glomerulonephritis", "Scarlet fever", "Peritonsillar abscess", "Meningitis", "Pneumonia"],
+          correct: 0,
+          exp: "Antibiotics (penicillin) prevent acute rheumatic fever; they do not prevent glomerulonephritis." },
+        { q: "Peritonsillar abscess (quinsy) presents with:",
+          opts: ["Severe sore throat, trismus, uvula deviation away from affected side", "Sore throat with bilateral tonsillar exudates", "Fever and muffled voice without trismus", "Dysphagia only", "Ear pain only"],
+          correct: 0,
+          exp: "Peritonsillar abscess causes asymmetric swelling, trismus, and uvular deviation." },
+        { q: "Epiglottitis (supraglottitis) in adults is often caused by:",
+          opts: ["Haemophilus influenzae type b (now rare due to vaccine), Strep, Staph", "Respiratory viruses", "Group A Strep", "Anaerobes", "Fungi"],
+          correct: 0,
+          exp: "In children, Hib vaccine has reduced incidence; in adults, multiple bacteria can cause." },
+        { q: "Laryngeal carcinoma is strongly associated with:",
+          opts: ["Smoking and alcohol", "HPV infection", "GERD", "Asbestos", "Radiation"],
+          correct: 0,
+          exp: "Squamous cell carcinoma of larynx is linked to tobacco and alcohol." },
+        { q: "Vocal cord nodules (singer's nodules) are:",
+          opts: ["Benign, bilateral, due to vocal abuse", "Premalignant lesions", "Granulomas", "Polyps", "Carcinomas"],
+          correct: 0,
+          exp: "Nodules are bilateral at junction of anterior and middle thirds of vocal cords." },
+        { q: "Reinke's edema is:",
+          opts: ["Polypoid degeneration of vocal cords due to smoking and reflux", "Laryngeal cancer", "Vocal cord paralysis", "Acute laryngitis", "Granuloma"],
+          correct: 0,
+          exp: "Reinke's edema is swelling of superficial lamina propria, often in smokers." },
+        { q: "Obstructive sleep apnea (OSA) is characterized by:",
+          opts: ["Apneas/hypopneas during sleep due to upper airway collapse", "Central apnea with no respiratory effort", "Hypoventilation without apnea", "Snoring without oxygen desaturation", "Daytime sleepiness only"],
+          correct: 0,
+          exp: "OSA involves repetitive pharyngeal collapse, often in obese individuals." },
+        { q: "Pleomorphic adenoma is the most common tumor of the:",
+          opts: ["Parotid gland", "Submandibular gland", "Minor salivary glands", "Lacrimal gland", "Thyroid"],
+          correct: 0,
+          exp: "Pleomorphic adenoma (benign mixed tumor) most often occurs in parotid." },
+        { q: "Warthin tumor (adenolymphoma) is associated with:",
+          opts: ["Smoking, male predominance, bilateral in some cases", "Female predominance", "Malignant transformation", "Cystic fibrosis", "HIV"],
+          correct: 0,
+          exp: "Warthin tumor is benign, often in parotid tail, more common in smokers." },
+        { q: "Mucoepidermoid carcinoma is the most common malignant salivary gland tumor.",
+          opts: ["True", "False", "Adenoid cystic is most common", "Acinic cell is most common", "SCC is most common"],
+          correct: 0,
+          exp: "Mucoepidermoid carcinoma is the most frequent malignant salivary tumor." },
+        { q: "Adenoid cystic carcinoma is known for:",
+          opts: ["Perineural invasion, slow growth, late recurrence", "High metastatic rate", "Rapid growth", "Good prognosis", "Association with radiation"],
+          correct: 0,
+          exp: "Adenoid cystic carcinoma tends to invade nerves and recur years later." },
+        { q: "Sialolithiasis (salivary duct stone) most commonly occurs in:",
+          opts: ["Submandibular gland (Wharton's duct)", "Parotid gland (Stensen's duct)", "Sublingual gland", "Minor salivary glands", "Lacrimal gland"],
+          correct: 0,
+          exp: "Submandibular stones are most common due to thicker mucus and upward duct course." },
+        { q: "Mumps (epidemic parotitis) is caused by:",
+          opts: ["Paramyxovirus", "Influenza virus", "EBV", "CMV", "Adenovirus"],
+          correct: 0,
+          exp: "Mumps virus causes painful parotitis; vaccine‑preventable." },
+        { q: "Glomus tympanicum tumors arise from:",
+          opts: ["Paraganglion cells along tympanic nerve", "Schwann cells", "Squamous epithelium", "Salivary tissue", "Cartilage"],
+          correct: 0,
+          exp: "Glomus tumors (paragangliomas) in middle ear cause pulsatile tinnitus and hearing loss." },
+        { q: "Acoustic neuroma (vestibular schwannoma) arises from:",
+          opts: ["Schwann cells of vestibular nerve (CN VIII)", "Cochlear nerve", "Facial nerve", "Meninges", "Brainstem"],
+          correct: 0,
+          exp: "Vestibular schwannoma is benign, presents with unilateral hearing loss, tinnitus, imbalance." },
+        { q: "Ramsay Hunt syndrome (herpes zoster oticus) is caused by:",
+          opts: ["Varicella‑zoster virus reactivation in geniculate ganglion", "HSV‑1", "HSV‑2", "EBV", "CMV"],
+          correct: 0,
+          exp: "Ramsay Hunt: painful ear vesicles, facial paralysis, hearing loss." },
+        { q: "Bell's palsy is:",
+          opts: ["Idiopathic facial nerve palsy (presumed viral)", "Ramsay Hunt syndrome", "Lyme disease facial palsy", "Stroke", "Myasthenia gravis"],
+          correct: 0,
+          exp: "Bell's palsy is acute, unilateral facial weakness without identifiable cause." },
+        { q: "In Sjögren syndrome, salivary gland pathology shows:",
+          opts: ["Lymphocytic infiltration, destruction of acini", "Granulomas", "Fibrosis", "Sialolithiasis", "Ductal dilatation"],
+          correct: 0,
+          exp: "Sjögren is autoimmune, causing dry mouth and eyes with lymphocytic infiltrate." }
+    ];
+    // Add extra 10 to reach 65
+    const extra = [
+        { q: "Trachoma is caused by:",
+          opts: ["Chlamydia trachomatis", "Neisseria gonorrhoeae", "Haemophilus aegyptius", "Adenovirus", "Moraxella"],
+          correct: 0,
+          exp: "Trachoma is chronic keratoconjunctivitis from repeated Chlamydia infection, leading to scarring and blindness." },
+        { q: "Ophthalmia neonatorum is often due to:",
+          opts: ["Neisseria gonorrhoeae or Chlamydia trachomatis acquired during birth", "Staphylococcus aureus", "HSV", "Pseudomonas", "Chemical irritation"],
+          correct: 0,
+          exp: "Chemical conjunctivitis (silver nitrate) also occurs but infectious causes require treatment." },
+        { q: "Retinopathy of prematurity is caused by:",
+          opts: ["Oxygen toxicity leading to abnormal retinal vessel development", "Genetic mutation", "Infection", "Trauma", "Nutritional deficiency"],
+          correct: 0,
+          exp: "High oxygen in preterm infants suppresses VEGF, then relative hypoxia causes neovascularization." },
+        { q: "Coats' disease is:",
+          opts: ["Retinal telangiectasia with exudation, often unilateral in young males", "Retinoblastoma", "Retinal detachment", "Diabetic retinopathy", "Macular degeneration"],
+          correct: 0,
+          exp: "Coats' disease presents with leukocoria due to exudative retinal detachment." },
+        { q: "Malignant otitis externa is a severe infection, usually in diabetics, caused by:",
+          opts: ["Pseudomonas aeruginosa", "Staphylococcus aureus", "Aspergillus", "Candida", "Proteus"],
+          correct: 0,
+          exp: "Malignant otitis externa spreads to skull base; requires IV antibiotics and often ENT consult." },
+        { q: "Fungal sinusitis (e.g., Aspergillus) can cause:",
+          opts: ["Allergic fungal sinusitis, fungus ball, or invasive disease in immunocompromised", "Acute bacterial sinusitis", "Nasal polyps only", "Orbital cellulitis", "Cavernous sinus thrombosis"],
+          correct: 0,
+          exp: "Aspergillus can cause non‑invasive or invasive sinus disease depending on immune status." },
+        { q: "Cavernous sinus thrombosis can complicate facial infections due to spread via:",
+          opts: ["Facial vein (valveless) to cavernous sinus", "Lymphatics", "Arterial supply", "Direct extension", "Nerve sheaths"],
+          correct: 0,
+          exp: "Facial infections (e.g., from nose, upper lip) can spread through angular vein to cavernous sinus." },
+        { q: "Ludwig's angina is:",
+          opts: ["Bilateral cellulitis of submandibular space, often from dental infection", "Peritonsillar abscess", "Retropharyngeal abscess", "Epiglottitis", "Parotitis"],
+          correct: 0,
+          exp: "Ludwig's angina is rapidly progressive, can cause airway compromise." },
+        { q: "Retropharyngeal abscess is most common in:",
+          opts: ["Young children (suppuration of retropharyngeal nodes)", "Elderly", "Immunocompromised", "Diabetics", "Adults with dental infections"],
+          correct: 0,
+          exp: "Retropharyngeal nodes atrophy by age 5, so abscess is rare in older children/adults." },
+        { q: "Lemierre's syndrome is caused by:",
+          opts: ["Fusobacterium necrophorum pharyngitis leading to septic thrombophlebitis of internal jugular vein", "Group A Strep", "Staph aureus", "Anaerobes", "EBV"],
+          correct: 0,
+          exp: "Lemierre's: oropharynx infection → septic emboli to lungs, etc." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

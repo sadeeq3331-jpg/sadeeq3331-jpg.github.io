@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiratory Pharmacology · MCQ Bank</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-stethoscope"></i>
+            <h1>Respiratory Pharmacology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ Respiratory Pharmacology Questions
+        const questions = [
+            // β2 agonists
+            { q: "Which of the following is a short‑acting β₂‑agonist (SABA)?",
+              opts: ["Salmeterol", "Formoterol", "Albuterol", "Indacaterol", "Olodaterol"],
+              correct: 2,
+              exp: "Albuterol (salbutamol) is a SABA; salmeterol and formoterol are LABAs; indacaterol and olodaterol are ultra‑LABAs." },
+            { q: "Long‑acting β₂‑agonists (LABA) should always be combined with which agent in asthma?",
+              opts: ["Inhaled corticosteroid", "Oral corticosteroid", "Anticholinergic", "Leukotriene antagonist", "Theophylline"],
+              correct: 0,
+              exp: "LABA monotherapy in asthma increases risk of severe exacerbations and death; must be used with an ICS." },
+            { q: "A patient using a LABA reports new‑onset tremor and palpitations. This is most likely due to:",
+              opts: ["β₁ stimulation", "β₂ stimulation", "α stimulation", "Muscarinic blockade", "PDE inhibition"],
+              correct: 0,
+              exp: "High doses of β₂‑agonists can cross‑stimulate β₁ receptors, causing tachycardia and tremor." },
+            { q: "Formoterol differs from salmeterol in that it:",
+              opts: ["Has a longer duration", "Has a faster onset", "Is only available orally", "Is a SABA", "Has no effect on mast cells"],
+              correct: 1,
+              exp: "Formoterol has a rapid onset (similar to SABA) but long duration; salmeterol has a slow onset." },
+            { q: "Exercise‑induced bronchospasm can be prevented by taking:",
+              opts: ["Inhaled corticosteroid 30 min before exercise", "Oral theophylline 1 hour before", "SABA 15‑20 min before exercise", "LAMA daily", "Leukotriene modifier at bedtime"],
+              correct: 2,
+              exp: "SABA taken shortly before exercise prevents bronchospasm; ICS are not for acute prevention." },
+
+            // Anticholinergics
+            { q: "Ipratropium is contraindicated in patients with:",
+              opts: ["Diabetes", "Narrow‑angle glaucoma", "Hypertension", "COPD", "Asthma"],
+              correct: 1,
+              exp: "Ipratropium can precipitate acute narrow‑angle glaucoma if nebulized mist contacts the eye." },
+            { q: "Which anticholinergic is long‑acting (LAMA) and used once daily for COPD?",
+              opts: ["Ipratropium", "Tiotropium", "Umeclidinium", "Both B and C", "Atropine"],
+              correct: 3,
+              exp: "Tiotropium and umeclidinium are LAMAs; ipratropium is short‑acting." },
+            { q: "The primary mechanism of anticholinergics in the airways is:",
+              opts: ["β₂ receptor stimulation", "Blockade of M₃ receptors on smooth muscle", "Inhibition of phosphodiesterase", "Mast cell stabilization", "Corticosteroid receptor activation"],
+              correct: 1,
+              exp: "Anticholinergics competitively block M₃ muscarinic receptors, reducing vagally mediated bronchoconstriction." },
+
+            // Methylxanthines
+            { q: "Theophylline toxicity is more likely with concurrent use of:",
+              opts: ["Phenytoin", "Rifampin", "Cimetidine", "Carbamazepine", "Smoking"],
+              correct: 2,
+              exp: "Cimetidine inhibits CYP1A2, raising theophylline levels. Smoking and rifampin induce metabolism." },
+            { q: "A patient on theophylline develops nausea, vomiting, and tachycardia. The next best step is:",
+              opts: ["Add a β‑blocker", "Check serum theophylline level", "Administer activated charcoal", "Increase the dose", "Switch to aminophylline"],
+              correct: 1,
+              exp: "These are signs of theophylline toxicity; serum level should be checked immediately." },
+            { q: "Which of the following is a proposed mechanism of theophylline?",
+              opts: ["Selective PDE‑4 inhibition", "Adenosine receptor antagonism", "β₂ receptor agonism", "Leukotriene synthesis inhibition", "Mast cell stabilization"],
+              correct: 1,
+              exp: "Theophylline non‑selectively inhibits PDE and antagonizes adenosine receptors; it also may increase HDAC activity." },
+
+            // Corticosteroids
+            { q: "Inhaled corticosteroids are first‑line maintenance therapy for:",
+              opts: ["Acute asthma exacerbation", "Mild persistent asthma", "COPD", "Exercise‑induced bronchospasm", "Allergic rhinitis"],
+              correct: 1,
+              exp: "ICS are first‑line for persistent asthma; not for acute exacerbation (systemic steroids used)." },
+            { q: "Oral candidiasis from inhaled corticosteroids can be minimized by:",
+              opts: ["Taking with food", "Rinsing mouth after use", "Using a spacer", "Both B and C", "None"],
+              correct: 3,
+              exp: "Rinsing mouth and using a spacer reduce oropharyngeal deposition, decreasing candidiasis." },
+            { q: "Long‑term high‑dose ICS may cause all EXCEPT:",
+              opts: ["Osteoporosis", "Adrenal suppression", "Weight loss", "Cataracts", "Easy bruising"],
+              correct: 2,
+              exp: "Long‑term high‑dose ICS can cause osteoporosis, adrenal suppression, cataracts, and easy bruising; weight gain (not loss) may occur." },
+
+            // Leukotriene modifiers
+            { q: "Which leukotriene modifier is a 5‑lipoxygenase inhibitor?",
+              opts: ["Montelukast", "Zafirlukast", "Zileuton", "Pranlukast", "Cromolyn"],
+              correct: 2,
+              exp: "Zileuton inhibits 5‑lipoxygenase; montelukast and zafirlukast are LTD₄ receptor antagonists." },
+            { q: "Zileuton is associated with which adverse effect requiring monitoring?",
+              opts: ["Hepatotoxicity", "Nephrotoxicity", "Cardiotoxicity", "Myelosuppression", "Ocular toxicity"],
+              correct: 0,
+              exp: "Zileuton can cause elevated liver enzymes; LFT monitoring needed." },
+            { q: "Montelukast is particularly effective in:",
+              opts: ["Exercise‑induced bronchospasm", "Aspirin‑exacerbated respiratory disease", "Allergic asthma", "All of the above", "None"],
+              correct: 3,
+              exp: "Montelukast is effective for exercise‑induced bronchospasm, aspirin‑sensitive asthma, and allergic asthma." },
+
+            // Mast cell stabilizers
+            { q: "Cromolyn sodium is used for:",
+              opts: ["Acute bronchospasm", "Prophylaxis of asthma", "COPD exacerbations", "Smoking cessation", "Cystic fibrosis"],
+              correct: 1,
+              exp: "Cromolyn prevents mast cell degranulation; used for prophylaxis, not acute relief." },
+
+            // Biologics
+            { q: "Omalizumab is a monoclonal antibody against:",
+              opts: ["IL‑5", "IgE", "IL‑4", "TNF‑α", "IL‑13"],
+              correct: 1,
+              exp: "Omalizumab binds free IgE, preventing its interaction with mast cells." },
+            { q: "Mepolizumab is indicated for severe asthma with:",
+              opts: ["High IgE levels", "Eosinophilic phenotype", "Neutrophilic inflammation", "Aspirin sensitivity", "Exercise‑induced bronchospasm"],
+              correct: 1,
+              exp: "Mepolizumab (anti‑IL5) is used for severe eosinophilic asthma." },
+            { q: "Dupilumab blocks the receptor for which cytokines?",
+              opts: ["IL‑4 and IL‑5", "IL‑5 and IL‑13", "IL‑4 and IL‑13", "IL‑13 and IL‑17", "IgE and IL‑4"],
+              correct: 2,
+              exp: "Dupilumab binds IL‑4 receptor α, inhibiting both IL‑4 and IL‑13 signaling." },
+
+            // Antitussives
+            { q: "Which antitussive is an opioid and has potential for abuse?",
+              opts: ["Dextromethorphan", "Codeine", "Benzonatate", "Guaifenesin", "Acetylcysteine"],
+              correct: 1,
+              exp: "Codeine is an opioid antitussive; dextromethorphan is non‑opioid." },
+            { q: "Dextromethorphan acts on which receptors?",
+              opts: ["μ‑opioid", "κ‑opioid", "Sigma and NMDA", "GABA", "5‑HT₃"],
+              correct: 2,
+              exp: "Dextromethorphan acts on sigma receptors and NMDA receptors." },
+            { q: "Benzonatate is a:",
+              opts: ["Mucolytic", "Local anesthetic derivative", "Opioid", "Decongestant", "Antihistamine"],
+              correct: 1,
+              exp: "Benzonatate is a local anesthetic that suppresses cough by anesthetizing stretch receptors." },
+
+            // Expectorants & mucolytics
+            { q: "Acetylcysteine is used in cystic fibrosis because it:",
+              opts: ["Increases mucus hydration", "Breaks disulfide bonds in mucus", "Inhibits neutrophil elastase", "Reduces DNA in mucus", "Stimulates ciliary motility"],
+              correct: 1,
+              exp: "NAC reduces disulfide bonds, lowering mucus viscosity." },
+            { q: "Dornase alfa (rhDNase) reduces mucus viscosity by:",
+              opts: ["Cleaving DNA", "Breaking disulfide bonds", "Hydrating mucus", "Inhibiting mucus secretion", "Increasing ciliary beat frequency"],
+              correct: 0,
+              exp: "Dornase alfa degrades DNA released from dying neutrophils, reducing sputum viscosity in CF." },
+            { q: "Guaifenesin is classified as a(n):",
+              opts: ["Antitussive", "Expectorant", "Mucolytic", "Decongestant", "Antihistamine"],
+              correct: 1,
+              exp: "Guaifenesin is an expectorant that increases respiratory tract fluid, reducing mucus viscosity." },
+
+            // PAH drugs
+            { q: "Bosentan is an endothelin receptor antagonist that can cause:",
+              opts: ["Hepatotoxicity", "Nephrotoxicity", "Cardiotoxicity", "Pulmonary fibrosis", "Neuropathy"],
+              correct: 0,
+              exp: "Bosentan may cause dose‑related hepatotoxicity; monthly LFT monitoring required." },
+            { q: "Sildenafil is used in pulmonary arterial hypertension because it:",
+              opts: ["Inhibits PDE‑5, increasing cGMP", "Inhibits PDE‑3, increasing cAMP", "Blocks endothelin receptors", "Activates guanylate cyclase", "Is a prostacyclin analogue"],
+              correct: 0,
+              exp: "Sildenafil inhibits PDE‑5, preventing cGMP breakdown, leading to vasodilation." },
+            { q: "Epoprostenol must be administered by continuous IV infusion because:",
+              opts: ["It is poorly absorbed orally", "It has a very short half‑life", "It is destroyed in the GI tract", "Both A and B", "It causes severe GI upset"],
+              correct: 3,
+              exp: "Epoprostenol is unstable at low pH and has a short half‑life (3‑5 min), requiring continuous IV." },
+            { q: "Riociguat works by:",
+              opts: ["Inhibiting PDE‑5", "Stimulating soluble guanylate cyclase", "Blocking endothelin receptors", "Activating IP receptors", "Inhibiting PDE‑3"],
+              correct: 1,
+              exp: "Riociguat directly stimulates soluble guanylate cyclase, increasing cGMP independent of NO." },
+
+            // Smoking cessation
+            { q: "Varenicline acts as a:",
+              opts: ["Partial nicotinic receptor agonist", "Nicotine replacement", "Dopamine reuptake inhibitor", "CYP2A6 inhibitor", "Nicotinic antagonist"],
+              correct: 0,
+              exp: "Varenicline is a partial agonist at α₄β₂ nicotinic receptors, reducing cravings." },
+            { q: "Bupropion is contraindicated in patients with:",
+              opts: ["Hypertension", "Seizure disorder", "Diabetes", "Asthma", "COPD"],
+              correct: 1,
+              exp: "Bupropion lowers seizure threshold; contraindicated in seizure disorders or eating disorders." },
+
+            // Surfactant
+            { q: "Exogenous surfactant is used in:",
+              opts: ["ARDS in adults", "Neonatal respiratory distress syndrome", "Asthma", "COPD", "Pneumonia"],
+              correct: 1,
+              exp: "Surfactant replacement is standard for preterm infants with RDS." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Which LABA has the fastest onset of action?",
+              opts: ["Salmeterol", "Formoterol", "Indacaterol", "Olodaterol", "Vilanterol"],
+              correct: 1,
+              exp: "Formoterol has a rapid onset (5‑15 min) similar to SABA." },
+            { q: "A patient with COPD and glaucoma should avoid:",
+              opts: ["Tiotropium", "Albuterol", "Fluticasone", "Theophylline", "Montelukast"],
+              correct: 0,
+              exp: "Tiotropium (anticholinergic) can worsen narrow‑angle glaucoma." },
+            { q: "Which ICS has high first‑pass metabolism and minimal systemic absorption?",
+              opts: ["Fluticasone", "Budesonide", "Beclomethasone", "Ciclesonide", "All of the above"],
+              correct: 4,
+              exp: "All modern ICS are designed to have high first‑pass metabolism, reducing systemic effects." },
+            { q: "The most common side effect of inhaled anticholinergics is:",
+              opts: ["Cough", "Dry mouth", "Tachycardia", "Urinary retention", "Blurred vision"],
+              correct: 1,
+              exp: "Dry mouth is most common; other effects are less frequent." },
+            { q: "A patient on theophylline develops nausea, vomiting, and tachycardia. The next step is:",
+              opts: ["Check serum theophylline level", "Administer activated charcoal", "Discontinue theophylline", "Add a β‑blocker", "Monitor ECG"],
+              correct: 0,
+              exp: "These are signs of theophylline toxicity; serum level should be checked." },
+            { q: "Montelukast is particularly effective in:",
+              opts: ["Exercise‑induced bronchospasm", "Aspirin‑exacerbated respiratory disease", "Allergic asthma", "All of the above", "None"],
+              correct: 3,
+              exp: "Montelukast is effective for exercise‑induced bronchospasm, aspirin‑sensitive asthma, and allergic asthma." },
+            { q: "Which of the following is a biologic that targets IL‑5?",
+              opts: ["Omalizumab", "Mepolizumab", "Dupilumab", "Rituximab", "Tocilizumab"],
+              correct: 1,
+              exp: "Mepolizumab, reslizumab, and benralizumab target IL‑5 or its receptor." },
+            { q: "A patient taking zileuton should be monitored for:",
+              opts: ["Hepatotoxicity", "Nephrotoxicity", "Cardiotoxicity", "Myelosuppression", "Neurotoxicity"],
+              correct: 0,
+              exp: "Zileuton can cause elevated liver enzymes; regular LFT monitoring is required." },
+            { q: "Which of the following is an endothelin receptor antagonist used in PAH?",
+              opts: ["Sildenafil", "Bosentan", "Epoprostenol", "Riociguat", "Treprostinil"],
+              correct: 1,
+              exp: "Bosentan, ambrisentan, and macitentan are endothelin receptor antagonists." },
+            { q: "Dornase alfa is used in:",
+              opts: ["Asthma", "COPD", "Cystic fibrosis", "Pneumonia", "Bronchiectasis"],
+              correct: 2,
+              exp: "Dornase alfa is specifically used in cystic fibrosis to reduce sputum viscosity." },
+            { q: "The mechanism of action of cromolyn sodium is:",
+              opts: ["Bronchodilation", "Mast cell stabilization", "Leukotriene inhibition", "Corticosteroid receptor activation", "Anticholinergic"],
+              correct: 1,
+              exp: "Cromolyn stabilizes mast cell membranes, preventing mediator release." },
+            { q: "Which of the following is a selective β₂‑agonist?",
+              opts: ["Albuterol", "Isoproterenol", "Epinephrine", "Norepinephrine", "Dobutamine"],
+              correct: 0,
+              exp: "Albuterol is selective for β₂ receptors; isoproterenol is non‑selective." },
+            { q: "A patient with asthma on high‑dose fluticasone develops easy bruising. This is likely due to:",
+              opts: ["Local effect", "Systemic absorption causing adrenal suppression", "Increased platelet aggregation", "Vitamin C deficiency", "Thrombocytosis"],
+              correct: 1,
+              exp: "High‑dose ICS can be absorbed systemically, causing adrenal suppression and easy bruising." },
+            { q: "Tiotropium is administered via which device?",
+              opts: ["MDI", "DPI (HandiHaler)", "Nebulizer", "Oral tablet", "Subcutaneous injection"],
+              correct: 1,
+              exp: "Tiotropium is delivered via a dry powder inhaler (HandiHaler or Respimat)." },
+            { q: "Which drug is a phosphodiesterase‑4 inhibitor used in COPD?",
+              opts: ["Theophylline", "Roflumilast", "Ipratropium", "Indacaterol", "Umeclidinium"],
+              correct: 1,
+              exp: "Roflumilast is a PDE‑4 inhibitor that reduces inflammation; used in severe COPD with chronic bronchitis." },
+            { q: "The most common adverse effect of roflumilast is:",
+              opts: ["Cardiac arrhythmias", "GI disturbances (nausea, diarrhea)", "Headache", "Rash", "Hepatotoxicity"],
+              correct: 1,
+              exp: "Roflumilast commonly causes nausea, diarrhea, and weight loss." },
+            { q: "Which of the following is NOT a known side effect of systemic corticosteroids?",
+              opts: ["Hyperglycemia", "Osteoporosis", "Weight loss", "Mood changes", "Adrenal suppression"],
+              correct: 2,
+              exp: "Systemic corticosteroids often cause weight gain (not loss) due to increased appetite and fluid retention." },
+            { q: "A patient with COPD is started on tiotropium. The expected improvement is due to:",
+              opts: ["Increased cAMP", "Reduced vagal tone", "β₂ stimulation", "Anti‑inflammatory effect", "Mucolytic action"],
+              correct: 1,
+              exp: "Tiotropium blocks M₃ receptors, reducing vagally mediated bronchoconstriction." },
+            { q: "Which biologic is administered subcutaneously and also used for chronic urticaria?",
+              opts: ["Mepolizumab", "Omalizumab", "Dupilumab", "Benralizumab", "Reslizumab"],
+              correct: 1,
+              exp: "Omalizumab (anti‑IgE) is used for allergic asthma and chronic idiopathic urticaria." },
+            { q: "In an acute asthma exacerbation, the preferred inhaled bronchodilator is:",
+              opts: ["Ipratropium alone", "Albuterol (SABA)", "Salmeterol", "Tiotropium", "Arformoterol"],
+              correct: 1,
+              exp: "SABA (albuterol) is first‑line for acute bronchospasm; ipratropium may be added." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

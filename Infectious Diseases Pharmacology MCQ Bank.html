@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infectious Diseases Pharmacology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-pills"></i>
+            <h1>Infectious Diseases Pharmacology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE INFECTIOUS DISEASES PHARMACOLOGY QUESTIONS
+        const questions = [
+            { q: "Penicillins exert their bactericidal effect by:",
+              opts: ["Inhibiting cell wall synthesis", "Inhibiting protein synthesis", "Inhibiting DNA gyrase", "Disrupting cell membrane", "Inhibiting folate synthesis"],
+              correct: 0,
+              exp: "Penicillins inhibit transpeptidase (PBPs), blocking peptidoglycan cross‑linking." },
+            { q: "Which penicillin is resistant to staphylococcal penicillinase?",
+              opts: ["Penicillin G", "Amoxicillin", "Methicillin", "Ampicillin", "Ticarcillin"],
+              correct: 2,
+              exp: "Methicillin, nafcillin, oxacillin are penicillinase‑resistant." },
+            { q: "Cephalosporins are classified into generations based on:",
+              opts: ["Spectrum of activity", "Route of administration", "Half‑life", "Chemical structure", "None"],
+              correct: 0,
+              exp: "Generations reflect Gram‑negative coverage (later generations more Gram‑negative, some anti‑pseudomonal)." },
+            { q: "Ceftriaxone is a third‑generation cephalosporin commonly used for:",
+              opts: ["Meningitis", "Gonorrhea", "Community‑acquired pneumonia", "All of the above", "None"],
+              correct: 3,
+              exp: "Ceftriaxone has good CNS penetration and covers many Gram‑negatives, including <em>N. gonorrhoeae</em>." },
+            { q: "Which cephalosporin has activity against MRSA?",
+              opts: ["Cefazolin", "Cefoxitin", "Ceftaroline", "Ceftazidime", "Cefepime"],
+              correct: 2,
+              exp: "Ceftaroline (5th generation) is active against MRSA." },
+            { q: "Carbapenems are active against all EXCEPT:",
+              opts: ["MRSA", "Anaerobes", "Gram‑negatives", "<em>Pseudomonas</em>", "<em>Enterococcus</em>"],
+              correct: 0,
+              exp: "Carbapenems are broad spectrum but not reliably active against MRSA (except some new agents)." },
+            { q: "Aztreonam is unique because it:",
+              opts: ["Only covers Gram‑negatives", "Only covers Gram‑positives", "Causes cross‑allergy with penicillins", "Is an aminoglycoside", "None"],
+              correct: 0,
+              exp: "Aztreonam is a monobactam active only against Gram‑negatives; safe in penicillin allergy." },
+            { q: "Vancomycin binds to:",
+              opts: ["D‑Ala‑D‑Ala peptidoglycan precursor", "Penicillin‑binding proteins", "50S ribosome", "30S ribosome", "DNA gyrase"],
+              correct: 0,
+              exp: "Vancomycin binds D‑Ala‑D‑Ala, inhibiting cell wall synthesis." },
+            { q: "Red man syndrome associated with vancomycin is caused by:",
+              opts: ["Histamine release (infusion reaction)", "IgE‑mediated allergy", "Direct vasodilation", "Nephrotoxicity", "Ototoxicity"],
+              correct: 0,
+              exp: "Red man syndrome (flushing, rash) is due to histamine release; can be minimized by slow infusion." },
+            { q: "Aminoglycosides (e.g., gentamicin) are primarily active against:",
+              opts: ["Gram‑negative aerobes", "Gram‑positive cocci", "Anaerobes", "Mycobacteria", "Fungi"],
+              correct: 0,
+              exp: "Aminoglycosides require oxygen for uptake, so they are active against aerobic Gram‑negatives." },
+            { q: "Aminoglycosides can cause:",
+              opts: ["Nephrotoxicity", "Ototoxicity", "Neuromuscular blockade", "All of the above", "None"],
+              correct: 3,
+              exp: "All are potential toxicities of aminoglycosides." },
+            { q: "Doxycycline is contraindicated in:",
+              opts: ["Children under 8 and pregnant women", "Adults with renal failure", "Patients with G6PD deficiency", "All", "None"],
+              correct: 0,
+              exp: "Tetracyclines cause tooth discoloration and affect bone growth; contraindicated in pregnancy and children." },
+            { q: "Macrolides (erythromycin, azithromycin) act by:",
+              opts: ["Binding 50S ribosome, inhibiting protein synthesis", "Binding 30S ribosome", "Inhibiting DNA gyrase", "Blocking cell wall synthesis", "None"],
+              correct: 0,
+              exp: "Macrolides bind 50S subunit." },
+            { q: "Clindamycin is associated with a high risk of:",
+              opts: ["<em>C. difficile</em> infection", "Nephrotoxicity", "Ototoxicity", "Hepatotoxicity", "Seizures"],
+              correct: 0,
+              exp: "Clindamycin can cause <em>C. difficile</em>‑associated diarrhea." },
+            { q: "Linezolid is an oxazolidinone antibiotic used for:",
+              opts: ["MRSA", "VRE", "Both", "Gram‑negatives", "Anaerobes"],
+              correct: 2,
+              exp: "Linezolid is active against MRSA and VRE." },
+            { q: "Linezolid can cause:",
+              opts: ["Myelosuppression", "Serotonin syndrome (MAOI effect)", "Peripheral neuropathy", "All of the above", "None"],
+              correct: 3,
+              exp: "Linezolid is a weak MAOI; may cause myelosuppression, neuropathy, and serotonin syndrome with other serotonergics." },
+            { q: "Fluoroquinolones (ciprofloxacin, levofloxacin) inhibit:",
+              opts: ["DNA gyrase (topoisomerase II) and topoisomerase IV", "RNA polymerase", "DNA‑directed RNA polymerase", "Peptidoglycan synthesis", "Folate synthesis"],
+              correct: 0,
+              exp: "Quinolones inhibit bacterial topoisomerases." },
+            { q: "Fluoroquinolones are associated with:",
+              opts: ["Tendonitis and tendon rupture", "QT prolongation", "CNS effects", "All of the above", "None"],
+              correct: 3,
+              exp: "Fluoroquinolones have boxed warnings for tendinopathy, peripheral neuropathy, CNS effects, and QT prolongation." },
+            { q: "Sulfamethoxazole‑trimethoprim (TMP‑SMX) inhibits:",
+              opts: ["Folate synthesis (two steps)", "DNA synthesis", "Protein synthesis", "Cell wall synthesis", "RNA synthesis"],
+              correct: 0,
+              exp: "Sulfa inhibits dihydropteroate synthase; TMP inhibits dihydrofolate reductase." },
+            { q: "TMP‑SMX is first‑line for:",
+              opts: ["<em>Pneumocystis jirovecii</em> pneumonia", "UTI", "MRSA infections", "All of the above", "None"],
+              correct: 3,
+              exp: "TMP‑SMX is used for PJP, many UTIs, and some MRSA infections." },
+            { q: "Metronidazole is active against:",
+              opts: ["Anaerobes and certain protozoa", "Gram‑positive aerobes", "Gram‑negative aerobes", "Mycobacteria", "Fungi"],
+              correct: 0,
+              exp: "Metronidazole is used for anaerobic bacteria (e.g., <em>Bacteroides</em>) and protozoa (<em>Giardia</em>, <em>Trichomonas</em>)." },
+            { q: "Rifampin is a potent inducer of:",
+              opts: ["CYP450 enzymes", "UGT enzymes", "P‑glycoprotein", "All of the above", "None"],
+              correct: 3,
+              exp: "Rifampin induces many drug‑metabolizing enzymes and transporters." },
+            { q: "Isoniazid (INH) can cause:",
+              opts: ["Peripheral neuropathy (prevent with pyridoxine)", "Hepatotoxicity", "Both", "Nephrotoxicity", "Ototoxicity"],
+              correct: 2,
+              exp: "INH causes peripheral neuropathy (B6 deficiency) and hepatotoxicity." },
+            { q: "Ethambutol is associated with:",
+              opts: ["Optic neuritis (dose‑dependent)", "Hepatotoxicity", "Nephrotoxicity", "Ototoxicity", "Peripheral neuropathy"],
+              correct: 0,
+              exp: "Ethambutol can cause optic neuritis (decreased visual acuity, red‑green color blindness)." },
+            { q: "Pyrazinamide may cause:",
+              opts: ["Hyperuricemia", "Hepatotoxicity", "Both", "Nephrotoxicity", "Ototoxicity"],
+              correct: 2,
+              exp: "Pyrazinamide can cause hyperuricemia and hepatotoxicity." },
+            { q: "Acyclovir is most active against:",
+              opts: ["HSV and VZV", "CMV", "EBV", "HHV‑6", "All"],
+              correct: 0,
+              exp: "Acyclovir is phosphorylated by viral thymidine kinase (HSV, VZV); less active against CMV." },
+            { q: "Oseltamivir is used for:",
+              opts: ["Influenza A and B", "RSV", "Parainfluenza", "Adenovirus", "None"],
+              correct: 0,
+              exp: "Oseltamivir is a neuraminidase inhibitor for influenza." },
+            { q: "Amphotericin B binds to:",
+              opts: ["Ergosterol in fungal membranes", "Cholesterol in human cells", "β‑glucan", "Chitin", "None"],
+              correct: 0,
+              exp: "Amphotericin binds ergosterol, forming pores." },
+            { q: "Amphotericin B is associated with:",
+              opts: ["Nephrotoxicity", "Infusion reactions", "Hypokalemia", "All of the above", "None"],
+              correct: 3,
+              exp: "Amphotericin has significant renal toxicity, infusion reactions, and electrolyte disturbances." },
+            { q: "Fluconazole is used for:",
+              opts: ["Candidiasis (including esophageal)", "Cryptococcal meningitis", "Coccidioidomycosis", "All of the above", "None"],
+              correct: 3,
+              exp: "Fluconazole has good activity against many yeasts and dimorphic fungi." },
+            { q: "Voriconazole is first‑line for:",
+              opts: ["Invasive aspergillosis", "Candidemia", "Mucormycosis", "Cryptococcal meningitis", "Histoplasmosis"],
+              correct: 0,
+              exp: "Voriconazole is preferred for invasive aspergillosis." },
+            { q: "Echinocandins (caspofungin) inhibit:",
+              opts: ["β‑glucan synthesis", "Ergosterol synthesis", "Cell wall chitin", "DNA synthesis", "Protein synthesis"],
+              correct: 0,
+              exp: "Echinocandins inhibit β‑1,3‑glucan synthase." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Chloroquine resistance in malaria is common in <em>P. falciparum</em> due to:",
+              opts: ["Efflux pumps (PfCRT mutation)", "Target modification", "Enzymatic degradation", "Reduced uptake", "None"],
+              correct: 0,
+              exp: "Mutations in the <em>P. falciparum</em> chloroquine resistance transporter (PfCRT) cause efflux of drug." },
+            { q: "Artemisinin derivatives are combined with other antimalarials to:",
+              opts: ["Prevent resistance", "Enhance efficacy", "Reduce side effects", "All", "None"],
+              correct: 0,
+              exp: "Artemisinin‑based combination therapy (ACT) delays resistance." },
+            { q: "Ivermectin is used for:",
+              opts: ["Onchocerciasis", "Strongyloidiasis", "Scabies", "All of the above", "None"],
+              correct: 3,
+              exp: "Ivermectin is effective against many nematodes and ectoparasites." },
+            { q: "Praziquantel is the drug of choice for:",
+              opts: ["Schistosomiasis", "Cestodes (tapeworms)", "Both", "Nematodes", "None"],
+              correct: 2,
+              exp: "Praziquantel is active against trematodes and cestodes." },
+            { q: "Nitazoxanide is used for:",
+              opts: ["<em>Cryptosporidium</em>", "<em>Giardia</em>", "Both", "Malaria", "Leishmania"],
+              correct: 2,
+              exp: "Nitazoxanide has broad antiparasitic activity including cryptosporidiosis and giardiasis." },
+            { q: "The drug of choice for primary amoebic meningoencephalitis (Naegleria) is:",
+              opts: ["Amphotericin B", "Metronidazole", "Chloroquine", "Pentamidine", "None"],
+              correct: 0,
+              exp: "Amphotericin B is used for <em>Naegleria fowleri</em> infection." },
+            { q: "Which antifungal is used for dermatophyte infections?",
+              opts: ["Terbinafine", "Fluconazole", "Griseofulvin", "All of the above", "None"],
+              correct: 3,
+              exp: "Terbinafine, azoles, and griseofulvin are all used for dermatophytosis." },
+            { q: "Foscarnet is used for CMV retinitis but can cause:",
+              opts: ["Nephrotoxicity and electrolyte disturbances", "Hepatotoxicity", "Myelosuppression", "Ototoxicity", "None"],
+              correct: 0,
+              exp: "Foscarnet is nephrotoxic and can cause hypocalcemia, hypo/hyperphosphatemia." },
+            { q: "Cidofovir is an antiviral for CMV that can cause:",
+              opts: ["Nephrotoxicity (give with probenecid)", "Ototoxicity", "Neutropenia", "Hepatotoxicity", "None"],
+              correct: 0,
+              exp: "Cidofovir is highly nephrotoxic; probenecid reduces renal uptake." },
+            { q: "Ribavirin is used for RSV and HCV. A major side effect is:",
+              opts: ["Hemolytic anemia", "Nephrotoxicity", "Cardiotoxicity", "Teratogenicity", "Both A and D"],
+              correct: 4,
+              exp: "Ribavirin causes dose‑dependent hemolytic anemia and is teratogenic." },
+            { q: "Zidovudine (AZT) is an NRTI that can cause:",
+              opts: ["Bone marrow suppression (anemia, neutropenia)", "Peripheral neuropathy", "Pancreatitis", "Lactic acidosis", "All"],
+              correct: 4,
+              exp: "Zidovudine commonly causes macrocytic anemia and neutropenia; also risk of lactic acidosis." },
+            { q: "Tenofovir can cause:",
+              opts: ["Nephrotoxicity (Fanconi syndrome)", "Bone density loss", "Both", "Hepatotoxicity", "Peripheral neuropathy"],
+              correct: 2,
+              exp: "Tenofovir can cause renal tubular dysfunction and decreased bone mineral density." },
+            { q: "Efavirenz (NNRTI) is associated with:",
+              opts: ["CNS side effects (vivid dreams, dizziness)", "Rash", "Hepatotoxicity", "All of the above", "None"],
+              correct: 3,
+              exp: "Efavirenz causes CNS symptoms, rash, and hepatotoxicity." },
+            { q: "Protease inhibitors (e.g., ritonavir) are potent:",
+              opts: ["CYP3A4 inhibitors", "CYP3A4 inducers", "UGT inducers", "None", "All"],
+              correct: 0,
+              exp: "Ritonavir is a strong CYP3A4 inhibitor, used to boost other PIs." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

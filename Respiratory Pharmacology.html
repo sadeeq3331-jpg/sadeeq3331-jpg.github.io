@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiratory Pharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-stethoscope"></i>
+        <h1>Respiratory Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>BRONCHODILATORS</h3>
+            <ul class="chapter-list">
+                <li><a href="#beta2-agonists"><i class="fas fa-bolt"></i> 1. β₂‑Adrenergic Agonists</a></li>
+                <li><a href="#anticholinergics"><i class="fas fa-ban"></i> 2. Anticholinergics</a></li>
+                <li><a href="#methylxanthines"><i class="fas fa-capsules"></i> 3. Methylxanthines</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTI‑INFLAMMATORY AGENTS</h3>
+            <ul class="chapter-list">
+                <li><a href="#corticosteroids"><i class="fas fa-syringe"></i> 4. Corticosteroids</a></li>
+                <li><a href="#leukotriene"><i class="fas fa-dna"></i> 5. Leukotriene Modifiers</a></li>
+                <li><a href="#mast-cell"><i class="fas fa-shield-alt"></i> 6. Mast Cell Stabilizers</a></li>
+                <li><a href="#biologics"><i class="fas fa-microscope"></i> 7. Biologics (Anti‑IgE, Anti‑IL5)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>COUGH & MUCOCILIARY</h3>
+            <ul class="chapter-list">
+                <li><a href="#antitussives"><i class="fas fa-pills"></i> 8. Antitussives</a></li>
+                <li><a href="#expectorants"><i class="fas fa-droplet"></i> 9. Expectorants & Mucolytics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PULMONARY HYPERTENSION</h3>
+            <ul class="chapter-list">
+                <li><a href="#pah"><i class="fas fa-heart"></i> 10. Pulmonary Arterial Hypertension Drugs</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SMOKING CESSATION & SURFACTANT</h3>
+            <ul class="chapter-list">
+                <li><a href="#smoking"><i class="fas fa-smoking"></i> 11. Smoking Cessation Aids</a></li>
+                <li><a href="#surfactant"><i class="fas fa-baby"></i> 12. Surfactant Preparations</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CHAPTER 1: β₂‑AGONISTS ==================== -->
+        <section id="beta2-agonists" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 1. β₂‑Adrenergic Agonists</div>
+            <div class="section-card">
+                <div class="section-heading">Mechanism of Action</div>
+                <div class="body-text">
+                    <p>β₂‑agonists stimulate β₂‑adrenergic receptors located primarily on airway smooth muscle cells. These receptors are G<sub>s</sub>‑coupled, leading to activation of adenylyl cyclase, which increases intracellular cyclic AMP (cAMP). Elevated cAMP activates protein kinase A (PKA), which phosphorylates multiple targets, resulting in:</p>
+                    <ul>
+                        <li><strong>Smooth muscle relaxation</strong> – PKA inhibits myosin light‑chain kinase and promotes K<sup>+</sup> channel opening, causing hyperpolarization and relaxation.</li>
+                        <li><strong>Inhibition of mast cell mediator release</strong> (e.g., histamine, leukotrienes).</li>
+                        <li><strong>Increased mucociliary clearance</strong> – enhanced ciliary beating.</li>
+                        <li><strong>Decreased vascular permeability</strong> and inhibition of cholinergic neurotransmission.</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">Short‑Acting β₂‑Agonists (SABA)</div>
+                <ul>
+                    <li><strong>Examples:</strong> Albuterol (salbutamol), levalbuterol, terbutaline, pirbuterol.</li>
+                    <li><strong>Onset:</strong> Rapid (within 5 minutes).</li>
+                    <li><strong>Duration:</strong> 4‑6 hours.</li>
+                    <li><strong>Clinical uses:</strong> Acute relief of bronchospasm (asthma, COPD), prevention of exercise‑induced bronchospasm (taken 15‑20 minutes before exercise).</li>
+                    <li><strong>Pharmacokinetics:</strong> Inhaled (minimal systemic absorption), oral (available but more side effects), IV (rare).</li>
+                    <li><strong>Adverse effects:</strong> Tachycardia (β₁ cross‑stimulation at high doses), tremor (skeletal muscle β₂), hypokalemia (due to intracellular shift), nervousness, headache.</li>
+                </ul>
+                <div class="subsection-heading">Long‑Acting β₂‑Agonists (LABA)</div>
+                <ul>
+                    <li><strong>Examples:</strong> Salmeterol, formoterol, indacaterol, olodaterol, vilanterol.</li>
+                    <li><strong>Onset:</strong> Salmeterol is slow (30‑60 min); formoterol and indacaterol are rapid (5‑15 min).</li>
+                    <li><strong>Duration:</strong> >12 hours (some once‑daily).</li>
+                    <li><strong>Clinical uses:</strong> Maintenance therapy for asthma (always combined with inhaled corticosteroid) and COPD (can be used alone or with LAMA/ICS).</li>
+                    <li><strong>Important warning:</strong> LABA monotherapy in asthma increases the risk of severe exacerbations and asthma‑related death – must be used with an ICS.</li>
+                    <li><strong>Adverse effects:</strong> Similar to SABA; long‑term use may lead to receptor downregulation (tolerance).</li>
+                </ul>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “SABA for rescue, LABA for control – but only with ICS.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 2: ANTICHOLINERGICS ==================== -->
+        <section id="anticholinergics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ban"></i> 2. Anticholinergics</div>
+            <div class="section-card">
+                <div class="section-heading">Mechanism of Action</div>
+                <div class="body-text">
+                    <p>Anticholinergics block muscarinic receptors (especially M<sub>3</sub> subtype) on bronchial smooth muscle. Acetylcholine released from parasympathetic nerves normally causes bronchoconstriction and mucus secretion. By competitively antagonizing these receptors, anticholinergics produce bronchodilation. They are functionally competitive antagonists – they reduce the effect of acetylcholine but do not block the action of other bronchodilators.</p>
+                </div>
+                <div class="subsection-heading">Short‑Acting (SAMA)</div>
+                <ul>
+                    <li><strong>Ipratropium bromide:</strong> Quaternary ammonium compound, poorly absorbed, duration 4‑6 hours.</li>
+                    <li><strong>Onset:</strong> 15‑30 minutes.</li>
+                    <li><strong>Uses:</strong> COPD maintenance, acute asthma (added to SABA in emergency department), rhinorrhea.</li>
+                    <li><strong>Side effects:</strong> Dry mouth, cough, bitter taste; rarely urinary retention or worsening of narrow‑angle glaucoma (if nebulized mist contacts eyes).</li>
+                </ul>
+                <div class="subsection-heading">Long‑Acting (LAMA)</div>
+                <ul>
+                    <li><strong>Examples:</strong> Tiotropium, umeclidinium, glycopyrronium, aclidinium.</li>
+                    <li><strong>Duration:</strong> 24 hours (once‑daily) for most; aclidinium is twice‑daily.</li>
+                    <li><strong>Uses:</strong> First‑line maintenance for COPD; also add‑on therapy for asthma not controlled with ICS‑LABA.</li>
+                    <li><strong>Side effects:</strong> Similar to ipratropium; less systemic because of minimal absorption.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> In COPD, LAMAs reduce exacerbations and improve lung function; they are often combined with LABAs or ICS in fixed‑dose inhalers.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 3: METHYLXANTHINES ==================== -->
+        <section id="methylxanthines" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 3. Methylxanthines</div>
+            <div class="section-card">
+                <div class="section-heading">Mechanism of Action</div>
+                <div class="body-text">
+                    <p>Methylxanthines (e.g., theophylline, aminophylline) have multiple proposed mechanisms:</p>
+                    <ul>
+                        <li><strong>Non‑selective phosphodiesterase (PDE) inhibition:</strong> Increases cAMP and cGMP in airway smooth muscle and inflammatory cells.</li>
+                        <li><strong>Adenosine receptor antagonism:</strong> Prevents adenosine‑induced bronchoconstriction and mast cell activation.</li>
+                        <li><strong>Increased histone deacetylase (HDAC) activity:</strong> Restores corticosteroid sensitivity in smokers.</li>
+                        <li><strong>Enhanced diaphragmatic contractility:</strong> May improve respiratory muscle function.</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">Pharmacokinetics</div>
+                <ul>
+                    <li>Narrow therapeutic index: 10‑20 μg/mL (55‑110 μmol/L). Toxicity common above 20 μg/mL.</li>
+                    <li>Metabolized by CYP1A2 and CYP3A4; many drug interactions.</li>
+                    <li><strong>Factors increasing levels:</strong> Liver disease, heart failure, cimetidine, erythromycin, fluconazole, ciprofloxacin.</li>
+                    <li><strong>Factors decreasing levels:</strong> Smoking, rifampin, phenytoin, carbamazepine.</li>
+                </ul>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li>Add‑on therapy for severe asthma or COPD (third‑line).</li>
+                    <li>Neonatal apnea (caffeine is preferred).</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li>Mild: nausea, vomiting, insomnia, nervousness.</li>
+                    <li>Severe (toxicity): tachycardia, arrhythmias, seizures, hypokalemia, hyperglycemia.</li>
+                </ul>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “Theophylline toxicity – from caffeine‑like symptoms to seizures.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 4: CORTICOSTEROIDS ==================== -->
+        <section id="corticosteroids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 4. Corticosteroids</div>
+            <div class="section-card">
+                <div class="section-heading">Mechanism of Action</div>
+                <div class="body-text">
+                    <p>Corticosteroids diffuse across the cell membrane and bind to cytoplasmic glucocorticoid receptors. The complex translocates to the nucleus and modulates gene transcription:</p>
+                    <ul>
+                        <li><strong>Transrepression:</strong> Decreased transcription of pro‑inflammatory genes (cytokines, chemokines, adhesion molecules, inflammatory enzymes).</li>
+                        <li><strong>Transactivation:</strong> Increased transcription of anti‑inflammatory proteins (lipocortin‑1, IL‑10, IκB‑α).</li>
+                        <li><strong>Non‑genomic effects:</strong> Rapid (minutes) via membrane‑bound receptors.</li>
+                    </ul>
+                    <p>In airways, they reduce eosinophil, mast cell, and lymphocyte numbers; decrease mucus secretion; and restore β₂‑receptor sensitivity.</p>
+                </div>
+                <div class="subsection-heading">Inhaled Corticosteroids (ICS)</div>
+                <ul>
+                    <li><strong>Examples:</strong> Fluticasone, budesonide, beclomethasone, mometasone, ciclesonide.</li>
+                    <li><strong>Pharmacokinetics:</strong> High first‑pass metabolism to minimize systemic effects; delivered via inhaler or nebulizer.</li>
+                    <li><strong>Uses:</strong> First‑line controller for persistent asthma; in COPD for patients with frequent exacerbations.</li>
+                    <li><strong>Adverse effects (local):</strong> Oropharyngeal candidiasis, dysphonia (hoarseness) – minimized by using a spacer and rinsing mouth after inhalation.</li>
+                    <li><strong>Adverse effects (systemic):</strong> Minimal at low doses; high doses may cause adrenal suppression, osteoporosis, growth suppression in children.</li>
+                </ul>
+                <div class="subsection-heading">Systemic Corticosteroids</div>
+                <ul>
+                    <li><strong>Examples:</strong> Prednisone, prednisolone, methylprednisolone (oral or IV).</li>
+                    <li><strong>Uses:</strong> Acute severe asthma exacerbations, COPD exacerbations, interstitial lung diseases.</li>
+                    <li><strong>Short‑term side effects:</strong> Hyperglycemia, mood changes, insomnia, fluid retention.</li>
+                    <li><strong>Long‑term side effects:</strong> Osteoporosis, adrenal suppression, cataracts, easy bruising, immunosuppression.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Important:</strong> Always use the lowest effective ICS dose and reassess regularly. In acute exacerbations, early systemic corticosteroids reduce hospitalizations and relapses.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 5: LEUKOTRIENE MODIFIERS ==================== -->
+        <section id="leukotriene" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 5. Leukotriene Modifiers</div>
+            <div class="section-card">
+                <div class="section-heading">Leukotriene Synthesis and Action</div>
+                <div class="body-text">
+                    <p>Leukotrienes (LT) are inflammatory mediators derived from arachidonic acid via the 5‑lipoxygenase (5‑LO) pathway. LTC<sub>4</sub>, LTD<sub>4</sub>, and LTE<sub>4</sub> (cysteinyl leukotrienes) cause bronchoconstriction, increased vascular permeability, and eosinophil recruitment. They are key mediators in asthma, especially allergic and aspirin‑sensitive forms.</p>
+                </div>
+                <div class="subsection-heading">5‑Lipoxygenase Inhibitor</div>
+                <ul>
+                    <li><strong>Zileuton:</strong> Inhibits leukotriene synthesis.</li>
+                    <li><strong>Uses:</strong> Mild persistent asthma, aspirin‑exacerbated respiratory disease.</li>
+                    <li><strong>Side effects:</strong> Hepatotoxicity (LFT monitoring required), drug interactions (inhibits CYP1A2).</li>
+                </ul>
+                <div class="subsection-heading">CysLT₁ Receptor Antagonists</div>
+                <ul>
+                    <li><strong>Montelukast, zafirlukast, pranlukast:</strong> Block LTD<sub>4</sub> receptors.</li>
+                    <li><strong>Uses:</strong> Exercise‑induced bronchospasm, allergic rhinitis, aspirin‑sensitive asthma, mild persistent asthma.</li>
+                    <li><strong>Side effects:</strong> Generally well tolerated; rare neuropsychiatric events (agitation, depression) with montelukast (FDA black box warning).</li>
+                </ul>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “Zileuton – watch the liver; montelukast – watch the mood.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 6: MAST CELL STABILIZERS ==================== -->
+        <section id="mast-cell" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 6. Mast Cell Stabilizers</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Cromolyn sodium and nedocromil sodium</strong> are believed to inhibit degranulation of mast cells by stabilizing cell membranes, possibly by blocking chloride channels. They prevent the release of histamine and other mediators.</p>
+                    <ul>
+                        <li><strong>Uses:</strong> Prophylactic treatment of asthma (not for acute attacks), exercise‑induced bronchospasm, allergic conjunctivitis, and rhinitis.</li>
+                        <li><strong>Onset:</strong> Several weeks needed for maximal effect.</li>
+                        <li><strong>Safety:</strong> Extremely safe – minimal side effects (occasional cough, unpleasant taste with nedocromil).</li>
+                    </ul>
+                    <p>They are rarely used now in asthma due to availability of more effective controllers, but remain an option for children and mild cases.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 7: BIOLOGICS ==================== -->
+        <section id="biologics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-microscope"></i> 7. Biologics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Biologic agents target specific inflammatory pathways in severe asthma not controlled with conventional therapy.</p>
+                </div>
+                <div class="subsection-heading">Anti‑IgE (Omalizumab)</div>
+                <ul>
+                    <li><strong>Mechanism:</strong> Humanized monoclonal antibody that binds free IgE, preventing its interaction with high‑affinity receptors on mast cells and basophils.</li>
+                    <li><strong>Uses:</strong> Moderate‑to‑severe allergic asthma with elevated IgE levels; chronic idiopathic urticaria.</li>
+                    <li><strong>Administration:</strong> Subcutaneous every 2‑4 weeks.</li>
+                    <li><strong>Side effects:</strong> Injection site reactions, anaphylaxis (rare), increased risk of parasitic infections.</li>
+                </ul>
+                <div class="subsection-heading">Anti‑IL5 (Mepolizumab, Reslizumab, Benralizumab)</div>
+                <ul>
+                    <li><strong>Mechanism:</strong> Block IL‑5, a key cytokine for eosinophil maturation, activation, and survival. Benralizumab binds the IL‑5 receptor α, inducing antibody‑dependent cell‑mediated cytotoxicity of eosinophils.</li>
+                    <li><strong>Uses:</strong> Severe eosinophilic asthma (blood eosinophils >150‑300 cells/μL).</li>
+                    <li><strong>Administration:</strong> Subcutaneous (mepolizumab, benralizumab) or IV (reslizumab).</li>
+                    <li><strong>Side effects:</strong> Headache, injection site reactions, rare hypersensitivity.</li>
+                </ul>
+                <div class="subsection-heading">Anti‑IL4/IL13 (Dupilumab)</div>
+                <ul>
+                    <li><strong>Mechanism:</strong> Blocks the IL‑4 receptor α, inhibiting both IL‑4 and IL‑13 signaling.</li>
+                    <li><strong>Uses:</strong> Moderate‑to‑severe asthma (eosinophilic or oral corticosteroid‑dependent), atopic dermatitis, nasal polyps.</li>
+                    <li><strong>Side effects:</strong> Injection site reactions, eosinophilia, conjunctivitis.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Note:</strong> Biologics are reserved for severe asthma; they are expensive and require specialist supervision.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 8: ANTITUSSIVES ==================== -->
+        <section id="antitussives" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 8. Antitussives</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Antitussives suppress cough by acting on the cough center in the medulla or on peripheral cough receptors.</p>
+                </div>
+                <ul>
+                    <li><strong>Dextromethorphan:</strong> Non‑opioid, acts on sigma receptors and NMDA receptors; OTC. May cause dizziness, drowsiness.</li>
+                    <li><strong>Codeine:</strong> Opioid, acts on μ‑opioid receptors in cough center; controlled substance. Side effects: sedation, constipation, risk of dependence.</li>
+                    <li><strong>Benzonatate:</strong> Local anesthetic derivative that anesthetizes stretch receptors in the respiratory tract; non‑narcotic. Side effects: sedation, nausea, may cause systemic toxicity if chewed.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Warning:</strong> Antitussives are contraindicated in productive cough (retained secretions). Codeine should not be used in children (risk of respiratory depression).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 9: EXPECTORANTS & MUCOLYTICS ==================== -->
+        <section id="expectorants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 9. Expectorants & Mucolytics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Expectorants</strong> increase the volume and reduce the viscosity of respiratory tract secretions, making cough more productive.</p>
+                    <ul>
+                        <li><strong>Guaifenesin:</strong> Increases respiratory tract fluid, decreasing mucus viscosity. Often used OTC. Minimal side effects.</li>
+                    </ul>
+                </div>
+                <div class="body-text">
+                    <p><strong>Mucolytics</strong> chemically break down mucus polymers.</p>
+                    <ul>
+                        <li><strong>Acetylcysteine (N‑acetylcysteine):</strong> Breaks disulfide bonds in mucoproteins, reducing viscosity. Used in COPD, cystic fibrosis, and as an antidote for acetaminophen overdose. Nebulized or oral. May cause bronchospasm (use with bronchodilator).</li>
+                        <li><strong>Dornase alfa (rhDNase):</strong> Recombinant human DNase I; cleaves DNA released from degenerating neutrophils, reducing sputum viscosity in cystic fibrosis. Administered via nebulizer. Side effects: pharyngitis, voice changes, rash.</li>
+                        <li><strong>Hypertonic saline (7%):</strong> Osmotic mucolytic; used in cystic fibrosis to improve mucociliary clearance.</li>
+                    </ul>
+                </div>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “NAC – for mucus and paracetamol overdose; dornase – for CF.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 10: PULMONARY ARTERIAL HYPERTENSION ==================== -->
+        <section id="pah" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 10. Pulmonary Arterial Hypertension Drugs</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Pulmonary arterial hypertension (PAH) is a progressive disease characterized by vasoconstriction and vascular remodeling. Drug therapy targets three main pathways: prostacyclin, endothelin, and nitric oxide.</p>
+                </div>
+                <div class="subsection-heading">Prostacyclin Pathway</div>
+                <ul>
+                    <li><strong>Prostacyclin (PGI₂) analogues:</strong> Epoprostenol (continuous IV, half‑life 3‑5 min), treprostinil (IV/SC/inhaled/oral), iloprost (inhaled, IV).</li>
+                    <li><strong>Mechanism:</strong> Activate IP receptors → ↑ cAMP → vasodilation, anti‑proliferation, anti‑platelet.</li>
+                    <li><strong>Selexipag:</strong> Oral prodrug of a selective IP receptor agonist.</li>
+                </ul>
+                <div class="subsection-heading">Endothelin Pathway</div>
+                <ul>
+                    <li><strong>Endothelin receptor antagonists (ERA):</strong> Bosentan (dual ET<sub>A</sub>/ET<sub>B</sub> antagonist), ambrisentan (selective ET<sub>A</sub>), macitentan (dual).</li>
+                    <li><strong>Mechanism:</strong> Block vasoconstrictive and mitogenic effects of endothelin‑1.</li>
+                    <li><strong>Side effects:</strong> Hepatotoxicity (bosentan – monthly LFTs), peripheral edema, teratogenicity (pregnancy category X).</li>
+                </ul>
+                <div class="subsection-heading">Nitric Oxide Pathway</div>
+                <ul>
+                    <li><strong>Phosphodiesterase‑5 (PDE‑5) inhibitors:</strong> Sildenafil, tadalafil – increase cGMP by preventing its breakdown, potentiating NO‑mediated vasodilation.</li>
+                    <li><strong>Guanylate cyclase stimulator:</strong> Riociguat – stimulates soluble guanylate cyclase directly, increasing cGMP independent of NO.</li>
+                    <li><strong>Side effects:</strong> Headache, flushing, dyspepsia, hypotension; contraindicated with nitrates.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Combination therapy:</strong> Often used to target multiple pathways. All patients should be managed in specialized centers.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 11: SMOKING CESSATION AIDS ==================== -->
+        <section id="smoking" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-smoking"></i> 11. Smoking Cessation Aids</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Smoking cessation reduces the risk of respiratory and cardiovascular diseases. Pharmacotherapy doubles quit rates.</p>
+                </div>
+                <ul>
+                    <li><strong>Nicotine replacement therapy (NRT):</strong> Patch, gum, lozenge, inhaler, nasal spray. Provides nicotine without carcinogens. Side effects: skin irritation (patch), mouth irritation (gum).</li>
+                    <li><strong>Varenicline:</strong> Partial agonist at α₄β₂ nicotinic receptors – reduces cravings and withdrawal. Common side effects: nausea, vivid dreams, headache. FDA black box for neuropsychiatric events (but evidence suggests risk is low).</li>
+                    <li><strong>Bupropion (Zyban):</strong> Atypical antidepressant; inhibits dopamine and norepinephrine reuptake. Also reduces cravings. Contraindicated in seizure disorders, eating disorders. Side effects: insomnia, dry mouth, lower seizure threshold.</li>
+                    <li><strong>Combination therapy:</strong> NRT + varenicline or bupropion may be more effective.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Note:</strong> Electronic cigarettes are not FDA‑approved as cessation aids; they may help some but long‑term safety is unknown.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 12: SURFACTANT PREPARATIONS ==================== -->
+        <section id="surfactant" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-baby"></i> 12. Surfactant Preparations</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Pulmonary surfactant is a mixture of phospholipids and proteins that reduces surface tension, preventing alveolar collapse. Deficiency in preterm infants leads to neonatal respiratory distress syndrome (RDS).</p>
+                </div>
+                <div class="subsection-heading">Types</div>
+                <ul>
+                    <li><strong>Natural surfactants:</strong> Beractant (Survanta), poractant alfa (Curosurf), calfactant (Infasurf) – derived from bovine or porcine lungs.</li>
+                    <li><strong>Synthetic surfactants:</strong> Lucinactant (Surfaxin) – contains synthetic phospholipids and a peptide analogue of surfactant protein B.</li>
+                </ul>
+                <div class="subsection-heading">Mechanism</div>
+                <div class="body-text">
+                    <p>Instilled intratracheally, they spread over the alveolar surface, reduce surface tension, increase lung compliance, and improve oxygenation.</p>
+                </div>
+                <div class="subsection-heading">Uses</div>
+                <ul>
+                    <li>Prophylaxis and rescue therapy for neonatal RDS in premature infants.</li>
+                    <li>Occasionally used in meconium aspiration syndrome and ARDS (off‑label).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Administration:</strong> Given via endotracheal tube shortly after birth. May transiently cause bradycardia, oxygen desaturation, or reflux into the tube.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Respiratory Pharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

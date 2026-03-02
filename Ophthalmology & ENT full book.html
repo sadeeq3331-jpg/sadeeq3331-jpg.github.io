@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ophthalmology & ENT · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-eye"></i><i class="fas fa-ear-listen" style="margin-left:-0.5rem;"></i>
+        <h1>Ophthalmology & ENT</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>OPHTHALMOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#eye-anatomy"><i class="fas fa-eye"></i> 1. Anatomy of the Eye</a></li>
+                <li class="chapter-item"><a href="#vision-physiology"><i class="fas fa-lightbulb"></i> 2. Physiology of Vision</a></li>
+                <li class="chapter-item"><a href="#refractive-errors"><i class="fas fa-glasses"></i> 3. Refractive Errors</a></li>
+                <li class="chapter-item"><a href="#conjunctiva-cornea"><i class="fas fa-droplet"></i> 4. Conjunctiva & Cornea</a></li>
+                <li class="chapter-item"><a href="#cataract"><i class="fas fa-water"></i> 5. Cataract</a></li>
+                <li class="chapter-item"><a href="#glaucoma"><i class="fas fa-chart-line"></i> 6. Glaucoma</a></li>
+                <li class="chapter-item"><a href="#retina"><i class="fas fa-camera"></i> 7. Retinal Disorders</a></li>
+                <li class="chapter-item"><a href="#uveitis-optic"><i class="fas fa-nerve"></i> 8. Uveitis & Optic Nerve</a></li>
+                <li class="chapter-item"><a href="#ophth-pharma"><i class="fas fa-pills"></i> 9. Ophthalmic Pharmacology</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENT – EAR</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#ear-anatomy"><i class="fas fa-ear-deaf"></i> 10. Anatomy of the Ear</a></li>
+                <li class="chapter-item"><a href="#hearing"><i class="fas fa-volume-up"></i> 11. Hearing & Balance</a></li>
+                <li class="chapter-item"><a href="#hearing-loss"><i class="fas fa-ear-listen"></i> 12. Hearing Loss</a></li>
+                <li class="chapter-item"><a href="#otitis-media"><i class="fas fa-bug"></i> 13. Otitis Media & Externa</a></li>
+                <li class="chapter-item"><a href="#meniere"><i class="fas fa-dizzy"></i> 14. Meniere's & Vertigo</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENT – NOSE</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#nose-anatomy"><i class="fas fa-nose"></i> 15. Anatomy of the Nose</a></li>
+                <li class="chapter-item"><a href="#sinusitis"><i class="fas fa-head-side-cough"></i> 16. Sinusitis</a></li>
+                <li class="chapter-item"><a href="#allergic-rhinitis"><i class="fas fa-allergies"></i> 17. Allergic Rhinitis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENT – THROAT & NECK</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#pharynx-larynx"><i class="fas fa-throat"></i> 18. Pharynx & Larynx</a></li>
+                <li class="chapter-item"><a href="#tonsillitis"><i class="fas fa-virus"></i> 19. Pharyngitis & Tonsillitis</a></li>
+                <li class="chapter-item"><a href="#osa"><i class="fas fa-sleep"></i> 20. Obstructive Sleep Apnea</a></li>
+                <li class="chapter-item"><a href="#neck-masses"><i class="fas fa-neck"></i> 21. Neck Masses & Salivary Glands</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENT PHARMACOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#ent-pharma"><i class="fas fa-pills"></i> 22. ENT Pharmacology</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== OPHTHALMOLOGY ==================== -->
+        <section id="eye-anatomy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 1. Anatomy of the Eye</div>
+            <div class="section-card">
+                <div class="section-heading">Layers of the Eyeball</div>
+                <ul>
+                    <li><strong>Fibrous tunic (outer):</strong> sclera (white) and cornea (transparent).</li>
+                    <li><strong>Vascular tunic (uvea):</strong> iris, ciliary body, choroid.</li>
+                    <li><strong>Nervous tunic (inner):</strong> retina.</li>
+                </ul>
+                <div class="subsection-heading">Anterior Segment</div>
+                <ul>
+                    <li><strong>Cornea:</strong> avascular, receives nutrients from aqueous humor and tears; 5 layers (epithelium, Bowman's, stroma, Descemet's, endothelium).</li>
+                    <li><strong>Anterior chamber:</strong> between cornea and iris, filled with aqueous humor.</li>
+                    <li><strong>Posterior chamber:</strong> between iris and lens.</li>
+                    <li><strong>Iris:</strong> controls pupil size; muscles: sphincter pupillae (parasympathetic, miosis) and dilator pupillae (sympathetic, mydriasis).</li>
+                    <li><strong>Ciliary body:</strong> produces aqueous humor; contains ciliary muscle (accommodation).</li>
+                    <li><strong>Lens:</strong> biconvex, transparent, changes shape for accommodation.</li>
+                </ul>
+                <div class="subsection-heading">Posterior Segment</div>
+                <ul>
+                    <li><strong>Vitreous humor:</strong> gel filling posterior cavity.</li>
+                    <li><strong>Retina:</strong> layers: photoreceptors (rods and cones), bipolar cells, ganglion cells; macula (central vision) and fovea (highest acuity).</li>
+                    <li><strong>Optic disc:</strong> blind spot, where optic nerve exits.</li>
+                </ul>
+                <div class="memory-aid">
+                    <i class="fas fa-lightbulb"></i> <strong>Layers from outside in:</strong> "SCLera, Choroid, Retina" – like a sandwich.
+                </div>
+            </div>
+        </section>
+
+        <section id="vision-physiology" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lightbulb"></i> 2. Physiology of Vision</div>
+            <div class="section-card">
+                <div class="subsection-heading">Refraction</div>
+                <p>Light is bent by cornea (most power) and lens. Accommodation: ciliary muscle contraction relaxes zonules, lens becomes more rounded (for near vision). Presbyopia: loss of lens elasticity with age.</p>
+                <div class="subsection-heading">Phototransduction</div>
+                <ul>
+                    <li><strong>Rods:</strong> dim light (scotopic), rhodopsin (opsin + retinal), monochrome.</li>
+                    <li><strong>Cones:</strong> color vision (photopic), three types (red, green, blue).</li>
+                    <li>In dark: cGMP high, Na⁺ channels open (depolarized). Light activates opsin, activates transducin → activates PDE → ↓ cGMP → channels close → hyperpolarization → less glutamate release.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Night blindness:</strong> from vitamin A deficiency (retinal needed for rhodopsin).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="refractive-errors" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-glasses"></i> 3. Refractive Errors</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Error</th><th>Focus</th><th>Correction</th></tr></thead>
+                    <tbody>
+                        <tr><td>Myopia (nearsighted)</td><td>Image in front of retina</td><td>Concave (diverging) lens</td></tr>
+                        <tr><td>Hyperopia (farsighted)</td><td>Image behind retina</td><td>Convex (converging) lens</td></tr>
+                        <tr><td>Astigmatism</td><td>Irregular corneal curvature</td><td>Cylindrical lens</td></tr>
+                        <tr><td>Presbyopia</td><td>Loss of accommodation</td><td>Reading glasses (convex)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="conjunctiva-cornea" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 4. Conjunctiva & Cornea</div>
+            <div class="section-card">
+                <div class="subsection-heading">Conjunctivitis</div>
+                <ul>
+                    <li><strong>Viral:</strong> watery discharge, preauricular lymphadenopathy (adenovirus).</li>
+                    <li><strong>Bacterial:</strong> purulent discharge, injected conjunctiva (Staph, Strep, Haemophilus).</li>
+                    <li><strong>Allergic:</strong> itching, watery, cobblestone papillae.</li>
+                </ul>
+                <div class="subsection-heading">Corneal Disorders</div>
+                <ul>
+                    <li><strong>Keratitis:</strong> corneal inflammation; bacterial (contact lens wear → Pseudomonas), viral (HSV dendritic ulcer).</li>
+                    <li><strong>Corneal ulcer:</strong> painful, photophobia, fluorescein uptake.</li>
+                    <li><strong>Arcus senilis:</strong> lipid deposit; normal in elderly, in young suggests hyperlipidemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cataract" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 5. Cataract</div>
+            <div class="section-card">
+                <p>Opacity of the lens. Risk factors: age, diabetes, smoking, UV light, corticosteroids. Symptoms: gradual vision loss, glare, diminished color perception. Treatment: surgical extraction with intraocular lens implant.</p>
+            </div>
+        </section>
+
+        <section id="glaucoma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 6. Glaucoma</div>
+            <div class="section-card">
+                <p>Optic neuropathy often associated with elevated intraocular pressure (IOP).</p>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Mechanism</th><th>Features</th><th>Treatment</th></tr></thead>
+                    <tbody>
+                        <tr><td>Open‑angle</td><td>Impaired aqueous outflow through trabecular mesh</td><td>Chronic, asymptomatic initially, peripheral vision loss</td><td>Prostaglandin analogs (latanoprost), beta‑blockers (timolol), alpha‑agonists, CAIs</td></tr>
+                        <tr><td>Angle‑closure</td><td>Blockage of trabecular mesh by iris</td><td>Acute, painful, red eye, mid‑dilated pupil, nausea; emergency</td><td>Pilocarpine, acetazolamide, hyperosmotics, laser iridotomy</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="retina" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-camera"></i> 7. Retinal Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Diabetic retinopathy:</strong> microaneurysms, hemorrhages, exudates, neovascularization (proliferative).</li>
+                    <li><strong>Age‑related macular degeneration (AMD):</strong> drusen, geographic atrophy (dry) or choroidal neovascularization (wet).</li>
+                    <li><strong>Retinal detachment:</strong> flashes, floaters, curtain; emergently repair.</li>
+                    <li><strong>Retinitis pigmentosa:</strong> night blindness, tunnel vision, bone‑spicule pigmentation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="uveitis-optic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nerve"></i> 8. Uveitis & Optic Nerve</div>
+            <div class="section-card">
+                <p><strong>Uveitis:</strong> inflammation of uvea; anterior (iritis) – painful, photophobia, ciliary flush; associated with HLA‑B27, sarcoid, TB. Treatment: steroids.</p>
+                <p><strong>Optic neuritis:</strong> painful eye movement, vision loss, afferent pupillary defect; often demyelinating (multiple sclerosis).</p>
+                <p><strong>Papilledema:</strong> bilateral optic disc swelling from increased intracranial pressure.</p>
+            </div>
+        </section>
+
+        <section id="ophth-pharma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 9. Ophthalmic Pharmacology</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Drug Class</th><th>Examples</th><th>Uses</th></tr></thead>
+                    <tbody>
+                        <tr><td>Prostaglandin analogs</td><td>Latanoprost, travoprost</td><td>Increase uveoscleral outflow; first‑line for open‑angle glaucoma</td></tr>
+                        <tr><td>Beta‑blockers</td><td>Timolol</td><td>Decrease aqueous production</td></tr>
+                        <tr><td>Alpha‑agonists</td><td>Brimonidine, apraclonidine</td><td>Decrease production, increase outflow</td></tr>
+                        <tr><td>Carbonic anhydrase inhibitors</td><td>Dorzolamide, brinzolamide (topical); acetazolamide (oral)</td><td>Decrease aqueous production</td></tr>
+                        <tr><td>Miotics</td><td>Pilocarpine</td><td>Contract ciliary muscle, open trabecular meshwork; used in angle‑closure</td></tr>
+                        <tr><td>Mydriatics/cycloplegics</td><td>Tropicamide, atropine, cyclopentolate</td><td>Dilate pupil for exam; treat uveitis (prevent synechiae)</td></tr>
+                        <tr><td>Topical antibiotics</td><td>Erythromycin, ofloxacin, gentamicin</td><td>Bacterial conjunctivitis/keratitis</td></tr>
+                        <tr><td>Topical antivirals</td><td>Trifluridine, ganciclovir</td><td>HSV keratitis</td></tr>
+                        <tr><td>Corticosteroids</td><td>Prednisolone acetate, dexamethasone</td><td>Uveitis, allergic conjunctivitis, post‑op</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Systemic effects:</strong> Timolol can cause bradycardia, bronchospasm (avoid in asthma).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ENT – EAR ==================== -->
+        <section id="ear-anatomy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ear-deaf"></i> 10. Anatomy of the Ear</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>External ear:</strong> pinna, external auditory canal.</li>
+                    <li><strong>Middle ear:</strong> tympanic membrane, ossicles (malleus, incus, stapes), Eustachian tube, oval window, round window.</li>
+                    <li><strong>Inner ear:</strong> cochlea (hearing), vestibule and semicircular canals (balance).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hearing" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-volume-up"></i> 11. Hearing & Balance</div>
+            <div class="section-card">
+                <div class="subsection-heading">Hearing mechanism</div>
+                <p>Sound waves → tympanic membrane → ossicles amplify → stapes pushes oval window → pressure wave in cochlea → deflects basilar membrane → hair cells (inner hair cells signal, outer hair cells amplify) → auditory nerve.</p>
+                <div class="subsection-heading">Balance</div>
+                <p>Semicircular canals sense rotation; utricle and saccule sense linear acceleration (otoliths).</p>
+            </div>
+        </section>
+
+        <section id="hearing-loss" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ear-listen"></i> 12. Hearing Loss</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Site</th><th>Causes</th><th>Tuning fork tests</th></tr></thead>
+                    <tbody>
+                        <tr><td>Conductive</td><td>External/middle ear</td><td>Cerumen, otitis media, otosclerosis</td><td>Rinne: bone > air; Weber: lateralizes to affected ear</td></tr>
+                        <tr><td>Sensorineural</td><td>Cochlea, CN VIII, central</td><td>Noise, aging, Meniere's, ototoxicity, acoustic neuroma</td><td>Rinne: air > bone (both reduced); Weber: lateralizes to normal ear</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="otitis-media" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bug"></i> 13. Otitis Media & Externa</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Otitis externa:</strong> “swimmer's ear”; Pseudomonas, Staph; pain with manipulation; treat with topical antibiotics (neomycin, ciprofloxacin drops).</li>
+                    <li><strong>Acute otitis media:</strong> purulent middle ear infection; fever, otalgia, bulging TM; common in children; organisms: Strep pneumo, H. influenzae, Moraxella; treat with amoxicillin.</li>
+                    <li><strong>Otitis media with effusion:</strong> fluid without infection; watchful waiting.</li>
+                    <li><strong>Mastoiditis:</strong> complication of OM; tenderness over mastoid; requires IV antibiotics +/- surgery.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="meniere" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dizzy"></i> 14. Meniere's & Vertigo</div>
+            <div class="section-card">
+                <p><strong>Meniere's disease:</strong> endolymphatic hydrops; episodic vertigo, fluctuating hearing loss, tinnitus, aural fullness. Treatment: low salt, diuretics, betahistine.</p>
+                <p><strong>Benign paroxysmal positional vertigo (BPPV):</strong> canalithiasis; brief vertigo with head movement; Dix‑Hallpike test; treat with Epley maneuver.</p>
+                <p><strong>Vestibular neuritis:</strong> acute prolonged vertigo, no hearing loss; viral; treat with steroids, vestibular suppressants (meclizine, diazepam).</p>
+            </div>
+        </section>
+
+        <!-- ==================== ENT – NOSE ==================== -->
+        <section id="nose-anatomy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nose"></i> 15. Anatomy of the Nose</div>
+            <div class="section-card">
+                <ul>
+                    <li>Nasal cavity lined by respiratory epithelium (ciliated pseudostratified).</li>
+                    <li>Olfactory epithelium in superior nasal cavity.</li>
+                    <li>Paranasal sinuses: frontal, maxillary, ethmoid, sphenoid; lined by mucosa, drain via ostia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="sinusitis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-head-side-cough"></i> 16. Sinusitis</div>
+            <div class="section-card">
+                <p>Inflammation of sinuses; acute (<4 weeks) vs chronic (>12 weeks). Symptoms: facial pain, purulent nasal discharge, congestion. Organisms: Strep pneumo, H. influenzae, anaerobes (chronic). Treatment: nasal saline, intranasal steroids, antibiotics if bacterial (amoxicillin‑clavulanate). Complications: orbital cellulitis, meningitis.</p>
+            </div>
+        </section>
+
+        <section id="allergic-rhinitis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-allergies"></i> 17. Allergic Rhinitis</div>
+            <div class="section-card">
+                <p>Type I hypersensitivity (IgE). Symptoms: sneezing, itching, watery rhinorrhea, congestion. Signs: allergic shiners, nasal crease, pale boggy turbinates. Treatment: antihistamines (cetirizine, loratadine), intranasal steroids (fluticasone), leukotriene antagonists, immunotherapy.</p>
+            </div>
+        </section>
+
+        <!-- ==================== ENT – THROAT & NECK ==================== -->
+        <section id="pharynx-larynx" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-throat"></i> 18. Pharynx & Larynx</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Nasopharynx:</strong> adenoids, Eustachian tube opening.</li>
+                    <li><strong>Oropharynx:</strong> tonsils, base of tongue.</li>
+                    <li><strong>Hypopharynx:</strong> pyriform sinuses.</li>
+                    <li><strong>Larynx:</strong> vocal cords (true and false), epiglottis; innervation: recurrent laryngeal nerve (all except cricothyroid – superior laryngeal).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="tonsillitis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-virus"></i> 19. Pharyngitis & Tonsillitis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Viral:</strong> most common; rhinovirus, adenovirus, EBV (exudates, fatigue).</li>
+                    <li><strong>Group A Strep (GAS):</strong> fever, tonsillar exudates, tender cervical nodes, no cough; treat with penicillin or amoxicillin to prevent rheumatic fever.</li>
+                    <li><strong>Peritonsillar abscess (quinsy):</strong> complication; trismus, uvula deviation; ENT referral.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="osa" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-sleep"></i> 20. Obstructive Sleep Apnea</div>
+            <div class="section-card">
+                <p>Recurrent upper airway collapse during sleep; snoring, daytime sleepiness, apneas. Risk factors: obesity, macroglossia, retrognathia. Diagnosis: polysomnography. Treatment: CPAP, weight loss, mandibular advancement device, surgery (UPPP).</p>
+            </div>
+        </section>
+
+        <section id="neck-masses" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-neck"></i> 21. Neck Masses & Salivary Glands</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Lymph nodes:</strong> reactive, infectious (TB), metastatic.</li>
+                    <li><strong>Branchial cleft cyst:</strong> anterior to SCM, painless.</li>
+                    <li><strong>Thyroglossal duct cyst:</strong> midline, moves with swallowing.</li>
+                    <li><strong>Salivary glands:</strong> parotid (Stensen's duct), submandibular (Wharton's duct).</li>
+                    <li><strong>Sialadenitis:</strong> inflammation (usually parotid), often from dehydration or sialolithiasis. Bacterial: Staph aureus, treat with antibiotics, hydration, massage.</li>
+                    <li><strong>Mumps:</strong> painful parotitis; vaccine‑preventable.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ENT PHARMACOLOGY ==================== -->
+        <section id="ent-pharma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 22. ENT Pharmacology</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Uses</th></tr></thead>
+                    <tbody>
+                        <tr><td>Decongestants</td><td>Oxymetazoline (topical), pseudoephedrine (oral)</td><td>Nasal congestion; avoid >3 days topical (rhinitis medicamentosa)</td></tr>
+                        <tr><td>Intranasal corticosteroids</td><td>Fluticasone, mometasone, budesonide</td><td>Allergic rhinitis, sinusitis, nasal polyps</td></tr>
+                        <tr><td>Antihistamines</td><td>Cetirizine, loratadine, fexofenadine (2nd gen); diphenhydramine (1st gen)</td><td>Allergic rhinitis, urticaria; 1st gen cause sedation</td></tr>
+                        <tr><td>Leukotriene antagonists</td><td>Montelukast</td><td>Allergic rhinitis, asthma</td></tr>
+                        <tr><td>Antibiotics for OM</td><td>Amoxicillin, amoxicillin‑clavulanate</td><td>Acute otitis media, sinusitis</td></tr>
+                        <tr><td>Otic drops</td><td>Ciprofloxacin/dexamethasone, neomycin/polymyxin/hydrocortisone</td><td>Otitis externa, acute otitis media with tubes</td></tr>
+                        <tr><td>Vestibular suppressants</td><td>Meclizine, diazepam, promethazine</td><td>Vertigo</td></tr>
+                    </tbody>
+                </table>
+                <div class="memory-aid">
+                    <i class="fas fa-lightbulb"></i> “For allergic rhinitis: intranasal steroids are most effective; antihistamines help itching/sneezing.”
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Ophthalmology & ENT Textbook · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

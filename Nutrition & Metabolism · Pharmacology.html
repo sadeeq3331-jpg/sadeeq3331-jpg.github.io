@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition & Metabolism · Pharmacology</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-apple-alt"></i>
+        <h1>Nutrition & Metabolism · Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>VITAMINS & MINERALS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#fat-soluble"><i class="fas fa-oil-can"></i> 1. Fat‑Soluble Vitamins (A, D, E, K)</a></li>
+                <li class="chapter-item"><a href="#water-soluble"><i class="fas fa-tint"></i> 2. Water‑Soluble Vitamins (B‑complex, C)</a></li>
+                <li class="chapter-item"><a href="#minerals-pharma"><i class="fas fa-cube"></i> 3. Minerals & Trace Elements</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>OBESITY PHARMACOTHERAPY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#centrally-acting"><i class="fas fa-brain"></i> 4. Centrally Acting Anti‑Obesity Drugs</a></li>
+                <li class="chapter-item"><a href="#peripheral"><i class="fas fa-stomach"></i> 5. Peripherally Acting Drugs</a></li>
+                <li class="chapter-item"><a href="#combination"><i class="fas fa-flask"></i> 6. Combination Products</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>DRUGS FOR METABOLIC DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#diabetes-pharma"><i class="fas fa-tint"></i> 7. Antidiabetic Drugs (Review)</a></li>
+                <li class="chapter-item"><a href="#dyslipidemia"><i class="fas fa-heart"></i> 8. Lipid‑Lowering Agents</a></li>
+                <li class="chapter-item"><a href="#gout-pharma"><i class="fas fa-pills"></i> 9. Anti‑Gout Drugs</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>APPETITE STIMULANTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#appetite-stim"><i class="fas fa-utensils"></i> 10. Appetite Stimulants</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>DRUGS FOR EATING DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#eating-disorders-pharma"><i class="fas fa-pills"></i> 11. Psychotropics in Eating Disorders</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>NUTRITIONAL SUPPORT</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#enteral"><i class="fas fa-syringe"></i> 12. Enteral Nutrition</a></li>
+                <li class="chapter-item"><a href="#parenteral"><i class="fas fa-syringe"></i> 13. Parenteral Nutrition</a></li>
+                <li class="chapter-item"><a href="#refeeding"><i class="fas fa-exclamation-triangle"></i> 14. Refeeding Syndrome</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== FAT‑SOLUBLE VITAMINS ==================== -->
+        <section id="fat-soluble" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-oil-can"></i> 1. Fat‑Soluble Vitamins (A, D, E, K)</div>
+            <div class="section-card">
+                <div class="subsection-heading">Vitamin A (Retinol, Retinoic Acid)</div>
+                <ul>
+                    <li><strong>Preparations:</strong> Retinol, retinyl palmitate, tretinoin (topical for acne, photoaging), isotretinoin (oral for severe acne).</li>
+                    <li><strong>Uses:</strong> Deficiency treatment (night blindness, xerophthalmia). Isotretinoin for cystic acne.</li>
+                    <li><strong>Mechanism:</strong> Essential for vision (11‑cis retinal), epithelial integrity, gene expression.</li>
+                    <li><strong>Toxicity (hypervitaminosis A):</strong> Acute: nausea, headache, blurred vision. Chronic: alopecia, dry skin, hepatotoxicity, bone pain, increased ICP (pseudotumor cerebri). Teratogenic (isotretinoin – iPLEDGE program).</li>
+                </ul>
+                <div class="subsection-heading">Vitamin D (Cholecalciferol, Ergocalciferol)</div>
+                <ul>
+                    <li><strong>Preparations:</strong> Vitamin D₂ (ergocalciferol), vitamin D₃ (cholecalciferol), calcitriol (1,25‑OH₂D₃ active form), calcipotriene (topical for psoriasis).</li>
+                    <li><strong>Uses:</strong> Deficiency (rickets, osteomalacia), hypoparathyroidism, CKD (with phosphate binders), osteoporosis (with calcium).</li>
+                    <li><strong>Mechanism:</strong> Increases calcium absorption in gut, promotes bone mineralization.</li>
+                    <li><strong>Toxicity (hypervitaminosis D):</strong> Hypercalcemia → nausea, vomiting, weakness, confusion, nephrocalcinosis.</li>
+                </ul>
+                <div class="subsection-heading">Vitamin E (Tocopherol)</div>
+                <ul>
+                    <li><strong>Uses:</strong> Deficiency (prematurity, fat malabsorption, abetalipoproteinemia). Antioxidant.</li>
+                    <li><strong>Toxicity:</strong> High doses may increase bleeding risk (vitamin K antagonism).</li>
+                </ul>
+                <div class="subsection-heading">Vitamin K (Phytonadione, Menadione)</div>
+                <ul>
+                    <li><strong>Preparations:</strong> Vitamin K₁ (phytonadione) – oral, SC, IV. Vitamin K₂ (menaquinone) – gut bacteria.</li>
+                    <li><strong>Uses:</strong> Newborn prophylaxis (hemorrhagic disease), warfarin reversal, deficiency (malabsorption, liver disease).</li>
+                    <li><strong>Mechanism:</strong> Cofactor for γ‑carboxylation of factors II, VII, IX, X, protein C, protein S.</li>
+                    <li><strong>Toxicity:</strong> IV phytonadione can cause anaphylactoid reactions (rare).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== WATER‑SOLUBLE VITAMINS ==================== -->
+        <section id="water-soluble" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 2. Water‑Soluble Vitamins (B‑complex, C)</div>
+            <div class="section-card">
+                <div class="subsection-heading">Thiamine (Vitamin B1)</div>
+                <ul>
+                    <li><strong>Uses:</strong> Wernicke‑Korsakoff syndrome (especially in alcoholism), beriberi.</li>
+                    <li><strong>Dosing:</strong> IV/IM for acute deficiency; always give before glucose to prevent Wernicke encephalopathy.</li>
+                    <li><strong>Mechanism:</strong> Cofactor for transketolase, pyruvate dehydrogenase, α‑ketoglutarate dehydrogenase.</li>
+                </ul>
+                <div class="subsection-heading">Riboflavin (Vitamin B2)</div>
+                <ul>
+                    <li><strong>Uses:</strong> Deficiency (cheilosis, glossitis).</li>
+                </ul>
+                <div class="subsection-heading">Niacin (Vitamin B3) – Nicotinic Acid, Niacinamide</div>
+                <ul>
+                    <li><strong>Uses:</strong> Pellagra (dermatitis, diarrhea, dementia). Also used for dyslipidemia (nicotinic acid lowers LDL, raises HDL).</li>
+                    <li><strong>Side effects (nicotinic acid):</strong> Flushing (prostaglandin‑mediated; aspirin can reduce), hepatotoxicity, hyperglycemia, hyperuricemia.</li>
+                    <li><strong>Niacinamide:</strong> Does not cause flushing or dyslipidemia effects; used for pellagra only.</li>
+                </ul>
+                <div class="subsection-heading">Pyridoxine (Vitamin B6)</div>
+                <ul>
+                    <li><strong>Uses:</strong> Isoniazid‑induced neuropathy (prophylaxis), sideroblastic anemia, pyridoxine‑dependent seizures.</li>
+                    <li><strong>Mechanism:</strong> Cofactor for transaminases, decarboxylases (neurotransmitter synthesis).</li>
+                </ul>
+                <div class="subsection-heading">Folate (Vitamin B9) – Folic Acid</div>
+                <ul>
+                    <li><strong>Uses:</strong> Megaloblastic anemia (with B12 deficiency, give B12 first to avoid precipitating neurologic symptoms), pregnancy to prevent neural tube defects.</li>
+                    <li><strong>Mechanism:</strong> Converted to tetrahydrofolate; essential for DNA synthesis.</li>
+                    <li><strong>Note:</strong> Methotrexate is a folate antagonist; leucovorin (folinic acid) bypasses DHFR inhibition.</li>
+                </ul>
+                <div class="subsection-heading">Cobalamin (Vitamin B12) – Cyanocobalamin, Hydroxocobalamin</div>
+                <ul>
+                    <li><strong>Uses:</strong> Pernicious anemia, B12 deficiency, also as antidote for cyanide poisoning (hydroxocobalamin).</li>
+                    <li><strong>Administration:</strong> Oral (only if deficiency not due to malabsorption), IM/SC for pernicious anemia.</li>
+                    <li><strong>Mechanism:</strong> Cofactor for methionine synthase and methylmalonyl‑CoA mutase.</li>
+                </ul>
+                <div class="subsection-heading">Vitamin C (Ascorbic Acid)</div>
+                <ul>
+                    <li><strong>Uses:</strong> Scurvy, wound healing, urinary acidification.</li>
+                    <li><strong>Side effects:</strong> Diarrhea (high doses), kidney stones (oxalate).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== MINERALS & TRACE ELEMENTS ==================== -->
+        <section id="minerals-pharma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cube"></i> 3. Minerals & Trace Elements</div>
+            <div class="section-card">
+                <div class="subsection-heading">Iron Preparations</div>
+                <ul>
+                    <li><strong>Oral:</strong> Ferrous sulfate, ferrous gluconate, ferrous fumarate.</li>
+                    <li><strong>Parenteral:</strong> Iron dextran, iron sucrose, ferric carboxymaltose.</li>
+                    <li><strong>Uses:</strong> Iron deficiency anemia.</li>
+                    <li><strong>Side effects:</strong> GI upset, constipation, black stools; parenteral can cause anaphylactoid reactions.</li>
+                </ul>
+                <div class="subsection-heading">Zinc</div>
+                <ul>
+                    <li><strong>Uses:</strong> Zinc deficiency, acrodermatitis enteropathica, Wilson disease (as copper chelator).</li>
+                    <li><strong>Mechanism:</strong> Cofactor for many enzymes; also inhibits copper absorption.</li>
+                    <li><strong>Side effects:</strong> GI irritation, copper deficiency with chronic use.</li>
+                </ul>
+                <div class="subsection-heading">Copper</div>
+                <ul>
+                    <li><strong>Uses:</strong> Copper deficiency (rare).</li>
+                    <li><strong>Copper chelators:</strong> Penicillamine, trientine (for Wilson disease).</li>
+                </ul>
+                <div class="subsection-heading">Selenium</div>
+                <ul>
+                    <li><strong>Uses:</strong> Selenium deficiency (Keshan disease), part of multivitamin preparations.</li>
+                </ul>
+                <div class="subsection-heading">Iodine</div>
+                <ul>
+                    <li><strong>Uses:</strong> Iodine deficiency (goiter), radioactive iodine (¹³¹I) for hyperthyroidism/thyroid cancer, topical antiseptic.</li>
+                </ul>
+                <div class="subsection-heading">Calcium</div>
+                <ul>
+                    <li><strong>Preparations:</strong> Calcium carbonate, calcium citrate, calcium gluconate, calcium chloride.</li>
+                    <li><strong>Uses:</strong> Osteoporosis prevention/treatment, hypocalcemia (IV calcium gluconate/chloride).</li>
+                    <li><strong>IV forms:</strong> Calcium chloride has 3× more elemental calcium than gluconate but is more irritating.</li>
+                </ul>
+                <div class="subsection-heading">Magnesium</div>
+                <ul>
+                    <li><strong>Preparations:</strong> Magnesium oxide, hydroxide (antacid), sulfate (IV for eclampsia, hypomagnesemia).</li>
+                    <li><strong>Uses:</strong> Hypomagnesemia, eclampsia (MgSO₄).</li>
+                </ul>
+                <div class="subsection-heading">Phosphate</div>
+                <ul>
+                    <li><strong>Uses:</strong> Hypophosphatemia (oral or IV), phosphate supplementation in parenteral nutrition.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CENTRALLY ACTING ANTI‑OBESITY DRUGS ==================== -->
+        <section id="centrally-acting" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 4. Centrally Acting Anti‑Obesity Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Phentermine (sympathomimetic amine):</strong> Schedule IV, approved for short‑term use (≤12 weeks). Increases norepinephrine, suppresses appetite. Side effects: tachycardia, hypertension, insomnia, dry mouth.</li>
+                    <li><strong>Diethylpropion, benzphetamine:</strong> Similar to phentermine; also short‑term.</li>
+                    <li><strong>Liraglutide (GLP‑1 agonist):</strong> Also used for type 2 diabetes; at higher doses (Saxenda) for weight loss. Delays gastric emptying, increases satiety. Side effects: nausea, vomiting, pancreatitis, gallbladder disease.</li>
+                    <li><strong>Semaglutide (GLP‑1 agonist):</strong> (Wegovy) once weekly for obesity; similar to liraglutide.</li>
+                    <li><strong>Naltrexone/bupropion (Contrave):</strong> Combination: naltrexone (opioid antagonist) + bupropion (dopamine/norepinephrine reuptake inhibitor). Acts on hypothalamic appetite centers. Side effects: nausea, headache, seizures (lower seizure threshold).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PERIPHERALLY ACTING DRUGS ==================== -->
+        <section id="peripheral" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 5. Peripherally Acting Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Orlistat (Xenical, Alli):</strong> Inhibits gastric and pancreatic lipase → reduces fat absorption (~30%). Side effects: oily stools, fecal urgency, flatulence, malabsorption of fat‑soluble vitamins (supplement recommended). Contraindicated in cholestasis.</li>
+                    <li><strong>Setmelanotide:</strong> Melanocortin‑4 receptor agonist; used for rare genetic obesity (POMC, PCSK1, LEPR deficiencies).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== COMBINATION PRODUCTS ==================== -->
+        <section id="combination" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 6. Combination Products</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Phentermine/topiramate (Qsymia):</strong> Topiramate (antiepileptic) adds appetite suppression. Side effects: paresthesia, cognitive impairment, metabolic acidosis, teratogenic (cleft lip).</li>
+                    <li><strong>Naltrexone/bupropion (already covered).</strong></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTIDIABETIC DRUGS (REVIEW) ==================== -->
+        <section id="diabetes-pharma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 7. Antidiabetic Drugs (Review)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Biguanides:</strong> Metformin – first‑line for type 2 diabetes; reduces hepatic glucose output, improves insulin sensitivity. Side effects: GI upset, lactic acidosis (rare; avoid in renal failure).</li>
+                    <li><strong>Sulfonylureas:</strong> Glipizide, glyburide – stimulate insulin secretion. Risk of hypoglycemia.</li>
+                    <li><strong>Thiazolidinediones:</strong> Pioglitazone – increase insulin sensitivity (PPAR‑γ). Fluid retention, weight gain, fracture risk.</li>
+                    <li><strong>DPP‑4 inhibitors:</strong> Sitagliptin – increase incretins (GLP‑1, GIP). Well tolerated.</li>
+                    <li><strong>GLP‑1 agonists:</strong> Exenatide, liraglutide, semaglutide – also promote weight loss (used in obesity).</li>
+                    <li><strong>SGLT2 inhibitors:</strong> Empagliflozin, dapagliflozin – block renal glucose reabsorption; also promote weight loss.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== LIPID‑LOWERING AGENTS ==================== -->
+        <section id="dyslipidemia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 8. Lipid‑Lowering Agents</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Statins (HMG‑CoA reductase inhibitors):</strong> Atorvastatin, simvastatin, rosuvastatin – first‑line for LDL reduction. Side effects: myopathy, hepatotoxicity (rare).</li>
+                    <li><strong>Ezetimibe:</strong> Inhibits cholesterol absorption (NPC1L1).</li>
+                    <li><strong>PCSK9 inhibitors:</strong> Evolocumab, alirocumab – monoclonal antibodies increase LDL receptor recycling.</li>
+                    <li><strong>Fibrates (PPAR‑α agonists):</strong> Fenofibrate, gemfibrozil – lower triglycerides, increase HDL. Gemfibrozil contraindicated with statins (myopathy risk).</li>
+                    <li><strong>Niacin (nicotinic acid):</strong> Lowers VLDL, raises HDL; side effects: flushing, hepatotoxicity, hyperglycemia.</li>
+                    <li><strong>Omega‑3 fatty acids:</strong> Prescription (icosapent ethyl, omega‑3 ethyl esters) for hypertriglyceridemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTI‑GOUT DRUGS ==================== -->
+        <section id="gout-pharma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 9. Anti‑Gout Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Acute gout:</strong>
+                        <ul>
+                            <li>NSAIDs (indomethacin, naproxen) – first‑line.</li>
+                            <li>Colchicine – inhibits microtubule polymerization, reduces neutrophil chemotaxis. Side effects: GI toxicity, myelosuppression.</li>
+                            <li>Corticosteroids – oral or intra‑articular.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Chronic gout (urate‑lowering):</strong>
+                        <ul>
+                            <li>Xanthine oxidase inhibitors: Allopurinol, febuxostat – reduce uric acid production. Allopurinol hypersensitivity (HLA‑B*5801).</li>
+                            <li>Uricosurics: Probenecid – inhibits URAT1, increases uric acid excretion.</li>
+                            <li>Recombinant uricase: Pegloticase – for refractory gout; contraindicated in G6PD deficiency.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== APPETITE STIMULANTS ==================== -->
+        <section id="appetite-stim" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-utensils"></i> 10. Appetite Stimulants</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Megestrol acetate (progestin):</strong> Used for appetite stimulation in cancer/AIDS cachexia. Mechanism unknown. Side effects: adrenal suppression, hyperglycemia, thromboembolism.</li>
+                    <li><strong>Dronabinol (cannabinoid):</strong> Synthetic THC; used for anorexia in AIDS, chemotherapy‑induced nausea. Side effects: euphoria, dizziness.</li>
+                    <li><strong>Cyproheptadine (antihistamine with serotonin antagonism):</strong> Used for appetite stimulation in children, also for carcinoid syndrome.</li>
+                    <li><strong>Oxandrolone (anabolic steroid):</strong> Promotes weight gain in catabolic states.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PSYCHOTROPICS IN EATING DISORDERS ==================== -->
+        <section id="eating-disorders-pharma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 11. Psychotropics in Eating Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Anorexia nervosa:</strong> No FDA‑approved drugs; SSRIs (fluoxetine) may help prevent relapse after weight restoration, but not for acute weight gain. Olanzapine may help with weight gain and reduce obsessive thoughts.</li>
+                    <li><strong>Bulimia nervosa:</strong> Fluoxetine (high dose 60 mg/day) is FDA‑approved; reduces binge‑purge cycles.</li>
+                    <li><strong>Binge‑eating disorder:</strong> Lisdexamfetamine (Vyvanse) – a stimulant, FDA‑approved for moderate‑severe binge eating. Also SSRIs, topiramate.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ENTERAL NUTRITION ==================== -->
+        <section id="enteral" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 12. Enteral Nutrition</div>
+            <div class="section-card">
+                <ul>
+                    <li>Feeding via GI tract (oral, nasogastric, gastrostomy, jejunostomy). Preferred over parenteral when GI functional.</li>
+                    <li>Formulations: Standard (polymeric), elemental (peptides/amino acids), disease‑specific (diabetes, renal, hepatic).</li>
+                    <li>Complications: Aspiration, diarrhea, tube dislodgement, refeeding syndrome.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PARENTERAL NUTRITION ==================== -->
+        <section id="parenteral" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 13. Parenteral Nutrition</div>
+            <div class="section-card">
+                <ul>
+                    <li>IV nutrition for patients with non‑functioning GI tract.</li>
+                    <li>Components: Dextrose, amino acids, lipids (soybean oil, olive oil, fish oil), electrolytes, vitamins, trace elements.</li>
+                    <li>Complications: Catheter‑related infections, thrombosis, metabolic (hyperglycemia, electrolyte abnormalities, hypertriglyceridemia), liver dysfunction (PN‑associated cholestasis), refeeding syndrome.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== REFEEDING SYNDROME ==================== -->
+        <section id="refeeding" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-exclamation-triangle"></i> 14. Refeeding Syndrome</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Potentially fatal metabolic complication when feeding is reintroduced to malnourished patients after a period of starvation.
+                </div>
+                <ul>
+                    <li><strong>Pathophysiology:</strong> Insulin surge → cellular uptake of phosphate, potassium, magnesium → hypophosphatemia, hypokalemia, hypomagnesemia; fluid retention, thiamine deficiency.</li>
+                    <li><strong>Clinical:</strong> Cardiac arrhythmias, heart failure, respiratory failure, neurological symptoms, death.</li>
+                    <li><strong>Prevention:</strong> Identify at‑risk patients, start feeding slowly, monitor electrolytes, supplement phosphate, potassium, magnesium, and thiamine before feeding.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Nutrition & Metabolism · Pharmacology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

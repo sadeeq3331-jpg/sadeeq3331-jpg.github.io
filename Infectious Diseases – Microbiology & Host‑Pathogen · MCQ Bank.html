@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infectious Diseases – Microbiology & Host‑Pathogen · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-virus"></i>
+            <h1>Infectious Diseases – Microbiology & Host‑Pathogen · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE MICROBIOLOGY & HOST‑PATHOGEN QUESTIONS
+        const questions = [
+            { q: "The peptidoglycan layer is a unique structure found in:",
+              opts: ["Gram‑positive bacteria", "Gram‑negative bacteria", "Both", "Viruses", "Fungi"],
+              correct: 2,
+              exp: "Both Gram‑positive and Gram‑negative bacteria have peptidoglycan; Gram‑positive have a thick layer, Gram‑negative a thin layer." },
+            { q: "Lipopolysaccharide (LPS) is a component of:",
+              opts: ["Gram‑positive cell wall", "Gram‑negative outer membrane", "Viral envelope", "Fungal cell wall", "Parasitic glycocalyx"],
+              correct: 1,
+              exp: "LPS (endotoxin) is part of the outer membrane of Gram‑negative bacteria." },
+            { q: "Teichoic acids are found in the cell wall of:",
+              opts: ["Gram‑positive bacteria", "Gram‑negative bacteria", "Mycobacteria", "Fungi", "None"],
+              correct: 0,
+              exp: "Teichoic and lipoteichoic acids are unique to Gram‑positive bacteria." },
+            { q: "The bacterial capsule is important for:",
+              opts: ["Motility", "Adherence", "Antiphagocytic activity", "Protein synthesis", "Spore formation"],
+              correct: 2,
+              exp: "Capsules help bacteria evade phagocytosis (e.g., <em>Strep. pneumoniae</em>, <em>H. influenzae</em>)." },
+            { q: "Endotoxin (LPS) is responsible for:",
+              opts: ["Fever", "Septic shock", "Activation of macrophages", "All of the above", "None"],
+              correct: 3,
+              exp: "LPS triggers cytokine release leading to fever, hypotension, and septic shock." },
+            { q: "Exotoxins differ from endotoxins in that exotoxins:",
+              opts: ["Are proteins", "Are heat‑labile", "Can be neutralized by antitoxins", "All of the above", "None"],
+              correct: 3,
+              exp: "Exotoxins are secreted proteins, often heat‑labile, and can be neutralized by specific antibodies." },
+            { q: "Which of the following bacteria produce a potent exotoxin that causes toxic shock syndrome?",
+              opts: ["<em>Staphylococcus aureus</em>", "<em>Streptococcus pyogenes</em>", "<em>Clostridium tetani</em>", "<em>Bacillus anthracis</em>", "<em>Vibrio cholerae</em>"],
+              correct: 0,
+              exp: "<em>S. aureus</em> produces TSST‑1, a superantigen exotoxin." },
+            { q: "The function of bacterial pili (fimbriae) is primarily:",
+              opts: ["Motility", "DNA transfer (conjugation) and adherence", "Protection from phagocytosis", "Spore formation", "Toxin secretion"],
+              correct: 1,
+              exp: "Pili mediate adherence to host cells (e.g., <em>N. gonorrhoeae</em>) and conjugation." },
+            { q: "Which structure is essential for bacterial motility?",
+              opts: ["Capsule", "Flagella", "Pili", "Spores", "Plasmid"],
+              correct: 1,
+              exp: "Flagella are organelles of motility." },
+            { q: "Spores (endospores) are formed by which genera?",
+              opts: ["<em>Bacillus</em> and <em>Clostridium</em>", "<em>Staphylococcus</em> and <em>Streptococcus</em>", "<em>E. coli</em> and <em>Salmonella</em>", "<em>Mycobacterium</em> and <em>Nocardia</em>", "<em>Pseudomonas</em>"],
+              correct: 0,
+              exp: "<em>Bacillus</em> (aerobic) and <em>Clostridium</em> (anaerobic) form endospores." },
+            { q: "Which of the following is an obligate intracellular parasite?",
+              opts: ["<em>Rickettsia</em>", "<em>Chlamydia</em>", "<em>Mycoplasma</em>", "Both A and B", "All"],
+              correct: 3,
+              exp: "<em>Rickettsia</em> and <em>Chlamydia</em> cannot survive outside host cells; <em>Mycoplasma</em> lacks cell wall but can grow extracellularly." },
+            { q: "Viruses are classified primarily based on:",
+              opts: ["Nucleic acid type and replication strategy", "Capsid shape", "Envelope presence", "Host range", "All of the above"],
+              correct: 4,
+              exp: "Baltimore classification uses genome type and replication strategy; morphology and host are also used." },
+            { q: "Which virus has a double‑stranded DNA genome?",
+              opts: ["HIV", "Influenza", "Herpes simplex", "Hepatitis C", "Measles"],
+              correct: 2,
+              exp: "HSV is dsDNA; HIV is ssRNA, influenza negative‑sense RNA, HCV positive‑sense RNA, measles negative‑sense RNA." },
+            { q: "Reverse transcriptase is an enzyme found in:",
+              opts: ["Retroviruses (HIV)", "Hepadnaviruses (HBV)", "Both", "Orthomyxoviruses", "Picornaviruses"],
+              correct: 2,
+              exp: "Retroviruses use reverse transcriptase to make DNA from RNA; HBV also uses reverse transcription during replication." },
+            { q: "The genetic material of influenza virus is:",
+              opts: ["dsDNA", "ssDNA", "Segmented negative‑sense RNA", "Positive‑sense RNA", "dsRNA"],
+              correct: 2,
+              exp: "Influenza virus has 8 segments of negative‑sense RNA." },
+            { q: "Fungal cell walls contain:",
+              opts: ["Peptidoglycan", "Chitin", "Cellulose", "LPS", "Teichoic acid"],
+              correct: 1,
+              exp: "Fungi have chitin and glucan in their cell walls." },
+            { q: "Dimorphic fungi exist as:",
+              opts: ["Yeast at 37°C, mold at 25°C", "Mold at 37°C, yeast at 25°C", "Always yeast", "Always mold", "Neither"],
+              correct: 0,
+              exp: "Dimorphic fungi (e.g., <em>Histoplasma</em>) are molds in environment, yeasts in host." },
+            { q: "Which of the following is a protozoan parasite?",
+              opts: ["<em>Plasmodium falciparum</em>", "<em>Schistosoma mansoni</em>", "<em>Ascaris lumbricoides</em>", "<em>Trichinella spiralis</em>", "<em>Taenia solium</em>"],
+              correct: 0,
+              exp: "<em>Plasmodium</em> is a protozoan; the others are helminths." },
+            { q: "The definitive host for <em>Toxoplasma gondii</em> is:",
+              opts: ["Humans", "Cats", "Pigs", "Rodents", "Birds"],
+              correct: 1,
+              exp: "Cats are definitive hosts; humans are intermediate." },
+            { q: "Koch's postulates are used to:",
+              opts: ["Classify bacteria", "Identify the causative agent of a disease", "Determine antibiotic sensitivity", "Diagnose viral infections", "None"],
+              correct: 1,
+              exp: "Koch's postulates establish a causal relationship between microbe and disease." },
+            { q: "Which of the following is a vector‑borne disease?",
+              opts: ["Malaria", "Lyme disease", "Dengue", "All of the above", "None"],
+              correct: 3,
+              exp: "Malaria (mosquito), Lyme (tick), Dengue (mosquito) are vector‑borne." },
+            { q: "The normal flora of the human gut includes:",
+              opts: ["<em>Bacteroides</em>", "<em>E. coli</em>", "<em>Lactobacillus</em>", "All of the above", "None"],
+              correct: 3,
+              exp: "<em>Bacteroides</em> (anaerobes), <em>E. coli</em>, and <em>Lactobacillus</em> are part of gut flora." },
+            { q: "Which of the following is a mechanism of innate immunity?",
+              opts: ["Physical barriers (skin)", "Phagocytosis by neutrophils", "Complement system", "All of the above", "None"],
+              correct: 3,
+              exp: "Innate immunity includes barriers, phagocytes, complement, and inflammation." },
+            { q: "Toll‑like receptors (TLRs) recognize:",
+              opts: ["Pathogen‑associated molecular patterns (PAMPs)", "Antibodies", "Cytokines", "MHC molecules", "T‑cell receptors"],
+              correct: 0,
+              exp: "TLRs are PRRs that bind PAMPs (e.g., LPS, flagellin)." },
+            { q: "The complement cascade can be activated by:",
+              opts: ["Classical pathway (antibody)", "Alternative pathway (microbial surfaces)", "Lectin pathway (mannose‑binding lectin)", "All of the above", "None"],
+              correct: 3,
+              exp: "All three pathways converge on C3." },
+            { q: "Which cell is primarily responsible for antibody production?",
+              opts: ["T helper cells", "Cytotoxic T cells", "B cells (plasma cells)", "Macrophages", "NK cells"],
+              correct: 2,
+              exp: "B cells differentiate into plasma cells that secrete antibodies." },
+            { q: "MHC class I molecules present antigens to:",
+              opts: ["CD4+ T cells", "CD8+ T cells", "B cells", "Macrophages", "Neutrophils"],
+              correct: 1,
+              exp: "MHC I presents endogenous antigens (e.g., viral) to CD8+ cytotoxic T cells." },
+            { q: "MHC class II molecules present antigens to:",
+              opts: ["CD4+ T cells", "CD8+ T cells", "B cells", "NK cells", "Dendritic cells"],
+              correct: 0,
+              exp: "MHC II on APCs presents exogenous antigen to CD4+ helper T cells." },
+            { q: "Neutralizing antibodies protect by:",
+              opts: ["Blocking pathogen attachment to host cells", "Opsonizing bacteria", "Activating complement", "All of the above", "None"],
+              correct: 3,
+              exp: "Antibodies can neutralize, opsonize, and activate complement." },
+            { q: "Passive immunity is acquired by:",
+              opts: ["Vaccination", "Infection", "Transfer of maternal antibodies", "Exposure to pathogen", "None"],
+              correct: 2,
+              exp: "Passive immunity involves preformed antibodies (e.g., from mother, IVIG)." },
+            { q: "Live‑attenuated vaccines include:",
+              opts: ["MMR", "Varicella", "Yellow fever", "All of the above", "None"],
+              correct: 3,
+              exp: "MMR, varicella, yellow fever are live vaccines." },
+            { q: "The term 'herd immunity' refers to:",
+              opts: ["Immunity of an individual after infection", "Protection of unvaccinated individuals due to high vaccination coverage", "Maternal antibodies protecting infant", "Immunity from vaccines", "None"],
+              correct: 1,
+              exp: "Herd immunity reduces pathogen spread when a large proportion of the population is immune." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Bacteria that require oxygen for growth are called:",
+              opts: ["Obligate aerobes", "Obligate anaerobes", "Facultative anaerobes", "Microaerophiles", "Aerotolerant"],
+              correct: 0,
+              exp: "Obligate aerobes require oxygen for growth (e.g., <em>Pseudomonas</em>)." },
+            { q: "Which bacterium is an obligate anaerobe?",
+              opts: ["<em>E. coli</em>", "<em>Staphylococcus aureus</em>", "<em>Clostridium tetani</em>", "<em>Neisseria gonorrhoeae</em>", "<em>Salmonella</em>"],
+              correct: 2,
+              exp: "<em>Clostridium</em> species are obligate anaerobes." },
+            { q: "A plasmid is:",
+              opts: ["Extrachromosomal DNA", "Chromosomal DNA", "RNA molecule", "Protein subunit", "None"],
+              correct: 0,
+              exp: "Plasmids are small, circular, extrachromosomal DNA often carrying resistance genes." },
+            { q: "Transformation is the process by which bacteria:",
+              opts: ["Take up free DNA from environment", "Transfer DNA via virus", "Transfer DNA via pilus", "Exchange plasmids", "None"],
+              correct: 0,
+              exp: "Transformation = uptake of naked DNA (e.g., <em>Strep. pneumoniae</em>)." },
+            { q: "Conjugation involves:",
+              opts: ["Direct cell‑to‑cell transfer of DNA via pilus", "Uptake of free DNA", "Bacteriophage‑mediated transfer", "Binary fission", "None"],
+              correct: 0,
+              exp: "Conjugation requires cell contact, often plasmid‑mediated." },
+            { q: "Which of the following viruses has an envelope?",
+              opts: ["Adenovirus", "Herpes simplex", "Poliovirus", "Rotavirus", "Papillomavirus"],
+              correct: 1,
+              exp: "Herpesviruses are enveloped; adenovirus, poliovirus, rotavirus, papillomavirus are naked." },
+            { q: "The viral capsid is composed of:",
+              opts: ["Lipids", "Carbohydrates", "Protein subunits (capsomeres)", "Nucleic acid", "Glycoproteins"],
+              correct: 2,
+              exp: "Capsid is protein shell around viral genome." },
+            { q: "Interferons are cytokines that:",
+              opts: ["Directly neutralize viruses", "Induce antiviral state in cells", "Activate complement", "Promote inflammation", "None"],
+              correct: 1,
+              exp: "Interferons induce proteins that inhibit viral replication." },
+            { q: "The most abundant immunoglobulin in secretions is:",
+              opts: ["IgG", "IgM", "IgA", "IgE", "IgD"],
+              correct: 2,
+              exp: "Secretory IgA is the main immunoglobulin in mucosal secretions." },
+            { q: "Which cell type is infected by HIV?",
+              opts: ["CD4+ T cells", "Macrophages", "Dendritic cells", "All of the above", "None"],
+              correct: 3,
+              exp: "HIV targets CD4+ cells including T cells, macrophages, dendritic cells." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

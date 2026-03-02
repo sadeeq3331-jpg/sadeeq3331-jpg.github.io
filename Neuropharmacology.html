@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuropharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-brain"></i>
+        <h1>Neuropharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>DEGENERATIVE DISORDERS</h3>
+            <ul class="chapter-list">
+                <li><a href="#parkinson"><i class="fas fa-bolt"></i> 1. Parkinson's Disease Drugs</a></li>
+                <li><a href="#alzheimer"><i class="fas fa-brain"></i> 2. Alzheimer's Disease Drugs</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>EPILEPSY & SEIZURES</h3>
+            <ul class="chapter-list">
+                <li><a href="#antiepileptics"><i class="fas fa-bolt"></i> 3. Antiepileptic Drugs</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PSYCHIATRIC DISORDERS</h3>
+            <ul class="chapter-list">
+                <li><a href="#antipsychotics"><i class="fas fa-pills"></i> 4. Antipsychotics</a></li>
+                <li><a href="#antidepressants"><i class="fas fa-heart"></i> 5. Antidepressants</a></li>
+                <li><a href="#mood-stabilizers"><i class="fas fa-chart-line"></i> 6. Mood Stabilizers</a></li>
+                <li><a href="#anxiolytics"><i class="fas fa-bed"></i> 7. Anxiolytics & Hypnotics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PAIN & ANESTHESIA</h3>
+            <ul class="chapter-list">
+                <li><a href="#opioids"><i class="fas fa-syringe"></i> 8. Opioid Analgesics</a></li>
+                <li><a href="#general-anesthetics"><i class="fas fa-hospital"></i> 9. General Anesthetics</a></li>
+                <li><a href="#local-anesthetics"><i class="fas fa-pills"></i> 10. Local Anesthetics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>OTHER CNS DRUGS</h3>
+            <ul class="chapter-list">
+                <li><a href="#stimulants"><i class="fas fa-bolt"></i> 11. CNS Stimulants</a></li>
+                <li><a href="#migraine"><i class="fas fa-head-side-brain"></i> 12. Migraine Drugs</a></li>
+                <li><a href="#muscle-relaxants"><i class="fas fa-dumbbell"></i> 13. Muscle Relaxants</a></li>
+                <li><a href="#substance-abuse"><i class="fas fa-smoking"></i> 14. Drugs for Substance Abuse</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CHAPTER 1: PARKINSON'S DISEASE DRUGS ==================== -->
+        <section id="parkinson" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 1. Drugs for Parkinson's Disease</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Parkinson's disease results from degeneration of dopaminergic neurons in the substantia nigra, leading to striatal dopamine deficiency. Pharmacotherapy aims to restore dopamine activity or modulate other neurotransmitters.</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug Class</th><th>Examples</th><th>Mechanism</th><th>Key Points</th></tr></thead>
+                    <tbody>
+                        <tr><td>Levodopa (L‑DOPA)</td><td>Levodopa (with carbidopa)</td><td>Precursor of dopamine; crosses BBB</td><td>Most effective; always combined with carbidopa (peripheral decarboxylase inhibitor) to reduce peripheral conversion. Long‑term use leads to motor fluctuations and dyskinesias.</td></tr>
+                        <tr><td>Dopamine agonists</td><td>Pramipexole, ropinirole, rotigotine, apomorphine</td><td>Directly stimulate dopamine D₂ receptors</td><td>Less potent than levodopa; used as monotherapy in early disease or adjunct. May cause impulse control disorders.</td></tr>
+                        <tr><td>MAO‑B inhibitors</td><td>Selegiline, rasagiline</td><td>Inhibit metabolism of dopamine</td><td>Mild efficacy; may be used early or as adjunct. Selegiline metabolized to amphetamine (insomnia).</td></tr>
+                        <tr><td>COMT inhibitors</td><td>Entacapone, tolcapone</td><td>Inhibit peripheral metabolism of levodopa</td><td>Used with levodopa to reduce “off” time. Tolcapone can cause hepatotoxicity (monitor LFTs).</td></tr>
+                        <tr><td>Anticholinergics</td><td>Benztropine, trihexyphenidyl</td><td>Block central muscarinic receptors</td><td>Useful for tremor, but side effects (dry mouth, confusion, constipation). Limited use in elderly.</td></tr>
+                        <tr><td>Amantadine</td><td>Amantadine</td><td>Antiviral with weak dopamine agonist and anticholinergic effects; also blocks NMDA receptors</td><td>Reduces dyskinesias; used as adjunct.</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Levodopa is the gold standard, but long‑term therapy leads to motor complications. COMT inhibitors and MAO‑B inhibitors can prolong levodopa effect. Avoid abrupt withdrawal of antiparkinsonian drugs (may cause neuroleptic malignant‑like syndrome).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 2: ALZHEIMER'S DISEASE DRUGS ==================== -->
+        <section id="alzheimer" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 2. Drugs for Alzheimer's Disease</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Alzheimer's disease is associated with loss of cholinergic neurons and accumulation of amyloid plaques and neurofibrillary tangles. Current drugs provide symptomatic benefit.</p>
+                </div>
+                <div class="subsection-heading">Cholinesterase Inhibitors</div>
+                <ul>
+                    <li><strong>Donepezil, rivastigmine, galantamine</strong>: Inhibit acetylcholinesterase, increasing synaptic ACh in brain.</li>
+                    <li><strong>Uses:</strong> Mild to moderate Alzheimer's disease (donepezil also for severe).</li>
+                    <li><strong>Adverse effects:</strong> Nausea, vomiting, diarrhea, bradycardia, syncope (vagotonic effects).</li>
+                </ul>
+                <div class="subsection-heading">NMDA Receptor Antagonist</div>
+                <ul>
+                    <li><strong>Memantine:</strong> Non‑competitive antagonist of NMDA receptors; reduces excitotoxicity.</li>
+                    <li><strong>Uses:</strong> Moderate to severe Alzheimer's disease; often combined with donepezil.</li>
+                    <li><strong>Adverse effects:</strong> Dizziness, headache, constipation.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Cholinesterase inhibitors can cause bradycardia and should be used with caution in patients with sick sinus syndrome or on beta‑blockers.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 3: ANTIEPILEPTIC DRUGS ==================== -->
+        <section id="antiepileptics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 3. Antiepileptic Drugs</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Antiepileptics suppress neuronal hyperexcitability by modulating ion channels or neurotransmitter systems. Choice depends on seizure type.</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Seizure Types</th><th>Key Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Phenytoin</td><td>Use‑dependent Na⁺ channel blocker</td><td>Focal, generalized tonic‑clonic</td><td>Gingival hyperplasia, hirsutism, nystagmus, ataxia, rash, Stevens‑Johnson syndrome, osteoporosis, drug interactions (CYP inducer).</td></tr>
+                        <tr><td>Carbamazepine</td><td>Na⁺ channel blocker</td><td>Focal, generalized tonic‑clonic</td><td>Drowsiness, ataxia, diplopia, SIADH, rash, Stevens‑Johnson, agranulocytosis, CYP inducer.</td></tr>
+                        <tr><td>Oxcarbazepine</td><td>Na⁺ channel blocker</td><td>Focal</td><td>Less CYP induction; hyponatremia more common.</td></tr>
+                        <tr><td>Valproate (valproic acid)</td><td>Multiple: Na⁺ channel, GABA potentiation, T‑type Ca²⁺ blockade</td><td>Broad spectrum (focal, generalized, absence, myoclonic)</td><td>Hepatotoxicity, thrombocytopenia, weight gain, tremor, neural tube defects (pregnancy category D).</td></tr>
+                        <tr><td>Lamotrigine</td><td>Na⁺ channel blocker, inhibits glutamate release</td><td>Focal, generalized tonic‑clonic, absence, Lennox‑Gastaut</td><td>Rash (including Stevens‑Johnson) – slow titration required.</td></tr>
+                        <tr><td>Levetiracetam</td><td>Binds SV2A protein</td><td>Broad spectrum</td><td>Irritability, agitation, psychosis; few drug interactions.</td></tr>
+                        <tr><td>Topiramate</td><td>Multiple: Na⁺ channel, GABA potentiation, AMPA antagonism, carbonic anhydrase inhibition</td><td>Focal, generalized, migraine prophylaxis</td><td>Weight loss, cognitive slowing, nephrolithiasis, metabolic acidosis, angle‑closure glaucoma.</td></tr>
+                        <tr><td>Phenobarbital</td><td>GABA<sub>A</sub> potentiation</td><td>Focal, generalized, status epilepticus</td><td>Sedation, tolerance, dependence, CYP inducer.</td></tr>
+                        <tr><td>Benzodiazepines</td><td>GABA<sub>A</sub> potentiation</td><td>Status epilepticus (lorazepam, diazepam), adjunct</td><td>Tolerance, sedation, dependence.</td></tr>
+                        <tr><td>Ethosuximide</td><td>T‑type Ca²⁺ channel blocker</td><td>Absence seizures only</td><td>GI upset, rash, headache.</td></tr>
+                        <tr><td>Gabapentin, Pregabalin</td><td>Ca²⁺ channel α2δ subunit blocker</td><td>Focal seizures, neuropathic pain</td><td>Dizziness, sedation, weight gain.</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Valproate is contraindicated in pregnancy due to teratogenicity and cognitive impairment risk. Lamotrigine requires slow titration to avoid severe rash.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 4: ANTIPSYCHOTICS ==================== -->
+        <section id="antipsychotics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 4. Antipsychotics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Antipsychotics are used for schizophrenia, bipolar disorder, and other psychoses. They are classified as typical (first‑generation) and atypical (second‑generation).</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Typical (FGA)</td><td>Haloperidol, chlorpromazine, fluphenazine</td><td>D₂ receptor antagonism (strong)</td><td>Extrapyramidal symptoms (EPS): dystonia, parkinsonism, akathisia, tardive dyskinesia. Neuroleptic malignant syndrome (NMS). Anticholinergic effects (chlorpromazine more).</td></tr>
+                        <tr><td>Atypical (SGA)</td><td>Clozapine, risperidone, olanzapine, quetiapine, aripiprazole, ziprasidone, paliperidone</td><td>D₂ + 5‑HT₂A antagonism (partial agonist at D₂ for aripiprazole)</td><td>Less EPS (except risperidone high dose). Metabolic syndrome: weight gain, diabetes, dyslipidemia (most with clozapine, olanzapine). Clozapine: agranulocytosis (monitor WBC), myocarditis, sialorrhea.</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Key Points</div>
+                <ul>
+                    <li><strong>Clozapine:</strong> Reserved for treatment‑resistant schizophrenia due to agranulocytosis risk; requires regular blood monitoring.</li>
+                    <li><strong>EPS:</strong> More common with high‑potency typicals (haloperidol). Atypicals are preferred for first‑line therapy.</li>
+                    <li><strong>NMS:</strong> Life‑threatening; presents with rigidity, fever, autonomic instability, elevated CK. Treatment: dantrolene, bromocriptine, supportive care.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 5: ANTIDEPRESSANTS ==================== -->
+        <section id="antidepressants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 5. Antidepressants</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>SSRIs</td><td>Fluoxetine, sertraline, paroxetine, citalopram, escitalopram</td><td>Selective serotonin reuptake inhibition</td><td>GI upset, sexual dysfunction, insomnia, serotonin syndrome (with MAOIs). Paroxetine most anticholinergic.</td></tr>
+                        <tr><td>SNRIs</td><td>Venlafaxine, duloxetine, desvenlafaxine</td><td>Serotonin and norepinephrine reuptake inhibition</td><td>Nausea, dizziness, hypertension (especially venlafaxine), withdrawal syndrome.</td></tr>
+                        <tr><td>TCAs</td><td>Amitriptyline, nortriptyline, imipramine, desipramine</td><td>Block reuptake of serotonin/norepinephrine; also block histamine, ACh, α₁ receptors</td><td>Sedation, dry mouth, constipation, urinary retention, orthostatic hypotension, cardiotoxicity (QT prolongation), lethal in overdose.</td></tr>
+                        <tr><td>MAOIs</td><td>Phenelzine, tranylcypromine, isocarboxazid; selegiline (patch)</td><td>Irreversible inhibition of MAO‑A and/or MAO‑B</td><td>Hypertensive crisis with tyramine (avoid aged cheese, wine). Serotonin syndrome with other serotonergic drugs. Orthostatic hypotension, weight gain.</td></tr>
+                        <tr><td>Atypicals</td><td>Bupropion, mirtazapine, trazodone, vortioxetine, vilazodone</td><td>Various</td><td>Bupropion: no sexual side effects, seizure risk (avoid in eating disorders). Mirtazapine: sedation, weight gain. Trazodone: sedation, priapism.</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> SSRIs are first‑line for depression. Avoid MAOIs with other serotonergics. TCAs are effective but dangerous in overdose.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 6: MOOD STABILIZERS ==================== -->
+        <section id="mood-stabilizers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 6. Mood Stabilizers</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Lithium:</strong> Mechanism unclear; modulates inositol phosphate, G proteins, and neuroprotection. Used for bipolar disorder (mania and maintenance). Narrow therapeutic index (0.6‑1.2 mEq/L). Toxicity: polyuria, polydipsia, tremor, nausea, ataxia, seizures, coma, arrhythmias. Monitor renal, thyroid function, and lithium levels.</li>
+                    <li><strong>Valproate:</strong> Effective for acute mania. Also used in epilepsy. Adverse effects: hepatotoxicity, thrombocytopenia, weight gain.</li>
+                    <li><strong>Carbamazepine, oxcarbazepine:</strong> Anticonvulsants with mood‑stabilizing properties. Carbamazepine induces its own metabolism; may cause SIADH, rash.</li>
+                    <li><strong>Lamotrigine:</strong> More effective for bipolar depression than mania; slow titration to avoid rash.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 7: ANXIOLYTICS & HYPNOTICS ==================== -->
+        <section id="anxiolytics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bed"></i> 7. Anxiolytics & Hypnotics</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Uses</th><th>Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Benzodiazepines</td><td>Alprazolam, lorazepam, diazepam, clonazepam</td><td>Positive allosteric modulators of GABA<sub>A</sub></td><td>Anxiety, panic, insomnia, seizures, muscle spasm</td><td>Sedation, tolerance, dependence, withdrawal, anterograde amnesia. Avoid with alcohol.</td></tr>
+                        <tr><td>Z‑drugs (non‑BZD hypnotics)</td><td>Zolpidem, eszopiclone, zaleplon</td><td>Selective GABA<sub>A</sub> α1 subunit</td><td>Insomnia (short‑term)</td><td>Similar to BZDs but shorter half‑life; sleepwalking, hallucinations.</td></tr>
+                        <tr><td>Buspirone</td><td>Buspirone</td><td>Partial 5‑HT₁A agonist</td><td>Generalized anxiety (chronic)</td><td>No sedation, no dependence; delayed onset (weeks).</td></tr>
+                        <tr><td>Beta‑blockers</td><td>Propranolol</td><td>β blockade</td><td>Performance anxiety (situational)</td><td>Bradycardia, hypotension.</td></tr>
+                        <tr><td>Antihistamines</td><td>Hydroxyzine</td><td>H₁ blockade</td><td>Mild anxiety, pruritus</td><td>Sedation.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 8: OPIOID ANALGESICS ==================== -->
+        <section id="opioids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 8. Opioid Analgesics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Opioids act on μ, κ, and δ receptors. μ receptor activation produces analgesia, euphoria, respiratory depression, and physical dependence.</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Properties</th><th>Key Points</th></tr></thead>
+                    <tbody>
+                        <tr><td>Morphine</td><td>Prototypical μ agonist</td><td>Metabolite morphine‑6‑glucuronide active. Histamine release (pruritus, hypotension).</td></tr>
+                        <tr><td>Codeine</td><td>Prodrug (CYP2D6 to morphine)</td><td>Weak analgesic; also antitussive.</td></tr>
+                        <tr><td>Oxycodone, hydrocodone</td><td>Semi‑synthetic</td><td>High abuse potential.</td></tr>
+                        <tr><td>Methadone</td><td>Long half‑life, NMDA antagonist</td><td>Used for chronic pain and opioid addiction; QT prolongation.</td></tr>
+                        <tr><td>Fentanyl</td><td>High potency (100× morphine)</td><td>Transdermal, IV; rapid onset; risk of respiratory depression.</td></tr>
+                        <tr><td>Meperidine (pethidine)</td><td>μ agonist</td><td>Metabolite normeperidine causes seizures; avoid in renal impairment, with MAOIs (serotonin syndrome).</td></tr>
+                        <tr><td>Tramadol</td><td>Weak μ agonist + inhibits reuptake of 5‑HT/NE</td><td>Seizure risk; serotonin syndrome with SSRIs.</td></tr>
+                        <tr><td>Naloxone</td><td>μ antagonist (antidote)</td><td>IV/IM; short half‑life (may need repeat). Precipitates withdrawal.</td></tr>
+                        <tr><td>Buprenorphine</td><td>Partial μ agonist</td><td>Used for addiction; ceiling effect on respiratory depression.</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Adverse effects:</strong> Respiratory depression (cause of death), constipation, nausea, sedation, tolerance, dependence. Miosis (except meperidine).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 9: GENERAL ANESTHETICS ==================== -->
+        <section id="general-anesthetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hospital"></i> 9. General Anesthetics</div>
+            <div class="section-card">
+                <div class="subsection-heading">Inhaled Anesthetics</div>
+                <ul>
+                    <li><strong>Halothane:</strong> Hepatotoxicity (halothane hepatitis), sensitizes myocardium to catecholamines.</li>
+                    <li><strong>Isoflurane, desflurane, sevoflurane:</strong> Low metabolism, rapid recovery. Desflurane irritates airways.</li>
+                    <li><strong>Nitrous oxide:</strong> Weak anesthetic, analgesic; can cause megaloblastic anemia with prolonged use (oxidizes vitamin B12).</li>
+                </ul>
+                <div class="subsection-heading">Intravenous Anesthetics</div>
+                <ul>
+                    <li><strong>Propofol:</strong> GABA<sub>A</sub> potentiation; rapid onset/offset; used for induction/maintenance; pain on injection, respiratory depression, hypotension. Risk of propofol infusion syndrome (high doses).</li>
+                    <li><strong>Thiopental (barbiturate):</strong> GABA<sub>A</sub>; used for induction; respiratory depression, hypotension.</li>
+                    <li><strong>Etomidate:</strong> Minimal hemodynamic effects; adrenal suppression (even single dose).</li>
+                    <li><strong>Ketamine:</strong> NMDA antagonist; dissociative anesthesia; sympathetic stimulation (increases HR, BP); emergence reactions.</li>
+                    <li><strong>Midazolam, diazepam:</strong> Benzodiazepines; used for sedation, induction (less common).</li>
+                </ul>
+                <div class="subsection-heading">Neuromuscular Blockers (NMB)</div>
+                <ul>
+                    <li><strong>Depolarizing:</strong> Succinylcholine – causes fasciculations, hyperkalemia, malignant hyperthermia trigger, prolonged apnea in pseudocholinesterase deficiency.</li>
+                    <li><strong>Non‑depolarizing:</strong> Rocuronium, vecuronium, atracurium, cisatracurium – competitive antagonists; reversal with neostigmine (anticholinesterase) plus glycopyrrolate or sugammadex (for rocuronium).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 10: LOCAL ANESTHETICS ==================== -->
+        <section id="local-anesthetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 10. Local Anesthetics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Local anesthetics block voltage‑gated Na⁺ channels, preventing nerve conduction. They are classified as esters or amides.</p>
+                </div>
+                <ul>
+                    <li><strong>Esters:</strong> Cocaine, procaine, benzocaine, tetracaine. Metabolized by pseudocholinesterase; may cause allergic reactions.</li>
+                    <li><strong>Amides:</strong> Lidocaine, bupivacaine, ropivacaine, mepivacaine. Metabolized by liver; rarely allergic.</li>
+                </ul>
+                <div class="subsection-heading">Key Points</div>
+                <ul>
+                    <li><strong>Lidocaine:</strong> Also antiarrhythmic (Class Ib). Maximum dose with epinephrine 7 mg/kg, without 4.5 mg/kg.</li>
+                    <li><strong>Bupivacaine:</strong> Long duration; more cardiotoxic (ventricular arrhythmias) if injected IV.</li>
+                    <li><strong>Cocaine:</strong> Only local anesthetic with vasoconstrictor effect (inhibits NE reuptake); used for nasal procedures.</li>
+                    <li><strong>Toxicity:</strong> CNS: numbness, tingling, seizures, coma. CVS: hypotension, arrhythmias. Treatment: lipid emulsion (especially for bupivacaine).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 11: CNS STIMULANTS ==================== -->
+        <section id="stimulants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 11. CNS Stimulants</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Amphetamines:</strong> Increase dopamine and norepinephrine release; used for ADHD, narcolepsy. Side effects: insomnia, anorexia, tachycardia, abuse potential.</li>
+                    <li><strong>Methylphenidate:</strong> Blocks dopamine and norepinephrine reuptake; similar uses and side effects.</li>
+                    <li><strong>Modafinil:</strong> Promotes wakefulness; used for narcolepsy, shift work disorder; mechanism unclear (dopamine reuptake inhibition). Low abuse potential.</li>
+                    <li><strong>Caffeine:</strong> Adenosine receptor antagonist; mild stimulant; tolerance, withdrawal headache.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 12: MIGRAINE DRUGS ==================== -->
+        <section id="migraine" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-head-side-brain"></i> 12. Migraine Drugs</div>
+            <div class="section-card">
+                <div class="subsection-heading">Acute (Abortive) Therapy</div>
+                <ul>
+                    <li><strong>Triptans:</strong> Sumatriptan, rizatriptan, etc. – 5‑HT₁B/1D agonists, vasoconstrict cerebral vessels. Contraindicated in CAD, stroke, uncontrolled hypertension.</li>
+                    <li><strong>Ergot alkaloids:</strong> Ergotamine, dihydroergotamine – non‑selective serotonin agonists; also vasoconstrict. Risk of ergotism.</li>
+                    <li><strong>NSAIDs, acetaminophen, antiemetics.</strong></li>
+                </ul>
+                <div class="subsection-heading">Preventive (Prophylactic) Therapy</div>
+                <ul>
+                    <li><strong>Beta‑blockers:</strong> Propranolol, timolol.</li>
+                    <li><strong>Anticonvulsants:</strong> Valproate, topiramate.</li>
+                    <li><strong>Antidepressants:</strong> Amitriptyline, venlafaxine.</li>
+                    <li><strong>Calcium channel blockers:</strong> Verapamil.</li>
+                    <li><strong>CGRP monoclonal antibodies:</strong> Erenumab, fremanezumab, galcanezumab – novel preventive.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 13: MUSCLE RELAXANTS ==================== -->
+        <section id="muscle-relaxants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dumbbell"></i> 13. Muscle Relaxants</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Baclofen:</strong> GABA<sub>B</sub> agonist; used for spasticity (MS, spinal cord injury). Side effects: sedation, weakness, withdrawal syndrome.</li>
+                    <li><strong>Tizanidine:</strong> α₂ agonist (centrally acting); for spasticity. Sedation, hypotension, hepatotoxicity.</li>
+                    <li><strong>Dantrolene:</strong> Directly acts on skeletal muscle ryanodine receptors, inhibiting Ca²⁺ release; used for malignant hyperthermia, spasticity. Hepatotoxicity.</li>
+                    <li><strong>Cyclobenzaprine, carisoprodol, methocarbamol:</strong> Centrally acting; used for acute muscle spasms. Sedation, anticholinergic effects. Carisoprodol metabolized to meprobamate (abuse potential).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 14: DRUGS FOR SUBSTANCE ABUSE ==================== -->
+        <section id="substance-abuse" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-smoking"></i> 14. Drugs for Substance Abuse</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Alcohol dependence:</strong> Naltrexone (opioid antagonist reduces craving), acamprosate (modulates glutamate), disulfiram (inhibits acetaldehyde dehydrogenase; causes aversive reaction with alcohol).</li>
+                    <li><strong>Opioid dependence:</strong> Methadone (long‑acting μ agonist), buprenorphine (partial μ agonist), naltrexone (antagonist).</li>
+                    <li><strong>Nicotine dependence:</strong> Nicotine replacement (patch, gum), varenicline (partial nicotinic agonist), bupropion.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Neuropharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

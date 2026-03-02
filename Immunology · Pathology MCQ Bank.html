@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immunology · Pathology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-shield-alt"></i>
+        <h1>Immunology · Pathology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ IMMUNOLOGY PATHOLOGY (IMMUNODEFICIENCY, HYPERSENSITIVITY, AUTOIMMUNITY) QUESTIONS
+    const questions = [
+        { q: "Which primary immunodeficiency is characterized by absence of T cells due to thymic aplasia?",
+          opts: ["DiGeorge syndrome (22q11.2 deletion)", "Severe combined immunodeficiency (SCID)", "Bruton agammaglobulinemia", "Chediak‑Higashi syndrome", "Chronic granulomatous disease"],
+          correct: 0,
+          exp: "DiGeorge: thymic hypoplasia → T‑cell deficiency, hypoparathyroidism, cardiac defects." },
+        { q: "X‑linked agammaglobulinemia (Bruton) is caused by a defect in:",
+          opts: ["BTK (Bruton tyrosine kinase)", "CD40L", "IL‑2 receptor γ chain", "Adenosine deaminase", "NADPH oxidase"],
+          correct: 0,
+          exp: "BTK mutation → B‑cell maturation arrest → absent immunoglobulins, recurrent bacterial infections." },
+        { q: "Severe combined immunodeficiency (SCID) can result from deficiency of:",
+          opts: ["Adenosine deaminase (ADA)", "CD40L", "MHC class II", "TAP", "C1 inhibitor"],
+          correct: 0,
+          exp: "ADA deficiency leads to accumulation of toxic metabolites, killing lymphocytes." },
+        { q: "Chronic granulomatous disease (CGD) is caused by defects in:",
+          opts: ["NADPH oxidase (phagocyte respiratory burst)", "Myeloperoxidase", "Complement C3", "IgG", "Mannose‑binding lectin"],
+          correct: 0,
+          exp: "CGD: phagocytes cannot produce superoxide; recurrent infections with catalase‑positive bacteria/fungi." },
+        { q: "Leukocyte adhesion deficiency (LAD) type I is due to lack of:",
+          opts: ["CD18 (β2 integrin)", "CD11a", "CD15s", "ICAM‑1", "Selectin"],
+          correct: 0,
+          exp: "CD18 deficiency impairs neutrophil adhesion/migration → delayed umbilical cord separation, infections." },
+        { q: "Wiskott‑Aldrich syndrome (WAS) is characterized by:",
+          opts: ["Thrombocytopenia (small platelets), eczema, recurrent infections, lymphoma risk", "Hepatosplenomegaly, pancytopenia", "Hyper‑IgM, neutropenia", "Ataxia, telangiectasias", "Mucocutaneous candidiasis"],
+          correct: 0,
+          exp: "WAS: X‑linked; WAS protein mutation affects cytoskeleton → immunodeficiency, thrombocytopenia, eczema." },
+        { q: "Hyper‑IgM syndrome (X‑linked) is most commonly due to mutation in:",
+          opts: ["CD40 ligand (CD40L)", "CD40", "AID", "UNG", "NEMO"],
+          correct: 0,
+          exp: "CD40L deficiency → B cells cannot class switch, so IgM elevated, other isotypes low." },
+        { q: "Ataxia‑telangiectasia is an autosomal recessive disorder caused by mutation in ATM gene. It features:",
+          opts: ["Cerebellar ataxia, telangiectasias, immunodeficiency, increased malignancy risk", "Thrombocytopenia, eczema", "Recurrent sinopulmonary infections, splenomegaly", "Partial albinism, giant lysosomes", "Hyper‑IgE, coarse facies"],
+          correct: 0,
+          exp: "ATM defect leads to DNA repair defect, neurodegeneration, immune defects, and lymphoma/leukemia risk." },
+        { q: "Chediak‑Higashi syndrome is caused by LYST mutation and presents with:",
+          opts: ["Partial oculocutaneous albinism, recurrent infections, giant lysosomal granules", "Thrombocytopenia, eczema", "Ataxia, telangiectasias", "Hyper‑IgE, coarse facies", "Gum hypertrophy, cardiac defects"],
+          correct: 0,
+          exp: "LYST defect impairs phagosome‑lysosome fusion; patients have giant granules in leukocytes." },
+        { q: "Job syndrome (hyper‑IgE syndrome) is characterized by:",
+          opts: ["Elevated IgE, recurrent staphylococcal abscesses, coarse facies, delayed shedding of primary teeth", "Thrombocytopenia, eczema", "Ataxia, telangiectasias", "Partial albinism, giant granules", "Recurrent neisserial infections"],
+          correct: 0,
+          exp: "Hyper‑IgE syndrome (STAT3 mutation) presents with 'cold' abscesses, eczema, eosinophilia, and characteristic facies." },
+        { q: "Selective IgA deficiency is the most common primary immunodeficiency. It is associated with:",
+          opts: ["Recurrent sinopulmonary and GI infections, anaphylaxis with IgA‑containing blood products", "Severe bacterial infections in infancy", "Opportunistic infections", "Autoimmunity only", "Thrombocytopenia"],
+          correct: 0,
+          exp: "Many patients are asymptomatic, but some have infections; anti‑IgA antibodies can cause transfusion reactions." },
+        { q: "Common variable immunodeficiency (CVID) typically presents with:",
+          opts: ["Hypogammaglobulinemia, recurrent sinopulmonary infections, autoimmune phenomena", "Severe T‑cell deficiency", "Absent B cells", "Hyper‑IgM", "Complement deficiency"],
+          correct: 0,
+          exp: "CVID is a heterogeneous disorder with low IgG, IgA, and/or IgM, leading to infections and autoimmunity." },
+        { q: "Transient hypogammaglobulinemia of infancy occurs because:",
+          opts: ["Physiologic nadir of IgG after maternal antibodies wane; may be prolonged", "B‑cell maturation defect", "T‑cell deficiency", "Thymic aplasia", "X‑linked defect"],
+          correct: 0,
+          exp: "It is a temporary delay in immunoglobulin production, usually resolving by 2‑4 years." },
+        { q: "Complement deficiency of which component increases susceptibility to encapsulated bacteria?",
+          opts: ["C3", "C1q", "C2", "C4", "C9"],
+          correct: 0,
+          exp: "C3 deficiency impairs opsonization and leads to severe pyogenic infections." },
+        { q: "Deficiency of which complement component is associated with increased risk of neisserial infections?",
+          opts: ["C5‑C9 (membrane attack complex)", "C1q", "C4", "C2", "Factor B"],
+          correct: 0,
+          exp: "MAC deficiencies (C5‑C9) impair lysis of Neisseria." },
+        { q: "Hereditary angioedema is caused by deficiency of:",
+          opts: ["C1 inhibitor", "C3", "C4", "C2", "Factor I"],
+          correct: 0,
+          exp: "C1‑INH deficiency leads to uncontrolled bradykinin production → episodic angioedema without urticaria." },
+        { q: "Paroxysmal nocturnal hemoglobinuria (PNH) results from deficiency of:",
+          opts: ["CD55 and CD59 (GPI‑anchored proteins)", "C1 inhibitor", "Factor H", "Factor I", "Properdin"],
+          correct: 0,
+          exp: "PNH: loss of GPI‑anchored complement regulators → complement‑mediated RBC lysis." },
+        { q: "Type I hypersensitivity (immediate) is mediated by:",
+          opts: ["IgE, mast cells, basophils", "IgG, complement", "IgM, complement", "T cells", "Immune complexes"],
+          correct: 0,
+          exp: "Type I: allergen cross‑links IgE on mast cells → degranulation (histamine, leukotrienes)." },
+        { q: "Anaphylaxis is a severe form of which hypersensitivity reaction?",
+          opts: ["Type I", "Type II", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Anaphylaxis is a systemic type I hypersensitivity." },
+        { q: "Which type of hypersensitivity involves antibody‑mediated destruction of cells (e.g., autoimmune hemolytic anemia)?",
+          opts: ["Type II", "Type I", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Type II: IgG/IgM bind to cell surface antigens → complement activation, ADCC." },
+        { q: "Goodpasture syndrome is an example of which hypersensitivity reaction?",
+          opts: ["Type II (anti‑basement membrane antibody)", "Type I", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Anti‑collagen IV antibodies attack glomerular and alveolar basement membranes." },
+        { q: "Type III hypersensitivity involves:",
+          opts: ["Immune complex deposition in tissues", "IgE and mast cells", "Antibody binding to cell surface", "T‑cell mediated", "Autoantibodies stimulating receptors"],
+          correct: 0,
+          exp: "Type III: soluble antigen‑antibody complexes deposit in vessels, joints, glomeruli → complement activation." },
+        { q: "Systemic lupus erythematosus (SLE) is a prototype of which hypersensitivity?",
+          opts: ["Type III (immune complex)", "Type II", "Type I", "Type IV", "Type V"],
+          correct: 0,
+          exp: "SLE involves immune complex deposition (anti‑DNA, etc.) causing vasculitis, nephritis, arthritis." },
+        { q: "Arthus reaction (local type III) occurs after:",
+          opts: ["Injection of antigen into immune individual (precipitating antibodies)", "Allergen exposure", "Transfusion", "Tuberculin test", "Contact dermatitis"],
+          correct: 0,
+          exp: "Arthus: local immune complex formation → edema, hemorrhage, necrosis." },
+        { q: "Type IV hypersensitivity is mediated by:",
+          opts: ["T cells (Th1, Th17, CTL)", "Antibodies", "Complement", "Mast cells", "Neutrophils"],
+          correct: 0,
+          exp: "Type IV: delayed‑type hypersensitivity (e.g., PPD, contact dermatitis, granulomas)." },
+        { q: "Tuberculin (PPD) reaction is an example of:",
+          opts: ["Type IV hypersensitivity", "Type I", "Type II", "Type III", "Type V"],
+          correct: 0,
+          exp: "PPD test reads delayed (48‑72h) T‑cell response." },
+        { q: "Contact dermatitis (e.g., poison ivy) is which type of hypersensitivity?",
+          opts: ["Type IV", "Type I", "Type II", "Type III", "Type V"],
+          correct: 0,
+          exp: "Type IV: T cells react to haptens (urushiol)." },
+        { q: "Granuloma formation is characteristic of:",
+          opts: ["Type IV hypersensitivity (chronic)", "Type I", "Type II", "Type III", "Immediate reactions"],
+          correct: 0,
+          exp: "Persistent antigens (TB, fungi) cause Th1‑driven granulomatous inflammation." },
+        { q: "Autoimmune hemolytic anemia (warm type) is associated with autoantibodies against:",
+          opts: ["RBC membrane proteins (e.g., Rh, glycophorins)", "Platelets", "Neutrophils", "Endothelial cells", "DNA"],
+          correct: 0,
+          exp: "Warm AIHA: IgG against RBCs, extravascular hemolysis (spleen)." },
+        { q: "Cold agglutinin disease involves IgM autoantibodies that agglutinate RBCs at low temperatures, often triggered by:",
+          opts: ["Mycoplasma pneumoniae infection", "EBV", "CMV", "HIV", "Strep"],
+          correct: 0,
+          exp: "Cold agglutinins (anti‑I) cause complement‑mediated intravascular hemolysis." },
+        { q: "Drug‑induced immune hemolytic anemia (e.g., penicillin) is an example of:",
+          opts: ["Type II hypersensitivity (hapten mechanism)", "Type I", "Type III", "Type IV", "Immune complex deposition"],
+          correct: 0,
+          exp: "Drug (penicillin) binds RBC membrane, forming hapten; antibodies destroy RBC." },
+        { q: "Graves disease is caused by autoantibodies that:",
+          opts: ["Stimulate TSH receptor (type V hypersensitivity)", "Block TSH receptor", "Destroy thyroid cells", "Bind to thyroglobulin", "Activate complement"],
+          correct: 0,
+          exp: "TSI (thyroid‑stimulating immunoglobulins) activate TSH receptor → hyperthyroidism." },
+        { q: "Myasthenia gravis is due to autoantibodies against:",
+          opts: ["Acetylcholine receptor (AChR) or MuSK", "Voltage‑gated calcium channels", "Voltage‑gated potassium channels", "Glutamate receptors", "GABA receptors"],
+          correct: 0,
+          exp: "AChR antibodies block neuromuscular transmission; MuSK antibodies also cause MG." },
+        { q: "Pemphigus vulgaris is caused by autoantibodies against:",
+          opts: ["Desmoglein 3 (keratinocyte adhesion)", "Desmoglein 1", "BP180, BP230", "Type VII collagen", "Hemidesmosomes"],
+          correct: 0,
+          exp: "Desmoglein 3 (and sometimes 1) antibodies cause acantholysis → intraepidermal blisters." },
+        { q: "Bullous pemphigoid is associated with autoantibodies against:",
+          opts: ["BP180 (collagen XVII) and BP230 (hemidesmosomes)", "Desmoglein 3", "Desmoglein 1", "Type VII collagen", "Laminin 332"],
+          correct: 0,
+          exp: "Subepidermal blistering with eosinophils; antibodies target hemidesmosomes." },
+        { q: "Rheumatoid arthritis is associated with autoantibodies to:",
+          opts: ["Fc portion of IgG (rheumatoid factor) and citrullinated proteins (anti‑CCP)", "dsDNA", "Sm", "RNP", "Scl‑70"],
+          correct: 0,
+          exp: "RF and anti‑CCP are diagnostic; immune complexes in joints → synovitis." },
+        { q: "Systemic lupus erythematosus (SLE) autoantibodies: which is most specific?",
+          opts: ["Anti‑dsDNA and anti‑Sm", "Anti‑Ro/SS‑A", "Anti‑La/SS‑B", "Anti‑RNP", "Anti‑histone"],
+          correct: 0,
+          exp: "Anti‑dsDNA (often nephritis) and anti‑Sm are highly specific for SLE." },
+        { q: "Sjögren syndrome is characterized by autoantibodies to:",
+          opts: ["Ro (SS‑A) and La (SS‑B)", "dsDNA", "Sm", "RNP", "Scl‑70"],
+          correct: 0,
+          exp: "Lymphocytic infiltration of salivary/lacrimal glands; sicca symptoms." },
+        { q: "Systemic sclerosis (scleroderma) autoantibodies: anti‑centromere is associated with:",
+          opts: ["Limited cutaneous systemic sclerosis (CREST syndrome)", "Diffuse cutaneous systemic sclerosis", "Pulmonary fibrosis", "Renal crisis", "Myositis"],
+          correct: 0,
+          exp: "Anti‑centromere: limited (CREST); anti‑Scl‑70 (topoisomerase I): diffuse." },
+        { q: "Polymyositis/dermatomyositis is associated with autoantibodies to:",
+          opts: ["Jo‑1 (histidyl‑tRNA synthetase) and others", "Sm", "RNP", "Scl‑70", "dsDNA"],
+          correct: 0,
+          exp: "Anti‑Jo‑1 associated with interstitial lung disease and mechanic's hands." },
+        { q: "ANCA‑associated vasculitides include:",
+          opts: ["Granulomatosis with polyangiitis (c‑ANCA/PR3), microscopic polyangiitis (p‑ANCA/MPO), eosinophilic granulomatosis with polyangiitis (Churg‑Strauss)", "Giant cell arteritis", "Takayasu arteritis", "Polyarteritis nodosa", "Kawasaki disease"],
+          correct: 0,
+          exp: "c‑ANCA (PR3) in GPA; p‑ANCA (MPO) in MPA and EGPA." },
+        { q: "Polyarteritis nodosa (PAN) is often associated with:",
+          opts: ["Hepatitis B virus infection", "Anti‑GBM antibodies", "c‑ANCA", "p‑ANCA", "Cryoglobulins"],
+          correct: 0,
+          exp: "PAN is a medium‑vessel vasculitis; 10‑30% associated with HBV." },
+        { q: "IgA vasculitis (Henoch‑Schönlein purpura) is characterized by:",
+          opts: ["IgA immune complex deposition in small vessels (skin, gut, kidney, joints)", "IgG deposition", "IgM deposition", "C3 deposition alone", "No immune complexes"],
+          correct: 0,
+          exp: "HSP: palpable purpura, abdominal pain, arthritis, nephritis." },
+        { q: "Cryoglobulinemic vasculitis is associated with:",
+          opts: ["Hepatitis C virus (type II mixed cryoglobulins)", "Hepatitis B", "HIV", "EBV", "CMV"],
+          correct: 0,
+          exp: "HCV drives clonal B‑cell expansion producing IgM with RF activity." },
+        { q: "Which of the following is a primary immunodeficiency affecting both B and T cells?",
+          opts: ["Severe combined immunodeficiency (SCID)", "X‑linked agammaglobulinemia", "DiGeorge syndrome", "Selective IgA deficiency", "Chronic granulomatous disease"],
+          correct: 0,
+          exp: "SCID: absence of T cells and B‑cell function (sometimes absent NK as well)." },
+        { q: "Which of the following is a complement regulatory protein deficiency leading to atypical HUS?",
+          opts: ["Factor H, factor I, or MCP (CD46)", "C1 inhibitor", "C3", "C4", "Properdin"],
+          correct: 0,
+          exp: "Defects in alternative pathway regulators cause uncontrolled complement activation and thrombotic microangiopathy." },
+        { q: "X‑linked lymphoproliferative disease (XLP) is caused by mutation in SH2D1A (SAP) and presents with:",
+          opts: ["Fulminant infectious mononucleosis (EBV), lymphoma, dysgammaglobulinemia", "Recurrent bacterial infections", "Autoimmunity", "Hemophagocytic lymphohistiocytosis", "All of the above"],
+          correct: 4,
+          exp: "XLP: inability to control EBV infection leads to severe complications." },
+        { q: "Autoimmune polyendocrine syndrome type 1 (APS‑1) is caused by mutation in:",
+          opts: ["AIRE gene", "FOXP3", "STAT3", "CASP10", "FAS"],
+          correct: 0,
+          exp: "AIRE mutation causes failure of central tolerance → mucocutaneous candidiasis, hypoparathyroidism, adrenal insufficiency." },
+        { q: "IPEX syndrome (immune dysregulation, polyendocrinopathy, enteropathy, X‑linked) is due to mutation in:",
+          opts: ["FOXP3", "AIRE", "IL2RA", "STAT5B", "CTLA4"],
+          correct: 0,
+          exp: "FOXP3 mutation causes lack of regulatory T cells → severe autoimmunity." },
+        { q: "Graft‑vs‑host disease (GVHD) occurs after:",
+          opts: ["Allogeneic hematopoietic stem cell transplant", "Solid organ transplant", "Blood transfusion", "Both A and C", "All of the above"],
+          correct: 3,
+          exp: "Donor T cells attack recipient tissues; acute GVHD: skin, liver, gut; chronic GVHD: autoimmune‑like." },
+        { q: "Hyperacute rejection of a transplanted organ is caused by:",
+          opts: ["Pre‑existing antibodies against donor ABO or HLA", "T‑cell mediated response", "Cytokine release", "Ischemia‑reperfusion injury", "Calcineurin inhibitors"],
+          correct: 0,
+          exp: "Hyperacute rejection occurs within minutes to hours due to preformed antibodies." },
+        { q: "Acute cellular rejection is mediated by:",
+          opts: ["T cells (CD8+ CTL and CD4+ helper)", "Antibodies", "NK cells", "Macrophages", "Complement"],
+          correct: 0,
+          exp: "T‑cell infiltration with tubulitis (kidney) or endotheliitis (heart)." },
+        { q: "Chronic rejection is characterized by:",
+          opts: ["Vascular intimal fibrosis (graft arteriosclerosis)", "Diffuse interstitial fibrosis", "Tubular atrophy", "Glomerulosclerosis", "All of the above"],
+          correct: 4,
+          exp: "Chronic rejection is a combination of immune and non‑immune processes leading to graft loss." },
+        { q: "The most common cause of primary immunodeficiency in adults is:",
+          opts: ["Common variable immunodeficiency (CVID)", "Selective IgA deficiency", "IgG subclass deficiency", "X‑linked agammaglobulinemia", "Chronic granulomatous disease"],
+          correct: 0,
+          exp: "CVID often presents in adulthood with hypogammaglobulinemia and recurrent infections." },
+        { q: "Recurrent neisserial infections suggest deficiency of:",
+          opts: ["Terminal complement components (C5‑C9)", "C3", "C1q", "C4", "Factor B"],
+          correct: 0,
+          exp: "MAC deficiency prevents lysis of Neisseria." },
+        { q: "Mannose‑binding lectin (MBL) deficiency is associated with:",
+          opts: ["Increased susceptibility to infections in infancy, especially encapsulated bacteria", "Severe autoimmunity", "Angioedema", "Neisserial infections", "Systemic lupus erythematosus"],
+          correct: 0,
+          exp: "MBL deficiency impairs opsonization; many individuals are asymptomatic." },
+        { q: "The histologic finding in acute cellular rejection of kidney transplant is:",
+          opts: ["Tubulitis, interstitial inflammation (lymphocytes)", "Glomerulitis", "Arterial fibrinoid necrosis", "Intimal thickening", "Mesangial proliferation"],
+          correct: 0,
+          exp: "Acute cellular rejection shows lymphocytic infiltration with tubulitis." },
+        { q: "The histologic finding in antibody‑mediated rejection is:",
+          opts: ["C4d deposition in peritubular capillaries, glomerulitis, capillaritis", "Tubulitis", "Granulomas", "Eosinophilic infiltrate", "Fibrosis"],
+          correct: 0,
+          exp: "C4d is a marker of complement activation by antibodies." },
+        { q: "Graft‑versus‑host disease (GVHD) prophylaxis typically includes:",
+          opts: ["Calcineurin inhibitors (cyclosporine, tacrolimus) and methotrexate", "Corticosteroids", "Antithymocyte globulin", "Rituximab", "Mycophenolate"],
+          correct: 0,
+          exp: "Combination of calcineurin inhibitor and methotrexate is standard." },
+        { q: "Post‑transplant lymphoproliferative disorder (PTLD) is most commonly associated with:",
+          opts: ["Epstein‑Barr virus (EBV)", "CMV", "HHV‑8", "HPV", "HIV"],
+          correct: 0,
+          exp: "EBV drives B‑cell proliferation in immunosuppressed transplant recipients." },
+        { q: "Which of the following is a feature of chronic granulomatous disease (CGD)?",
+          opts: ["Granuloma formation, recurrent catalase‑positive infections", "Autoimmunity", "Eczema, thrombocytopenia", "Ataxia, telangiectasias", "Giant lysosomal granules"],
+          correct: 0,
+          exp: "Inability to kill catalase‑positive organisms leads to granuloma formation." },
+        { q: "Job syndrome (hyper‑IgE) is often caused by mutations in:",
+          opts: ["STAT3", "DOCK8", "TYK2", "IL6ST", "All of the above (different forms)"],
+          correct: 4,
+          exp: "Autosomal dominant STAT3 mutation causes classic hyper‑IgE syndrome; autosomal recessive forms (DOCK8) also exist." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "What is the characteristic laboratory finding in X‑linked agammaglobulinemia?",
+          opts: ["Absence of B cells (CD19+), very low immunoglobulins", "Absent T cells", "Normal immunoglobulins", "Elevated IgE", "Low C3"],
+          correct: 0,
+          exp: "BTK mutation blocks B‑cell development → absent B cells." },
+        { q: "Which infection is most typical in patients with T‑cell deficiency (e.g., DiGeorge)?",
+          opts: ["Opportunistic infections (PJP, CMV, fungal)", "Encapsulated bacteria", "Pyogenic infections", "Staphylococcal abscesses", "Giardia"],
+          correct: 0,
+          exp: "T‑cell deficiency predisposes to viral, fungal, and opportunistic pathogens." },
+        { q: "Which infection is characteristic of complement deficiency (C5‑C9)?",
+          opts: ["Recurrent Neisseria meningitis/disseminated gonococcal infection", "Recurrent staphylococcal abscesses", "Recurrent pneumococcal pneumonia", "Recurrent fungal infections", "Recurrent viral infections"],
+          correct: 0,
+          exp: "MAC deficiency impairs serum bactericidal activity against Neisseria." },
+        { q: "The diagnosis of common variable immunodeficiency (CVID) requires:",
+          opts: ["Low IgG, IgA, and/or IgM; poor vaccine response; exclusion of other causes", "Absent B cells", "Hyper‑IgM", "Low T cells", "Positive ANA"],
+          correct: 0,
+          exp: "CVID is a diagnosis of exclusion with hypogammaglobulinemia and impaired antibody response." },
+        { q: "In hereditary angioedema (C1‑INH deficiency), which mediator causes symptoms?",
+          opts: ["Bradykinin", "Histamine", "Leukotrienes", "Prostaglandins", "Tryptase"],
+          correct: 0,
+          exp: "C1‑INH deficiency leads to uncontrolled kallikrein activation, increasing bradykinin." },
+        { q: "Sézary syndrome (cutaneous T‑cell lymphoma) presents with:",
+          opts: ["Exfoliative erythroderma, lymphadenopathy, circulating Sézary cells (cerebriform nuclei)", "B‑cell lymphoma", "Hodgkin lymphoma", "Mycosis fungoides only", "Leukemia"],
+          correct: 0,
+          exp: "Sézary syndrome is the leukemic phase of mycosis fungoides." },
+        { q: "Mycosis fungoides is a lymphoma of:",
+          opts: ["CD4+ T cells (skin‑homing)", "CD8+ T cells", "B cells", "NK cells", "Histiocytes"],
+          correct: 0,
+          exp: "MF presents as patches/plaques; histology shows Pautrier microabscesses." },
+        { q: "Which of the following is an example of a type II hypersensitivity reaction that causes disease by stimulating receptor?",
+          opts: ["Graves disease (TSH receptor)", "Myasthenia gravis", "Pernicious anemia", "Autoimmune hemolytic anemia", "Goodpasture syndrome"],
+          correct: 0,
+          exp: "Graves is stimulatory; others are destructive." },
+        { q: "Membranous nephropathy is often associated with autoantibodies to:",
+          opts: ["Phospholipase A2 receptor (PLA2R)", "GBM", "DNA", "C3 convertase", "Factor H"],
+          correct: 0,
+          exp: "PLA2R antibodies are found in 70% of primary membranous nephropathy." },
+        { q: "Anti‑GBM disease (Goodpasture) involves antibodies against:",
+          opts: ["Type IV collagen α3 chain", "Type IV collagen α5 chain", "Laminin", "Entactin", "Proteoglycans"],
+          correct: 0,
+          exp: "Target is the non‑collagenous domain of α3(IV) in basement membrane." },
+        { q: "The mechanism of hemolysis in cold agglutinin disease is:",
+          opts: ["Complement‑mediated intravascular hemolysis (IgM binds RBC at low temperature)", "Extravascular hemolysis (IgG)", "Mechanical fragmentation", "Oxidative damage", "Autoantibody‑induced spherocytosis"],
+          correct: 0,
+          exp: "IgM binds RBCs in acral areas, activates complement, causing hemolysis." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

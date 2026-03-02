@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition & Metabolism · Nutrients & Energy Balance</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-apple-alt"></i>
+        <h1>Nutrition & Metabolism · Nutrients & Energy Balance</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>MACRONUTRIENTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#carbohydrates"><i class="fas fa-bread-slice"></i> 1. Carbohydrates</a></li>
+                <li class="chapter-item"><a href="#proteins"><i class="fas fa-dna"></i> 2. Proteins & Amino Acids</a></li>
+                <li class="chapter-item"><a href="#lipids"><i class="fas fa-oil-can"></i> 3. Lipids (Fats)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>MICRONUTRIENTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#vitamins"><i class="fas fa-flask"></i> 4. Vitamins</a></li>
+                <li class="chapter-item"><a href="#minerals"><i class="fas fa-cube"></i> 5. Minerals & Trace Elements</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>DIGESTION & ABSORPTION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#digestion"><i class="fas fa-stomach"></i> 6. Digestion Process</a></li>
+                <li class="chapter-item"><a href="#absorption"><i class="fas fa-arrow-down"></i> 7. Nutrient Absorption</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENERGY METABOLISM</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#energy-balance"><i class="fas fa-fire"></i> 8. Energy Balance & Expenditure</a></li>
+                <li class="chapter-item"><a href="#basal-metabolism"><i class="fas fa-heartbeat"></i> 9. Basal Metabolic Rate</a></li>
+                <li class="chapter-item"><a href="#thermic-effect"><i class="fas fa-temperature-high"></i> 10. Thermic Effect of Food</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>METABOLIC REGULATION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#fed-state"><i class="fas fa-sun"></i> 11. Fed State (Absorptive)</a></li>
+                <li class="chapter-item"><a href="#fasted-state"><i class="fas fa-moon"></i> 12. Fasted State (Post‑absorptive)</a></li>
+                <li class="chapter-item"><a href="#hormonal"><i class="fas fa-hormone"></i> 13. Hormonal Regulation (Insulin, Glucagon)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>BODY COMPOSITION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#body-composition"><i class="fas fa-weight-scale"></i> 14. Body Composition Assessment</a></li>
+                <li class="chapter-item"><a href="#adipose"><i class="fas fa-droplet"></i> 15. Adipose Tissue & Obesity</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CARBOHYDRATES ==================== -->
+        <section id="carbohydrates" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bread-slice"></i> 1. Carbohydrates</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Carbohydrates are the body's primary energy source, providing 4 kcal/g. They are classified as:
+                </div>
+                <ul>
+                    <li><strong>Monosaccharides:</strong> Glucose, fructose, galactose.</li>
+                    <li><strong>Disaccharides:</strong> Sucrose (glucose + fructose), lactose (glucose + galactose), maltose (glucose + glucose).</li>
+                    <li><strong>Polysaccharides:</strong> Starch (amylose, amylopectin), glycogen, fiber (cellulose, pectin).</li>
+                </ul>
+                <div class="definition-box">
+                    <strong>Dietary fiber:</strong> Non‑digestible carbohydrates. Soluble fiber (pectin, β‑glucan) lowers cholesterol; insoluble fiber (cellulose) promotes bowel regularity.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PROTEINS & AMINO ACIDS ==================== -->
+        <section id="proteins" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 2. Proteins & Amino Acids</div>
+            <div class="section-card">
+                <ul>
+                    <li>Proteins provide 4 kcal/g. Composed of amino acids.</li>
+                    <li><strong>Essential amino acids:</strong> Histidine, isoleucine, leucine, lysine, methionine, phenylalanine, threonine, tryptophan, valine (PVT TIM HALL).</li>
+                    <li><strong>Complete proteins:</strong> Contain all essential amino acids (animal sources, soy, quinoa).</li>
+                    <li><strong>Nitrogen balance:</strong> Positive (growth, pregnancy), negative (starvation, illness).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== LIPIDS ==================== -->
+        <section id="lipids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-oil-can"></i> 3. Lipids (Fats)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Lipids provide 9 kcal/g. Essential for cell membranes, hormone synthesis, and energy storage.</li>
+                    <li><strong>Fatty acids:</strong> Saturated (no double bonds), monounsaturated (one double bond), polyunsaturated (multiple double bonds).</li>
+                    <li><strong>Essential fatty acids:</strong> Linoleic acid (omega‑6), α‑linolenic acid (omega‑3).</li>
+                    <li><strong>Triglycerides:</strong> Main storage form in adipose tissue.</li>
+                    <li><strong>Cholesterol:</strong> Not an energy source; precursor for steroid hormones, vitamin D, bile acids.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== VITAMINS ==================== -->
+        <section id="vitamins" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 4. Vitamins</div>
+            <div class="section-card">
+                <div class="subsection-heading">Fat‑Soluble Vitamins (A, D, E, K)</div>
+                <ul>
+                    <li><strong>Vitamin A:</strong> Vision, epithelial integrity. Deficiency: night blindness, xerophthalmia.</li>
+                    <li><strong>Vitamin D:</strong> Calcium homeostasis, bone health. Deficiency: rickets (children), osteomalacia (adults).</li>
+                    <li><strong>Vitamin E:</strong> Antioxidant. Deficiency: hemolytic anemia, neuropathy (rare).</li>
+                    <li><strong>Vitamin K:</strong> Blood clotting (factors II, VII, IX, X). Deficiency: bleeding.</li>
+                </ul>
+                <div class="subsection-heading">Water‑Soluble Vitamins (B‑complex, C)</div>
+                <ul>
+                    <li><strong>Vitamin B1 (thiamine):</strong> Coenzyme in carbohydrate metabolism. Deficiency: beriberi, Wernicke‑Korsakoff.</li>
+                    <li><strong>Vitamin B2 (riboflavin):</strong> Component of FAD and FMN. Deficiency: cheilosis, glossitis.</li>
+                    <li><strong>Vitamin B3 (niacin):</strong> Component of NAD⁺/NADP⁺. Deficiency: pellagra (diarrhea, dermatitis, dementia).</li>
+                    <li><strong>Vitamin B5 (pantothenic acid):</strong> Component of CoA. Deficiency rare.</li>
+                    <li><strong>Vitamin B6 (pyridoxine):</strong> Transamination, neurotransmitter synthesis. Deficiency: neuropathy, sideroblastic anemia.</li>
+                    <li><strong>Vitamin B7 (biotin):</strong> Carboxylase cofactor. Deficiency: dermatitis, alopecia.</li>
+                    <li><strong>Vitamin B9 (folate):</strong> DNA synthesis, methylation. Deficiency: megaloblastic anemia, neural tube defects.</li>
+                    <li><strong>Vitamin B12 (cobalamin):</strong> Myelin synthesis, folate metabolism. Deficiency: pernicious anemia, subacute combined degeneration.</li>
+                    <li><strong>Vitamin C (ascorbic acid):</strong> Collagen synthesis, antioxidant. Deficiency: scurvy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== MINERALS & TRACE ELEMENTS ==================== -->
+        <section id="minerals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cube"></i> 5. Minerals & Trace Elements</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Mineral</th><th>Functions</th><th>Deficiency</th><th>Toxicity</th></tr></thead>
+                    <tbody>
+                        <tr><td>Calcium</td><td>Bone, muscle contraction, nerve transmission</td><td>Osteoporosis, tetany</td><td>Hypercalcemia, kidney stones</td></tr>
+                        <tr><td>Phosphorus</td><td>Bone, ATP, phospholipids</td><td>Rickets (with low Ca)</td><td>Hypocalcemia</td></tr>
+                        <tr><td>Magnesium</td><td>Enzyme cofactor, muscle relaxation</td><td>Neuromuscular irritability, arrhythmias</td><td>Hyporeflexia, hypotension</td></tr>
+                        <tr><td>Iron</td><td>Hemoglobin, myoglobin, cytochromes</td><td>Microcytic anemia</td><td>Hemochromatosis</td></tr>
+                        <tr><td>Zinc</td><td>Enzyme cofactor, immunity, wound healing</td><td>Growth retardation, alopecia, hypogonadism</td><td>Nausea, vomiting</td></tr>
+                        <tr><td>Iodine</td><td>Thyroid hormone synthesis</td><td>Goiter, cretinism</td><td>Thyrotoxicosis</td></tr>
+                        <tr><td>Selenium</td><td>Antioxidant (glutathione peroxidase)</td><td>Cardiomyopathy (Keshan disease)</td><td>Hair loss, nail changes</td></tr>
+                        <tr><td>Copper</td><td>Iron metabolism, connective tissue</td><td>Anemia, neutropenia, bone demineralization</td><td>Wilson disease (accumulation)</td></tr>
+                        <tr><td>Fluoride</td><td>Dental health</td><td>Caries</td><td>Fluorosis (mottled teeth)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== DIGESTION PROCESS ==================== -->
+        <section id="digestion" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 6. Digestion Process</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Mouth:</strong> Salivary amylase (starch → maltose), lingual lipase.</li>
+                    <li><strong>Stomach:</strong> Gastric lipase, pepsin (protein digestion), HCl denatures proteins.</li>
+                    <li><strong>Small intestine:</strong>
+                        <ul>
+                            <li>Pancreatic enzymes: trypsin, chymotrypsin (proteins), pancreatic amylase, pancreatic lipase, nucleases.</li>
+                            <li>Brush border enzymes: disaccharidases (sucrase, lactase, maltase), peptidases.</li>
+                        </ul>
+                    </li>
+                    <li>Bile (from liver) emulsifies fats.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NUTRIENT ABSORPTION ==================== -->
+        <section id="absorption" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrow-down"></i> 7. Nutrient Absorption</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Carbohydrates:</strong> Absorbed as monosaccharides (glucose, galactose via SGLT1; fructose via GLUT5).</li>
+                    <li><strong>Proteins:</strong> Absorbed as amino acids, di‑, tri‑peptides via various transporters (PEPT1).</li>
+                    <li><strong>Lipids:</strong> Micelles (bile salts) → diffusion into enterocytes → chylomicrons → lymph.</li>
+                    <li><strong>Vitamins:</strong> B12 requires intrinsic factor; fat‑soluble vitamins in micelles.</li>
+                    <li><strong>Minerals:</strong> Calcium (active, vitamin D‑dependent), iron (heme vs non‑heme), etc.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ENERGY BALANCE & EXPENDITURE ==================== -->
+        <section id="energy-balance" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fire"></i> 8. Energy Balance & Expenditure</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Energy balance = Energy intake – Energy expenditure.
+                </div>
+                <ul>
+                    <li><strong>Total Daily Energy Expenditure (TDEE) = BMR + TEF + PA</strong></li>
+                    <li>Positive balance → weight gain; negative balance → weight loss.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== BASAL METABOLIC RATE ==================== -->
+        <section id="basal-metabolism" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 9. Basal Metabolic Rate (BMR)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Energy expended at rest (fasting, supine, thermoneutral).</li>
+                    <li>Accounts for 60‑70% of TDEE.</li>
+                    <li>Determined by lean body mass, age (↓ with age), gender (♂ > ♀), genetics.</li>
+                    <li><strong>Harris‑Benedict equation:</strong> Estimate BMR based on weight, height, age, sex.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== THERMIC EFFECT OF FOOD ==================== -->
+        <section id="thermic-effect" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-temperature-high"></i> 10. Thermic Effect of Food (TEF)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Energy cost of digesting, absorbing, and metabolizing nutrients.</li>
+                    <li>~10% of energy intake; protein has highest TEF (~20‑30%), carbs ~5‑10%, fat ~0‑3%.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== FED STATE ==================== -->
+        <section id="fed-state" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-sun"></i> 11. Fed State (Absorptive)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Lasts 2‑4 hours after meal; insulin dominant.</li>
+                    <li>Glucose → glycogen (liver, muscle) or fat (adipose).</li>
+                    <li>Amino acids → protein synthesis (muscle, liver).</li>
+                    <li>Fatty acids stored as triglycerides in adipose tissue.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== FASTED STATE ==================== -->
+        <section id="fasted-state" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-moon"></i> 12. Fasted State (Post‑absorptive)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Glucagon dominant; insulin low.</li>
+                    <li>Glycogenolysis (liver glycogen → glucose).</li>
+                    <li>Gluconeogenesis (from lactate, glycerol, amino acids).</li>
+                    <li>Lipolysis → fatty acids → energy; ketogenesis in prolonged fasting.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== HORMONAL REGULATION ==================== -->
+        <section id="hormonal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hormone"></i> 13. Hormonal Regulation</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Insulin:</strong> Anabolic; promotes glucose uptake, glycogen synthesis, protein synthesis, fat storage.</li>
+                    <li><strong>Glucagon:</strong> Catabolic; promotes glycogenolysis, gluconeogenesis, ketogenesis.</li>
+                    <li><strong>Epinephrine:</strong> Stress hormone; mobilizes glucose and fatty acids.</li>
+                    <li><strong>Cortisol:</strong> Promotes gluconeogenesis, protein catabolism.</li>
+                    <li><strong>Growth hormone:</strong> Promotes protein synthesis, lipolysis.</li>
+                    <li><strong>Thyroid hormones:</strong> Increase BMR, stimulate metabolism.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== BODY COMPOSITION ASSESSMENT ==================== -->
+        <section id="body-composition" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight-scale"></i> 14. Body Composition Assessment</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>BMI (kg/m²):</strong> Underweight <18.5, normal 18.5‑24.9, overweight 25‑29.9, obese ≥30.</li>
+                    <li><strong>Waist circumference:</strong> >102 cm (men), >88 cm (women) → increased cardiometabolic risk.</li>
+                    <li><strong>Skinfold thickness:</strong> Estimates body fat %.</li>
+                    <li><strong>Bioelectrical impedance, DEXA, underwater weighing.</strong></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ADIPOSE TISSUE & OBESITY ==================== -->
+        <section id="adipose" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 15. Adipose Tissue & Obesity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>White adipose tissue:</strong> Energy storage, leptin secretion.</li>
+                    <li><strong>Brown adipose tissue:</strong> Thermogenesis (uncoupling protein UCP1).</li>
+                    <li><strong>Obesity:</strong> Excess body fat. Associated with insulin resistance, inflammation, cardiovascular disease.</li>
+                    <li><strong>Adipokines:</strong> Leptin (satiety), adiponectin (insulin‑sensitizing), resistin (pro‑inflammatory).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Nutrition & Metabolism · Nutrients & Energy Balance · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Methodology & Biostatistics · Principles & Design</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-chart-bar"></i>
+        <h1>Research Methodology & Biostatistics · Principles & Design</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>FUNDAMENTALS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#intro"><i class="fas fa-book-open"></i> 1. Introduction to Research</a></li>
+                <li class="chapter-item"><a href="#question"><i class="fas fa-question-circle"></i> 2. Research Question & Hypothesis</a></li>
+                <li class="chapter-item"><a href="#variables"><i class="fas fa-cogs"></i> 3. Variables & Measurement</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>STUDY DESIGNS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#observational"><i class="fas fa-eye"></i> 4. Observational Studies</a></li>
+                <li class="chapter-item"><a href="#experimental"><i class="fas fa-flask"></i> 5. Experimental Studies (RCTs)</a></li>
+                <li class="chapter-item"><a href="#bias-confounding"><i class="fas fa-balance-scale"></i> 6. Bias & Confounding</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>STATISTICAL CONCEPTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#descriptive"><i class="fas fa-chart-pie"></i> 7. Descriptive Statistics</a></li>
+                <li class="chapter-item"><a href="#probability"><i class="fas fa-dice"></i> 8. Probability & Distributions</a></li>
+                <li class="chapter-item"><a href="#inferential"><i class="fas fa-chart-line"></i> 9. Inferential Statistics</a></li>
+                <li class="chapter-item"><a href="#hypothesis-testing"><i class="fas fa-vial"></i> 10. Hypothesis Testing</a></li>
+                <li class="chapter-item"><a href="#sample-size"><i class="fas fa-calculator"></i> 11. Sample Size & Power</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ETHICS & REPORTING</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#ethics"><i class="fas fa-gavel"></i> 12. Research Ethics</a></li>
+                <li class="chapter-item"><a href="#reporting"><i class="fas fa-file-alt"></i> 13. Reporting Guidelines</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== INTRODUCTION ==================== -->
+        <section id="intro" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-book-open"></i> 1. Introduction to Research</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Medical research is systematic investigation to generate knowledge about health and disease. It can be:
+                </div>
+                <ul>
+                    <li><strong>Basic (laboratory) research:</strong> Studies mechanisms at cellular/molecular level.</li>
+                    <li><strong>Translational research:</strong> Applies basic science to clinical practice (bench to bedside).</li>
+                    <li><strong>Clinical research:</strong> Studies involving human subjects (patients or volunteers).</li>
+                    <li><strong>Epidemiological research:</strong> Studies patterns, causes, and effects of health in populations.</li>
+                </ul>
+                <div class="definition-box">
+                    <strong>The research cycle:</strong> Question → Hypothesis → Study design → Data collection → Analysis → Interpretation → Dissemination.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== RESEARCH QUESTION & HYPOTHESIS ==================== -->
+        <section id="question" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-question-circle"></i> 2. Research Question & Hypothesis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    A good research question should be <strong>FINER</strong>: Feasible, Interesting, Novel, Ethical, Relevant.
+                </div>
+                <ul>
+                    <li><strong>PICO format:</strong> Population, Intervention, Comparison, Outcome (common in clinical studies).</li>
+                    <li><strong>Hypothesis:</strong> A testable statement predicting the relationship between variables.
+                        <ul>
+                            <li><strong>Null hypothesis (H₀):</strong> No effect or difference.</li>
+                            <li><strong>Alternative hypothesis (H₁):</strong> There is an effect or difference.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== VARIABLES & MEASUREMENT ==================== -->
+        <section id="variables" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cogs"></i> 3. Variables & Measurement</div>
+            <div class="section-card">
+                <div class="body-text">
+                    A variable is any characteristic that can vary among subjects.
+                </div>
+                <ul>
+                    <li><strong>Types of variables:</strong>
+                        <ul>
+                            <li><strong>Quantitative (numeric):</strong> Continuous (height, weight) vs discrete (number of children).</li>
+                            <li><strong>Categorical (qualitative):</strong> Nominal (gender, blood type) vs ordinal (stage of cancer).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Scales of measurement:</strong> Nominal, ordinal, interval, ratio.</li>
+                    <li><strong>Independent variable:</strong> Manipulated or predictor.</li>
+                    <li><strong>Dependent variable:</strong> Outcome measured.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== OBSERVATIONAL STUDIES ==================== -->
+        <section id="observational" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 4. Observational Studies</div>
+            <div class="section-card">
+                <div class="body-text">
+                    In observational studies, the investigator observes without intervening.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Design</th><th>Description</th><th>Strength</th><th>Limitation</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Cross‑sectional</strong></td><td>Data collected at one point in time</td><td>Quick, estimates prevalence</td><td>Cannot establish causality (temporal relationship)</td></tr>
+                        <tr><td><strong>Cohort</strong></td><td>Follow groups over time based on exposure</td><td>Can calculate incidence, relative risk; establishes temporality</td><td>Expensive, loss to follow‑up, long duration</td></tr>
+                        <tr><td><strong>Case‑control</strong></td><td>Select cases (disease) and controls (no disease), look back for exposure</td><td>Efficient for rare diseases</td><td>Recall bias, selection of controls difficult</td></tr>
+                        <tr><td><strong>Ecological</strong></td><td>Groups as unit (populations), not individuals</td><td>Hypothesis‑generating</td><td>Ecological fallacy</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== EXPERIMENTAL STUDIES (RCTS) ==================== -->
+        <section id="experimental" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 5. Experimental Studies (Randomized Controlled Trials)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    In experimental studies, the investigator assigns interventions.
+                </div>
+                <ul>
+                    <li><strong>Randomized controlled trial (RCT):</strong> Participants randomly assigned to intervention or control group. Gold standard for efficacy.</li>
+                    <li><strong>Key features:</strong>
+                        <ul>
+                            <li><strong>Randomization:</strong> Reduces selection bias, balances known and unknown confounders.</li>
+                            <li><strong>Blinding (masking):</strong> Single‑blind (participant), double‑blind (participant and investigator), triple‑blind (also analyst).</li>
+                            <li><strong>Placebo control:</strong> To control for placebo effect.</li>
+                            <li><strong>Intention‑to‑treat (ITT):</strong> Analyze participants in the groups they were randomized to, regardless of adherence. Preserves randomization.</li>
+                            <li><strong>Per‑protocol analysis:</strong> Only those who completed the protocol; may introduce bias.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== BIAS & CONFOUNDING ==================== -->
+        <section id="bias-confounding" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-balance-scale"></i> 6. Bias & Confounding</div>
+            <div class="section-card">
+                <div class="subsection-heading">Bias (Systematic Error)</div>
+                <ul>
+                    <li><strong>Selection bias:</strong> Systematic differences between groups (e.g., Berkson bias, non‑response bias).</li>
+                    <li><strong>Information bias:</strong> Errors in measurement (recall bias, interviewer bias, misclassification).</li>
+                    <li><strong>Lead‑time bias:</strong> Early detection falsely prolongs survival.</li>
+                    <li><strong>Length‑time bias:</strong> Overrepresentation of less aggressive disease in screening.</li>
+                </ul>
+                <div class="subsection-heading">Confounding</div>
+                <ul>
+                    <li>A confounder is a variable associated with both exposure and outcome, and not on the causal pathway.</li>
+                    <li>Example: age confounds the relationship between gray hair and heart disease (age causes both).</li>
+                    <li><strong>Control:</strong> Randomization, restriction, matching, stratification, multivariable analysis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== DESCRIPTIVE STATISTICS ==================== -->
+        <section id="descriptive" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-pie"></i> 7. Descriptive Statistics</div>
+            <div class="section-card">
+                <div class="subsection-heading">Measures of Central Tendency</div>
+                <ul>
+                    <li><strong>Mean:</strong> Average (sensitive to outliers).</li>
+                    <li><strong>Median:</strong> Middle value (robust to outliers).</li>
+                    <li><strong>Mode:</strong> Most frequent value.</li>
+                </ul>
+                <div class="subsection-heading">Measures of Dispersion</div>
+                <ul>
+                    <li><strong>Range:</strong> Max – min.</li>
+                    <li><strong>Interquartile range (IQR):</strong> 75th percentile – 25th percentile.</li>
+                    <li><strong>Variance:</strong> Average squared deviation from mean.</li>
+                    <li><strong>Standard deviation (SD):</strong> Square root of variance. Describes spread in same units as data.</li>
+                    <li><strong>Standard error of the mean (SEM):</strong> SD/√n. Measures precision of sample mean.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PROBABILITY & DISTRIBUTIONS ==================== -->
+        <section id="probability" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dice"></i> 8. Probability & Distributions</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Normal (Gaussian) distribution:</strong> Bell‑shaped, symmetric; mean = median = mode. 68% within 1 SD, 95% within 2 SD.</li>
+                    <li><strong>Skewed distributions:</strong> Positive (right) tail, negative (left) tail.</li>
+                    <li><strong>Binomial distribution:</strong> Probability of binary outcomes (success/failure).</li>
+                    <li><strong>Poisson distribution:</strong> Rare events (counts).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== INFERENTIAL STATISTICS ==================== -->
+        <section id="inferential" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 9. Inferential Statistics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Inferential statistics draw conclusions about a population from a sample.
+                </div>
+                <ul>
+                    <li><strong>Estimation:</strong> Point estimate (e.g., sample mean) and confidence interval (CI) (range likely to contain true population value). 95% CI means if repeated samples taken, 95% of CIs would contain true value.</li>
+                    <li><strong>Hypothesis testing:</strong> Determine if observed difference is real or due to chance.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== HYPOTHESIS TESTING ==================== -->
+        <section id="hypothesis-testing" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-vial"></i> 10. Hypothesis Testing</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Null hypothesis (H₀):</strong> No effect.</li>
+                    <li><strong>Alternative hypothesis (H₁):</strong> There is an effect.</li>
+                    <li><strong>Type I error (α):</strong> Reject H₀ when true (false positive). Usually set at 0.05.</li>
+                    <li><strong>Type II error (β):</strong> Fail to reject H₀ when false (false negative). Power = 1 – β.</li>
+                    <li><strong>p‑value:</strong> Probability of observing data as extreme as or more extreme than what was observed, assuming H₀ is true. If p < α, reject H₀.</li>
+                    <li><strong>Statistically significant:</strong> p < 0.05 (conventional).</li>
+                </ul>
+                <div class="definition-box">
+                    <strong>Common tests:</strong>
+                    <ul>
+                        <li>t‑test: compares means between two groups.</li>
+                        <li>ANOVA: compares means among ≥3 groups.</li>
+                        <li>Chi‑square: tests association between categorical variables.</li>
+                        <li>Pearson correlation: measures linear relationship between continuous variables.</li>
+                        <li>Regression: models relationship (linear, logistic).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SAMPLE SIZE & POWER ==================== -->
+        <section id="sample-size" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-calculator"></i> 11. Sample Size & Power</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Power (1 – β):</strong> Probability of detecting an effect if it truly exists. Desired power usually ≥80%.</li>
+                    <li>Sample size depends on: desired power, significance level (α), effect size, variability.</li>
+                    <li>Larger sample size increases power and precision.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== RESEARCH ETHICS ==================== -->
+        <section id="ethics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-gavel"></i> 12. Research Ethics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Belmont Report principles:</strong> Respect for persons (autonomy, informed consent), beneficence (maximize benefits, minimize harm), justice (fair selection).</li>
+                    <li><strong>Informed consent:</strong> Must be voluntary, informed, and from a competent person.</li>
+                    <li><strong>Institutional Review Board (IRB) / Research Ethics Committee:</strong> Reviews research protocols to protect human subjects.</li>
+                    <li><strong>Declaration of Helsinki:</strong> Ethical principles for medical research involving human subjects.</li>
+                    <li><strong>Good Clinical Practice (GCP):</strong> International quality standard for conducting trials.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== REPORTING GUIDELINES ==================== -->
+        <section id="reporting" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-file-alt"></i> 13. Reporting Guidelines</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>CONSORT:</strong> For RCTs.</li>
+                    <li><strong>STROBE:</strong> For observational studies.</li>
+                    <li><strong>PRISMA:</strong> For systematic reviews and meta‑analyses.</li>
+                    <li><strong>STARD:</strong> For diagnostic accuracy studies.</li>
+                    <li><strong>ARRIVE:</strong> For animal studies.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Research Methodology & Biostatistics · Principles & Design · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

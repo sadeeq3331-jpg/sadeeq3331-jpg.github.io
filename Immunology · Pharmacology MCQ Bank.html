@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immunology · Pharmacology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-shield-alt"></i>
+        <h1>Immunology · Pharmacology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ IMMUNOLOGY PHARMACOLOGY (IMMUNOSUPPRESSANTS, BIOLOGICS) QUESTIONS
+    const questions = [
+        { q: "Cyclosporine exerts its immunosuppressive effect by inhibiting:",
+          opts: ["Calcineurin (blocks NF‑AT activation)", "mTOR", "JAK kinases", "DHFR", "IMPDH"],
+          correct: 0,
+          exp: "Cyclosporine binds cyclophilin, inhibiting calcineurin, which prevents IL‑2 transcription." },
+        { q: "Tacrolimus (FK506) inhibits T‑cell activation by binding to:",
+          opts: ["FKBP12 (then inhibits calcineurin)", "Cyclophilin", "mTOR", "NF‑κB", "JAK3"],
+          correct: 0,
+          exp: "Tacrolimus binds FKBP12; the complex inhibits calcineurin, blocking IL‑2 production." },
+        { q: "Sirolimus (rapamycin) inhibits:",
+          opts: ["mTOR (mammalian target of rapamycin)", "Calcineurin", "DHFR", "IMPDH", "NF‑κB"],
+          correct: 0,
+          exp: "mTOR inhibition blocks cell cycle progression from G1 to S in lymphocytes." },
+        { q: "Mycophenolate mofetil (MMF) suppresses lymphocyte proliferation by inhibiting:",
+          opts: ["Inosine monophosphate dehydrogenase (IMPDH)", "Dihydrofolate reductase", "Thymidylate synthase", "Xanthine oxidase", "Adenosine deaminase"],
+          correct: 0,
+          exp: "IMPDH inhibition depletes guanine nucleotides, selectively inhibiting lymphocyte proliferation." },
+        { q: "Azathioprine is a prodrug converted to 6‑mercaptopurine, which inhibits:",
+          opts: ["Purine synthesis", "Pyrimidine synthesis", "Folate metabolism", "DNA polymerase", "Topoisomerase"],
+          correct: 0,
+          exp: "6‑MP metabolites inhibit purine synthesis, blocking DNA replication." },
+        { q: "TPMT testing is recommended before starting azathioprine because:",
+          opts: ["TPMT deficiency leads to severe myelosuppression", "TPMT increases drug efficacy", "TPMT causes hepatotoxicity", "TPMT induces drug interactions", "TPMT affects absorption"],
+          correct: 0,
+          exp: "Low TPMT activity → accumulation of thioguanine nucleotides → toxicity." },
+        { q: "Methotrexate, used in autoimmune diseases, exerts anti‑inflammatory effects partly by:",
+          opts: ["Increasing extracellular adenosine", "Inhibiting DHFR", "Blocking TNF", "Inhibiting COX", "Depleting folate"],
+          correct: 0,
+          exp: "Methotrexate increases adenosine, which has anti‑inflammatory properties." },
+        { q: "Corticosteroids (e.g., prednisone) suppress immunity by:",
+          opts: ["Inhibiting cytokine gene transcription (NF‑κB)", "Blocking calcineurin", "Depleting lymphocytes", "Inhibiting mTOR", "Blocking IL‑2 receptor"],
+          correct: 0,
+          exp: "Steroids bind glucocorticoid receptor, inhibit NF‑κB, reducing cytokine production." },
+        { q: "Rituximab is a monoclonal antibody directed against:",
+          opts: ["CD20 on B cells", "CD19", "CD22", "CD52", "CD3"],
+          correct: 0,
+          exp: "Rituximab depletes B cells; used in lymphoma, autoimmune diseases." },
+        { q: "Infliximab, adalimumab, and etanercept are drugs that block:",
+          opts: ["TNF‑α", "IL‑1", "IL‑6", "IL‑17", "IL‑12/23"],
+          correct: 0,
+          exp: "They are TNF inhibitors used in RA, IBD, psoriasis, etc." },
+        { q: "Anakinra is a recombinant IL‑1 receptor antagonist used for:",
+          opts: ["Rheumatoid arthritis, cryopyrin‑associated periodic syndromes", "Psoriasis", "Crohn disease", "Multiple sclerosis", "Asthma"],
+          correct: 0,
+          exp: "Anakinra blocks IL‑1, effective in CAPS and RA." },
+        { q: "Tocilizumab is a monoclonal antibody against:",
+          opts: ["IL‑6 receptor", "IL‑6", "IL‑1β", "IL‑17", "TNF‑α"],
+          correct: 0,
+          exp: "Tocilizumab inhibits IL‑6 signaling; used in RA, juvenile idiopathic arthritis." },
+        { q: "Ustekinumab targets the p40 subunit of:",
+          opts: ["IL‑12 and IL‑23", "IL‑12 only", "IL‑23 only", "IL‑17", "TNF‑α"],
+          correct: 0,
+          exp: "p40 is shared by IL‑12 and IL‑23; used in psoriasis, Crohn disease." },
+        { q: "Secukinumab and ixekizumab are monoclonal antibodies against:",
+          opts: ["IL‑17A", "IL‑23", "IL‑12/23", "IL‑6", "TNF‑α"],
+          correct: 0,
+          exp: "IL‑17 inhibitors are used for psoriasis and ankylosing spondylitis." },
+        { q: "Abatacept is a fusion protein (CTLA‑4‑Ig) that:",
+          opts: ["Inhibits T‑cell costimulation (binds CD80/86)", "Blocks IL‑1", "Blocks TNF", "Depletes B cells", "Inhibits JAK"],
+          correct: 0,
+          exp: "Abatacept prevents CD28 binding, reducing T‑cell activation." },
+        { q: "Belimumab is a monoclonal antibody against:",
+          opts: ["BAFF (B‑cell activating factor)", "CD20", "CD22", "CD52", "IL‑6"],
+          correct: 0,
+          exp: "Belimumab inhibits BAFF, reducing B‑cell survival; used in SLE." },
+        { q: "Omalizumab is an anti‑IgE antibody used for:",
+          opts: ["Severe allergic asthma, chronic urticaria", "Rheumatoid arthritis", "Crohn disease", "Psoriasis", "Multiple sclerosis"],
+          correct: 0,
+          exp: "Omalizumab binds free IgE, preventing mast cell activation." },
+        { q: "Dupilumab is a monoclonal antibody targeting:",
+          opts: ["IL‑4 receptor α (blocks IL‑4 and IL‑13)", "IL‑5", "IL‑13", "IgE", "IL‑17"],
+          correct: 0,
+          exp: "Dupilumab is used in atopic dermatitis, asthma, nasal polyps." },
+        { q: "Mepolizumab and reslizumab are anti‑IL‑5 antibodies used for:",
+          opts: ["Eosinophilic asthma", "Allergic rhinitis", "Atopic dermatitis", "Psoriasis", "RA"],
+          correct: 0,
+          exp: "IL‑5 inhibition reduces eosinophils." },
+        { q: "Tofacitinib is a JAK inhibitor used in RA and ulcerative colitis. It blocks:",
+          opts: ["JAK1, JAK3 (and sometimes JAK2)", "JAK2 only", "TYK2 only", "STAT3", "NF‑κB"],
+          correct: 0,
+          exp: "Tofacitinib inhibits JAK1 and JAK3, interfering with cytokine signaling." },
+        { q: "Ruxolitinib is a JAK1/2 inhibitor used for:",
+          opts: ["Myelofibrosis, polycythemia vera, and atopic dermatitis (topical)", "Rheumatoid arthritis", "Psoriasis", "Crohn disease", "SLE"],
+          correct: 0,
+          exp: "Ruxolitinib targets JAK1/2, reducing inflammation and myeloproliferation." },
+        { q: "IVIG (intravenous immunoglobulin) is used in Kawasaki disease, ITP, and Guillain‑Barré. Its mechanism includes:",
+          opts: ["Fc receptor blockade, anti‑idiotype antibodies, immunomodulation", "B‑cell depletion", "T‑cell suppression", "Complement inhibition", "All of the above"],
+          correct: 4,
+          exp: "IVIG has multiple immunomodulatory actions." },
+        { q: "Antithymocyte globulin (ATG) is used in:",
+          opts: ["Transplant rejection, aplastic anemia", "Autoimmune diseases", "Allergy", "Infections", "Cancer"],
+          correct: 0,
+          exp: "ATG depletes T cells, used for induction in transplant and severe aplastic anemia." },
+        { q: "Muromonab‑CD3 (OKT3) is a monoclonal antibody against CD3, which:",
+          opts: ["Depletes T cells (rarely used due to cytokine release syndrome)", "Blocks IL‑2 receptor", "Depletes B cells", "Blocks CD20", "Blocks CD52"],
+          correct: 0,
+          exp: "OKT3 caused severe cytokine release; largely replaced by other agents." },
+        { q: "Basiliximab and daclizumab are monoclonal antibodies against:",
+          opts: ["CD25 (IL‑2 receptor α chain)", "CD3", "CD20", "CD52", "CD4"],
+          correct: 0,
+          exp: "They block IL‑2 signaling on activated T cells; used in transplant." },
+        { q: "Eculizumab is a monoclonal antibody that inhibits complement by binding to:",
+          opts: ["C5 (prevents MAC formation)", "C3", "C1q", "C4", "C5a"],
+          correct: 0,
+          exp: "Eculizumab blocks C5 cleavage; used in paroxysmal nocturnal hemoglobinuria (PNH) and atypical HUS." },
+        { q: "Canakinumab is an anti‑IL‑1β antibody used for:",
+          opts: ["Cryopyrin‑associated periodic syndromes (CAPS)", "Rheumatoid arthritis", "Psoriasis", "Asthma", "SLE"],
+          correct: 0,
+          exp: "Canakinumab specifically blocks IL‑1β." },
+        { q: "Crisaborole is a topical PDE4 inhibitor used for:",
+          opts: ["Mild‑to‑moderate atopic dermatitis", "Psoriasis", "Contact dermatitis", "Acne", "Rosacea"],
+          correct: 0,
+          exp: "PDE4 inhibition reduces inflammation." },
+        { q: "Apremilast is an oral PDE4 inhibitor used for:",
+          opts: ["Psoriasis and psoriatic arthritis", "Rheumatoid arthritis", "Crohn disease", "Asthma", "Atopic dermatitis"],
+          correct: 0,
+          exp: "Apremilast reduces inflammation by increasing cAMP." },
+        { q: "Fingolimod, used in multiple sclerosis, acts by:",
+          opts: ["Sequestering lymphocytes in lymph nodes (S1P receptor agonist)", "Blocking α4 integrin", "Depleting B cells", "Inhibiting JAK", "Blocking IL‑6"],
+          correct: 0,
+          exp: "Fingolimod traps lymphocytes in nodes, preventing CNS infiltration." },
+        { q: "Natalizumab is a monoclonal antibody against α4 integrin, used in MS and Crohn disease. Its risk is:",
+          opts: ["Progressive multifocal leukoencephalopathy (PML) due to JC virus", "Infusion reactions", "Hepatotoxicity", "Nephrotoxicity", "Cardiotoxicity"],
+          correct: 0,
+          exp: "α4 integrin blockade prevents lymphocyte migration; JC virus reactivation can cause PML." },
+        { q: "Vedolizumab is a gut‑selective integrin antagonist (α4β7) used for:",
+          opts: ["Ulcerative colitis and Crohn disease", "Multiple sclerosis", "Rheumatoid arthritis", "Psoriasis", "Asthma"],
+          correct: 0,
+          exp: "Vedolizumab blocks lymphocyte trafficking to gut." },
+        { q: "Interferon‑β (IFN‑β) is used in multiple sclerosis; its mechanism includes:",
+          opts: ["Anti‑inflammatory, inhibits Th17, promotes regulatory T cells", "Blocking IL‑2", "Depleting B cells", "Inhibiting complement", "Blocking TNF"],
+          correct: 0,
+          exp: "IFN‑β reduces relapses in MS." },
+        { q: "Glatiramer acetate is used in MS and is thought to:",
+          opts: ["Induce regulatory T cells, alter antigen presentation", "Block α4 integrin", "Deplete lymphocytes", "Inhibit JAK", "Block IL‑6"],
+          correct: 0,
+          exp: "Glatiramer is a random polymer mimicking myelin basic protein." },
+        { q: "Cyclophosphamide, used in severe lupus nephritis and ANCA vasculitis, works by:",
+          opts: ["Alkylating DNA, suppressing lymphocyte proliferation", "Inhibiting calcineurin", "Depleting B cells", "Blocking TNF", "Inhibiting DHFR"],
+          correct: 0,
+          exp: "Cyclophosphamide is an alkylating agent that cross‑links DNA." },
+        { q: "Hydroxychloroquine, used in SLE and RA, acts by:",
+          opts: ["Increasing pH in endosomes, inhibiting TLR signaling", "Blocking TNF", "Depleting B cells", "Inhibiting JAK", "Blocking IL‑1"],
+          correct: 0,
+          exp: "Hydroxychloroquine interferes with antigen presentation and TLR activation." },
+        { q: "Sulfasalazine is used in inflammatory bowel disease and RA. Its active component is:",
+          opts: ["5‑aminosalicylic acid (5‑ASA) after cleavage by gut bacteria", "Sulfapyridine", "Mesalamine", "Sulfamethoxazole", "Trimethoprim"],
+          correct: 0,
+          exp: "5‑ASA is the anti‑inflammatory moiety." },
+        { q: "Leflunomide, used in RA, inhibits:",
+          opts: ["Dihydroorotate dehydrogenase (pyrimidine synthesis)", "IMPDH", "DHFR", "COX", "JAK"],
+          correct: 0,
+          exp: "Leflunomide blocks pyrimidine synthesis, inhibiting lymphocyte proliferation." },
+        { q: "C1 esterase inhibitor (C1INH) concentrate is used for:",
+          opts: ["Hereditary angioedema", "Anaphylaxis", "Autoimmune hemolytic anemia", "Transplant rejection", "Vasculitis"],
+          correct: 0,
+          exp: "Replacement therapy for C1INH deficiency reduces bradykinin‑mediated attacks." },
+        { q: "Icatibant is a bradykinin B2 receptor antagonist used for:",
+          opts: ["Hereditary angioedema", "Anaphylaxis", "Angiotensin‑converting enzyme inhibitor‑induced angioedema", "Both A and C", "None"],
+          correct: 3,
+          exp: "Icatibant blocks bradykinin, effective in hereditary angioedema and ACEi‑induced angioedema." },
+        { q: "Ecallantide is a kallikrein inhibitor used for:",
+          opts: ["Hereditary angioedema", "Anaphylaxis", "Angioedema from ACE inhibitors", "Mastocytosis", "Urticaria"],
+          correct: 0,
+          exp: "Ecallantide inhibits plasma kallikrein, reducing bradykinin production." },
+        { q: "Rilonacept is an IL‑1 trap (fusion protein) used for:",
+          opts: ["Cryopyrin‑associated periodic syndromes, gout flares", "Rheumatoid arthritis", "Psoriasis", "Crohn disease", "Asthma"],
+          correct: 0,
+          exp: "Rilonacept neutralizes IL‑1." },
+        { q: "Anakinra, canakinumab, and rilonacept all target:",
+          opts: ["IL‑1", "IL‑6", "TNF‑α", "IL‑17", "IL‑23"],
+          correct: 0,
+          exp: "They are IL‑1 blockers." },
+        { q: "Belatacept is a costimulation blocker (CTLA‑4‑Ig) used in kidney transplant. It differs from abatacept by:",
+          opts: ["Higher affinity for CD80/86", "Lower affinity", "Longer half‑life", "B‑cell depletion", "Oral administration"],
+          correct: 0,
+          exp: "Belatacept has higher avidity for CD80/86, providing better immunosuppression." },
+        { q: "Alemtuzumab is a monoclonal antibody against CD52, used in:",
+          opts: ["Multiple sclerosis, chronic lymphocytic leukemia", "Rheumatoid arthritis", "Psoriasis", "Crohn disease", "SLE"],
+          correct: 0,
+          exp: "Alemtuzumab depletes lymphocytes (both T and B)." },
+        { q: "Ofatumumab is an anti‑CD20 antibody used in MS and CLL. It is:",
+          opts: ["Fully human, subcutaneous", "Chimeric, IV", "Murine, IV", "Humanized, IV", "Same as rituximab"],
+          correct: 0,
+          exp: "Ofatumumab is a human anti‑CD20 monoclonal antibody." },
+        { q: "Ocrelizumab is a humanized anti‑CD20 antibody used in:",
+          opts: ["Multiple sclerosis (relapsing and primary progressive)", "Rheumatoid arthritis", "SLE", "Lymphoma", "Asthma"],
+          correct: 0,
+          exp: "Ocrelizumab depletes B cells; approved for MS." },
+        { q: "Rituximab can cause which adverse effect related to infusion?",
+          opts: ["Cytokine release syndrome (fever, chills, hypotension)", "Anaphylaxis", "Serum sickness", "Tumor lysis syndrome", "All of the above"],
+          correct: 4,
+          exp: "Rituximab infusion reactions are common; premedication with antihistamines/steroids is used." },
+        { q: "Infliximab is chimeric (mouse/human) and can cause formation of:",
+          opts: ["Human anti‑chimeric antibodies (HACA), reducing efficacy", "Anti‑drug antibodies", "Infusion reactions", "Delayed hypersensitivity", "All of the above"],
+          correct: 4,
+          exp: "HACA can lead to loss of response; concomitant methotrexate reduces antibody formation." },
+        { q: "Adalimumab is fully human, but anti‑drug antibodies still occur, which may:",
+          opts: ["Neutralize efficacy, increase clearance", "Increase toxicity", "Have no effect", "Cause anaphylaxis", "Induce autoimmunity"],
+          correct: 0,
+          exp: "Anti‑adalimumab antibodies can reduce drug levels." },
+        { q: "Etanercept is a TNF receptor‑Ig fusion protein. Unlike monoclonal antibodies, it:",
+          opts: ["Does not bind lymphotoxin‑α (TNF‑β) as strongly?", "Actually it binds both TNF‑α and lymphotoxin‑α", "Is not effective in granulomatous diseases (Crohn)", "Both B and C", "None"],
+          correct: 3,
+          exp: "Etanercept binds TNF‑α and lymphotoxin‑α, but is ineffective in Crohn disease." },
+        { q: "Certolizumab pegol is a PEGylated Fab' fragment of an anti‑TNF antibody. Its advantage is:",
+          opts: ["Lack of Fc region (no complement activation, no placental transfer)", "Longer half‑life", "Subcutaneous administration", "Higher affinity", "Less immunogenicity"],
+          correct: 0,
+          exp: "Certolizumab lacks Fc, so it does not cross placenta actively." },
+        { q: "Golimumab is a human anti‑TNF antibody administered:",
+          opts: ["Subcutaneously monthly", "Intravenously", "Orally", "Intramuscularly weekly", "Subcutaneously weekly"],
+          correct: 0,
+          exp: "Golimumab is given once monthly SC for RA, PsA, AS." },
+        { q: "Tildrakizumab, guselkumab, and risankizumab are anti‑IL‑23 p19 antibodies used for:",
+          opts: ["Psoriasis", "Rheumatoid arthritis", "Crohn disease", "Asthma", "MS"],
+          correct: 0,
+          exp: "They selectively block IL‑23, sparing IL‑12." },
+        { q: "Brodalumab is an anti‑IL‑17 receptor antibody used in psoriasis. It carries a black box warning for:",
+          opts: ["Suicidal ideation", "Infections", "Malignancy", "Cardiovascular events", "Hepatotoxicity"],
+          correct: 0,
+          exp: "Brodalumab has a boxed warning for suicidal behavior." },
+        { q: "Ixekizumab is an anti‑IL‑17A antibody. Common adverse effects include:",
+          opts: ["Upper respiratory infections, injection site reactions, Candida infections", "Tuberculosis reactivation", "Demyelination", "Heart failure", "Lupus‑like syndrome"],
+          correct: 0,
+          exp: "IL‑17 inhibition increases risk of mucocutaneous candidiasis." },
+        { q: "Vedolizumab's gut selectivity makes it safer regarding:",
+          opts: ["Lower risk of systemic immunosuppression (no PML risk)", "Lower risk of infections", "No risk of tuberculosis", "No risk of malignancy", "All of the above"],
+          correct: 0,
+          exp: "Vedolizumab specifically blocks gut homing; PML risk is very low." },
+        { q: "Rituximab is also used in ANCA‑associated vasculitis. The recommended regimen is often:",
+          opts: ["IV rituximab plus glucocorticoids", "Oral rituximab", "IM rituximab", "Subcutaneous rituximab weekly", "Intrathecal rituximab"],
+          correct: 0,
+          exp: "Rituximab is approved for granulomatosis with polyangiitis and microscopic polyangiitis." },
+        { q: "In transplant immunosuppression, the combination of tacrolimus, mycophenolate, and steroids is common. Tacrolimus level monitoring is important because:",
+          opts: ["Narrow therapeutic index, risk of nephrotoxicity", "Wide therapeutic index", "No toxicity", "Interactions with food", "Rapid metabolism"],
+          correct: 0,
+          exp: "Tacrolimus levels must be monitored to avoid toxicity and rejection." },
+        { q: "Cyclosporine adverse effects include all EXCEPT:",
+          opts: ["Myelosuppression", "Nephrotoxicity", "Hypertension", "Gingival hyperplasia", "Hyperlipidemia"],
+          correct: 0,
+          exp: "Cyclosporine causes nephrotoxicity, hypertension, gingival hyperplasia, and hyperlipidemia, but not myelosuppression." },
+        { q: "Tacrolimus side effects include:",
+          opts: ["Neurotoxicity (tremor, headache), post‑transplant diabetes mellitus", "Hirsutism, gingival hyperplasia", "Myelosuppression", "Pulmonary fibrosis", "Cardiomyopathy"],
+          correct: 0,
+          exp: "Tacrolimus is neurotoxic and diabetogenic." },
+        { q: "Mycophenolate mofetil adverse effects include:",
+          opts: ["GI upset (nausea, diarrhea), myelosuppression, teratogenicity", "Nephrotoxicity", "Hypertension", "Hirsutism", "Gingival hyperplasia"],
+          correct: 0,
+          exp: "MMF commonly causes GI intolerance and bone marrow suppression." },
+        { q: "Sirolimus (rapamycin) adverse effects include:",
+          opts: ["Hyperlipidemia, thrombocytopenia, mouth ulcers, delayed wound healing", "Nephrotoxicity", "Diabetes", "Hirsutism", "Gingival hyperplasia"],
+          correct: 0,
+          exp: "Sirolimus inhibits mTOR, causing metabolic and hematologic effects." },
+        { q: "The combination of sirolimus with calcineurin inhibitors may:",
+          opts: ["Increase nephrotoxicity", "Decrease nephrotoxicity", "Improve outcomes", "No interaction", "Cause hypertension"],
+          correct: 0,
+          exp: "Calcineurin inhibitors and sirolimus both can be nephrotoxic; levels must be monitored." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Which immunosuppressant works by inhibiting dihydroorotate dehydrogenase?",
+          opts: ["Leflunomide", "Mycophenolate", "Azathioprine", "Methotrexate", "Cyclosporine"],
+          correct: 0,
+          exp: "Leflunomide inhibits pyrimidine synthesis; used in RA." },
+        { q: "Voclosporin is a novel calcineurin inhibitor approved for lupus nephritis. Compared to cyclosporine, it:",
+          opts: ["Has more predictable pharmacokinetics, no need for monitoring", "Is more nephrotoxic", "Is less effective", "Causes more hypertension", "Requires monitoring"],
+          correct: 0,
+          exp: "Voclosporine has a more consistent dose‑response relationship." },
+        { q: "Which biologic is used to treat eosinophilic granulomatosis with polyangiitis (Churg‑Strauss)?",
+          opts: ["Mepolizumab (anti‑IL‑5)", "Rituximab", "Infliximab", "Tocilizumab", "Anakinra"],
+          correct: 0,
+          exp: "Mepolizumab reduces eosinophils and glucocorticoid requirements in EGPA." },
+        { q: "Reslizumab is another anti‑IL‑5 antibody; it is administered:",
+          opts: ["Intravenously", "Subcutaneously", "Orally", "Intramuscularly", "Intranasally"],
+          correct: 0,
+          exp: "Reslizumab is given IV; mepolizumab and benralizumab are SC." },
+        { q: "Benralizumab is an anti‑IL‑5 receptor antibody that:",
+          opts: ["Induces apoptosis of eosinophils (ADCC)", "Blocks IL‑5", "Neutralizes IL‑5", "Depletes B cells", "Inhibits JAK"],
+          correct: 0,
+          exp: "Benralizumab binds IL‑5Rα and recruits NK cells to kill eosinophils." },
+        { q: "Omalizumab's black box warning includes:",
+          opts: ["Anaphylaxis", "Malignancy", "Cardiovascular events", "Infections", "Thrombocytopenia"],
+          correct: 0,
+          exp: "Omalizumab can cause anaphylaxis; patients should be observed after injection." },
+        { q: "Dupilumab adverse effects include:",
+          opts: ["Injection site reactions, conjunctivitis, eosinophilia", "Tuberculosis reactivation", "Demyelination", "Heart failure", "Lupus‑like syndrome"],
+          correct: 0,
+          exp: "Conjunctivitis is a known side effect of dupilumab." },
+        { q: "The JAK inhibitor tofacitinib carries warnings for:",
+          opts: ["Thrombosis, infections, malignancy", "Nephrotoxicity", "Hepatotoxicity", "Cardiomyopathy", "Pulmonary fibrosis"],
+          correct: 0,
+          exp: "JAK inhibitors increase risk of thrombosis, serious infections, and lymphoma." },
+        { q: "Siponimod is an S1P receptor modulator used in MS. It requires:",
+          opts: ["CYP2C9 genotype testing before use", "Liver function monitoring", "ECG monitoring", "Eye exam", "All of the above"],
+          correct: 4,
+          exp: "Siponimod dosing depends on CYP2C9 genotype; baseline eye exam and ECG needed." },
+        { q: "Ozanimod is another S1P modulator used in MS and UC. It does NOT require genotyping because:",
+          opts: ["Metabolized by multiple pathways", "No genetic variation", "Prodrug", "Short half‑life", "Topical use"],
+          correct: 0,
+          exp: "Ozanimod metabolism is less dependent on CYP2C9." },
+        { q: "Cladribine is an immunosuppressant used in MS. It works by:",
+          opts: ["Depleting lymphocytes (purine analog)", "Blocking IL‑2", "Inhibiting JAK", "Depleting B cells", "Blocking α4 integrin"],
+          correct: 0,
+          exp: "Cladribine causes selective lymphocyte depletion." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

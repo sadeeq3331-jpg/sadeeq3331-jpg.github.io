@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatrics · Physiology MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-child"></i>
+        <h1>Pediatrics · Physiology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ PEDIATRICS PHYSIOLOGY QUESTIONS
+    const questions = [
+        { q: "At birth, the average weight of a term infant is approximately:",
+          opts: ["2.5 kg", "3.5 kg", "4.5 kg", "5.0 kg", "6.0 kg"],
+          correct: 1,
+          exp: "Average birth weight is 3.5 kg (range 2.5‑4.5 kg)." },
+        { q: "By what age does an infant typically double birth weight?",
+          opts: ["3 months", "5 months", "9 months", "12 months", "18 months"],
+          correct: 1,
+          exp: "Birth weight doubles by about 5 months and triples by 1 year." },
+        { q: "Head circumference increases most rapidly during which period?",
+          opts: ["First year of life", "Second year of life", "Third year of life", "Puberty", "Adolescence"],
+          correct: 0,
+          exp: "Head circumference increases by ~12 cm in first year (2 cm/month in first 3 months)." },
+        { q: "Which reflex is characterized by extension of the arm on the side of head turning and flexion of the opposite arm?",
+          opts: ["Moro reflex", "Tonic neck reflex", "Grasp reflex", "Rooting reflex", "Babinski reflex"],
+          correct: 1,
+          exp: "Tonic neck reflex (fencing posture) appears at birth and disappears by 6‑7 months." },
+        { q: "The Moro reflex is elicited by:",
+          opts: ["Sudden loss of head support", "Stroking the cheek", "Pressure on palm", "Stroking the sole", "Pulling to sit"],
+          correct: 0,
+          exp: "Moro reflex (startle) involves extension then flexion of arms; disappears by 4‑6 months." },
+        { q: "At what age does social smile typically appear?",
+          opts: ["Birth", "2 months", "4 months", "6 months", "9 months"],
+          correct: 1,
+          exp: "Social smile emerges around 2 months of age." },
+        { q: "Which developmental milestone is expected at 6 months?",
+          opts: ["Sits without support", "Walks alone", "Says first word", "Pincer grasp", "Runs"],
+          correct: 0,
+          exp: "At 6 months, infants sit with support; sits without support by 8 months." },
+        { q: "Pincer grasp (thumb‑finger) is typically achieved by:",
+          opts: ["6 months", "9 months", "12 months", "15 months", "18 months"],
+          correct: 1,
+          exp: "Pincer grasp develops around 9‑10 months." },
+        { q: "At what age does an infant say their first meaningful word?",
+          opts: ["6 months", "9 months", "12 months", "15 months", "18 months"],
+          correct: 2,
+          exp: "First words (e.g., mama/dada specific) appear around 12 months." },
+        { q: "By what age do most children walk independently?",
+          opts: ["9 months", "12 months", "15 months", "18 months", "24 months"],
+          correct: 1,
+          exp: "Average age for walking alone is 12 months (range 9‑15 months)." },
+        { q: "The daily caloric requirement for a 1‑month‑old infant is approximately:",
+          opts: ["80‑90 kcal/kg", "100‑120 kcal/kg", "130‑150 kcal/kg", "150‑180 kcal/kg", "200 kcal/kg"],
+          correct: 1,
+          exp: "Infants require 100‑120 kcal/kg/day in the first few months." },
+        { q: "Which vitamin is routinely given to breastfed infants to prevent deficiency?",
+          opts: ["Vitamin A", "Vitamin D", "Vitamin E", "Vitamin K", "Vitamin C"],
+          correct: 1,
+          exp: "Breast milk is low in vitamin D; 400 IU/day supplement is recommended." },
+        { q: "Vitamin K is given at birth to prevent:",
+          opts: ["Hemorrhagic disease of newborn", "Rickets", "Anemia", "Thrombocytopenia", "Infection"],
+          correct: 0,
+          exp: "Newborns are vitamin K deficient due to poor placental transfer and sterile gut." },
+        { q: "The first stool passed by a newborn is called:",
+          opts: ["Meconium", "Transitional stool", "Milk stool", "Hirschsprung stool", "Diarrhea"],
+          correct: 0,
+          exp: "Meconium is dark green/black and sterile, passed in first 24‑48 hours." },
+        { q: "Physiologic jaundice in term newborns peaks at what age?",
+          opts: ["24 hours", "3‑5 days", "7‑10 days", "2 weeks", "1 month"],
+          correct: 1,
+          exp: "Physiologic jaundice peaks at 3‑5 days due to immature hepatic conjugation." },
+        { q: "Which statement about neonatal red blood cells is true?",
+          opts: ["They have a shorter lifespan (70‑90 days)", "They have a longer lifespan (120 days)", "They are macrocytic", "They have low hemoglobin F", "They have low erythropoietin"],
+          correct: 0,
+          exp: "Neonatal RBC lifespan is about 70‑90 days, contributing to physiologic anemia." },
+        { q: "Glomerular filtration rate (GFR) in a term newborn is approximately:",
+          opts: ["10% of adult", "25% of adult", "50% of adult", "75% of adult", "Same as adult"],
+          correct: 0,
+          exp: "Neonatal GFR is about 20 mL/min/1.73m² (~10% adult), reaching adult levels by 1‑2 years." },
+        { q: "Which electrolyte disturbance is most common in preterm infants due to immature renal function?",
+          opts: ["Hypernatremia", "Hyponatremia", "Hyperkalemia", "Hypokalemia", "Hypocalcemia"],
+          correct: 1,
+          exp: "Preterm infants often waste sodium, leading to hyponatremia." },
+        { q: "Surfactant production begins at what gestational age?",
+          opts: ["16‑18 weeks", "20‑24 weeks", "28‑32 weeks", "34‑36 weeks", "After birth"],
+          correct: 1,
+          exp: "Surfactant synthesis begins around 20‑24 weeks but is sufficient only by 34‑36 weeks." },
+        { q: "Which of the following is a sign of respiratory distress in a newborn?",
+          opts: ["Grunting", "Nasal flaring", "Intercostal retractions", "Tachypnea", "All of the above"],
+          correct: 4,
+          exp: "Grunting, flaring, retractions, and tachypnea are all signs of respiratory distress." },
+        { q: "The normal respiratory rate for a newborn is:",
+          opts: ["20‑30 breaths/min", "30‑60 breaths/min", "60‑80 breaths/min", "80‑100 breaths/min", "10‑20 breaths/min"],
+          correct: 1,
+          exp: "Newborns typically breathe 30‑60 times per minute." },
+        { q: "Fetal circulation is characterized by:",
+          opts: ["High pulmonary vascular resistance, low systemic resistance", "Low pulmonary resistance, high systemic resistance", "Equal pulmonary and systemic resistance", "No resistance changes", "None"],
+          correct: 0,
+          exp: "In utero, pulmonary vessels are constricted (high resistance); systemic resistance is low due to placenta." },
+        { q: "At birth, the foramen ovale closes functionally due to:",
+          opts: ["Increased left atrial pressure", "Decreased right atrial pressure", "Increased right atrial pressure", "Decreased left atrial pressure", "Both A and B"],
+          correct: 4,
+          exp: "Lung expansion decreases pulmonary resistance, increasing pulmonary venous return to left atrium; placental removal decreases right atrial pressure." },
+        { q: "The ductus arteriosus normally closes within:",
+          opts: ["Hours after birth", "24‑48 hours", "1 week", "2 weeks", "1 month"],
+          correct: 1,
+          exp: "Functional closure occurs by 24‑48 hours; permanent fibrosis by 2‑3 weeks." },
+        { q: "Persistent pulmonary hypertension of newborn (PPHN) can result from:",
+          opts: ["Meconium aspiration", "Perinatal asphyxia", "Sepsis", "Congenital diaphragmatic hernia", "All of the above"],
+          correct: 4,
+          exp: "PPHN is failure of pulmonary vascular resistance to drop after birth." },
+        { q: "Which reflex is used to test for developmental dysplasia of the hip (DDH)?",
+          opts: ["Moro", "Babinski", "Ortolani and Barlow", "Rooting", "Palmar grasp"],
+          correct: 2,
+          exp: "Ortolani (reduction) and Barlow (dislocation) maneuvers screen for DDH." },
+        { q: "The most common cause of pathologic jaundice in the first 24 hours of life is:",
+          opts: ["Breastfeeding jaundice", "Hemolytic disease (ABO/Rh incompatibility)", "Cephalohematoma", "Physiologic jaundice", "Biliary atresia"],
+          correct: 1,
+          exp: "Jaundice within 24 hours is always pathologic, most often due to hemolysis." },
+        { q: "Breast milk jaundice typically presents after:",
+          opts: ["24 hours", "2‑3 days", "4‑7 days", "2 weeks", "1 month"],
+          correct: 2,
+          exp: "Breast milk jaundice appears at 4‑7 days and may persist for weeks." },
+        { q: "Kernicterus is caused by:",
+          opts: ["Unconjugated hyperbilirubinemia depositing in basal ganglia", "Conjugated hyperbilirubinemia", "Hepatic encephalopathy", "Hypoglycemia", "Hypoxia"],
+          correct: 0,
+          exp: "Unconjugated bilirubin crosses blood‑brain barrier, staining basal ganglia and brainstem nuclei." },
+        { q: "The most common pathogen causing early‑onset neonatal sepsis is:",
+          opts: ["Group B Streptococcus", "E. coli", "Listeria monocytogenes", "Staphylococcus aureus", "HSV"],
+          correct: 0,
+          exp: "GBS is the leading cause of early‑onset sepsis; intrapartum prophylaxis reduces risk." },
+        { q: "Hypoglycemia in a newborn is defined as blood glucose less than:",
+          opts: ["20 mg/dL", "30 mg/dL", "40 mg/dL", "50 mg/dL", "60 mg/dL"],
+          correct: 2,
+          exp: "Operational threshold is <40 mg/dL in first 24 hours, <45 mg/dL thereafter." },
+        { q: "Which of the following is a risk factor for neonatal hypoglycemia?",
+          opts: ["Infant of diabetic mother", "Preterm infant", "Intrauterine growth restriction", "Perinatal asphyxia", "All of the above"],
+          correct: 4,
+          exp: "All listed conditions increase hypoglycemia risk." },
+        { q: "The most common cause of neonatal seizures is:",
+          opts: ["Hypoxic‑ischemic encephalopathy", "Metabolic disturbances", "Infection", "Intracranial hemorrhage", "Developmental defects"],
+          correct: 0,
+          exp: "HIE is the most common cause, especially in term infants." },
+        { q: "At what age do anterior fontanelles typically close?",
+          opts: ["2‑4 months", "4‑8 months", "9‑18 months", "18‑24 months", "2‑3 years"],
+          correct: 2,
+          exp: "Anterior fontanelle closes between 9 and 18 months." },
+        { q: "Delayed closure of fontanelles is associated with:",
+          opts: ["Hypothyroidism", "Rickets", "Increased intracranial pressure", "Down syndrome", "Both A and B"],
+          correct: 4,
+          exp: "Hypothyroidism and rickets cause delayed closure; increased ICP causes bulging fontanelle." },
+        { q: "Which teeth typically erupt first?",
+          opts: ["Upper central incisors", "Lower central incisors", "First molars", "Canines", "Lateral incisors"],
+          correct: 1,
+          exp: "Lower central incisors usually erupt around 6‑10 months." },
+        { q: "The average age for loss of first deciduous tooth is:",
+          opts: ["4 years", "5 years", "6 years", "7 years", "8 years"],
+          correct: 2,
+          exp: "First tooth is typically lost around 6 years." },
+        { q: "Which screening test is used to detect developmental dysplasia of the hip after 4‑6 months?",
+          opts: ["Ortolani maneuver", "Barlow maneuver", "Galeazzi sign", "Trendelenburg test", "X‑ray"],
+          correct: 2,
+          exp: "After 4‑6 months, limited abduction and Galeazzi sign are more reliable; X‑ray confirms." },
+        { q: "Peak incidence of sudden infant death syndrome (SIDS) occurs at:",
+          opts: ["1‑2 months", "2‑4 months", "6‑9 months", "9‑12 months", "12‑18 months"],
+          correct: 1,
+          exp: "SIDS peaks at 2‑4 months of age; risk factors include prone sleep, maternal smoking." },
+        { q: "Which vaccine is contraindicated in immunocompromised children?",
+          opts: ["Inactivated polio", "Hepatitis B", "MMR", "DTaP", "Hib"],
+          correct: 2,
+          exp: "Live vaccines (MMR, varicella, live influenza) are contraindicated in severe immunosuppression." },
+        { q: "The recommended age for first MMR vaccine is:",
+          opts: ["6 months", "9 months", "12‑15 months", "18 months", "4‑6 years"],
+          correct: 2,
+          exp: "MMR is first given at 12‑15 months, with a booster at 4‑6 years." },
+        { q: "Daily maintenance fluid requirement for a 10‑kg child (using Holliday‑Segar method) is:",
+          opts: ["500 mL/day", "750 mL/day", "1000 mL/day", "1250 mL/day", "1500 mL/day"],
+          correct: 2,
+          exp: "For first 10 kg: 100 mL/kg/day = 1000 mL." },
+        { q: "For a 25‑kg child, daily maintenance fluid requirement is:",
+          opts: ["1000 mL", "1250 mL", "1500 mL", "1750 mL", "2000 mL"],
+          correct: 2,
+          exp: "10 kg: 1000 mL; next 10 kg: 500 mL; total 1500 mL." },
+        { q: "The most common cause of failure to thrive in infancy is:",
+          opts: ["Organic disease", "Inadequate caloric intake (non‑organic)", "Malabsorption", "Endocrine disorders", "Genetic syndromes"],
+          correct: 1,
+          exp: "Most FTT is due to inadequate intake (often psychosocial), not organic disease." },
+        { q: "At what age do children typically achieve 50% of adult height?",
+          opts: ["2 years", "3 years", "4 years", "5 years", "6 years"],
+          correct: 0,
+          exp: "Height at 2 years is about half of adult height." },
+        { q: "The pubertal growth spurt in girls occurs at what Tanner stage?",
+          opts: ["I‑II", "II‑III", "III‑IV", "IV‑V", "After menarche"],
+          correct: 1,
+          exp: "Peak height velocity in girls is at Tanner stage II‑III (usually before menarche)." },
+        { q: "In boys, the pubertal growth spurt occurs at Tanner stage:",
+          opts: ["II‑III", "III‑IV", "IV‑V", "After testicular enlargement", "After voice change"],
+          correct: 1,
+          exp: "Boys peak height velocity at Tanner stage III‑IV (average age 13‑14)." },
+        { q: "Thelarche refers to:",
+          opts: ["Pubic hair development", "Breast development", "Menarche", "Testicular enlargement", "Growth spurt"],
+          correct: 1,
+          exp: "Thelarche is breast budding, typically the first sign of puberty in girls (age 8‑13)." },
+        { q: "Menarche typically occurs how many years after thelarche?",
+          opts: ["0.5 years", "1‑2 years", "2‑3 years", "3‑4 years", "4‑5 years"],
+          correct: 1,
+          exp: "Menarche usually occurs 2‑2.5 years after thelarche, around age 12‑13." },
+        { q: "Gonadarche refers to:",
+          opts: ["Adrenal androgen production", "Activation of hypothalamic‑pituitary‑gonadal axis", "Breast development", "Pubic hair development", "Menarche"],
+          correct: 1,
+          exp: "Gonadarche is reactivation of HPG axis; adrenarche is adrenal androgen secretion." },
+        { q: "The first sign of puberty in boys is:",
+          opts: ["Pubic hair", "Growth spurt", "Testicular enlargement (>3 mL)", "Voice change", "Penile growth"],
+          correct: 2,
+          exp: "Testicular enlargement (≥4 mL) is the first sign (age 9‑14)." },
+        { q: "Precocious puberty is defined as onset before age __ in girls and __ in boys.",
+          opts: ["8, 9", "9, 10", "10, 11", "7, 8", "6, 7"],
+          correct: 0,
+          exp: "Precocious puberty: girls <8, boys <9 years." },
+        { q: "Delayed puberty in boys is defined as no testicular enlargement by age:",
+          opts: ["12 years", "13 years", "14 years", "15 years", "16 years"],
+          correct: 2,
+          exp: "Boys: no testicular enlargement by 14 years; girls: no breast development by 13 years." },
+        { q: "Bone age is most accurately assessed using X‑ray of:",
+          opts: ["Hand and wrist", "Knee", "Elbow", "Pelvis", "Foot"],
+          correct: 0,
+          exp: "Left hand and wrist X‑ray (Greulich‑Pyle atlas) is standard for bone age." },
+        { q: "Which factor accelerates bone age?",
+          opts: ["Growth hormone deficiency", "Hypothyroidism", "Sex steroids (estrogen/testosterone)", "Malnutrition", "Constitutional delay"],
+          correct: 2,
+          exp: "Sex steroids accelerate epiphyseal maturation; estrogen is the key hormone for closure." },
+        { q: "Constitutional growth delay is characterized by:",
+          opts: ["Delayed bone age, delayed puberty, normal growth velocity", "Advanced bone age, early puberty", "Short stature with normal bone age", "Tall stature with delayed puberty", "None"],
+          correct: 0,
+          exp: "Constitutional delay: child grows at normal rate but on lower percentile, with delayed bone age and puberty." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "The Denver Developmental Screening Test assesses:",
+          opts: ["Gross motor, fine motor, language, personal‑social", "IQ only", "Physical growth only", "Vision and hearing only", "Reflexes only"],
+          correct: 0,
+          exp: "Denver II screens four domains: gross motor, fine motor‑adaptive, language, personal‑social." },
+        { q: "At what age does separation anxiety typically peak?",
+          opts: ["4‑6 months", "9‑12 months", "18‑24 months", "2‑3 years", "3‑4 years"],
+          correct: 1,
+          exp: "Separation anxiety peaks around 9‑12 months and resolves by 2 years." },
+        { q: "Parallel play is characteristic of which age group?",
+          opts: ["1‑2 years", "2‑3 years", "3‑4 years", "4‑5 years", "5‑6 years"],
+          correct: 1,
+          exp: "Parallel play (playing alongside, not with) is typical for toddlers 2‑3 years." },
+        { q: "Cooperative play begins around age:",
+          opts: ["2 years", "3 years", "4 years", "5 years", "6 years"],
+          correct: 2,
+          exp: "Cooperative play emerges around 4 years." },
+        { q: "A 2‑year‑old's vocabulary typically includes:",
+          opts: ["50 words", "200 words", "500 words", "1000 words", ">2000 words"],
+          correct: 0,
+          exp: "By 2 years, a child usually knows 50+ words and starts combining 2 words." },
+        { q: "The ability to hop on one foot is expected by age:",
+          opts: ["2 years", "3 years", "4 years", "5 years", "6 years"],
+          correct: 2,
+          exp: "Hopping on one foot is achieved by 4 years; skipping by 5 years." },
+        { q: "At what age can a child copy a circle?",
+          opts: ["2 years", "3 years", "4 years", "5 years", "6 years"],
+          correct: 1,
+          exp: "Copy a circle at 3 years; square at 4 years; triangle at 5 years." },
+        { q: "A child who stacks 6 cubes is likely age:",
+          opts: ["1 year", "1.5 years", "2 years", "2.5 years", "3 years"],
+          correct: 2,
+          exp: "2‑year‑olds can stack 6‑7 cubes." },
+        { q: "Which reflex persists longest?",
+          opts: ["Moro", "Tonic neck", "Plantar grasp", "Rooting", "Babinski"],
+          correct: 2,
+          exp: "Plantar grasp disappears around 9‑10 months; Moro and rooting by 4‑6 months." },
+        { q: "The presence of Moro reflex beyond 6 months suggests:",
+          opts: ["Cerebral palsy", "Normal variation", "Seizure disorder", "Developmental delay", "Hypothyroidism"],
+          correct: 0,
+          exp: "Persistent primitive reflexes may indicate upper motor neuron lesion (cerebral palsy)." },
+        { q: "Infants are obligate nose breathers until:",
+          opts: ["1 month", "3 months", "6 months", "9 months", "12 months"],
+          correct: 1,
+          exp: "Obligate nose breathing lasts until about 3‑4 months; nasal congestion can cause distress." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

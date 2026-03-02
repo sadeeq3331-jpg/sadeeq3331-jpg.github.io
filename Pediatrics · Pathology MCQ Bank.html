@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatrics · Pathology MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-child"></i>
+        <h1>Pediatrics · Pathology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ PEDIATRICS PATHOLOGY QUESTIONS
+    const questions = [
+        { q: "The most common cause of neonatal respiratory distress is:",
+          opts: ["Respiratory distress syndrome (RDS)", "Transient tachypnea of newborn (TTN)", "Meconium aspiration syndrome", "Pneumonia", "Congenital diaphragmatic hernia"],
+          correct: 1,
+          exp: "TTN is most common, especially after C‑section; self‑limited due to delayed lung fluid clearance." },
+        { q: "Surfactant deficiency leads to which condition in preterm infants?",
+          opts: ["Respiratory distress syndrome (RDS)", "Bronchopulmonary dysplasia", "Meconium aspiration", "Pneumothorax", "Pneumonia"],
+          correct: 0,
+          exp: "RDS (hyaline membrane disease) results from surfactant deficiency, causing alveolar collapse." },
+        { q: "Hyaline membranes in RDS are composed of:",
+          opts: ["Fibrin and necrotic epithelial cells", "Surfactant", "Mucus", "Inflammatory cells", "Platelets"],
+          correct: 0,
+          exp: "Hyaline membranes are proteinaceous debris (fibrin) lining alveolar ducts." },
+        { q: "Bronchopulmonary dysplasia (BPD) is associated with:",
+          opts: ["Oxygen toxicity and barotrauma", "Surfactant deficiency", "Group B Strep infection", "Congenital heart disease", "Meconium aspiration"],
+          correct: 0,
+          exp: "BPD is chronic lung disease of prematurity from oxygen/ventilator injury." },
+        { q: "Necrotizing enterocolitis (NEC) is most common in:",
+          opts: ["Term infants", "Preterm infants after formula feeding", "Preterm infants after breast milk feeding", "Infants with congenital heart disease", "Infants with gastroschisis"],
+          correct: 1,
+          exp: "NEC typically affects preterm infants, especially after formula feeding (lack of protective factors)." },
+        { q: "Pneumatosis intestinalis on X‑ray is pathognomonic for:",
+          opts: ["Necrotizing enterocolitis", "Hirschsprung disease", "Intussusception", "Malrotation", "Meconium ileus"],
+          correct: 0,
+          exp: "Gas in bowel wall (pneumatosis) is a hallmark of NEC." },
+        { q: "Which organism is most commonly associated with early‑onset neonatal sepsis?",
+          opts: ["Group B Streptococcus", "Escherichia coli", "Listeria monocytogenes", "Staphylococcus aureus", "Coagulase‑negative staph"],
+          correct: 0,
+          exp: "GBS remains the leading cause of early‑onset sepsis; intrapartum prophylaxis reduces risk." },
+        { q: "Congenital syphilis can present with which finding?",
+          opts: ["Snuffles (rhinitis)", "Hutchinson teeth", "Saber shins", "Saddle nose", "All of the above"],
+          correct: 4,
+          exp: "Early: snuffles, rash; late: Hutchinson teeth, saddle nose, saber shins." },
+        { q: "TORCH infections include all except:",
+          opts: ["Toxoplasmosis", "Rubella", "Cytomegalovirus", "HIV", "Herpes simplex"],
+          correct: 3,
+          exp: "TORCH: Toxoplasmosis, Others (syphilis, VZV, parvovirus), Rubella, CMV, HSV." },
+        { q: "Congenital CMV infection classically presents with:",
+          opts: ["Microcephaly, periventricular calcifications, sensorineural hearing loss", "Hydrocephalus, chorioretinitis, intracerebral calcifications", "Cataracts, heart defects, deafness", "Vesicular rash, limb hypoplasia", "Hydrops fetalis"],
+          correct: 0,
+          exp: "CMV: microcephaly, periventricular calcifications, hearing loss; petechiae, hepatosplenomegaly." },
+        { q: "The classic triad of congenital rubella includes:",
+          opts: ["Cataracts, sensorineural deafness, congenital heart disease (PDA)", "Microcephaly, chorioretinitis, hepatosplenomegaly", "Hydrocephalus, intracranial calcifications, chorioretinitis", "Cleft lip, heart defect, polydactyly", "Macrosomia, omphalocele, macroglossia"],
+          correct: 0,
+          exp: "Rubella: cataracts, deafness, PDA; also blueberry muffin rash." },
+        { q: "Which chromosomal abnormality is most commonly associated with congenital heart disease?",
+          opts: ["Down syndrome (trisomy 21)", "Turner syndrome (45,X)", "Klinefelter syndrome (47,XXY)", "Cri‑du‑chat (5p‑)", "Williams syndrome"],
+          correct: 0,
+          exp: "Down syndrome: AVSD (40%), VSD, ASD; also duodenal atresia, Hirschsprung." },
+        { q: "Tetralogy of Fallot consists of:",
+          opts: ["VSD, pulmonary stenosis, overriding aorta, right ventricular hypertrophy", "VSD, ASD, PDA, LVH", "ASD, VSD, coarctation, PDA", "Pulmonary stenosis, VSD, ASD, RVH", "Transposition, VSD, pulmonary stenosis, RVH"],
+          correct: 0,
+          exp: "TOF: VSD, pulmonary stenosis, overriding aorta, RVH." },
+        { q: "A newborn with cyanosis that improves with prostaglandin E1 likely has:",
+          opts: ["Ductal‑dependent lesion (e.g., pulmonary atresia)", "Transposition of great arteries", "Tetralogy of Fallot", "Total anomalous pulmonary venous return", "Truncus arteriosus"],
+          correct: 0,
+          exp: "PGE1 maintains PDA patency, improving pulmonary blood flow in ductal‑dependent lesions." },
+        { q: "Coarctation of aorta is associated with:",
+          opts: ["Turner syndrome", "Down syndrome", "Marfan syndrome", "Noonan syndrome", "Williams syndrome"],
+          correct: 0,
+          exp: "Coarctation is common in Turner syndrome (along with bicuspid aortic valve)." },
+        { q: "The most common cyanotic congenital heart disease presenting in the first week of life is:",
+          opts: ["Transposition of great arteries", "Tetralogy of Fallot", "Truncus arteriosus", "Total anomalous pulmonary venous return", "Tricuspid atresia"],
+          correct: 0,
+          exp: "TGA presents with early cyanosis due to parallel circulation." },
+        { q: "Pyloric stenosis typically presents at what age?",
+          opts: ["Birth", "2‑3 weeks", "3‑6 weeks", "3‑6 months", "6‑12 months"],
+          correct: 2,
+          exp: "Hypertrophic pyloric stenosis presents at 3‑6 weeks with projectile vomiting, olive‑shaped mass." },
+        { q: "Which electrolyte abnormality is common in pyloric stenosis?",
+          opts: ["Hypokalemic, hypochloremic metabolic alkalosis", "Hypernatremic metabolic acidosis", "Hypokalemic metabolic acidosis", "Hyperchloremic metabolic acidosis", "Hypocalcemia"],
+          correct: 0,
+          exp: "Loss of gastric acid (HCl) leads to hypochloremic, hypokalemic metabolic alkalosis." },
+        { q: "Intussusception is most commonly located at:",
+          opts: ["Ileocecal valve", "Sigmoid colon", "Duodenojejunal junction", "Rectosigmoid", "Pylorus"],
+          correct: 0,
+          exp: "Ileocolic intussusception is most common; presents with currant jelly stool and intermittent pain." },
+        { q: "Meckel diverticulum follows the 'rule of 2s' except:",
+          opts: ["2% of population", "2 inches long", "2 feet from ileocecal valve", "2 types of ectopic tissue (gastric, pancreatic)", "2 years of age at presentation"],
+          correct: 4,
+          exp: "Meckel's: 2% of pop, 2 inches long, 2 feet from ileocecal valve, 2 types of tissue, but most present by age 2 (not always)." },
+        { q: "Hirschsprung disease is caused by:",
+          opts: ["Absence of ganglion cells in distal colon", "Hyperganglionosis", "Inflammation of myenteric plexus", "Muscular hypertrophy", "Aganglionosis of entire colon"],
+          correct: 0,
+          exp: "Failure of neural crest cell migration leads to aganglionic segment; presents with failure to pass meconium." },
+        { q: "Which finding suggests Hirschsprung disease on rectal biopsy?",
+          opts: ["Absence of ganglion cells and hypertrophic nerve trunks", "Eosinophilic infiltration", "Ganglion cells present", "Fibrosis", "Crypt abscesses"],
+          correct: 0,
+          exp: "Biopsy shows aganglionosis and hypertrophic nerve fibers." },
+        { q: "Cystic fibrosis is caused by mutation in the gene encoding:",
+          opts: ["CFTR (chloride channel)", "Dystrophin", "Fibrillin", "Surfactant protein B", "Alpha‑1 antitrypsin"],
+          correct: 0,
+          exp: "CFTR gene (chromosome 7) encodes a chloride channel; most common mutation ΔF508." },
+        { q: "Which of the following is a pulmonary manifestation of cystic fibrosis?",
+          opts: ["Bronchiectasis", "Recurrent pneumonia (S. aureus, Pseudomonas)", "Atelectasis", "All of the above", "None"],
+          correct: 3,
+          exp: "CF causes thick mucus leading to obstruction, infection, and bronchiectasis." },
+        { q: "Meconium ileus is a neonatal presentation of:",
+          opts: ["Cystic fibrosis", "Hirschsprung disease", "Necrotizing enterocolitis", "Intussusception", "Malrotation"],
+          correct: 0,
+          exp: "Meconium ileus occurs in 10‑20% of CF newborns due to inspissated meconium." },
+        { q: "Which enzyme deficiency causes phenylketonuria (PKU)?",
+          opts: ["Phenylalanine hydroxylase", "Tyrosine hydroxylase", "Homogentisate oxidase", "Branched‑chain α‑ketoacid dehydrogenase", "Galactose‑1‑phosphate uridylyltransferase"],
+          correct: 0,
+          exp: "PKU is deficiency of phenylalanine hydroxylase, leading to accumulation of phenylalanine." },
+        { q: "Untreated PKU leads to:",
+          opts: ["Intellectual disability, musty odor, eczema", "Hypotonia, hepatomegaly", "Coarse facies, organomegaly", "Self‑mutilation, hyperuricemia", "Lens dislocation, marfanoid habitus"],
+          correct: 0,
+          exp: "PKU causes progressive intellectual disability, seizures, eczema, hypopigmentation, musty odor." },
+        { q: "Galactosemia (classic) is due to deficiency of:",
+          opts: ["Galactose‑1‑phosphate uridylyltransferase (GALT)", "Galactokinase", "UDP‑galactose‑4‑epimerase", "Aldolase B", "Fructokinase"],
+          correct: 0,
+          exp: "Classic galactosemia is GALT deficiency, leading to vomiting, jaundice, cataracts, E. coli sepsis." },
+        { q: "Which disorder presents with cataracts, hepatomegaly, and E. coli sepsis after milk ingestion?",
+          opts: ["Galactosemia", "PKU", "Maple syrup urine disease", "Tyrosinemia", "Hereditary fructose intolerance"],
+          correct: 0,
+          exp: "Galactosemia symptoms appear after lactose ingestion." },
+        { q: "Hereditary fructose intolerance (aldolase B deficiency) causes:",
+          opts: ["Hypoglycemia, vomiting, liver failure after fructose ingestion", "Cataracts, intellectual disability", "Hemolysis, dark urine", "Severe diarrhea, acidosis", "Cholestatic jaundice"],
+          correct: 0,
+          exp: "Fructose‑1‑phosphate accumulates, inhibiting gluconeogenesis and causing hypoglycemia." },
+        { q: "Maple syrup urine disease results from deficiency of:",
+          opts: ["Branched‑chain α‑ketoacid dehydrogenase", "Phenylalanine hydroxylase", "Homogentisate oxidase", "Tyrosine aminotransferase", "Methylmalonyl‑CoA mutase"],
+          correct: 0,
+          exp: "MSUD leads to accumulation of leucine, isoleucine, valine, causing sweet‑smelling urine and encephalopathy." },
+        { q: "Which finding is characteristic of homocystinuria?",
+          opts: ["Ectopia lentis (downward dislocation), marfanoid habitus, thromboembolism", "Upward lens dislocation, tall stature, aortic root dilation", "Cherry‑red spot, coarse facies", "Self‑mutilation, hyperuricemia", "Dystonia, liver disease"],
+          correct: 0,
+          exp: "Homocystinuria (cystathionine β‑synthase deficiency) causes lens dislocation downward, skeletal changes, and thrombosis." },
+        { q: "Tyrosinemia type I is due to deficiency of:",
+          opts: ["Fumarylacetoacetate hydrolase", "Tyrosine aminotransferase", "4‑hydroxyphenylpyruvate dioxygenase", "Homogentisate oxidase", "Phenylalanine hydroxylase"],
+          correct: 0,
+          exp: "Tyrosinemia I presents with liver failure, renal tubular dysfunction, neurological crises." },
+        { q: "Alkaptonuria is caused by deficiency of:",
+          opts: ["Homogentisate oxidase", "Tyrosinase", "Phenylalanine hydroxylase", "Branched‑chain ketoacid dehydrogenase", "Galactose‑1‑phosphate uridylyltransferase"],
+          correct: 0,
+          exp: "Alkaptonuria: homogentisate accumulates, causing dark urine, ochronosis, arthritis." },
+        { q: "Glycogen storage disease type I (von Gierke) is due to deficiency of:",
+          opts: ["Glucose‑6‑phosphatase", "Debranching enzyme", "Branching enzyme", "Muscle phosphorylase", "Liver phosphorylase"],
+          correct: 0,
+          exp: "von Gierke: severe fasting hypoglycemia, hepatomegaly, lactic acidosis, hyperuricemia." },
+        { q: "Pompe disease (GSD II) involves deficiency of:",
+          opts: ["Lysosomal α‑1,4‑glucosidase (acid maltase)", "Debranching enzyme", "Branching enzyme", "Myophosphorylase", "Liver phosphorylase"],
+          correct: 0,
+          exp: "Pompe is a lysosomal storage disease with glycogen accumulation in heart, muscle; cardiomegaly." },
+        { q: "McArdle disease (GSD V) presents with:",
+          opts: ["Exercise intolerance, cramps, myoglobinuria", "Hypoglycemia, hepatomegaly", "Cardiomegaly, hypotonia", "Cirrhosis, failure to thrive", "Hemolytic anemia"],
+          correct: 0,
+          exp: "McArdle: muscle phosphorylase deficiency, causing exercise‑induced pain and myoglobinuria." },
+        { q: "Tay‑Sachs disease is caused by deficiency of:",
+          opts: ["Hexosaminidase A", "Sphingomyelinase", "Glucocerebrosidase", "Galactocerebrosidase", "α‑galactosidase A"],
+          correct: 0,
+          exp: "Tay‑Sachs: hexosaminidase A deficiency → GM2 ganglioside accumulation → cherry‑red spot, neurodegeneration." },
+        { q: "Niemann‑Pick type A/B is due to deficiency of:",
+          opts: ["Sphingomyelinase", "Glucocerebrosidase", "Hexosaminidase A", "Arylsulfatase A", "α‑iduronidase"],
+          correct: 0,
+          exp: "Niemann‑Pick: sphingomyelinase deficiency → foam cells, hepatosplenomegaly, neurodegeneration (type A)." },
+        { q: "Gaucher disease involves deficiency of:",
+          opts: ["Glucocerebrosidase", "Sphingomyelinase", "β‑galactosidase", "α‑galactosidase A", "Iduronate‑2‑sulfatase"],
+          correct: 0,
+          exp: "Gaucher: glucocerebroside accumulates → Gaucher cells (crumpled tissue paper), hepatosplenomegaly, bone pain." },
+        { q: "Krabbe disease (globoid cell leukodystrophy) is due to deficiency of:",
+          opts: ["Galactocerebrosidase", "Arylsulfatase A", "β‑galactosidase", "Hexosaminidase A", "Iduronidase"],
+          correct: 0,
+          exp: "Krabbe: galactocerebrosidase deficiency → demyelination, globoid cells, early death." },
+        { q: "Fabry disease (X‑linked) causes deficiency of:",
+          opts: ["α‑galactosidase A", "β‑galactosidase", "Glucocerebrosidase", "Sphingomyelinase", "Iduronate‑2‑sulfatase"],
+          correct: 0,
+          exp: "Fabry: α‑galactosidase A deficiency → angiokeratomas, acroparesthesias, renal failure, cardiovascular disease." },
+        { q: "Metachromatic leukodystrophy involves deficiency of:",
+          opts: ["Arylsulfatase A", "Galactocerebrosidase", "β‑galactosidase", "Hexosaminidase A", "Sphingomyelinase"],
+          correct: 0,
+          exp: "Arylsulfatase A deficiency → accumulation of sulfatides → demyelination, peripheral neuropathy." },
+        { q: "Klinefelter syndrome (47,XXY) is associated with:",
+          opts: ["Tall stature, hypogonadism, gynecomastia, infertility", "Short stature, webbed neck, coarctation", "Intellectual disability, coarse facies, macroorchidism", "Cleft lip, cardiac defects, polydactyly", "Obesity, hypotonia, small hands"],
+          correct: 0,
+          exp: "Klinefelter: male with extra X → tall, small testes, gynecomastia, learning difficulties." },
+        { q: "Turner syndrome (45,X) features include:",
+          opts: ["Short stature, webbed neck, coarctation, streak ovaries", "Tall stature, gynecomastia, small testes", "Macroorchidism, long face, autism", "Obesity, hypotonia, small hands", "Cleft lip, cardiac defects, polydactyly"],
+          correct: 0,
+          exp: "Turner: female with monosomy X → short, webbed neck, coarctation, lymphedema, normal intelligence." },
+        { q: "Down syndrome (trisomy 21) is associated with increased risk of:",
+          opts: ["Alzheimer disease, leukemia, AVSD, duodenal atresia", "Wilms tumor, Beckwith‑Wiedemann", "Retinoblastoma, osteosarcoma", "Neurofibromatosis, pheochromocytoma", "Medullary thyroid carcinoma"],
+          correct: 0,
+          exp: "Down syndrome: Alzheimer's (by 40s), ALL, AVSD, duodenal atresia, Hirschsprung." },
+        { q: "Angelman syndrome is caused by maternal deletion of 15q11‑13, leading to:",
+          opts: ["Jerky movements, happy demeanor, severe intellectual disability", "Hyperphagia, obesity, hypotonia", "Precocious puberty, short stature", "Marfanoid habitus, lens dislocation", "Self‑mutilation, hyperuricemia"],
+          correct: 0,
+          exp: "Angelman: 'happy puppet' – ataxia, seizures, absent speech, inappropriate laughter." },
+        { q: "Prader‑Willi syndrome (paternal deletion 15q11‑13) presents with:",
+          opts: ["Hyperphagia, obesity, hypotonia, intellectual disability", "Jerky movements, happy demeanor", "Short stature, webbed neck", "Macroorchidism, long face", "Coarse facies, organomegaly"],
+          correct: 0,
+          exp: "Prader‑Willi: infantile hypotonia, feeding difficulties, then hyperphagia, obesity, hypogonadism." },
+        { q: "Beckwith‑Wiedemann syndrome (11p15) is associated with:",
+          opts: ["Macrosomia, omphalocele, macroglossia, neonatal hypoglycemia, tumor risk", "Microcephaly, growth retardation, intellectual disability", "Cleft lip, cardiac defects, polydactyly", "Tall stature, gynecomastia, infertility", "Short stature, webbed neck, coarctation"],
+          correct: 0,
+          exp: "Beckwith‑Wiedemann: overgrowth, abdominal wall defect, large tongue, Wilms tumor risk." },
+        { q: "Neuroblastoma most commonly arises from:",
+          opts: ["Adrenal medulla (neural crest)", "Kidney", "Sympathetic chain", "Cerebellum", "Retina"],
+          correct: 0,
+          exp: "Neuroblastoma arises from neural crest cells, most often in adrenal medulla or sympathetic chain." },
+        { q: "The most common malignant solid tumor of childhood is:",
+          opts: ["Neuroblastoma", "Wilms tumor", "Leukemia", "Lymphoma", "Rhabdomyosarcoma"],
+          correct: 0,
+          exp: "Neuroblastoma is the most common extracranial solid tumor in children." },
+        { q: "Wilms tumor (nephroblastoma) is associated with which syndrome?",
+          opts: ["WAGR (WT1 deletion), Beckwith‑Wiedemann, Denys‑Drash", "Neurofibromatosis", "Li‑Fraumeni", "Familial adenomatous polyposis", "Hereditary retinoblastoma"],
+          correct: 0,
+          exp: "Wilms tumor: WAGR (Wilms, aniridia, GU anomalies, retardation), Beckwith‑Wiedemann, Denys‑Drash." },
+        { q: "Retinoblastoma is caused by mutation in the gene:",
+          opts: ["RB1 (tumor suppressor)", "TP53", "WT1", "APC", "NF1"],
+          correct: 0,
+          exp: "RB1 gene (13q14); hereditary form is bilateral, early onset, with osteosarcoma risk." },
+        { q: "Rhabdomyosarcoma, the most common soft tissue sarcoma in children, often presents with:",
+          opts: ["Head/neck mass, GU mass (botryoid), extremity mass", "Painless abdominal mass", "Lymphadenopathy", "Bone pain", "Proptosis"],
+          correct: 0,
+          exp: "Rhabdomyosarcoma arises in head/neck, genitourinary tract (bladder, prostate), and extremities." },
+        { q: "Leukemia is the most common childhood malignancy. Which type predominates?",
+          opts: ["Acute lymphoblastic leukemia (ALL)", "Acute myeloid leukemia (AML)", "Chronic lymphocytic leukemia (CLL)", "Chronic myeloid leukemia (CML)", "Juvenile myelomonocytic leukemia"],
+          correct: 0,
+          exp: "ALL accounts for 80% of childhood leukemias." },
+        { q: "Hodgkin lymphoma in children shows which histologic finding?",
+          opts: ["Reed‑Sternberg cells (CD15+, CD30+)", "Small cleaved cells", "Lymphoblasts", "Burkitt cells", "Plasmacytoid lymphocytes"],
+          correct: 0,
+          exp: "Reed‑Sternberg cells (owl‑eye appearance) are diagnostic of Hodgkin lymphoma." },
+        { q: "Burkitt lymphoma is associated with translocation:",
+          opts: ["t(8;14) involving c‑myc", "t(14;18) involving bcl‑2", "t(9;22) BCR‑ABL", "t(11;14) cyclin D1", "t(2;5) ALK"],
+          correct: 0,
+          exp: "t(8;14) places c‑myc next to Ig heavy chain enhancer, causing overexpression." },
+        { q: "Kawasaki disease is an acute vasculitis that can cause:",
+          opts: ["Coronary artery aneurysms", "Renal artery stenosis", "Pulmonary hemorrhage", "Cerebral vasculitis", "Aortic dissection"],
+          correct: 0,
+          exp: "Kawasaki disease involves medium vessels, especially coronary arteries, leading to aneurysms." },
+        { q: "The most common cause of acquired heart disease in children in developed countries is:",
+          opts: ["Kawasaki disease", "Rheumatic fever", "Viral myocarditis", "Cardiomyopathy", "Infective endocarditis"],
+          correct: 0,
+          exp: "Kawasaki is the leading cause of acquired pediatric heart disease in developed nations." },
+        { q: "Rheumatic fever follows infection with:",
+          opts: ["Group A Streptococcus", "Staphylococcus aureus", "Streptococcus pneumoniae", "Mycoplasma pneumoniae", "Epstein‑Barr virus"],
+          correct: 0,
+          exp: "Rheumatic fever occurs 2‑4 weeks after GAS pharyngitis; cross‑reactivity attacks heart, joints, brain." },
+        { q: "Jones criteria for rheumatic fever include major criteria:",
+          opts: ["Carditis, arthritis, chorea, erythema marginatum, subcutaneous nodules", "Fever, arthralgia, elevated ESR, prolonged PR interval", "Polyarthritis, rash, hepatosplenomegaly", "Endocarditis, myocarditis, pericarditis", "None"],
+          correct: 0,
+          exp: "Major Jones criteria: carditis, polyarthritis, chorea, erythema marginatum, subcutaneous nodules." },
+        { q: "Juvenile idiopathic arthritis (JIA) is defined by arthritis lasting:",
+          opts: ["At least 6 weeks", "At least 3 months", "At least 6 months", "At least 1 year", "At least 2 weeks"],
+          correct: 0,
+          exp: "JIA: arthritis for ≥6 weeks in a child <16 years after excluding other causes." },
+        { q: "Systemic JIA (Still disease) presents with:",
+          opts: ["Daily high fevers, evanescent rash, hepatosplenomegaly, serositis", "Asymmetric oligoarthritis, ANA positive", "RF‑positive polyarthritis", "Enthesitis, sacroiliitis", "Psoriatic rash, nail pitting"],
+          correct: 0,
+          exp: "Systemic JIA: quotidian fevers, salmon‑pink rash, organomegaly; can develop macrophage activation syndrome." }
+    ];
+    // Add extra to reach 65+
+    const extra = [
+        { q: "Acute post‑streptococcal glomerulonephritis typically presents with:",
+          opts: ["Hematuria, hypertension, edema, oliguria", "Nephrotic syndrome", "Rapidly progressive glomerulonephritis", "Asymptomatic hematuria", "Chronic kidney disease"],
+          correct: 0,
+          exp: "PSGN presents with acute nephritic syndrome 1‑3 weeks after GAS infection (pharyngitis or impetigo)." },
+        { q: "Minimal change disease (nil disease) is the most common cause of nephrotic syndrome in children. Its pathology shows:",
+          opts: ["Foot process effacement (fusion) on EM, normal light microscopy", "Membranous thickening", "Focal segmental glomerulosclerosis", "Mesangial proliferation", "Crescents"],
+          correct: 0,
+          exp: "Minimal change: normal light, IgM negative; EM shows podocyte effacement." },
+        { q: "Hemolytic uremic syndrome (HUS) classically presents with triad of:",
+          opts: ["Microangiopathic hemolytic anemia, thrombocytopenia, acute renal failure", "Hematuria, proteinuria, edema", "Nephrotic syndrome, hypertension, renal failure", "Fever, rash, arthritis", "Jaundice, hepatosplenomegaly, anemia"],
+          correct: 0,
+          exp: "Typical HUS (Shiga toxin‑producing E. coli) causes MAHA, thrombocytopenia, renal failure." },
+        { q: "Which infection is the most common trigger of typical HUS?",
+          opts: ["E. coli O157:H7", "Shigella dysenteriae", "Streptococcus pneumoniae", "HIV", "Campylobacter"],
+          correct: 0,
+          exp: "STEC (E. coli O157) produces Shiga toxin, damaging endothelial cells." },
+        { q: "Henoch‑Schönlein purpura (IgA vasculitis) presents with:",
+          opts: ["Palpable purpura, arthritis, abdominal pain, hematuria", "Petechiae, epistaxis, hemarthrosis", "Malar rash, oral ulcers, nephritis", "Erythema nodosum, hilar adenopathy", "Vesicles, crusts, itching"],
+          correct: 0,
+          exp: "HSP: non‑thrombocytopenic purpura (buttocks, legs), arthralgia, GI pain, IgA nephropathy." },
+        { q: "Osteogenesis imperfecta is caused by defect in:",
+          opts: ["Type I collagen", "Fibrillin", "Dystrophin", "Collagen III", "Elastin"],
+          correct: 0,
+          exp: "OI: mutations in COL1A1/COL1A2 → brittle bones, blue sclerae, hearing loss." },
+        { q: "Which condition presents with "cherry‑red spot" on fundoscopy?",
+          opts: ["Tay‑Sachs", "Niemann‑Pick type A", "Central retinal artery occlusion", "All of the above", "None"],
+          correct: 3,
+          exp: "Cherry‑red spot occurs in Tay‑Sachs, Niemann‑Pick, Sandhoff, and central retinal artery occlusion." },
+        { q: "Rickets results from deficiency of:",
+          opts: ["Vitamin D", "Vitamin A", "Vitamin C", "Vitamin K", "Vitamin E"],
+          correct: 0,
+          exp: "Vitamin D deficiency causes defective bone mineralization, leading to bowed legs, rachitic rosary." },
+        { q: "Scurvy is caused by deficiency of:",
+          opts: ["Vitamin C", "Vitamin B1", "Vitamin B3", "Vitamin B12", "Vitamin A"],
+          correct: 0,
+          exp: "Vitamin C deficiency impairs collagen synthesis, causing bleeding gums, perifollicular hemorrhages." },
+        { q: "Kwashiorkor is characterized by:",
+          opts: ["Edema, fatty liver, dermatosis, hypoalbuminemia", "Wasting, no edema, normal albumin", "Obesity, hepatomegaly", "Rickets, bowed legs", "Bleeding gums, poor wound healing"],
+          correct: 0,
+          exp: "Kwashiorkor (protein deficiency with adequate calories) causes edema, skin lesions, fatty liver." },
+        { q: "Marasmus is due to deficiency of:",
+          opts: ["Total calories (protein and energy)", "Protein only", "Iron only", "Vitamin D only", "Multiple vitamins"],
+          correct: 0,
+          exp: "Marasmus is severe wasting (calorie deficiency) with loss of muscle and fat." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

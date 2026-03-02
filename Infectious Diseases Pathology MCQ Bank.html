@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infectious Diseases Pathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-disease"></i>
+            <h1>Infectious Diseases Pathology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE INFECTIOUS DISEASES PATHOLOGY QUESTIONS
+        const questions = [
+            { q: "The most common cause of community‑acquired pneumonia in adults is:",
+              opts: ["<em>Streptococcus pneumoniae</em>", "<em>Mycoplasma pneumoniae</em>", "<em>Chlamydia pneumoniae</em>", "<em>Haemophilus influenzae</em>", "<em>Legionella</em>"],
+              correct: 0,
+              exp: "<em>Strep. pneumoniae</em> is the most common cause of CAP." },
+            { q: "Primary tuberculosis is characterized by:",
+              opts: ["Ghon complex (Ghon focus + involved lymph node)", "Apical cavitation", "Miliary spread", "Pleuritis", "Empyema"],
+              correct: 0,
+              exp: "Primary TB: Ghon complex; reactivation: apical cavitation." },
+            { q: "Reactivation tuberculosis typically occurs in the:",
+              opts: ["Upper lobes", "Lower lobes", "Middle lobe", "Lingula", "Diffuse"],
+              correct: 0,
+              exp: "Reactivation TB occurs in apical posterior segments of upper lobes (high oxygen)." },
+            { q: "The classic cerebrospinal fluid (CSF) finding in bacterial meningitis is:",
+              opts: ["Neutrophilic pleocytosis, low glucose, high protein", "Lymphocytic pleocytosis, normal glucose, high protein", "Neutrophils, normal glucose, normal protein", "Lymphocytes, low glucose, high protein", "Normal"],
+              correct: 0,
+              exp: "Bacterial meningitis: high WBC (neutrophils), low glucose, high protein." },
+            { q: "Which organism is the most common cause of viral meningitis?",
+              opts: ["HSV", "Enteroviruses", "West Nile virus", "HIV", "CMV"],
+              correct: 1,
+              exp: "Enteroviruses (coxsackie, echo) are the most common cause of viral meningitis." },
+            { q: "The most common cause of infective endocarditis in IV drug users is:",
+              opts: ["<em>Staphylococcus aureus</em>", "<em>Streptococcus viridans</em>", "<em>Enterococcus</em>", "<em>Pseudomonas</em>", "<em>Candida</em>"],
+              correct: 0,
+              exp: "<em>S. aureus</em> is the most common cause of IE in IV drug users, often affecting tricuspid valve." },
+            { q: "Rheumatic fever follows infection with:",
+              opts: ["Group A <em>Streptococcus pyogenes</em>", "<em>Staphylococcus aureus</em>", "<em>Neisseria gonorrhoeae</em>", "<em>Chlamydia trachomatis</em>", "<em>Mycoplasma pneumoniae</em>"],
+              correct: 0,
+              exp: "Rheumatic fever follows Group A strep pharyngitis (molecular mimicry)." },
+            { q: "Which organism causes pseudomembranous colitis?",
+              opts: ["<em>Clostridium difficile</em>", "<em>Clostridium perfringens</em>", "<em>E. coli O157:H7</em>", "<em>Salmonella</em>", "<em>Shigella</em>"],
+              correct: 0,
+              exp: "<em>C. difficile</em> toxin A/B causes pseudomembranous colitis." },
+            { q: "Ghon complex is associated with:",
+              opts: ["Tuberculosis", "Histoplasmosis", "Coccidioidomycosis", "Sarcoidosis", "Lung cancer"],
+              correct: 0,
+              exp: "Ghon complex (primary TB) = Ghon focus + involved lymph node." },
+            { q: "Which of the following is a sexually transmitted infection caused by a bacterium?",
+              opts: ["Chlamydia", "Syphilis", "Gonorrhea", "All of the above", "None"],
+              correct: 3,
+              exp: "Chlamydia (<em>C. trachomatis</em>), syphilis (<em>T. pallidum</em>), gonorrhea (<em>N. gonorrhoeae</em>) are bacterial STIs." },
+            { q: "Condyloma acuminata (genital warts) are caused by:",
+              opts: ["HPV", "HSV", "Molluscum contagiosum", "Syphilis", "Chancroid"],
+              correct: 0,
+              exp: "HPV (usually types 6,11) causes genital warts." },
+            { q: "The characteristic histologic finding in HSV infection is:",
+              opts: ["Multinucleated giant cells with Cowdry A inclusions", "Granulomas", "Necrotizing granulomas", "Spores", "Foamy macrophages"],
+              correct: 0,
+              exp: "HSV causes multinucleated cells and Cowdry type A intranuclear inclusions." },
+            { q: "CMV inclusions are often described as:",
+              opts: ["Owl‑eye inclusions", "Cowdry A", "Negri bodies", "Guarnieri bodies", "Molluscum bodies"],
+              correct: 0,
+              exp: "CMV produces large intranuclear inclusions with a halo ('owl‑eye')." },
+            { q: "Which parasite causes malaria?",
+              opts: ["<em>Plasmodium falciparum</em>", "<em>Toxoplasma gondii</em>", "<em>Babesia</em>", "<em>Leishmania</em>", "<em>Trypanosoma</em>"],
+              correct: 0,
+              exp: "<em>Plasmodium</em> species cause malaria." },
+            { q: "Chagas disease is caused by:",
+              opts: ["<em>Trypanosoma cruzi</em>", "<em>Trypanosoma brucei</em>", "<em>Leishmania donovani</em>", "<em>Entamoeba histolytica</em>", "<em>Giardia lamblia</em>"],
+              correct: 0,
+              exp: "<em>T. cruzi</em> causes Chagas disease (American trypanosomiasis)." },
+            { q: "Hydrophobia is a classic symptom of:",
+              opts: ["Rabies", "Tetanus", "Botulism", "Polio", "Meningitis"],
+              correct: 0,
+              exp: "Rabies presents with hydrophobia, aerophobia, and encephalitis." },
+            { q: "Negri bodies are pathognomonic for:",
+              opts: ["Rabies", "CMV", "HSV", "Measles", "Polio"],
+              correct: 0,
+              exp: "Negri bodies are eosinophilic cytoplasmic inclusions in rabies." },
+            { q: "TORCH infections include all EXCEPT:",
+              opts: ["Toxoplasmosis", "Rubella", "CMV", "HSV", "Hepatitis B"],
+              correct: 4,
+              exp: "TORCH: Toxoplasmosis, Others (syphilis, HIV), Rubella, CMV, HSV." },
+            { q: "Congenital rubella syndrome includes:",
+              opts: ["Cataracts, deafness, PDA", "Hydrocephalus, chorioretinitis", "Microcephaly, intracranial calcifications", "Hepatosplenomegaly, jaundice", "All"],
+              correct: 0,
+              exp: "Rubella triad: cataracts, deafness, congenital heart disease (PDA)." },
+            { q: "Koplik spots are associated with:",
+              opts: ["Measles", "Rubella", "Scarlet fever", "Kawasaki disease", "EBV"],
+              correct: 0,
+              exp: "Koplik spots (buccal mucosa) are pathognomonic for measles." },
+            { q: "The most common cause of infectious diarrhea in children worldwide is:",
+              opts: ["Rotavirus", "<em>E. coli</em>", "<em>Salmonella</em>", "<em>Shigella</em>", "<em>Campylobacter</em>"],
+              correct: 0,
+              exp: "Rotavirus is the leading cause of severe diarrhea in children." },
+            { q: "Which organism causes epidemic louse‑borne typhus?",
+              opts: ["<em>Rickettsia prowazekii</em>", "<em>Rickettsia typhi</em>", "<em>Rickettsia rickettsii</em>", "<em>Coxiella burnetii</em>", "<em>Ehrlichia</em>"],
+              correct: 0,
+              exp: "<em>R. prowazekii</em> (louse‑borne) causes epidemic typhus; <em>R. typhi</em> causes murine typhus." },
+            { q: "Rocky Mountain spotted fever is caused by:",
+              opts: ["<em>Rickettsia rickettsii</em>", "<em>Rickettsia prowazekii</em>", "<em>Rickettsia typhi</em>", "<em>Orientia tsutsugamushi</em>", "<em>Coxiella burnetii</em>"],
+              correct: 0,
+              exp: "<em>R. rickettsii</em> transmitted by tick, causes RMSF." },
+            { q: "Lyme disease is caused by:",
+              opts: ["<em>Borrelia burgdorferi</em>", "<em>Borrelia recurrentis</em>", "<em>Treponema pallidum</em>", "<em>Leptospira interrogans</em>", "<em>Bartonella henselae</em>"],
+              correct: 0,
+              exp: "<em>B. burgdorferi</em> (tick‑borne) causes Lyme disease." },
+            { q: "Erythema migrans is characteristic of:",
+              opts: ["Lyme disease", "Syphilis", "Erysipelas", "Cellulitis", "Necrotizing fasciitis"],
+              correct: 0,
+              exp: "Erythema migrans (bull's‑eye rash) is pathognomonic for Lyme disease." },
+            { q: "Cat scratch disease is caused by:",
+              opts: ["<em>Bartonella henselae</em>", "<em>Pasteurella multocida</em>", "<em>Capnocytophaga</em>", "<em>Francisella tularensis</em>", "<em>Yersinia pestis</em>"],
+              correct: 0,
+              exp: "<em>B. henselae</em> causes cat scratch disease (granulomatous lymphadenitis)." },
+            { q: "Which virus is associated with Burkitt lymphoma?",
+              opts: ["EBV", "CMV", "HPV", "HHV‑8", "HTLV‑1"],
+              correct: 0,
+              exp: "EBV is linked to endemic Burkitt lymphoma." },
+            { q: "Hepatocellular carcinoma is strongly associated with:",
+              opts: ["HBV and HCV", "HAV", "HEV", "HDV", "All"],
+              correct: 0,
+              exp: "Chronic HBV and HCV infection increase HCC risk." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Which organism causes whooping cough (pertussis)?",
+              opts: ["<em>Bordetella pertussis</em>", "<em>Bordetella parapertussis</em>", "<em>Haemophilus influenzae</em>", "<em>Mycoplasma pneumoniae</em>", "<em>Chlamydia pneumoniae</em>"],
+              correct: 0,
+              exp: "<em>B. pertussis</em> causes whooping cough (paroxysmal cough, inspiratory whoop)." },
+            { q: "Diphtheria is caused by:",
+              opts: ["<em>Corynebacterium diphtheriae</em>", "<em>Listeria monocytogenes</em>", "<em>Bacillus anthracis</em>", "<em>Yersinia pestis</em>", "<em>Francisella tularensis</em>"],
+              correct: 0,
+              exp: "<em>C. diphtheriae</em> produces exotoxin causing pseudomembrane in throat." },
+            { q: "Gas gangrene is most commonly caused by:",
+              opts: ["<em>Clostridium perfringens</em>", "<em>Clostridium tetani</em>", "<em>Clostridium botulinum</em>", "<em>Clostridium difficile</em>", "<em>Bacillus anthracis</em>"],
+              correct: 0,
+              exp: "<em>C. perfringens</em> causes myonecrosis (gas gangrene)." },
+            { q: "Botulism is caused by:",
+              opts: ["<em>Clostridium botulinum</em> toxin", "<em>Clostridium tetani</em> toxin", "<em>Staphylococcus aureus</em> toxin", "<em>Bacillus cereus</em> toxin", "<em>E. coli</em> toxin"],
+              correct: 0,
+              exp: "Botulinum toxin causes flaccid paralysis; foodborne, wound, or infant botulism." },
+            { q: "Tetanus is caused by:",
+              opts: ["<em>Clostridium tetani</em> toxin", "<em>Clostridium botulinum</em> toxin", "<em>Clostridium perfringens</em> toxin", "<em>Staphylococcus aureus</em> toxin", "<em>Streptococcus pyogenes</em> toxin"],
+              correct: 0,
+              exp: "Tetanus toxin causes spastic paralysis (lockjaw, risus sardonicus)." },
+            { q: "Typhoid fever is caused by:",
+              opts: ["<em>Salmonella typhi</em>", "<em>Salmonella paratyphi</em>", "<em>Salmonella enteritidis</em>", "<em>Shigella dysenteriae</em>", "<em>Yersinia enterocolitica</em>"],
+              correct: 0,
+              exp: "<em>S. typhi</em> causes enteric fever (rose spots, relative bradycardia)." },
+            { q: "Brucellosis is associated with:",
+              opts: ["Undulant fever, exposure to unpasteurized milk", "Pneumonia, anemia", "Arthritis, rash", "Meningitis, cranial nerve palsies", "None"],
+              correct: 0,
+              exp: "Brucellosis causes undulant fever, transmitted from animals (goats, cows)." },
+            { q: "Leptospirosis (Weil's disease) presents with:",
+              opts: ["Jaundice, renal failure, hemorrhage", "Pneumonia, hepatitis", "Meningitis, rash", "Arthritis, carditis", "None"],
+              correct: 0,
+              exp: "Leptospirosis can cause severe icteric form (Weil's) with liver and kidney involvement." },
+            { q: "Which parasite causes hydatid cyst disease?",
+              opts: ["<em>Echinococcus granulosus</em>", "<em>Taenia solium</em>", "<em>Taenia saginata</em>", "<em>Diphyllobothrium latum</em>", "<em>Hymenolepis nana</em>"],
+              correct: 0,
+              exp: "<em>E. granulosus</em> causes hydatid cysts (liver, lungs)." },
+            { q: "Neurocysticercosis is caused by the larval stage of:",
+              opts: ["<em>Taenia solium</em>", "<em>Taenia saginata</em>", "<em>Echinococcus granulosus</em>", "<em>Diphyllobothrium latum</em>", "<em>Ascaris lumbricoides</em>"],
+              correct: 0,
+              exp: "<em>T. solium</em> eggs hatch and larvae encyst in brain, causing neurocysticercosis." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

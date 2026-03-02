@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductive Pharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-venus-mars"></i>
+        <h1>Reproductive Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Introduction to Reproductive Pharmacology</a></li>
+                <li><a href="#ch2"><i class="fas fa-calendar-alt"></i> 2. Estrogens & Progestins</a></li>
+                <li><a href="#ch3"><i class="fas fa-pills"></i> 3. Oral Contraceptives & Hormonal Contraception</a></li>
+                <li><a href="#ch4"><i class="fas fa-mars"></i> 4. Androgens & Anti‑Androgens</a></li>
+                <li><a href="#ch5"><i class="fas fa-child"></i> 5. Drugs for Infertility</a></li>
+                <li><a href="#ch6"><i class="fas fa-clock"></i> 6. Drugs for Menopause & Osteoporosis</a></li>
+                <li><a href="#ch7"><i class="fas fa-baby"></i> 7. Drugs for Labor & Lactation</a></li>
+                <li><a href="#ch8"><i class="fas fa-tumor"></i> 8. Drugs for Reproductive Cancers</a></li>
+                <li><a href="#ch9"><i class="fas fa-bolt"></i> 9. Drugs for Erectile Dysfunction</a></li>
+                <li><a href="#ch10"><i class="fas fa-droplet"></i> 10. Drugs for Menstrual Disorders</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: INTRODUCTION -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Introduction to Reproductive Pharmacology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Reproductive pharmacology encompasses drugs that modulate the hypothalamic‑pituitary‑gonadal (HPG) axis, sex hormones, and their receptors, as well as agents used in contraception, infertility, menopause, and reproductive cancers.</p>
+                </div>
+                <div class="key-points">
+                    <ul>
+                        <li><i class="fas fa-check"></i> Hormonal contraceptives: estrogens + progestins (or progestin‑only).</li>
+                        <li><i class="fas fa-check"></i> SERMs (Selective Estrogen Receptor Modulators) have tissue‑specific effects.</li>
+                        <li><i class="fas fa-check"></i> GnRH agonists/antagonists used for hormone‑sensitive cancers and infertility.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: ESTROGENS & PROGESTINS -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-calendar-alt"></i> 2. Estrogens & Progestins</div>
+            <div class="section-card">
+                <div class="subsection-heading">Estrogens</div>
+                <ul>
+                    <li><strong>Natural estrogens:</strong> Estradiol, estrone, estriol.</li>
+                    <li><strong>Synthetic:</strong> Ethinyl estradiol (oral contraceptive), conjugated equine estrogens (HRT).</li>
+                    <li><strong>Mechanism:</strong> Bind estrogen receptors (ERα, ERβ), regulate gene transcription.</li>
+                    <li><strong>Clinical uses:</strong> Hormone replacement therapy (HRT), contraception, osteoporosis prevention, atrophic vaginitis.</li>
+                    <li><strong>Adverse effects:</strong> Thromboembolism, breast tenderness, nausea, endometrial hyperplasia (if unopposed), increased risk of breast cancer with long‑term use.</li>
+                </ul>
+                <div class="subsection-heading">Progestins</div>
+                <ul>
+                    <li><strong>Natural progesterone:</strong> Micronized progesterone (oral, vaginal).</li>
+                    <li><strong>Synthetic progestins:</strong> Medroxyprogesterone acetate, norethindrone, levonorgestrel, drospirenone.</li>
+                    <li><strong>Mechanism:</strong> Bind progesterone receptors; convert proliferative endometrium to secretory.</li>
+                    <li><strong>Clinical uses:</strong> Contraception, HRT (with estrogen), endometriosis, amenorrhea, luteal phase support.</li>
+                    <li><strong>Adverse effects:</strong> Weight gain, depression, breakthrough bleeding, fluid retention; drospirenone (spironolactone analog) may cause hyperkalemia.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Unopposed estrogen increases endometrial cancer risk; adding progestin mitigates this.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: ORAL CONTRACEPTIVES & HORMONAL CONTRACEPTIVES -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 3. Oral Contraceptives & Hormonal Contraception</div>
+            <div class="section-card">
+                <div class="subsection-heading">Combined Oral Contraceptives (COCs)</div>
+                <ul>
+                    <li>Contain estrogen (ethinyl estradiol) + progestin.</li>
+                    <li>Mechanism: Suppress LH/FSH (negative feedback), thicken cervical mucus, alter endometrium.</li>
+                    <li>Non‑contraceptive benefits: reduce acne, dysmenorrhea, ovarian/endometrial cancer risk.</li>
+                    <li>Adverse effects: Thromboembolism (↑ risk with smoking), hypertension, migraine, weight gain.</li>
+                </ul>
+                <div class="subsection-heading">Progestin‑Only Pills (POPs)</h2>
+                <ul>
+                    <li>Mechanism: Thicken cervical mucus, thin endometrium; may not consistently suppress ovulation.</li>
+                    <li>Advantage: No estrogen, safe for breastfeeding, smokers.</li>
+                </ul>
+                <div class="subsection-heading">Long‑Acting Reversible Contraceptives (LARCs)</div>
+                <ul>
+                    <li><strong>Levonorgestrel IUD (Mirena):</strong> Local progestin; lasts 5‑7 years.</li>
+                    <li><strong>Copper IUD (Paragard):</strong> Spermicidal; lasts 10 years; may increase bleeding.</li>
+                    <li><strong>Etonogestrel implant (Nexplanon):</strong> Subdermal; lasts 3 years.</li>
+                    <li><strong>Medroxyprogesterone acetate injection (Depo‑Provera):</strong> IM every 3 months; weight gain, bone density loss (reversible).</li>
+                </ul>
+                <div class="subsection-heading">Emergency Contraception</div>
+                <ul>
+                    <li><strong>Levonorgestrel (Plan B):</strong> Progestin‑only; effective up to 72 hours.</li>
+                    <li><strong>Ulipristal acetate (Ella):</strong> Progesterone receptor modulator; effective up to 120 hours.</li>
+                    <li><strong>Copper IUD:</strong> Most effective emergency contraception.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> COCs increase risk of DVT/PE, especially in smokers over 35. Screening for contraindications essential.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: ANDROGENS & ANTI‑ANDROGENS -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-mars"></i> 4. Androgens & Anti‑Androgens</div>
+            <div class="section-card">
+                <div class="subsection-heading">Androgens</div>
+                <ul>
+                    <li><strong>Testosterone:</strong> Available as injectable, transdermal, buccal, gel. Used for male hypogonadism, delayed puberty.</li>
+                    <li>Adverse effects: Erythrocytosis, acne, sleep apnea, prostate enlargement, gynecomastia (via aromatization).</li>
+                </ul>
+                <div class="subsection-heading">Anabolic Steroids</div>
+                <ul>
+                    <li>Modified androgens with greater anabolic:androgenic ratio. Abuse can cause hepatotoxicity, dyslipidemia, infertility, mood changes.</li>
+                </ul>
+                <div class="subsection-heading">Anti‑Androgens</div>
+                <ul>
+                    <li><strong>Cyproterone acetate:</strong> Progestin with anti‑androgen effects; used for hirsutism, prostate cancer.</li>
+                    <li><strong>Spironolactone:</strong> Aldosterone antagonist; also blocks androgen receptors; used for hirsutism, acne, female pattern hair loss.</li>
+                    <li><strong>Flutamide, bicalutamide:</strong> Non‑steroidal androgen receptor antagonists; used for prostate cancer. Hepatotoxicity (flutamide).</li>
+                    <li><strong>Finasteride, dutasteride:</strong> 5α‑reductase inhibitors; block conversion of testosterone to DHT; used for BPH, male pattern baldness.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Finasteride reduces PSA by ~50%; adjust PSA values.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: DRUGS FOR INFERTILITY -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> 5. Drugs for Infertility</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clomiphene citrate:</strong> SERM; blocks estrogen negative feedback → ↑ FSH/LH → ovulation induction. Used in anovulatory infertility. Side effects: hot flashes, multiple pregnancy, visual disturbances.</li>
+                    <li><strong>Letrozole (aromatase inhibitor):</strong> Off‑label for ovulation induction; reduces estrogen, increasing FSH. May have lower multiple pregnancy risk.</li>
+                    <li><strong>Gonadotropins:</strong> FSH (follitropin alfa, beta), LH, hCG (trigger ovulation). Used in assisted reproduction. Risk: OHSS (ovarian hyperstimulation syndrome).</li>
+                    <li><strong>GnRH agonists (leuprolide, buserelin):</strong> Initially stimulate, then downregulate gonadotropins; used to prevent premature LH surge in IVF.</li>
+                    <li><strong>GnRH antagonists (cetrorelix, ganirelix):</strong> Immediate blockade; used in IVF to prevent LH surge.</li>
+                    <li><strong>Bromocriptine, cabergoline:</strong> Dopamine agonists; lower prolactin in hyperprolactinemic infertility.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> OHSS presents with abdominal pain, ascites, hemoconcentration; risk factors: high estradiol, PCOS.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: DRUGS FOR MENOPAUSE & OSTEOPOROSIS -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-clock"></i> 6. Drugs for Menopause & Osteoporosis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Hormone replacement therapy (HRT):</strong> Estrogen ± progestin for menopausal symptoms (hot flashes, vaginal atrophy). Risks: thromboembolism, breast cancer (with combined therapy), endometrial cancer (if estrogen alone).</li>
+                    <li><strong>Tibolone:</strong> Synthetic steroid with estrogenic, progestogenic, and androgenic activity; used for menopausal symptoms.</li>
+                    <li><strong>SERMs (raloxifene, tamoxifen):</strong> Raloxifene used for osteoporosis (agonist in bone, antagonist in breast/uterus); tamoxifen for breast cancer prevention (agonist in bone, antagonist in breast, partial agonist in uterus).</li>
+                    <li><strong>Bisphosphonates (alendronate, risedronate):</strong> Inhibit bone resorption; used for osteoporosis.</li>
+                    <li><strong>Denosumab:</strong> RANKL inhibitor; for osteoporosis.</li>
+                    <li><strong>Teriparatide:</strong> PTH analog; anabolic for severe osteoporosis.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Raloxifene does not stimulate endometrium, so no increased risk of endometrial cancer.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: DRUGS FOR LABOR & LACTATION -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-baby"></i> 7. Drugs for Labor & Lactation</div>
+            <div class="section-card">
+                <div class="subsection-heading">Oxytocics (Uterine Stimulants)</div>
+                <ul>
+                    <li><strong>Oxytocin:</strong> Stimulates uterine contractions; used for labor induction, augmentation, and postpartum hemorrhage. Adverse effects: water intoxication (due to ADH‑like effect).</li>
+                    <li><strong>Ergot alkaloids (ergonovine, methylergonovine):</strong> Increase uterine tone; used for postpartum hemorrhage. Contraindicated in hypertension, preeclampsia (vasoconstriction).</li>
+                    <li><strong>Prostaglandins (dinoprostone PGE₂, misoprostol PGE₁):</strong> Ripen cervix, induce labor; misoprostol also used for postpartum hemorrhage.</li>
+                </ul>
+                <div class="subsection-heading">Tocolytics (Uterine Relaxants)</div>
+                <ul>
+                    <li><strong>Beta‑2 agonists (terbutaline):</strong> Relax uterus; used for preterm labor (off‑label). Side effects: tachycardia, hyperglycemia.</li>
+                    <li><strong>Magnesium sulfate:</strong> Tocolytic; also used for eclampsia prophylaxis. Monitor for magnesium toxicity (loss of DTRs, respiratory depression).</li>
+                    <li><strong>Nifedipine (calcium channel blocker):</strong> Inhibits uterine contractions; used for preterm labor.</li>
+                    <li><strong>Indomethacin (NSAID):</strong> Inhibits prostaglandin synthesis; short‑term tocolytic. Avoid after 32 weeks (constricts ductus arteriosus).</li>
+                </ul>
+                <div class="subsection-heading">Lactation</div>
+                <ul>
+                    <li><strong>Cabergoline, bromocriptine:</strong> Dopamine agonists; suppress prolactin, used to inhibit lactation (e.g., stillbirth).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: DRUGS FOR REPRODUCTIVE CANCERS -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tumor"></i> 8. Drugs for Reproductive Cancers</div>
+            <div class="section-card">
+                <div class="subsection-heading">Breast Cancer</div>
+                <ul>
+                    <li><strong>SERMs (tamoxifen):</strong> First‑line for ER+ breast cancer (adjuvant, metastatic). Side effects: hot flashes, thromboembolism, endometrial cancer.</li>
+                    <li><strong>Aromatase inhibitors (anastrozole, letrozole, exemestane):</strong> Inhibit peripheral estrogen synthesis; used in postmenopausal women. Side effects: arthralgia, osteoporosis.</li>
+                    <li><strong>Fulvestrant:</strong> ER antagonist (downregulator); used in metastatic breast cancer.</li>
+                    <li><strong>Trastuzumab (HER2/neu antibody):</strong> For HER2+ breast cancer; cardiotoxicity (monitor LVEF).</li>
+                    <li><strong>Palbociclib, ribociclib:</strong> CDK4/6 inhibitors; used with aromatase inhibitors.</li>
+                </ul>
+                <div class="subsection-heading">Prostate Cancer</div>
+                <ul>
+                    <li><strong>GnRH agonists (leuprolide, goserelin):</strong> Medical castration; initial flare (first few weeks) – use with anti‑androgen to prevent flare.</li>
+                    <li><strong>GnRH antagonists (degarelix):</strong> No flare; immediate suppression.</li>
+                    <li><strong>Anti‑androgens (flutamide, bicalutamide):</strong> Block androgen receptor; used with GnRH agonists.</li>
+                    <li><strong>Abiraterone:</strong> Inhibits CYP17 (androgen synthesis).</li>
+                    <li><strong>Enzalutamide:</strong> Potent androgen receptor antagonist.</li>
+                </ul>
+                <div class="subsection-heading">Ovarian/Uterine Cancers</div>
+                <ul>
+                    <li><strong>Platinum agents (carboplatin, cisplatin) + taxanes (paclitaxel):</strong> First‑line for ovarian cancer.</li>
+                    <li><strong>Bevacizumab (anti‑VEGF):</strong> Angiogenesis inhibitor.</li>
+                    <li><strong>PARP inhibitors (olaparib, niraparib):</strong> For BRCA‑mutated ovarian cancer.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: DRUGS FOR ERECTILE DYSFUNCTION -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 9. Drugs for Erectile Dysfunction</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>PDE‑5 inhibitors:</strong> Sildenafil, tadalafil, vardenafil, avanafil. Increase cGMP, enhancing NO‑mediated vasodilation in corpus cavernosum.</li>
+                    <li>Onset: 30‑60 min; duration: sildenafil 4‑6h, tadalafil up to 36h.</li>
+                    <li>Adverse effects: Headache, flushing, dyspepsia, nasal congestion, priapism (rare).</li>
+                    <li><strong>Contraindication:</strong> Concurrent nitrates (severe hypotension).</li>
+                    <li><strong>Alprostadil:</strong> Prostaglandin E₁; intracavernosal injection or urethral suppository; second‑line.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Tadalafil also indicated for benign prostatic hyperplasia (relaxes bladder neck).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: DRUGS FOR MENSTRUAL DISORDERS -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 10. Drugs for Menstrual Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>NSAIDs (ibuprofen, naproxen):</strong> Inhibit prostaglandin synthesis; used for dysmenorrhea.</li>
+                    <li><strong>Tranexamic acid:</strong> Antifibrinolytic; reduces heavy menstrual bleeding (menorrhagia).</li>
+                    <li><strong>Hormonal therapies:</strong> COCs, progestins, IUD (levonorgestrel) for menorrhagia, dysmenorrhea, endometriosis.</li>
+                    <li><strong>GnRH agonists (leuprolide):</strong> Used for endometriosis (temporary, add‑back therapy to prevent bone loss).</li>
+                    <li><strong>Danazol:</strong> Synthetic androgen; used for endometriosis (now less common due to androgenic side effects).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Reproductive Pharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

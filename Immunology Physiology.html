@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immunology · Physiology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-shield-alt"></i>
+        <h1>Immunology · Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>OVERVIEW & CELLS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#intro"><i class="fas fa-book-open"></i> 1. Introduction to the Immune System</a></li>
+                <li class="chapter-item"><a href="#cells"><i class="fas fa-cells"></i> 2. Cells of the Immune System</a></li>
+                <li class="chapter-item"><a href="#organs"><i class="fas fa-sitemap"></i> 3. Lymphoid Organs</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>INNATE IMMUNITY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#innate"><i class="fas fa-shield"></i> 4. Innate Immunity</a></li>
+                <li class="chapter-item"><a href="#prr"><i class="fas fa-hand"></i> 5. Pattern Recognition Receptors</a></li>
+                <li class="chapter-item"><a href="#complement"><i class="fas fa-circle"></i> 6. Complement System</a></li>
+                <li class="chapter-item"><a href="#phagocytosis"><i class="fas fa-eater"></i> 7. Phagocytosis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ADAPTIVE IMMUNITY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#bcell"><i class="fas fa-dna"></i> 8. B Lymphocytes & Antibodies</a></li>
+                <li class="chapter-item"><a href="#tcell"><i class="fas fa-dna"></i> 9. T Lymphocytes & Receptors</a></li>
+                <li class="chapter-item"><a href="#mhc"><i class="fas fa-grip"></i> 10. Major Histocompatibility Complex</a></li>
+                <li class="chapter-item"><a href="#antigen-processing"><i class="fas fa-microscope"></i> 11. Antigen Processing & Presentation</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>EFFECTOR MECHANISMS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#humoral"><i class="fas fa-tint"></i> 12. Humoral Immunity</a></li>
+                <li class="chapter-item"><a href="#cell-mediated"><i class="fas fa-bolt"></i> 13. Cell‑Mediated Immunity</a></li>
+                <li class="chapter-item"><a href="#cytokines"><i class="fas fa-comment"></i> 14. Cytokines</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>IMMUNE REGULATION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#tolerance"><i class="fas fa-balance-scale"></i> 15. Immunological Tolerance</a></li>
+                <li class="chapter-item"><a href="#memory"><i class="fas fa-brain"></i> 16. Immunological Memory</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SPECIAL TOPICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#vaccines"><i class="fas fa-syringe"></i> 17. Vaccines & Immunization</a></li>
+                <li class="chapter-item"><a href="#hypersensitivity"><i class="fas fa-exclamation-triangle"></i> 18. Hypersensitivity Reactions</a></li>
+                <li class="chapter-item"><a href="#autoimmunity"><i class="fas fa-disease"></i> 19. Autoimmunity</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== OVERVIEW & CELLS ==================== -->
+        <section id="intro" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-book-open"></i> 1. Introduction to the Immune System</div>
+            <div class="section-card">
+                <div class="body-text">
+                    The immune system protects the body from pathogens (bacteria, viruses, fungi, parasites) and eliminates damaged or malignant cells. It comprises two interconnected arms: <strong>innate immunity</strong> (rapid, non‑specific) and <strong>adaptive immunity</strong> (slow, highly specific, with memory).
+                </div>
+                <ul>
+                    <li><strong>Innate immunity:</strong> Physical barriers (skin, mucosa), chemical barriers (lysozyme, defensins), cellular components (macrophages, neutrophils, NK cells), and soluble proteins (complement).</li>
+                    <li><strong>Adaptive immunity:</strong> Lymphocytes (B and T cells) and their products (antibodies, cytokines). Characterized by specificity, diversity, memory, and self/non‑self discrimination.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cells" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cells"></i> 2. Cells of the Immune System</div>
+            <div class="section-card">
+                <div class="body-text">
+                    All immune cells originate from hematopoietic stem cells in bone marrow.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Cell Type</th><th>Lineage</th><th>Main Functions</th></tr></thead>
+                    <tbody>
+                        <tr><td>Macrophages</td><td>Monocyte</td><td>Phagocytosis, antigen presentation, cytokine secretion</td></tr>
+                        <tr><td>Neutrophils</td><td>Granulocyte</td><td>Phagocytosis, NETosis; most abundant leukocyte</td></tr>
+                        <tr><td>Dendritic cells</td><td>Monocyte/lymphoid</td><td>Professional antigen‑presenting cells (APCs), activate naïve T cells</td></tr>
+                        <tr><td>Mast cells</td><td>Granulocyte</td><td>Release histamine, involved in allergy, inflammation</td></tr>
+                        <tr><td>Eosinophils</td><td>Granulocyte</td><td>Fight parasites, involved in allergic responses</td></tr>
+                        <tr><td>Basophils</td><td>Granulocyte</td><td>Similar to mast cells; release histamine</td></tr>
+                        <tr><td>Natural Killer (NK) cells</td><td>Lymphoid (innate)</td><td>Kill virus‑infected and tumor cells without prior sensitization</td></tr>
+                        <tr><td>B lymphocytes</td><td>Lymphoid</td><td>Produce antibodies, antigen presentation</td></tr>
+                        <tr><td>T lymphocytes</td><td>Lymphoid</td><td>Helper (CD4+), cytotoxic (CD8+), regulatory (Treg)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="organs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-sitemap"></i> 3. Lymphoid Organs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Primary (central) lymphoid organs:</strong> Bone marrow (B cell development) and thymus (T cell development).</li>
+                    <li><strong>Secondary (peripheral) lymphoid organs:</strong> Lymph nodes, spleen, mucosa‑associated lymphoid tissue (MALT), tonsils, appendix. Sites where lymphocytes encounter antigens and are activated.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== INNATE IMMUNITY ==================== -->
+        <section id="innate" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield"></i> 4. Innate Immunity</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Innate immunity provides immediate defense against pathogens. It recognizes conserved microbial patterns via germline‑encoded receptors. Does not generate memory.
+                </div>
+                <ul>
+                    <li><strong>Barriers:</strong> Skin (keratin, low pH), mucous membranes, cilia, antimicrobial peptides (defensins, cathelicidins).</li>
+                    <li><strong>Cellular components:</strong> Phagocytes (macrophages, neutrophils), NK cells, dendritic cells.</li>
+                    <li><strong>Soluble mediators:</strong> Complement, acute‑phase proteins (C‑reactive protein, mannose‑binding lectin), cytokines.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="prr" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand"></i> 5. Pattern Recognition Receptors (PRRs)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toll‑like receptors (TLRs):</strong> Membrane‑bound (endosome or cell surface) that recognize PAMPs (e.g., LPS, flagellin, dsRNA).</li>
+                    <li><strong>NOD‑like receptors (NLRs):</strong> Cytosolic; recognize bacterial products; form inflammasomes (e.g., NLRP3).</li>
+                    <li><strong>RIG‑I‑like receptors (RLRs):</strong> Detect viral RNA in cytosol.</li>
+                    <li><strong>C‑type lectin receptors (CLRs):</strong> Recognize fungal carbohydrates.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="complement" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-circle"></i> 6. Complement System</div>
+            <div class="section-card">
+                <div class="body-text">
+                    A cascade of plasma proteins that opsonize, lyse, and recruit inflammatory cells.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Pathway</th><th>Activation</th><th>Key Components</th></tr></thead>
+                    <tbody>
+                        <tr><td>Classical</td><td>Antibody‑antigen complexes (IgG, IgM)</td><td>C1q, C1r, C1s, C4, C2</td></tr>
+                        <tr><td>Lectin</td><td>Mannose‑binding lectin binds microbial carbohydrates</td><td>MBL, MASP‑1, MASP‑2, C4, C2</td></tr>
+                        <tr><td>Alternative</td><td>Spontaneous hydrolysis of C3 on pathogen surfaces</td><td>Factor B, Factor D, Properdin</td></tr>
+                    </tbody>
+                </table>
+                <div class="body-text">
+                    All pathways converge at C3 convertase, leading to C3 cleavage (opsonin C3b, anaphylatoxin C3a). Terminal pathway forms membrane attack complex (C5b‑C9) causing lysis.
+                </div>
+            </div>
+        </section>
+
+        <section id="phagocytosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eater"></i> 7. Phagocytosis</div>
+            <div class="section-card">
+                <ul>
+                    <li>Uptake of large particles (>0.5 μm) by phagocytes.</li>
+                    <li>Steps: Recognition (via receptors for Fc, complement, scavenger), ingestion, phagosome formation, fusion with lysosome, killing (reactive oxygen species, nitric oxide, enzymes).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ADAPTIVE IMMUNITY ==================== -->
+        <section id="bcell" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 8. B Lymphocytes & Antibodies</div>
+            <div class="section-card">
+                <ul>
+                    <li>B cells develop in bone marrow, express B‑cell receptor (BCR = membrane IgM/IgD).</li>
+                    <li>Upon antigen binding and T‑cell help, differentiate into plasma cells (secrete antibodies) and memory B cells.</li>
+                    <li><strong>Antibody structure:</strong> Two heavy chains, two light chains; variable region binds antigen, constant region mediates effector functions.</li>
+                </ul>
+                <table class="premium-table">
+                    <thead><tr><th>Isotype</th><th>Functions</th></tr></thead>
+                    <tbody>
+                        <tr><td>IgM</td><td>Primary response, complement activation, pentamer</td></tr>
+                        <tr><td>IgG</td><td>Most abundant, secondary response, opsonization, crosses placenta</td></tr>
+                        <tr><td>IgA</td><td>Mucosal immunity, dimer in secretions</td></tr>
+                        <tr><td>IgE</td><td>Mast cell degranulation, anti‑parasite, allergy</td></tr>
+                        <tr><td>IgD</td><td>B‑cell receptor (naïve B cells)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="tcell" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 9. T Lymphocytes & Receptors</div>
+            <div class="section-card">
+                <ul>
+                    <li>T cells develop in thymus; express T‑cell receptor (TCR) associated with CD3 complex.</li>
+                    <li><strong>CD4+ helper T cells:</strong> Recognize antigen on MHC class II; differentiate into Th1, Th2, Th17, Tfh, Treg.</li>
+                    <li><strong>CD8+ cytotoxic T cells:</strong> Recognize antigen on MHC class I; kill infected or malignant cells.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="mhc" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-grip"></i> 10. Major Histocompatibility Complex (MHC)</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class I</th><th>Class II</th></tr></thead>
+                    <tbody>
+                        <tr><td>Expressed on all nucleated cells</td><td>Expressed on APCs (dendritic cells, macrophages, B cells)</td></tr>
+                        <tr><td>Presents endogenous peptides (e.g., viral) to CD8+ T cells</td><td>Presents exogenous peptides to CD4+ T cells</td></tr>
+                        <tr><td>HLA‑A, HLA‑B, HLA‑C</td><td>HLA‑DP, HLA‑DQ, HLA‑DR</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="antigen-processing" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-microscope"></i> 11. Antigen Processing & Presentation</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>MHC I pathway:</strong> Endogenous proteins degraded by proteasome → peptides transported by TAP into ER → loaded onto MHC I → Golgi → cell surface.</li>
+                    <li><strong>MHC II pathway:</strong> Exogenous antigens endocytosed → degraded in lysosomes → MHC II (with invariant chain) binds peptide in MIIC compartment → surface.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== EFFECTOR MECHANISMS ==================== -->
+        <section id="humoral" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 12. Humoral Immunity</div>
+            <div class="section-card">
+                <ul>
+                    <li>Mediated by antibodies. Functions: neutralization, opsonization, complement activation, antibody‑dependent cell‑mediated cytotoxicity (ADCC).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cell-mediated" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 13. Cell‑Mediated Immunity</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>CD8+ T cells:</strong> Kill via perforin/granzyme or Fas/FasL.</li>
+                    <li><strong>CD4+ T helper subsets:</strong>
+                        <ul>
+                            <li>Th1: IFN‑γ, macrophage activation (intracellular pathogens).</li>
+                            <li>Th2: IL‑4, IL‑5, IgE, eosinophils (helminths, allergy).</li>
+                            <li>Th17: IL‑17, neutrophil recruitment (extracellular bacteria, fungi).</li>
+                            <li>Treg: Suppress immune responses (IL‑10, TGF‑β).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cytokines" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-comment"></i> 14. Cytokines</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Interleukins (IL):</strong> IL‑2 (T cell growth), IL‑4 (B cell switching), IL‑6 (inflammation).</li>
+                    <li><strong>Interferons (IFN):</strong> Type I (IFN‑α/β) antiviral; type II (IFN‑γ) macrophage activation.</li>
+                    <li><strong>TNF‑α:</strong> Inflammation, fever.</li>
+                    <li><strong>Chemokines:</strong> Chemotaxis (e.g., IL‑8).</li>
+                    <li><strong>TGF‑β:</strong> Anti‑inflammatory, fibrosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== IMMUNE REGULATION ==================== -->
+        <section id="tolerance" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-balance-scale"></i> 15. Immunological Tolerance</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Central tolerance:</strong> In thymus (T cells) and bone marrow (B cells) – negative selection of self‑reactive lymphocytes.</li>
+                    <li><strong>Peripheral tolerance:</strong> Anergy, deletion, regulatory T cells.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="memory" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 16. Immunological Memory</div>
+            <div class="section-card">
+                <ul>
+                    <li>Secondary response is faster, stronger, and more specific due to memory B and T cells.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SPECIAL TOPICS ==================== -->
+        <section id="vaccines" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 17. Vaccines & Immunization</div>
+            <div class="section-card">
+                <ul>
+                    <li>Active immunization: exposure to antigen (live attenuated, inactivated, subunit, toxoid) induces protective immune response.</li>
+                    <li>Passive immunization: transfer of antibodies (e.g., maternal, immunoglobulin therapy).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hypersensitivity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-exclamation-triangle"></i> 18. Hypersensitivity Reactions</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Immune mechanism</th><th>Example</th></tr></thead>
+                    <tbody>
+                        <tr><td>I (anaphylactic)</td><td>IgE, mast cells, basophils</td><td>Anaphylaxis, hay fever</td></tr>
+                        <tr><td>II (cytotoxic)</td><td>IgG/IgM against cell surface, complement</td><td>Autoimmune hemolytic anemia, transfusion reaction</td></tr>
+                        <tr><td>III (immune complex)</td><td>Antigen‑antibody complexes deposited in tissues</td><td>SLE, serum sickness</td></tr>
+                        <tr><td>IV (delayed type)</td><td>T‑cell mediated</td><td>Contact dermatitis, TB test</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="autoimmunity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-disease"></i> 19. Autoimmunity</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Breakdown of tolerance leading to immune responses against self. Examples: type 1 diabetes, rheumatoid arthritis, multiple sclerosis. Risk factors: genetic (HLA associations), environmental, failure of regulatory mechanisms.
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Immunology Physiology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immunology · Pharmacology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-shield-alt"></i>
+        <h1>Immunology · Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>IMMUNOSUPPRESSANTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#calcineurin"><i class="fas fa-pills"></i> 1. Calcineurin Inhibitors</a></li>
+                <li class="chapter-item"><a href="#antiproliferative"><i class="fas fa-pills"></i> 2. Antiproliferative Agents</a></li>
+                <li class="chapter-item"><a href="#mtor"><i class="fas fa-pills"></i> 3. mTOR Inhibitors</a></li>
+                <li class="chapter-item"><a href="#corticosteroids"><i class="fas fa-pills"></i> 4. Corticosteroids</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>BIOLOGICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#anti-cytokine"><i class="fas fa-syringe"></i> 5. Anti‑Cytokine Therapies</a></li>
+                <li class="chapter-item"><a href="#anti-tcell"><i class="fas fa-syringe"></i> 6. Anti‑T Cell / Costimulation Blockers</a></li>
+                <li class="chapter-item"><a href="#anti-bcell"><i class="fas fa-syringe"></i> 7. Anti‑B Cell Therapies</a></li>
+                <li class="chapter-item"><a href="#ivig"><i class="fas fa-syringe"></i> 8. Intravenous Immunoglobulin (IVIG)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTI‑ALLERGY DRUGS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antihistamines"><i class="fas fa-capsules"></i> 9. Antihistamines</a></li>
+                <li class="chapter-item"><a href="#mast-cell"><i class="fas fa-capsules"></i> 10. Mast Cell Stabilizers</a></li>
+                <li class="chapter-item"><a href="#leukotriene"><i class="fas fa-capsules"></i> 11. Leukotriene Antagonists</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>IMMUNOSTIMULANTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#cytokines"><i class="fas fa-flask"></i> 12. Cytokine Therapies</a></li>
+                <li class="chapter-item"><a href="#vaccines-immune"><i class="fas fa-syringe"></i> 13. Vaccines & Adjuvants</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIDOTES & OTHERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#chemo-immune"><i class="fas fa-flask"></i> 14. Immunotoxicities & Antidotes</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== IMMUNOSUPPRESSANTS ==================== -->
+        <section id="calcineurin" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 1. Calcineurin Inhibitors</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Calcineurin inhibitors block T‑cell activation by inhibiting the phosphatase calcineurin, preventing NFAT nuclear translocation and IL‑2 transcription.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Uses</th><th>Toxicity</th></tr></thead>
+                    <tbody>
+                        <tr><td>Cyclosporine</td><td>Binds cyclophilin → inhibits calcineurin</td><td>Transplant rejection, rheumatoid arthritis, psoriasis</td><td>Nephrotoxicity, hypertension, hirsutism, gingival hyperplasia, hyperlipidemia</td></tr>
+                        <tr><td>Tacrolimus (FK506)</td><td>Binds FKBP12 → inhibits calcineurin</td><td>Transplant rejection (liver, kidney), atopic dermatitis (topical)</td><td>Nephrotoxicity, neurotoxicity (tremor), post‑transplant diabetes mellitus, alopecia</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Monitoring:</strong> Therapeutic drug levels required due to narrow window and drug interactions (CYP3A4 inhibitors increase levels).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="antiproliferative" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 2. Antiproliferative Agents</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Uses</th><th>Toxicity</th></tr></thead>
+                    <tbody>
+                        <tr><td>Azathioprine</td><td>Converted to 6‑MP, inhibits purine synthesis</td><td>Transplant rejection, autoimmune (IBD, lupus)</td><td>Myelosuppression (TPMT testing required), hepatotoxicity, pancreatitis</td></tr>
+                        <tr><td>Mycophenolate mofetil (MMF)</td><td>Inhibits IMPDH, blocking guanosine synthesis (selective for lymphocytes)</td><td>Transplant rejection (first‑line with calcineurin inhibitors)</td><td>GI intolerance, myelosuppression, teratogenic</td></tr>
+                        <tr><td>Methotrexate</td><td>Inhibits DHFR, increases adenosine</td><td>Rheumatoid arthritis, psoriasis, Crohn disease</td><td>Hepatotoxicity, myelosuppression, stomatitis; reversed by leucovorin</td></tr>
+                        <tr><td>Leflunomide</td><td>Inhibits pyrimidine synthesis (DHODH)</td><td>Rheumatoid arthritis</td><td>Hepatotoxicity, diarrhea, teratogenic</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="mtor" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 3. mTOR Inhibitors</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Sirolimus (rapamycin), everolimus:</strong> Bind FKBP12 and inhibit mTOR → block IL‑2‑driven T‑cell proliferation.</li>
+                    <li><strong>Uses:</strong> Transplant rejection (often with calcineurin inhibitors), drug‑eluting stents (everolimus), tuberous sclerosis.</li>
+                    <li><strong>Toxicity:</strong> Hyperlipidemia, thrombocytopenia, delayed wound healing, mouth ulcers.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="corticosteroids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 4. Corticosteroids</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Examples:</strong> Prednisone, methylprednisolone, dexamethasone.</li>
+                    <li><strong>Mechanism:</strong> Bind glucocorticoid receptor, inhibit cytokine gene transcription, induce lymphocyte apoptosis.</li>
+                    <li><strong>Uses:</strong> Autoimmune diseases, allergic reactions, asthma, transplant rejection, lymphoma.</li>
+                    <li><strong>Toxicity:</strong> Cushingoid features, hyperglycemia, osteoporosis, immunosuppression, adrenal suppression (withdrawal).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== BIOLOGICS ==================== -->
+        <section id="anti-cytokine" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 5. Anti‑Cytokine Therapies</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Target</th><th>Drugs</th><th>Uses</th></tr></thead>
+                    <tbody>
+                        <tr><td>TNF‑α</td><td>Infliximab, adalimumab, etanercept, certolizumab, golimumab</td><td>Rheumatoid arthritis, IBD, ankylosing spondylitis, psoriasis</td></tr>
+                        <tr><td>IL‑1</td><td>Anakinra (IL‑1RA), canakinumab (anti‑IL‑1β)</td><td>Rheumatoid arthritis, cryopyrin‑associated periodic syndromes</td></tr>
+                        <tr><td>IL‑6</td><td>Tocilizumab, sarilumab</td><td>Rheumatoid arthritis, juvenile idiopathic arthritis, giant cell arteritis</td></tr>
+                        <tr><td>IL‑12/23 p40</td><td>Ustekinumab</td><td>Psoriasis, Crohn disease, psoriatic arthritis</td></tr>
+                        <tr><td>IL‑17</td><td>Secukinumab, ixekizumab, brodalumab</td><td>Psoriasis, ankylosing spondylitis</td></tr>
+                        <tr><td>IL‑23 p19</td><td>Guselkumab, tildrakizumab, risankizumab</td><td>Psoriasis</td></tr>
+                        <tr><td>IL‑5</td><td>Mepolizumab, reslizumab</td><td>Eosinophilic asthma</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Risks:</strong> Infections (TB reactivation), demyelination, heart failure (TNF inhibitors), infusion reactions, malignancy.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="anti-tcell" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 6. Anti‑T Cell / Costimulation Blockers</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Muromonab‑CD3 (OKT3):</strong> Anti‑CD3 monoclonal antibody; depletes T cells. Rarely used due to cytokine release syndrome.</li>
+                    <li><strong>Anti‑thymocyte globulin (ATG):</strong> Polyclonal antibodies against T cells; used in transplant induction and aplastic anemia.</li>
+                    <li><strong>Basiliximab, daclizumab:</strong> Anti‑CD25 (IL‑2 receptor α) monoclonal antibodies; used to prevent transplant rejection (no longer available).</li>
+                    <li><strong>Abatacept (CTLA‑4‑Ig):</strong> Inhibits CD28‑mediated costimulation; used in rheumatoid arthritis.</li>
+                    <li><strong>Belatacept:</strong> High‑affinity CTLA‑4‑Ig; used in kidney transplant (EBV seropositive only).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="anti-bcell" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 7. Anti‑B Cell Therapies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Rituximab (anti‑CD20):</strong> Depletes B cells; used in B‑cell lymphomas, rheumatoid arthritis, ANCA‑associated vasculitis, autoimmune hemolytic anemia.</li>
+                    <li><strong>Obinutuzumab, ofatumumab:</strong> Other anti‑CD20 antibodies for CLL, lymphoma.</li>
+                    <li><strong>Belimumab (anti‑BAFF):</strong> Inhibits B‑cell survival; used in SLE.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ivig" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 8. Intravenous Immunoglobulin (IVIG)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Pooled IgG from thousands of donors.</li>
+                    <li><strong>Mechanisms:</strong> Neutralization of pathogens, anti‑inflammatory via Fc receptors, idiotypic antibodies, complement inhibition.</li>
+                    <li><strong>Uses:</strong> Primary immunodeficiencies, ITP, Guillain‑Barré, Kawasaki disease, chronic inflammatory demyelinating polyneuropathy.</li>
+                    <li><strong>Risks:</strong> Infusion reactions, thrombosis, renal failure (sucrose formulations), aseptic meningitis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTI‑ALLERGY DRUGS ==================== -->
+        <section id="antihistamines" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 9. Antihistamines (H1 Receptor Antagonists)</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Generation</th><th>Examples</th><th>Uses</th><th>Side Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>First‑generation</td><td>Diphenhydramine, chlorpheniramine, hydroxyzine, promethazine</td><td>Allergic reactions, pruritus, sedation, motion sickness</td><td>Sedation, anticholinergic (dry mouth, urinary retention)</td></tr>
+                        <tr><td>Second‑generation</td><td>Cetirizine, loratadine, fexofenadine, levocetirizine</td><td>Allergic rhinitis, urticaria</td><td>Minimal sedation, less anticholinergic</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="mast-cell" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 10. Mast Cell Stabilizers</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Cromolyn sodium:</strong> Prevents mast cell degranulation; used for allergic conjunctivitis (eye drops), asthma (nebulized), and mastocytosis.</li>
+                    <li><strong>Nedocromil:</strong> Similar to cromolyn; used in asthma and allergic conjunctivitis.</li>
+                    <li><strong>Ketotifen:</strong> Dual mast cell stabilizer and H1 antagonist; available as eye drops.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="leukotriene" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 11. Leukotriene Antagonists</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Montelukast, zafirlukast:</strong> CysLT1 receptor antagonists; used in asthma and allergic rhinitis.</li>
+                    <li><strong>Zileuton:</strong> 5‑lipoxygenase inhibitor; blocks leukotriene synthesis; less used due to hepatotoxicity and multiple doses.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== IMMUNOSTIMULANTS ==================== -->
+        <section id="cytokines" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 12. Cytokine Therapies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Interferon‑α:</strong> Used for hepatitis B/C, melanoma, leukemia. Side effects: flu‑like symptoms, depression.</li>
+                    <li><strong>Interferon‑β:</strong> Used in multiple sclerosis; reduces relapses.</li>
+                    <li><strong>Interferon‑γ:</strong> Used in chronic granulomatous disease and osteopetrosis.</li>
+                    <li><strong>IL‑2 (aldesleukin):</strong> Used in metastatic renal cell carcinoma and melanoma; high toxicity (capillary leak syndrome).</li>
+                    <li><strong>Granulocyte colony‑stimulating factor (G‑CSF, filgrastim):</strong> Increases neutrophils; used after chemotherapy, in neutropenia.</li>
+                    <li><strong>GM‑CSF (sargramostim):</strong> Increases neutrophils, macrophages; similar uses.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vaccines-immune" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 13. Vaccines & Adjuvants</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Live attenuated vaccines:</strong> Measles, mumps, rubella, varicella, yellow fever, BCG. Contraindicated in immunocompromised.</li>
+                    <li><strong>Inactivated/killed vaccines:</strong> Polio (IPV), influenza (inactivated), hepatitis A, rabies.</li>
+                    <li><strong>Subunit/recombinant:</strong> Hepatitis B, HPV, acellular pertussis.</li>
+                    <li><strong>Toxoids:</strong> Tetanus, diphtheria.</li>
+                    <li><strong>Adjuvants:</strong> Aluminum salts, MF59, AS04 – enhance immune response.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTIDOTES & OTHERS ==================== -->
+        <section id="chemo-immune" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 14. Immunotoxicities & Antidotes</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Cytokine release syndrome (CRS):</strong> Associated with CAR‑T cells and certain antibodies (rituximab). Treatment: tocilizumab (anti‑IL‑6), corticosteroids.</li>
+                    <li><strong>Immune reconstitution inflammatory syndrome (IRIS):</strong> Seen in HIV after ART initiation; treat with corticosteroids if severe.</li>
+                    <li><strong>Anaphylaxis:</strong> Epinephrine (first‑line), antihistamines, corticosteroids.</li>
+                    <li><strong>Heparin‑induced thrombocytopenia (HIT):</strong> Stop heparin, use direct thrombin inhibitors (argatroban, bivalirudin).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Immunology Pharmacology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renal Physiology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-kidney"></i>
+        <h1>Renal Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Introduction & Functions</a></li>
+                <li><a href="#ch2"><i class="fas fa-sitemap"></i> 2. Renal Anatomy</a></li>
+                <li><a href="#ch3"><i class="fas fa-filter"></i> 3. Glomerular Filtration</a></li>
+                <li><a href="#ch4"><i class="fas fa-truck"></i> 4. Tubular Transport Mechanisms</a></li>
+                <li><a href="#ch5"><i class="fas fa-bolt"></i> 5. Na⁺, K⁺, Ca²⁺, PO₄³⁻ Handling</a></li>
+                <li><a href="#ch6"><i class="fas fa-flask"></i> 6. Acid‑Base Balance</a></li>
+                <li><a href="#ch7"><i class="fas fa-tint"></i> 7. Urine Concentration & Dilution</a></li>
+                <li><a href="#ch8"><i class="fas fa-heartbeat"></i> 8. Renal Hormones</a></li>
+                <li><a href="#ch9"><i class="fas fa-toilet"></i> 9. Micturition</a></li>
+                <li><a href="#ch10"><i class="fas fa-chart-line"></i> 10. Renal Function Tests</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: INTRODUCTION & FUNCTIONS -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Introduction & Functions of the Kidney</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The kidneys are paired retroperitoneal organs that maintain homeostasis by filtering blood, reabsorbing essential substances, and excreting waste. They also have endocrine functions.</p>
+                </div>
+                <div class="subsection-heading">Major Functions</div>
+                <ul>
+                    <li><strong>Regulation of water and electrolyte balance:</strong> Adjust urine concentration and ion excretion to match intake.</li>
+                    <li><strong>Excretion of metabolic wastes:</strong> Urea (from protein metabolism), creatinine (from muscle), uric acid, and other toxins.</li>
+                    <li><strong>Acid‑base balance:</strong> Excrete H⁺ and reabsorb HCO₃⁻.</li>
+                    <li><strong>Blood pressure regulation:</strong> Via renin‑angiotensin‑aldosterone system (RAAS) and extracellular fluid volume control.</li>
+                    <li><strong>Endocrine functions:</strong> Produce erythropoietin (stimulates RBC production), activate vitamin D (calcitriol), and secrete renin.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Chronic kidney disease leads to anemia (↓ erythropoietin), hyperphosphatemia (↓ calcitriol), and metabolic acidosis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: RENAL ANATOMY -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-sitemap"></i> 2. Renal Anatomy</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Each kidney contains about 1 million nephrons – the functional units. Nephrons consist of a renal corpuscle (glomerulus + Bowman's capsule) and a tubular system.</p>
+                </div>
+                <div class="subsection-heading">Nephron Segments</div>
+                <ul>
+                    <li><strong>Glomerulus:</strong> Capillary tuft where ultrafiltration occurs.</li>
+                    <li><strong>Proximal convoluted tubule (PCT):</strong> Major site of reabsorption (Na⁺, Cl⁻, water, glucose, amino acids, bicarbonate).</li>
+                    <li><strong>Loop of Henle:</strong> Descending limb (water permeable), thin ascending limb, thick ascending limb (TAL) – active NaCl reabsorption, diluting segment.</li>
+                    <li><strong>Distal convoluted tubule (DCT):</strong> Fine tuning of Na⁺, Ca²⁺ reabsorption.</li>
+                    <li><strong>Collecting duct (CD):</strong> Principal cells (Na⁺ reabsorption, K⁺ secretion) and intercalated cells (acid‑base transport).</li>
+                </ul>
+                <div class="diagram-placeholder"><i class="fas fa-project-diagram"></i> [Diagram: Nephron with segments and vascular supply]</div>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Diuretics act on specific segments: loop diuretics on TAL, thiazides on DCT, potassium‑sparing on CD.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: GLOMERULAR FILTRATION -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-filter"></i> 3. Glomerular Filtration</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Glomerular filtration is the first step of urine formation. The glomerular filtration rate (GFR) is the volume of plasma filtered per unit time (normal ~125 mL/min).</p>
+                </div>
+                <div class="subsection-heading">Determinants of GFR</div>
+                <ul>
+                    <li><strong>Net filtration pressure = P<sub>GC</sub> – P<sub>BC</sub> – π<sub>GC</sub></strong> (P<sub>GC</sub> = glomerular capillary hydrostatic pressure; P<sub>BC</sub> = Bowman's capsule pressure; π<sub>GC</sub> = glomerular capillary oncotic pressure).</li>
+                    <li><strong>K<sub>f</sub> (filtration coefficient):</strong> Product of hydraulic conductivity and surface area.</li>
+                </ul>
+                <div class="subsection-heading">Regulation of GFR</div>
+                <ul>
+                    <li><strong>Autoregulation:</strong> Maintains GFR despite BP fluctuations (60‑160 mmHg). Two mechanisms:
+                        <ul>
+                            <li><strong>Myogenic mechanism:</strong> Afferent arteriole constricts when stretched.</li>
+                            <li><strong>Tubuloglomerular feedback:</strong> Macula densa senses NaCl delivery; if high, signals afferent arteriole to constrict (via adenosine).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Sympathetic nervous system:</strong> Strong stimulation constricts afferent arterioles, ↓ GFR (e.g., during severe hemorrhage).</li>
+                    <li><strong>Angiotensin II:</strong> Constricts efferent arteriole to maintain GFR when BP low.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> In renal artery stenosis, angiotensin II helps maintain GFR via efferent constriction; ACE inhibitors can cause acute kidney injury by removing this effect.</p>
+                </div>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “Myogenic – muscle sense stretch; Tubuloglomerular – macula densa tells arteriole.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: TUBULAR TRANSPORT MECHANISMS -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-truck"></i> 4. Tubular Transport Mechanisms</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Reabsorption and secretion occur via passive diffusion, facilitated diffusion, active transport, and co‑transport.</p>
+                </div>
+                <div class="subsection-heading">Proximal Tubule (PCT)</div>
+                <ul>
+                    <li>Reabsorbs ~65% of filtered Na⁺ and water, and almost all glucose, amino acids, and bicarbonate.</li>
+                    <li><strong>SGLT2</strong> (Na⁺‑glucose co‑transporter) on apical membrane; basolateral GLUT2 and Na⁺/K⁺ ATPase.</li>
+                    <li><strong>Na⁺/H⁺ exchanger (NHE3):</strong> Mediates Na⁺ reabsorption and H⁺ secretion (involved in HCO₃⁻ reclamation).</li>
+                </ul>
+                <div class="subsection-heading">Loop of Henle</div>
+                <ul>
+                    <li><strong>Thick ascending limb (TAL):</strong> Apical Na‑K‑2Cl co‑transporter (NKCC2) reabsorbs NaCl; loop diuretics (furosemide) block it. This segment is water‑impermeable, creating dilute urine.</li>
+                </ul>
+                <div class="subsection-heading">Distal Convoluted Tubule (DCT)</div>
+                <ul>
+                    <li><strong>Na‑Cl co‑transporter (NCC)</strong> reabsorbs NaCl; thiazide diuretics block it.</li>
+                </ul>
+                <div class="subsection-heading">Collecting Duct (CD)</div>
+                <ul>
+                    <li><strong>Principal cells:</strong> Na⁺ reabsorption via ENaC (amiloride‑sensitive), K⁺ secretion via ROMK.</li>
+                    <li><strong>α‑intercalated cells:</strong> Secrete H⁺ (via H⁺‑ATPase) and reabsorb bicarbonate.</li>
+                    <li><strong>β‑intercalated cells:</strong> Secrete bicarbonate (less common).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Glucose appears in urine (glycosuria) when plasma glucose exceeds renal threshold (~180 mg/dL) due to SGLT saturation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: NA⁺, K⁺, CA²⁺, PO₄³⁻ HANDLING -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 5. Renal Handling of Sodium, Potassium, Calcium, Phosphate</div>
+            <div class="section-card">
+                <div class="subsection-heading">Sodium</div>
+                <div class="body-text">
+                    <p>Na⁺ reabsorption is tightly regulated. PCT (65%), TAL (25%), DCT (5%), CD (4%). Aldosterone increases Na⁺ reabsorption in CD.</p>
+                </div>
+                <div class="subsection-heading">Potassium</div>
+                <ul>
+                    <li>Most K⁺ reabsorbed in PCT and TAL; K⁺ secretion occurs in principal cells of CD (regulated by aldosterone).</li>
+                    <li>Dietary K⁺ loading increases aldosterone, enhancing secretion.</li>
+                </ul>
+                <div class="subsection-heading">Calcium</div>
+                <ul>
+                    <li>~60% reabsorbed in PCT (passive), 25% in TAL (paracellular), and DCT/CNT regulated by PTH (stimulates Ca²⁺ reabsorption via TRPV5).</li>
+                    <li>PTH increases Ca²⁺ reabsorption in DCT, and decreases PO₄³⁻ reabsorption in PCT.</li>
+                </ul>
+                <div class="subsection-heading">Phosphate</div>
+                <ul>
+                    <li>Reabsorbed in PCT via Na⁺‑phosphate co‑transporters (NPT2a, NPT2c). Inhibited by PTH (phosphaturia).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Hyperkalemia can be caused by aldosterone deficiency, K⁺‑sparing diuretics, or renal failure. Hypocalcemia may result from hypoparathyroidism or vitamin D deficiency.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: ACID‑BASE BALANCE -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 6. Renal Acid‑Base Balance</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The kidneys regulate pH by reabsorbing filtered HCO₃⁻ and excreting fixed acids (via titratable acids and NH₄⁺).</p>
+                </div>
+                <div class="subsection-heading">Bicarbonate Reabsorption</div>
+                <ul>
+                    <li>In PCT: H⁺ secreted (via NHE3) combines with filtered HCO₃⁻ to form H₂CO₃, then CO₂ and H₂O; HCO₃⁻ is indirectly reabsorbed (new HCO₃⁻ generated).</li>
+                </ul>
+                <div class="subsection-heading">Excretion of H⁺</div>
+                <ul>
+                    <li>Intercalated cells (α) secrete H⁺ via H⁺‑ATPase; H⁺ is buffered in urine by phosphate (titratable acid) and ammonia (NH₃ → NH₄⁺).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> In metabolic acidosis, the kidney increases NH₃ production to excrete more acid. Renal tubular acidosis (RTA) involves defects in H⁺ secretion or HCO₃⁻ reabsorption.</p>
+                </div>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “PCT reabsorbs HCO₃⁻; collecting duct secretes H⁺.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: URINE CONCENTRATION & DILUTION -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 7. Urine Concentration & Dilution</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The countercurrent multiplier system (loop of Henle) creates a hypertonic medullary interstitium, allowing water reabsorption in collecting duct under ADH control.</p>
+                </div>
+                <div class="subsection-heading">Countercurrent Mechanism</div>
+                <ul>
+                    <li><strong>Loop of Henle:</strong> Descending limb permeable to water (concentrates), ascending limb impermeable to water, actively transports NaCl into interstitium.</li>
+                    <li><strong>Vasa recta:</strong> Countercurrent exchange preserves medullary gradient.</li>
+                </ul>
+                <div class="subsection-heading">Role of ADH</div>
+                <ul>
+                    <li>ADH (vasopressin) increases water permeability of collecting duct by inserting aquaporin‑2 channels.</li>
+                    <li>In absence of ADH (diabetes insipidus), dilute urine (low osmolality).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Loop diuretics disrupt the countercurrent gradient, impairing concentrating ability. Lithium can cause nephrogenic diabetes insipidus.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: RENAL HORMONES -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 8. Renal Hormones</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Renin:</strong> Secreted by juxtaglomerular cells in response to low BP, low Na⁺, or sympathetic stimulation. Converts angiotensinogen to angiotensin I.</li>
+                    <li><strong>Angiotensin II:</strong> Potent vasoconstrictor, stimulates aldosterone release, increases thirst.</li>
+                    <li><strong>Aldosterone:</strong> Acts on principal cells to increase Na⁺ reabsorption and K⁺ secretion.</li>
+                    <li><strong>Erythropoietin (EPO):</strong> Stimulates RBC production; deficiency causes anemia in CKD.</li>
+                    <li><strong>Calcitriol (1,25‑dihydroxyvitamin D):</strong> Activated in proximal tubule; increases intestinal Ca²⁺ absorption.</li>
+                    <li><strong>Prostaglandins:</strong> Vasodilators that protect renal blood flow during stress.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: MICTURITION -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-toilet"></i> 9. Micturition</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Urine storage and voiding involve autonomic and somatic nerves.</p>
+                    <ul>
+                        <li><strong>Detrusor muscle:</strong> Relaxes during filling (sympathetic β₃), contracts during voiding (parasympathetic M₃).</li>
+                        <li><strong>Internal urethral sphincter:</strong> Smooth muscle, sympathetic α₁ maintains contraction.</li>
+                        <li><strong>External urethral sphincter:</strong> Skeletal muscle, somatic (pudendal nerve) maintains voluntary control.</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Spinal cord injury above sacral level causes spastic bladder; damage to sacral parasympathetic causes flaccid bladder.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: RENAL FUNCTION TESTS -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 10. Renal Function Tests</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>GFR:</strong> Measured by inulin clearance (gold standard), or estimated by creatinine clearance or eGFR (CKD‑EPI, MDRD).</li>
+                    <li><strong>Renal plasma flow (RPF):</strong> Measured by PAH clearance.</li>
+                    <li><strong>Filtration fraction = GFR / RPF</strong> (normal ~0.2).</li>
+                    <li><strong>Urine osmolality, specific gravity:</strong> Assess concentrating ability.</li>
+                    <li><strong>Fractional excretion of Na⁺ (FeNa):</strong> Differentiates prerenal (<1%) from intrinsic renal (>2%) AKI.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> FeNa &lt;1% suggests prerenal azotemia; &gt;2% suggests acute tubular necrosis.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Renal Physiology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

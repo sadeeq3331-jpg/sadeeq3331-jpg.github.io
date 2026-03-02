@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacology · Systemic Pharmacology</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-pills"></i>
+        <h1>Pharmacology · Systemic Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>AUTONOMIC NERVOUS SYSTEM</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#cholinergic"><i class="fas fa-nerve"></i> 1. Cholinergic Agonists</a></li>
+                <li class="chapter-item"><a href="#anticholinergic"><i class="fas fa-nerve"></i> 2. Anticholinergic Drugs</a></li>
+                <li class="chapter-item"><a href="#adrenergic"><i class="fas fa-nerve"></i> 3. Adrenergic Agonists</a></li>
+                <li class="chapter-item"><a href="#alpha-blockers"><i class="fas fa-nerve"></i> 4. Alpha‑Adrenergic Antagonists</a></li>
+                <li class="chapter-item"><a href="#beta-blockers"><i class="fas fa-heart"></i> 5. Beta‑Adrenergic Antagonists</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CARDIOVASCULAR</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antiarrhythmics"><i class="fas fa-heartbeat"></i> 6. Antiarrhythmic Drugs</a></li>
+                <li class="chapter-item"><a href="#antihypertensives"><i class="fas fa-tachometer-alt"></i> 7. Antihypertensive Drugs</a></li>
+                <li class="chapter-item"><a href="#diuretics"><i class="fas fa-tint"></i> 8. Diuretics</a></li>
+                <li class="chapter-item"><a href="#anticoagulants"><i class="fas fa-blood"></i> 9. Anticoagulants & Antiplatelets</a></li>
+                <li class="chapter-item"><a href="#lipid-lowering"><i class="fas fa-heart"></i> 10. Lipid‑Lowering Agents</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>RESPIRATORY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#asthma"><i class="fas fa-lungs"></i> 11. Drugs for Asthma & COPD</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>GASTROINTESTINAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acid-peptic"><i class="fas fa-stomach"></i> 12. Drugs for Acid‑Peptic Disorders</a></li>
+                <li class="chapter-item"><a href="#antiemetics"><i class="fas fa-poop"></i> 13. Antiemetics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENDOCRINE</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#diabetes"><i class="fas fa-tint"></i> 14. Antidiabetic Drugs</a></li>
+                <li class="chapter-item"><a href="#thyroid"><i class="fas fa-hormone"></i> 15. Thyroid & Anti‑thyroid Drugs</a></li>
+                <li class="chapter-item"><a href="#steroids"><i class="fas fa-hormone"></i> 16. Corticosteroids</a></li>
+                <li class="chapter-item"><a href="#sex-hormones"><i class="fas fa-venus-mars"></i> 17. Sex Hormones & Contraceptives</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CNS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#sedative-hypnotic"><i class="fas fa-bed"></i> 18. Sedative‑Hypnotics</a></li>
+                <li class="chapter-item"><a href="#antidepressants"><i class="fas fa-smile"></i> 19. Antidepressants</a></li>
+                <li class="chapter-item"><a href="#antipsychotics"><i class="fas fa-brain"></i> 20. Antipsychotics</a></li>
+                <li class="chapter-item"><a href="#antiepileptics"><i class="fas fa-bolt"></i> 21. Antiepileptic Drugs</a></li>
+                <li class="chapter-item"><a href="#parkinsons"><i class="fas fa-running"></i> 22. Drugs for Parkinson's</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== AUTONOMIC NERVOUS SYSTEM ==================== -->
+        <section id="cholinergic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nerve"></i> 1. Cholinergic Agonists</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Direct acting (muscarinic):</strong> Bethanechol (urinary retention), pilocarpine (glaucoma, xerostomia), carbachol (glaucoma).</li>
+                    <li><strong>Indirect acting (anticholinesterases):</strong> Neostigmine (post‑op ileus, myasthenia), pyridostigmine (myasthenia), physostigmine (anticholinergic overdose), edrophonium (diagnosis of myasthenia).</li>
+                    <li><strong>Mechanism:</strong> Activate muscarinic or nicotinic receptors, or inhibit acetylcholinesterase.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="anticholinergic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nerve"></i> 2. Anticholinergic Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Muscarinic antagonists:</strong> Atropine (bradycardia, pre‑anesthetic), scopolamine (motion sickness), ipratropium (COPD, asthma), tiotropium (COPD), darifenacin (overactive bladder).</li>
+                    <li><strong>Side effects:</strong> Dry mouth, blurred vision, constipation, urinary retention, tachycardia, confusion in elderly.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="adrenergic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nerve"></i> 3. Adrenergic Agonists</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Alpha‑1 agonists:</strong> Phenylephrine (nasal decongestant, hypotension), midodrine (orthostatic hypotension).</li>
+                    <li><strong>Beta‑2 agonists:</strong> Albuterol (asthma), terbutaline (tocolytic).</li>
+                    <li><strong>Non‑selective beta agonists:</strong> Isoproterenol (bradycardia, heart block).</li>
+                    <li><strong>Alpha and beta agonists:</strong> Epinephrine (anaphylaxis, cardiac arrest), norepinephrine (shock), dopamine (shock).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="alpha-blockers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nerve"></i> 4. Alpha‑Adrenergic Antagonists</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Non‑selective alpha blockers:</strong> Phenoxybenzamine (pheochromocytoma), phentolamine (hypertensive crisis).</li>
+                    <li><strong>Selective alpha‑1 blockers:</strong> Prazosin, doxazosin, terazosin (hypertension, BPH), tamsulosin (BPH only).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="beta-blockers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 5. Beta‑Adrenergic Antagonists</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Non‑selective (β1, β2):</strong> Propranolol, nadolol, timolol.</li>
+                    <li><strong>Cardioselective (β1):</strong> Metoprolol, atenolol, bisoprolol, esmolol.</li>
+                    <li><strong>With ISA:</strong> Pindolol, acebutolol.</li>
+                    <li><strong>With α‑blockade:</strong> Carvedilol, labetalol.</li>
+                    <li><strong>Uses:</strong> Hypertension, angina, heart failure, arrhythmias, migraine prophylaxis, glaucoma (timolol).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CARDIOVASCULAR ==================== -->
+        <section id="antiarrhythmics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 6. Antiarrhythmic Drugs (Vaughan Williams)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Class I (Na⁺ channel blockers):</strong>
+                        <ul>
+                            <li>Ia: Quinidine, procainamide, disopyramide (moderate blockade, ↑ QT).</li>
+                            <li>Ib: Lidocaine, mexiletine (mild blockade, ↓ QT).</li>
+                            <li>Ic: Flecainide, propafenone (strong blockade).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Class II (β‑blockers):</strong> Propranolol, metoprolol.</li>
+                    <li><strong>Class III (K⁺ channel blockers):</strong> Amiodarone, sotalol, dofetilide, ibutilide.</li>
+                    <li><strong>Class IV (Ca²⁺ channel blockers):</strong> Verapamil, diltiazem.</li>
+                    <li><strong>Other:</strong> Adenosine (AV nodal blocker), digoxin (Na/K‑ATPase inhibitor).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="antihypertensives" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tachometer-alt"></i> 7. Antihypertensive Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>ACE inhibitors:</strong> Captopril, enalapril, lisinopril – cough, angioedema, hyperkalemia.</li>
+                    <li><strong>ARBs:</strong> Losartan, valsartan – no cough.</li>
+                    <li><strong>CCBs:</strong> Dihydropyridines (amlodipine, nifedipine) – vasodilation, edema; verapamil, diltiazem – negative chronotropy.</li>
+                    <li><strong>Thiazide diuretics:</strong> Hydrochlorothiazide, chlorthalidone.</li>
+                    <li><strong>Beta‑blockers.</strong></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="diuretics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 8. Diuretics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Loop diuretics:</strong> Furosemide, bumetanide, torsemide – inhibit Na‑K‑2Cl cotransporter in thick ascending limb.</li>
+                    <li><strong>Thiazides:</strong> HCTZ, chlorthalidone – inhibit Na‑Cl cotransporter in distal tubule.</li>
+                    <li><strong>K⁺‑sparing diuretics:</strong> Spironolactone (aldosterone antagonist), eplerenone, amiloride, triamterene.</li>
+                    <li><strong>Carbonic anhydrase inhibitors:</strong> Acetazolamide – proximal tubule.</li>
+                    <li><strong>Osmotic diuretics:</strong> Mannitol – increase osmotic pressure.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="anticoagulants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 9. Anticoagulants & Antiplatelets</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Anticoagulants:</strong> Heparin (IV/SC), LMWH (enoxaparin), warfarin (oral, vitamin K antagonist), DOACs (dabigatran, rivaroxaban, apixaban).</li>
+                    <li><strong>Antiplatelets:</strong> Aspirin (COX‑1 inhibitor), clopidogrel (P2Y12 antagonist), abciximab (GP IIb/IIIa inhibitor).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="lipid-lowering" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 10. Lipid‑Lowering Agents</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Statins:</strong> Atorvastatin, simvastatin – inhibit HMG‑CoA reductase.</li>
+                    <li><strong>Ezetimibe:</strong> Inhibits cholesterol absorption.</li>
+                    <li><strong>PCSK9 inhibitors:</strong> Evolocumab, alirocumab.</li>
+                    <li><strong>Fibrates:</strong> Fenofibrate – PPAR‑α agonists, lower triglycerides.</li>
+                    <li><strong>Niacin:</strong> Reduces VLDL.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== RESPIRATORY ==================== -->
+        <section id="asthma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 11. Drugs for Asthma & COPD</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Bronchodilators:</strong> β2‑agonists (SABA: albuterol; LABA: salmeterol, formoterol), anticholinergics (ipratropium, tiotropium).</li>
+                    <li><strong>Anti‑inflammatory:</strong> Inhaled corticosteroids (fluticasone, budesonide), leukotriene antagonists (montelukast), cromolyn (mast cell stabilizer).</li>
+                    <li><strong>Monoclonal antibodies:</strong> Omalizumab (anti‑IgE), mepolizumab (anti‑IL‑5), dupilumab (anti‑IL‑4/13).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== GASTROINTESTINAL ==================== -->
+        <section id="acid-peptic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 12. Drugs for Acid‑Peptic Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Antacids:</strong> Aluminum/magnesium hydroxide.</li>
+                    <li><strong>H2 blockers:</strong> Ranitidine, famotidine, cimetidine.</li>
+                    <li><strong>PPIs:</strong> Omeprazole, esomeprazole, lansoprazole (inhibit H⁺/K⁺ ATPase).</li>
+                    <li><strong>Sucralfate:</strong> Coats ulcers.</li>
+                    <li><strong>Misoprostol:</strong> Prostaglandin analog, prevents NSAID ulcers.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="antiemetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-poop"></i> 13. Antiemetics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>5‑HT3 antagonists:</strong> Ondansetron, granisetron.</li>
+                    <li><strong>Dopamine antagonists:</strong> Metoclopramide, prochlorperazine.</li>
+                    <li><strong>NK1 antagonists:</strong> Aprepitant.</li>
+                    <li><strong>Antihistamines:</strong> Promethazine, diphenhydramine.</li>
+                    <li><strong>Anticholinergics:</strong> Scopolamine.</li>
+                    <li><strong>Cannabinoids:</strong> Dronabinol.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ENDOCRINE ==================== -->
+        <section id="diabetes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 14. Antidiabetic Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Insulin:</strong> Rapid‑acting (lispro, aspart), short‑acting (regular), intermediate (NPH), long‑acting (glargine, detemir).</li>
+                    <li><strong>Biguanides:</strong> Metformin (↓ hepatic glucose output).</li>
+                    <li><strong>Sulfonylureas:</strong> Glipizide, glyburide (↑ insulin secretion).</li>
+                    <li><strong>TZDs:</strong> Pioglitazone (↑ insulin sensitivity).</li>
+                    <li><strong>DPP‑4 inhibitors:</strong> Sitagliptin.</li>
+                    <li><strong>GLP‑1 agonists:</strong> Liraglutide, semaglutide.</li>
+                    <li><strong>SGLT2 inhibitors:</strong> Empagliflozin (↓ renal glucose reabsorption).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="thyroid" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hormone"></i> 15. Thyroid & Anti‑thyroid Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Thyroid hormone replacement:</strong> Levothyroxine (T4), liothyronine (T3).</li>
+                    <li><strong>Anti‑thyroid drugs:</strong> Methimazole, propylthiouracil (inhibit thyroid peroxidase).</li>
+                    <li><strong>Iodine & radioiodine:</strong> Iodine (Wolff‑Chaikoff effect), radioactive iodine (¹³¹I) ablates thyroid tissue.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="steroids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hormone"></i> 16. Corticosteroids</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Glucocorticoids:</strong> Prednisone, methylprednisolone, dexamethasone – anti‑inflammatory, immunosuppressive.</li>
+                    <li><strong>Mineralocorticoids:</strong> Fludrocortisone – for adrenal insufficiency.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="sex-hormones" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-venus-mars"></i> 17. Sex Hormones & Contraceptives</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Estrogens:</strong> Conjugated estrogens, ethinyl estradiol (contraceptives, HRT).</li>
+                    <li><strong>Progestins:</strong> Progesterone, medroxyprogesterone, levonorgestrel.</li>
+                    <li><strong>Oral contraceptives:</strong> Combined estrogen‑progestin, progestin‑only.</li>
+                    <li><strong>Androgens:</strong> Testosterone.</li>
+                    <li><strong>Anti‑androgens:</strong> Spironolactone, bicalutamide, finasteride (5α‑reductase inhibitor).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CNS ==================== -->
+        <section id="sedative-hypnotic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bed"></i> 18. Sedative‑Hypnotics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Benzodiazepines:</strong> Diazepam, lorazepam, alprazolam – enhance GABAₐ.</li>
+                    <li><strong>Z‑drugs:</strong> Zolpidem, zaleplon, eszopiclone.</li>
+                    <li><strong>Barbiturates:</strong> Phenobarbital, pentobarbital – increase duration of Cl⁻ channel opening.</li>
+                    <li><strong>Melatonin agonists:</strong> Ramelteon.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="antidepressants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-smile"></i> 19. Antidepressants</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>SSRIs:</strong> Fluoxetine, sertraline, citalopram – first‑line.</li>
+                    <li><strong>SNRIs:</strong> Venlafaxine, duloxetine.</li>
+                    <li><strong>TCAs:</strong> Amitriptyline, nortriptyline – cardiac toxicity.</li>
+                    <li><strong>MAOIs:</strong> Phenelzine, tranylcypromine – dietary restrictions.</li>
+                    <li><strong>Atypicals:</strong> Bupropion (NDRI), mirtazapine (NaSSA), trazodone.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="antipsychotics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 20. Antipsychotics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>First‑generation (typical):</strong> Haloperidol, chlorpromazine – D2 antagonists; EPS, tardive dyskinesia.</li>
+                    <li><strong>Second‑generation (atypical):</strong> Risperidone, olanzapine, quetiapine, aripiprazole (partial agonist), clozapine (refractory schizophrenia; agranulocytosis risk).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="antiepileptics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 21. Antiepileptic Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Na⁺ channel blockers:</strong> Phenytoin, carbamazepine, oxcarbazepine, lamotrigine.</li>
+                    <li><strong>GABA enhancers:</strong> Benzodiazepines, barbiturates, tiagabine.</li>
+                    <li><strong>Ca²⁺ channel blockers (T‑type):</strong> Ethosuximide (absence seizures).</li>
+                    <li><strong>Multiple mechanisms:</strong> Valproate, levetiracetam, topiramate.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="parkinsons" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-running"></i> 22. Drugs for Parkinson's Disease</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Levodopa + carbidopa:</strong> (dopa decarboxylase inhibitor).</li>
+                    <li><strong>Dopamine agonists:</strong> Pramipexole, ropinirole.</li>
+                    <li><strong>COMT inhibitors:</strong> Entacapone, tolcapone.</li>
+                    <li><strong>MAO‑B inhibitors:</strong> Selegiline, rasagiline.</li>
+                    <li><strong>Anticholinergics:</strong> Benztropine, trihexyphenidyl (for tremor).</li>
+                    <li><strong>Amantadine:</strong> Antiviral with anti‑dyskinetic effects.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Pharmacology · Systemic Pharmacology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

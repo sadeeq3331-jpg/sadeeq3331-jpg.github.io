@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatry · Physiology (Neurobiology) MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-brain"></i>
+        <h1>Psychiatry · Physiology (Neurobiology) MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ PSYCHIATRY PHYSIOLOGY (NEUROBIOLOGY) QUESTIONS
+    const questions = [
+        { q: "The primary neurotransmitter at the synapse between a motor neuron and skeletal muscle is:",
+          opts: ["Dopamine", "Acetylcholine", "Norepinephrine", "Serotonin", "GABA"],
+          correct: 1,
+          exp: "Acetylcholine (ACh) is released at the neuromuscular junction." },
+        { q: "Dopamine is synthesized from which amino acid?",
+          opts: ["Tyrosine", "Tryptophan", "Phenylalanine", "Histidine", "Glutamate"],
+          correct: 0,
+          exp: "Tyrosine → L-DOPA → dopamine via tyrosine hydroxylase and DOPA decarboxylase." },
+        { q: "The rate‑limiting enzyme in catecholamine synthesis is:",
+          opts: ["Tyrosine hydroxylase", "DOPA decarboxylase", "Dopamine β‑hydroxylase", "Phenylethanolamine N‑methyltransferase", "Monoamine oxidase"],
+          correct: 0,
+          exp: "Tyrosine hydroxylase converts tyrosine to L-DOPA and is the rate‑limiting step." },
+        { q: "Norepinephrine is converted to epinephrine by:",
+          opts: ["Dopamine β‑hydroxylase", "Phenylethanolamine N‑methyltransferase (PNMT)", "Catechol‑O‑methyltransferase (COMT)", "Monoamine oxidase (MAO)", "Tyrosine hydroxylase"],
+          correct: 1,
+          exp: "PNMT, found in adrenal medulla, converts norepinephrine to epinephrine." },
+        { q: "The major inhibitory neurotransmitter in the brain is:",
+          opts: ["Glutamate", "GABA", "Dopamine", "Acetylcholine", "Glycine"],
+          correct: 1,
+          exp: "GABA (γ‑aminobutyric acid) is the primary inhibitory neurotransmitter in the CNS." },
+        { q: "The major excitatory neurotransmitter in the brain is:",
+          opts: ["GABA", "Glycine", "Glutamate", "Serotonin", "Dopamine"],
+          correct: 2,
+          exp: "Glutamate is the main excitatory neurotransmitter." },
+        { q: "Serotonin (5‑HT) is synthesized from:",
+          opts: ["Tyrosine", "Tryptophan", "Phenylalanine", "Histidine", "Methionine"],
+          correct: 1,
+          exp: "Tryptophan is hydroxylated to 5‑hydroxytryptophan then decarboxylated to serotonin." },
+        { q: "Which nucleus contains the cell bodies of most serotonergic neurons?",
+          opts: ["Locus coeruleus", "Substantia nigra", "Raphe nuclei", "Ventral tegmental area", "Nucleus basalis"],
+          correct: 2,
+          exp: "Raphe nuclei (midline brainstem) are the main source of serotonin." },
+        { q: "The locus coeruleus is the primary source of which neurotransmitter?",
+          opts: ["Dopamine", "Norepinephrine", "Serotonin", "Acetylcholine", "Histamine"],
+          correct: 1,
+          exp: "Locus coeruleus provides most noradrenergic innervation to the brain." },
+        { q: "Dopamine neurons in the mesolimbic pathway originate in the:",
+          opts: ["Substantia nigra", "Ventral tegmental area (VTA)", "Raphe nuclei", "Locus coeruleus", "Tuberomammillary nucleus"],
+          correct: 1,
+          exp: "VTA projects to nucleus accumbens and other limbic structures." },
+        { q: "The nigrostriatal dopamine pathway is involved in:",
+          opts: ["Reward and motivation", "Motor control", "Emotion", "Memory", "Sleep"],
+          correct: 1,
+          exp: "Substantia nigra to striatum regulates voluntary movement." },
+        { q: "Degeneration of nigrostriatal dopamine neurons leads to:",
+          opts: ["Parkinson disease", "Huntington disease", "Schizophrenia", "Alzheimer disease", "Depression"],
+          correct: 0,
+          exp: "Loss of dopamine in substantia nigra causes Parkinson's motor symptoms." },
+        { q: "Histamine in the brain is produced by neurons in the:",
+          opts: ["Tuberomammillary nucleus", "Locus coeruleus", "Raphe nuclei", "Basal forebrain", "Hypothalamus (arcuate)"],
+          correct: 0,
+          exp: "Tuberomammillary nucleus (hypothalamus) sends histaminergic projections." },
+        { q: "Acetylcholine in the CNS is synthesized from:",
+          opts: ["Choline and acetyl‑CoA via choline acetyltransferase", "Tyrosine", "Tryptophan", "Glutamine", "Histidine"],
+          correct: 0,
+          exp: "Choline acetyltransferase (ChAT) produces ACh from choline and acetyl‑CoA." },
+        { q: "The basal forebrain cholinergic system is important for:",
+          opts: ["Memory and attention", "Motor control", "Sleep", "Reward", "Pain"],
+          correct: 0,
+          exp: "Nucleus basalis of Meynert projects to cortex; degeneration in Alzheimer's." },
+        { q: "The main excitatory amino acid transporters (EAATs) remove:",
+          opts: ["Glutamate from synapse", "GABA from synapse", "Dopamine from synapse", "Serotonin from synapse", "Glycine"],
+          correct: 0,
+          exp: "EAATs (mainly on astrocytes) clear glutamate to prevent excitotoxicity." },
+        { q: "The enzyme that degrades catecholamines in the synapse is primarily:",
+          opts: ["COMT", "MAO", "Both COMT and MAO", "Acetylcholinesterase", "DOPA decarboxylase"],
+          correct: 2,
+          exp: "COMT (extracellular) and MAO (intracellular) metabolize catecholamines." },
+        { q: "MAO‑A preferentially metabolizes:",
+          opts: ["Serotonin, norepinephrine, dopamine", "Dopamine only", "Phenylethylamine", "Histamine", "Acetylcholine"],
+          correct: 0,
+          exp: "MAO‑A has higher affinity for serotonin and norepinephrine; MAO‑B for dopamine and phenylethylamine." },
+        { q: "The amygdala is primarily involved in:",
+          opts: ["Fear and emotional processing", "Memory consolidation", "Motor planning", "Language", "Visual recognition"],
+          correct: 0,
+          exp: "Amygdala is key for fear conditioning and emotional responses." },
+        { q: "The hippocampus is crucial for:",
+          opts: ["Formation of new declarative memories", "Emotional regulation", "Motor learning", "Executive function", "Sensory processing"],
+          correct: 0,
+          exp: "Hippocampus consolidates short‑term to long‑term memory." },
+        { q: "The prefrontal cortex is associated with:",
+          opts: ["Executive functions, decision‑making, personality", "Vision", "Audition", "Motor execution", "Emotional reflexes"],
+          correct: 0,
+          exp: "PFC handles planning, inhibition, and social behavior." },
+        { q: "The hypothalamus controls:",
+          opts: ["Autonomic functions, endocrine, circadian rhythms", "Voluntary movement", "Conscious thought", "Language", "Memory"],
+          correct: 0,
+          exp: "Hypothalamus regulates homeostasis and links to pituitary." },
+        { q: "The suprachiasmatic nucleus (SCN) is the:",
+          opts: ["Master circadian pacemaker", "Feeding center", "Thirst center", "Thermoregulatory center", "Sexual behavior center"],
+          correct: 0,
+          exp: "SCN in hypothalamus generates circadian rhythms." },
+        { q: "Melatonin is secreted by the:",
+          opts: ["Pineal gland", "Pituitary gland", "Hypothalamus", "Thalamus", "Adrenal gland"],
+          correct: 0,
+          exp: "Pineal gland releases melatonin in response to darkness." },
+        { q: "The stress response (HPA axis) involves:",
+          opts: ["CRH (hypothalamus) → ACTH (pituitary) → cortisol (adrenal)", "GHRH → GH", "TRH → TSH → T3/T4", "GnRH → FSH/LH", "Dopamine → prolactin"],
+          correct: 0,
+          exp: "Hypothalamic‑pituitary‑adrenal axis mediates stress." },
+        { q: "Cortisol exerts negative feedback on:",
+          opts: ["Hypothalamus and pituitary", "Only hypothalamus", "Only pituitary", "Adrenal cortex", "All of the above"],
+          correct: 0,
+          exp: "Cortisol inhibits CRH and ACTH secretion." },
+        { q: "Which brain region is most implicated in reward and addiction?",
+          opts: ["Nucleus accumbens", "Hippocampus", "Amygdala", "Cerebellum", "Thalamus"],
+          correct: 0,
+          exp: "Nucleus accumbens (part of ventral striatum) is a key reward center." },
+        { q: "Dopamine release in the nucleus accumbens is associated with:",
+          opts: ["Pleasure and reinforcement", "Fear", "Sadness", "Hunger", "Sleep"],
+          correct: 0,
+          exp: "Dopamine mediates the rewarding effects of natural stimuli and drugs." },
+        { q: "The default mode network (DMN) is active during:",
+          opts: ["Rest and self‑referential thought", "Attention‑demanding tasks", "Motor activity", "Sensory processing", "Sleep"],
+          correct: 0,
+          exp: "DMN (medial PFC, posterior cingulate, etc.) is active at rest." },
+        { q: "Slow‑wave sleep (NREM stage 3) is characterized by:",
+          opts: ["Delta waves on EEG", "Sleep spindles", "Rapid eye movements", "Low‑voltage mixed frequency", "Alpha waves"],
+          correct: 0,
+          exp: "Deep sleep shows high‑amplitude delta waves." },
+        { q: "REM sleep is associated with:",
+          opts: ["Rapid eye movements, muscle atonia, dreaming", "Deep relaxation", "No dreaming", "Slow waves", "Spindles"],
+          correct: 0,
+          exp: "REM sleep is paradoxical: brain active, body paralyzed." },
+        { q: "The neurotransmitter most implicated in sleep‑wake regulation from the hypothalamus is:",
+          opts: ["Orexin (hypocretin)", "Dopamine", "Serotonin", "Norepinephrine", "Histamine"],
+          correct: 0,
+          exp: "Orexin neurons stabilize wakefulness; loss causes narcolepsy." },
+        { q: "Which nucleus promotes wakefulness via histamine?",
+          opts: ["Tuberomammillary nucleus", "Locus coeruleus", "Raphe nuclei", "Ventral tegmental area", "Basal forebrain"],
+          correct: 0,
+          exp: "Histaminergic neurons in tuberomammillary nucleus promote arousal." },
+        { q: "The neurobiological basis of anxiety involves hyperactivity of:",
+          opts: ["Amygdala", "Prefrontal cortex", "Hippocampus", "Cerebellum", "Basal ganglia"],
+          correct: 0,
+          exp: "Amygdala hyperactivation is linked to fear and anxiety disorders." },
+        { q: "BDNF (brain‑derived neurotrophic factor) supports:",
+          opts: ["Neuronal survival and plasticity", "Neurotransmitter synthesis", "Myelination", "Synaptic degradation", "Apoptosis"],
+          correct: 0,
+          exp: "BDNF promotes growth, differentiation, and synaptic plasticity." },
+        { q: "Long‑term potentiation (LTP) in the hippocampus is dependent on:",
+          opts: ["NMDA receptor activation", "GABA release", "Dopamine D2 receptors", "Serotonin 5‑HT3 receptors", "ACh muscarinic receptors"],
+          correct: 0,
+          exp: "LTP at glutamatergic synapses requires NMDA receptor activation and Ca²⁺ influx." },
+        { q: "The striatum (caudate, putamen) is part of the:",
+          opts: ["Basal ganglia", "Limbic system", "Thalamus", "Cortex", "Brainstem"],
+          correct: 0,
+          exp: "Basal ganglia include striatum, globus pallidus, substantia nigra, subthalamic nucleus." },
+        { q: "Which of the following is a neuropeptide involved in stress and anxiety?",
+          opts: ["Corticotropin‑releasing hormone (CRH)", "Substance P", "Neuropeptide Y", "All of the above", "None"],
+          correct: 3,
+          exp: "CRH, Substance P, and NPY all modulate stress responses." },
+        { q: "The anterior cingulate cortex is involved in:",
+          opts: ["Error detection and conflict monitoring", "Motor execution", "Visual processing", "Auditory processing", "Olfaction"],
+          correct: 0,
+          exp: "ACC is part of the salience network and monitors performance." },
+        { q: "The insula is associated with:",
+          opts: ["Interoception and emotional awareness", "Language", "Memory", "Vision", "Motor planning"],
+          correct: 0,
+          exp: "Insula processes bodily sensations and emotional feelings." },
+        { q: "Glutamate transporters are primarily located on:",
+          opts: ["Astrocytes", "Neurons", "Oligodendrocytes", "Microglia", "Endothelial cells"],
+          correct: 0,
+          exp: "Astrocytic EAATs clear synaptic glutamate." },
+        { q: "Which receptor type is ionotropic for glutamate?",
+          opts: ["AMPA, NMDA, kainate", "mGluR1‑8", "GABAₐ", "GABA_B", "5‑HT₃"],
+          correct: 0,
+          exp: "AMPA, NMDA, and kainate are ionotropic glutamate receptors." },
+        { q: "The effect of benzodiazepines on GABAₐ receptors is to:",
+          opts: ["Increase frequency of Cl⁻ channel opening", "Increase duration of opening", "Block the channel", "Decrease affinity for GABA", "Alter receptor synthesis"],
+          correct: 0,
+          exp: "Benzodiazepines increase the frequency of Cl⁻ channel opening." },
+        { q: "Barbiturates enhance GABAₐ receptor function by:",
+          opts: ["Increasing duration of Cl⁻ channel opening", "Increasing frequency of opening", "Blocking GABA reuptake", "Acting as GABA agonist", "All"],
+          correct: 0,
+          exp: "Barbiturates prolong opening time, leading to greater inhibition." },
+        { q: "The main inhibitory neurotransmitter in the spinal cord is:",
+          opts: ["Glycine", "GABA", "Glutamate", "Aspartate", "Taurine"],
+          correct: 0,
+          exp: "Glycine mediates inhibition in spinal cord and brainstem." },
+        { q: "Strychnine poisoning causes convulsions by blocking:",
+          opts: ["Glycine receptors", "GABA receptors", "NMDA receptors", "Dopamine receptors", "Acetylcholine receptors"],
+          correct: 0,
+          exp: "Strychnine is a competitive antagonist of glycine." },
+        { q: "The neurobiology of psychosis (schizophrenia) is linked to overactivity of which system?",
+          opts: ["Mesolimbic dopamine", "Nigrostriatal dopamine", "Mesocortical dopamine", "Serotonin", "Glutamate"],
+          correct: 0,
+          exp: "Positive symptoms are associated with hyperdopaminergia in mesolimbic pathway." },
+        { q: "The glutamate hypothesis of schizophrenia suggests:",
+          opts: ["NMDA receptor hypofunction", "NMDA receptor hyperfunction", "Increased AMPA", "Decreased kainate", "None"],
+          correct: 0,
+          exp: "Reduced NMDA function (e.g., from PCP) can mimic schizophrenia symptoms." },
+        { q: "Depression is associated with reduced monoamine levels, particularly:",
+          opts: ["Serotonin, norepinephrine, dopamine", "Only serotonin", "Only norepinephrine", "Only dopamine", "GABA"],
+          correct: 0,
+          exp: "Monoamine hypothesis: deficiency of serotonin, NE, DA contributes to depression." },
+        { q: "The neurotrophic hypothesis of depression involves:",
+          opts: ["Decreased BDNF and hippocampal atrophy", "Increased BDNF", "Hyperplasia of hippocampus", "Increased neurogenesis", "All"],
+          correct: 0,
+          exp: "Stress reduces BDNF, leading to hippocampal volume loss; antidepressants increase BDNF." },
+        { q: "The hypothalamic‑pituitary‑thyroid (HPT) axis dysregulation in depression may show:",
+          opts: ["Blunted TSH response to TRH", "Elevated T3", "Elevated T4", "Increased TSH", "Normal TRH"],
+          correct: 0,
+          exp: "Some depressed patients have a blunted TSH response to TRH." },
+        { q: "Which EEG finding is characteristic of generalized anxiety disorder?",
+          opts: ["Increased beta activity", "Increased delta", "Decreased alpha", "Spikes", "Slow waves"],
+          correct: 0,
+          exp: "Anxiety is associated with increased beta (alert) activity." },
+        { q: "The startle reflex is modulated by the:",
+          opts: ["Amygdala", "Hippocampus", "Cerebellum", "Thalamus", "Basal ganglia"],
+          correct: 0,
+          exp: "Amygdala enhances startle in fear conditioning." },
+        { q: "Neuropeptide Y (NPY) has what effect on anxiety?",
+          opts: ["Anxiolytic", "Anxiogenic", "No effect", "Depends on receptor", "Increases fear"],
+          correct: 0,
+          exp: "NPY is anxiolytic in many brain regions." },
+        { q: "The bed nucleus of the stria terminalis (BNST) is involved in:",
+          opts: ["Sustained anxiety (rather than phasic fear)", "Fear conditioning", "Memory", "Motor control", "Sensory processing"],
+          correct: 0,
+          exp: "BNST mediates long‑lasting anxiety responses." },
+        { q: "Which brain region is most affected in Alzheimer disease?",
+          opts: ["Hippocampus and entorhinal cortex", "Striatum", "Cerebellum", "Brainstem", "Motor cortex"],
+          correct: 0,
+          exp: "Early Alzheimer's involves medial temporal lobe structures." }
+    ];
+    // Add extra 12 to reach 65+
+    const extra = [
+        { q: "Neurofibrillary tangles in Alzheimer disease are composed of:",
+          opts: ["Hyperphosphorylated tau protein", "β‑amyloid", "α‑synuclein", "TDP‑43", "Huntingtin"],
+          correct: 0,
+          exp: "Tau tangles are intracellular; amyloid plaques are extracellular." },
+        { q: "The main pathology in Parkinson disease is:",
+          opts: ["Loss of substantia nigra dopamine neurons and Lewy bodies (α‑synuclein)", "Amyloid plaques", "Tau tangles", "Striatal atrophy", "Cortical atrophy"],
+          correct: 0,
+          exp: "Lewy bodies contain α‑synuclein; nigral cell loss leads to dopamine depletion." },
+        { q: "Huntington disease is caused by:",
+          opts: ["CAG repeat expansion in huntingtin gene", "Trinucleotide repeat in ataxin", "Amyloid deposition", "Tau mutation", "Prion"],
+          correct: 0,
+          exp: "Autosomal dominant, expanded CAG repeats, atrophy of caudate." },
+        { q: "The neurochemical deficit in Huntington disease is primarily:",
+          opts: ["Loss of GABAergic medium spiny neurons in striatum", "Dopamine excess", "Serotonin deficiency", "Acetylcholine excess", "Glutamate deficiency"],
+          correct: 0,
+          exp: "Striatal GABAergic neurons degenerate, causing chorea." },
+        { q: "Which neurotransmitter is released by sympathetic postganglionic fibers?",
+          opts: ["Norepinephrine", "Acetylcholine", "Dopamine", "Epinephrine", "Serotonin"],
+          correct: 0,
+          exp: "Most sympathetic postganglionic fibers release norepinephrine (except sweat glands)." },
+        { q: "Parasympathetic postganglionic fibers release:",
+          opts: ["Acetylcholine", "Norepinephrine", "Dopamine", "Nitric oxide", "VIP"],
+          correct: 0,
+          exp: "ACh acts on muscarinic receptors." },
+        { q: "The blood‑brain barrier is formed by:",
+          opts: ["Tight junctions of endothelial cells", "Astrocyte foot processes", "Pericytes", "All contribute", "Only A"],
+          correct: 3,
+          exp: "Endothelial tight junctions are primary; astrocytes and pericytes support." },
+        { q: "The area postrema lacks blood‑brain barrier and detects:",
+          opts: ["Blood toxins (vomiting center)", "Glucose", "Oxygen", "pH", "Hormones"],
+          correct: 0,
+          exp: "Area postrema (chemoreceptor trigger zone) responds to emetic stimuli." },
+        { q: "Circadian rhythms are generated by clock genes (e.g., CLOCK, BMAL1) in the:",
+          opts: ["SCN", "Pineal", "Raphe", "Locus coeruleus", "Hypothalamus (other)"],
+          correct: 0,
+          exp: "SCN contains molecular clocks that drive circadian rhythms." },
+        { q: "Melatonin acts on which receptors in the SCN?",
+          opts: ["MT1 and MT2", "5‑HT", "Dopamine D2", "GABAₐ", "NMDA"],
+          correct: 0,
+          exp: "Melatonin feedback helps entrain circadian rhythms." },
+        { q: "The neuropeptide orexin (hypocretin) is produced in the:",
+          opts: ["Lateral hypothalamus", "Ventromedial hypothalamus", "Arcuate nucleus", "Supraoptic nucleus", "Paraventricular nucleus"],
+          correct: 0,
+          exp: "Orexin neurons in lateral hypothalamus regulate arousal and appetite." },
+        { q: "Narcolepsy with cataplexy is caused by loss of:",
+          opts: ["Orexin neurons", "Dopamine neurons", "Serotonin neurons", "Histamine neurons", "ACh neurons"],
+          correct: 0,
+          exp: "Most narcolepsy with cataplexy is due to orexin deficiency." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

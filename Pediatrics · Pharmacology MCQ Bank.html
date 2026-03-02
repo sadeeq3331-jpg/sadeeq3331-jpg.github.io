@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pediatrics · Pharmacology MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-child"></i>
+        <h1>Pediatrics · Pharmacology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ PEDIATRICS PHARMACOLOGY QUESTIONS
+    const questions = [
+        { q: "Which medication is used to maintain patency of the ductus arteriosus in newborns with ductal‑dependent congenital heart disease?",
+          opts: ["Prostaglandin E1 (alprostadil)", "Indomethacin", "Ibuprofen", "Furosemide", "Dopamine"],
+          correct: 0,
+          exp: "PGE1 keeps ductus open by smooth muscle relaxation; used in pulmonary atresia, TGA, etc." },
+        { q: "Indomethacin is used in preterm infants to:",
+          opts: ["Close a patent ductus arteriosus (PDA)", "Prevent intraventricular hemorrhage", "Treat NEC", "Promote diuresis", "Both A and B"],
+          correct: 4,
+          exp: "Indomethacin inhibits prostaglandin synthesis, promoting PDA closure and reducing severe IVH risk." },
+        { q: "Surfactant replacement therapy (e.g., beractant) is indicated for:",
+          opts: ["Respiratory distress syndrome (RDS) in preterm infants", "Meconium aspiration syndrome", "Bronchopulmonary dysplasia", "Pneumonia", "Transient tachypnea of newborn"],
+          correct: 0,
+          exp: "Exogenous surfactant replaces deficient endogenous surfactant in RDS." },
+        { q: "Palivizumab is a monoclonal antibody used for prophylaxis against:",
+          opts: ["Respiratory syncytial virus (RSV)", "Influenza", "CMV", "HIV", "Hepatitis B"],
+          correct: 0,
+          exp: "Palivizumab (Synagis) is given to high‑risk infants to prevent severe RSV infection." },
+        { q: "What is the mechanism of action of palivizumab?",
+          opts: ["Binds RSV F protein, neutralizing virus", "Inhibits viral replication", "Stimulates immune system", "Blocks viral entry", "Enhances antibody production"],
+          correct: 0,
+          exp: "Palivizumab is a monoclonal antibody against RSV fusion (F) protein." },
+        { q: "Caffeine citrate is used in preterm infants for:",
+          opts: ["Apnea of prematurity", "Bronchopulmonary dysplasia prophylaxis", "Hypotension", "Sedation", "Seizure control"],
+          correct: 0,
+          exp: "Caffeine stimulates respiratory drive, reducing apnea and need for mechanical ventilation." },
+        { q: "The loading dose of caffeine citrate for apnea of prematurity is approximately:",
+          opts: ["10 mg/kg", "20 mg/kg", "50 mg/kg", "100 mg/kg", "5 mg/kg"],
+          correct: 1,
+          exp: "Loading dose 20 mg/kg (caffeine citrate) followed by maintenance 5‑10 mg/kg/day." },
+        { q: "Which vaccine is contraindicated in an infant with severe combined immunodeficiency (SCID)?",
+          opts: ["MMR", "Hepatitis B", "DTaP", "Hib", "IPV"],
+          correct: 0,
+          exp: "Live vaccines (MMR, varicella, rotavirus) are contraindicated in severe immunodeficiency." },
+        { q: "Rotavirus vaccine is administered:",
+          opts: ["Orally", "Intramuscularly", "Subcutaneously", "Intradermally", "Intranasally"],
+          correct: 0,
+          exp: "Rotarix and RotaTeq are oral live attenuated vaccines." },
+        { q: "At what age is the first dose of hepatitis B vaccine typically given?",
+          opts: ["Birth", "2 months", "4 months", "6 months", "12 months"],
+          correct: 0,
+          exp: "HepB is given at birth, then at 1‑2 months and 6‑18 months." },
+        { q: "Which of the following is a live attenuated vaccine?",
+          opts: ["MMR", "IPV", "DTaP", "Hib", "Hepatitis B"],
+          correct: 0,
+          exp: "MMR (measles, mumps, rubella) is live; IPV, DTaP, Hib, HepB are inactivated." },
+        { q: "The recommended dose of acetaminophen for a child is:",
+          opts: ["10‑15 mg/kg every 4‑6 hours", "5‑10 mg/kg every 4 hours", "15‑20 mg/kg every 8 hours", "20‑25 mg/kg every 6 hours", "30 mg/kg once daily"],
+          correct: 0,
+          exp: "Acetaminophen 10‑15 mg/kg/dose q4‑6h (max 60‑75 mg/kg/day)." },
+        { q: "Ibuprofen dosing in children is typically:",
+          opts: ["10 mg/kg every 6‑8 hours", "5 mg/kg every 4 hours", "15 mg/kg every 12 hours", "20 mg/kg once daily", "2 mg/kg every 8 hours"],
+          correct: 0,
+          exp: "Ibuprofen 10 mg/kg/dose q6‑8h (max 40 mg/kg/day)." },
+        { q: "Which medication should be avoided in children with viral illness due to risk of Reye syndrome?",
+          opts: ["Aspirin", "Acetaminophen", "Ibuprofen", "Naproxen", "Amoxicillin"],
+          correct: 0,
+          exp: "Reye syndrome (hepatic failure, encephalopathy) is associated with aspirin use during viral illness." },
+        { q: "Morphine use in neonates requires caution because:",
+          opts: ["Increased CNS sensitivity and reduced clearance", "Increased seizure risk", "Nephrotoxicity", "Hepatotoxicity", "Bradycardia"],
+          correct: 0,
+          exp: "Neonates have immature hepatic metabolism and increased permeability of BBB, leading to prolonged half‑life." },
+        { q: "Codeine is contraindicated in children after tonsillectomy due to risk of:",
+          opts: ["Fatal respiratory depression (ultrarapid metabolizers)", "Bleeding", "Nephrotoxicity", "Reye syndrome", "Seizures"],
+          correct: 0,
+          exp: "CYP2D6 ultrarapid metabolizers convert codeine to morphine too rapidly, leading to respiratory depression." },
+        { q: "What is the antidote for acetaminophen overdose?",
+          opts: ["N‑acetylcysteine (NAC)", "Flumazenil", "Naloxone", "Deferoxamine", "Fomepizole"],
+          correct: 0,
+          exp: "NAC replenishes glutathione, detoxifying the toxic metabolite NAPQI." },
+        { q: "The most common cause of acute liver failure in children after acetaminophen overdose is:",
+          opts: ["Hepatotoxicity from NAPQI accumulation", "Shock liver", "Viral hepatitis", "Wilson disease", "Autoimmune hepatitis"],
+          correct: 0,
+          exp: "NAPQI depletes glutathione and causes centrilobular necrosis." },
+        { q: "Naloxone is used to reverse respiratory depression from:",
+          opts: ["Opioids", "Benzodiazepines", "Barbiturates", "Alcohol", "Clonidine"],
+          correct: 0,
+          exp: "Naloxone competitively antagonizes mu opioid receptors." },
+        { q: "Flumazenil is used to reverse:",
+          opts: ["Benzodiazepines", "Opioids", "Anticholinergics", "Tricyclic antidepressants", "Organophosphates"],
+          correct: 0,
+          exp: "Flumazenil is a competitive antagonist at benzodiazepine receptors; caution in mixed overdose (seizures)." },
+        { q: "Which of the following is the initial treatment for anaphylaxis in a child?",
+          opts: ["Epinephrine intramuscular", "Diphenhydramine IV", "Corticosteroids IV", "Albuterol nebulized", "Normal saline bolus"],
+          correct: 0,
+          exp: "Epinephrine (1:1000) 0.01 mg/kg IM is first‑line; antihistamines and steroids are adjunctive." },
+        { q: "The first‑line antibiotic for acute otitis media in a child with no penicillin allergy is:",
+          opts: ["Amoxicillin (high dose)", "Amoxicillin‑clavulanate", "Cefdinir", "Azithromycin", "TMP‑SMX"],
+          correct: 0,
+          exp: "High‑dose amoxicillin (80‑90 mg/kg/day) covers S. pneumoniae and most H. influenzae." },
+        { q: "For a child with type I hypersensitivity to penicillin, which antibiotic is suitable for acute otitis media?",
+          opts: ["Cefdinir (cephalosporin) – with caution", "Amoxicillin", "Clindamycin", "Vancomycin", "Doxycycline (if >8 years)"],
+          correct: 3,
+          exp: "Cephalosporins may have cross‑reactivity; alternatives include clindamycin, azithromycin, or TMP‑SMX." },
+        { q: "Which antibiotic is used for treatment of Group A streptococcal pharyngitis in a penicillin‑allergic child?",
+          opts: ["Clindamycin or azithromycin", "Cephalexin", "Doxycycline", "TMP‑SMX", "Vancomycin"],
+          correct: 0,
+          exp: "Clindamycin or macrolides (azithromycin) are acceptable alternatives." },
+        { q: "Azithromycin is commonly used in children for:",
+          opts: ["Atypical pneumonia (Mycoplasma), pertussis, Group A strep allergy", "Bacterial conjunctivitis", "UTI", "Meningitis", "Sepsis"],
+          correct: 0,
+          exp: "Azithromycin covers Mycoplasma, Chlamydia, Legionella, and is used for pertussis prophylaxis." },
+        { q: "The first‑line treatment for community‑acquired pneumonia (typical) in a fully immunized child is:",
+          opts: ["Amoxicillin or ampicillin", "Azithromycin", "Ceftriaxone", "Vancomycin", "Doxycycline"],
+          correct: 0,
+          exp: "S. pneumoniae is the most common bacterial cause; amoxicillin is first‑line." },
+        { q: "For a child with suspected Mycoplasma pneumoniae pneumonia, the preferred antibiotic is:",
+          opts: ["Azithromycin", "Amoxicillin", "Cephalexin", "TMP‑SMX", "Ceftriaxone"],
+          correct: 0,
+          exp: "Macrolides (azithromycin) are first‑line for atypical pneumonia." },
+        { q: "Which antibiotic is contraindicated in infants <6 months due to risk of kernicterus?",
+          opts: ["Ceftriaxone", "Amoxicillin", "Azithromycin", "Gentamicin", "Vancomycin"],
+          correct: 0,
+          exp: "Ceftriaxone displaces bilirubin from albumin and should be avoided in hyperbilirubinemic neonates." },
+        { q: "Fluoroquinolones are generally avoided in children due to concern for:",
+          opts: ["Arthropathy (cartilage damage) in animal studies", "Nephrotoxicity", "Ototoxicity", "Hepatotoxicity", "Seizures"],
+          correct: 0,
+          exp: "Quinolones are not first‑line in children because of potential joint damage, though risk in humans is low." },
+        { q: "Tetracyclines (e.g., doxycycline) are avoided in children <8 years because they cause:",
+          opts: ["Tooth discoloration and enamel hypoplasia", "Growth suppression", "Photosensitivity", "GI bleeding", "Nephrotoxicity"],
+          correct: 0,
+          exp: "Tetracyclines bind calcium in developing teeth, causing permanent discoloration." },
+        { q: "Which drug is used for severe hypertension in children as an intravenous agent?",
+          opts: ["Labetalol", "Captopril", "Nifedipine", "Hydralazine", "Furosemide"],
+          correct: 0,
+          exp: "IV labetalol, nicardipine, or sodium nitroprusside are used for hypertensive emergencies." },
+        { q: "For maintenance IV fluids in a child, the preferred solution is:",
+          opts: ["D5 1/2NS + KCl", "D5W", "NS", "Lactated Ringer's", "D5 1/4NS"],
+          correct: 0,
+          exp: "Isotonic fluids (NS or LR) are now recommended for maintenance to avoid hyponatremia; D5 1/2NS with KCl is traditional." },
+        { q: "What is the Holliday‑Segar method used for?",
+          opts: ["Estimating daily maintenance fluid requirements", "Calculating caloric needs", "Calculating drug doses", "Estimating GFR", "Calculating energy expenditure"],
+          correct: 0,
+          exp: "Holliday‑Segar: 100 mL/kg for first 10 kg, 50 mL/kg for next 10 kg, 20 mL/kg thereafter." },
+        { q: "For a 15‑kg child, the daily maintenance fluid requirement is:",
+          opts: ["1250 mL", "1000 mL", "1500 mL", "1750 mL", "2000 mL"],
+          correct: 0,
+          exp: "100 mL/kg for 10 kg = 1000 mL; 50 mL/kg for next 5 kg = 250 mL; total 1250 mL." },
+        { q: "What is the preferred oral rehydration solution (ORS) composition per WHO?",
+          opts: ["90 mEq/L sodium, 75 mmol/L glucose", "50 mEq/L sodium, 100 mmol/L glucose", "120 mEq/L sodium, 50 mmol/L glucose", "30 mEq/L sodium, 150 mmol/L glucose", "75 mEq/L sodium, 75 mmol/L glucose"],
+          correct: 0,
+          exp: "WHO ORS: Na 90, K 20, Cl 80, citrate 10, glucose 111 mmol/L (osm 311)." },
+        { q: "Which anticonvulsant is first‑line for neonatal seizures?",
+          opts: ["Phenobarbital", "Phenytoin", "Levetiracetam", "Valproate", "Carbamazepine"],
+          correct: 0,
+          exp: "Phenobarbital (load 20 mg/kg) is traditional first‑line; levetiracetam is increasingly used." },
+        { q: "For status epilepticus in a child, after benzodiazepines, the next drug of choice is often:",
+          opts: ["Fosphenytoin/phenytoin or levetiracetam", "Valproate", "Propofol", "Midazolam drip", "Carbamazepine"],
+          correct: 0,
+          exp: "Phenytoin/fosphenytoin or levetiracetam are used as second‑line." },
+        { q: "Methylphenidate is used for:",
+          opts: ["ADHD", "Depression", "Anxiety", "Narcolepsy", "Both A and D"],
+          correct: 4,
+          exp: "Methylphenidate (stimulant) is first‑line for ADHD and also used for narcolepsy." },
+        { q: "Atomoxetine is a non‑stimulant medication for ADHD that works by:",
+          opts: ["Inhibiting norepinephrine reuptake", "Increasing dopamine release", "Blocking alpha‑2 receptors", "Inhibiting serotonin reuptake", "Blocking nicotinic receptors"],
+          correct: 0,
+          exp: "Atomoxetine selectively inhibits norepinephrine reuptake (NET)." },
+        { q: "Which medication is used for nocturnal enuresis when alarms fail?",
+          opts: ["Desmopressin (DDAVP)", "Oxybutynin", "Imipramine", "Furosemide", "Both A and C"],
+          correct: 4,
+          exp: "Desmopressin (synthetic vasopressin) reduces urine output; imipramine (TCA) is also used but with side effects." },
+        { q: "Oxybutynin is used in children for:",
+          opts: ["Overactive bladder (urge incontinence)", "Nocturnal enuresis", "Hypertension", "ADHD", "All of the above"],
+          correct: 0,
+          exp: "Oxybutynin is an anticholinergic that relaxes detrusor muscle." },
+        { q: "Which drug is used to treat severe diaper dermatitis with Candida?",
+          opts: ["Nystatin cream", "Hydrocortisone cream", "Clotrimazole", "Miconazole", "All of the above"],
+          correct: 4,
+          exp: "Topical antifungals (nystatin, clotrimazole, miconazole) treat candidal diaper dermatitis." },
+        { q: "For atopic dermatitis, which topical agent is first‑line for acute flares?",
+          opts: ["Topical corticosteroids", "Topical calcineurin inhibitors", "Emollients", "Antihistamines", "Antibiotics"],
+          correct: 0,
+          exp: "Topical steroids (low potency on face, medium elsewhere) are first‑line for flares." },
+        { q: "Pimecrolimus and tacrolimus are topical calcineurin inhibitors used for atopic dermatitis. They are preferred for:",
+          opts: ["Sensitive areas (face, neck, intertriginous) to avoid steroid atrophy", "Severe thick plaques", "Bacterial superinfection", "Acute weeping eczema", "All cases"],
+          correct: 0,
+          exp: "TCIs are steroid‑sparing agents for sensitive areas; they have a black box warning for malignancy (rare)." },
+        { q: "Which antihistamine is preferred for sedation in an agitated child?",
+          opts: ["Diphenhydramine (first‑generation)", "Loratadine (second‑generation)", "Cetirizine", "Fexofenadine", "Levocetirizine"],
+          correct: 0,
+          exp: "First‑generation antihistamines (diphenhydramine, hydroxyzine) cross BBB and cause sedation." },
+        { q: "In an acute asthma exacerbation, the initial bronchodilator of choice is:",
+          opts: ["Short‑acting beta‑agonist (albuterol) inhaled", "Ipratropium bromide", "Oral beta‑agonist", "IV magnesium", "IV salbutamol"],
+          correct: 0,
+          exp: "Inhaled SABA (albuterol) is first‑line; ipratropium added in severe cases." },
+        { q: "For asthma controller therapy in a child, the preferred first‑line medication is:",
+          opts: ["Inhaled corticosteroid (fluticasone, budesonide)", "Leukotriene antagonist (montelukast)", "Long‑acting beta‑agonist (salmeterol)", "Cromolyn", "Theophylline"],
+          correct: 0,
+          exp: "Inhaled steroids are the most effective anti‑inflammatory controllers." },
+        { q: "Montelukast is particularly useful for:",
+          opts: ["Exercise‑induced bronchoconstriction and allergic rhinitis", "Acute asthma attacks", "Status asthmaticus", "COPD", "Bronchiolitis"],
+          correct: 0,
+          exp: "Montelukast (leukotriene antagonist) helps with EIB and allergic rhinitis." },
+        { q: "Which medication is used for acute severe asthma not responding to bronchodilators?",
+          opts: ["Systemic corticosteroids (prednisolone, IV methylprednisolone)", "Nebulized racemic epinephrine", "IV terbutaline", "Heliox", "All of the above"],
+          correct: 0,
+          exp: "Systemic corticosteroids reduce inflammation and should be given early in severe exacerbations." },
+        { q: "Intravenous magnesium sulfate in acute asthma acts as:",
+          opts: ["Bronchodilator (smooth muscle relaxant)", "Anti‑inflammatory", "Mucolytic", "Sedative", "Expectorant"],
+          correct: 0,
+          exp: "MgSO4 relaxes smooth muscle and is used in severe, refractory asthma." },
+        { q: "Nebulized racemic epinephrine is first‑line for:",
+          opts: ["Croup (laryngotracheobronchitis)", "Asthma", "Bronchiolitis", "Epiglottitis", "Allergic rhinitis"],
+          correct: 0,
+          exp: "In croup, racemic epinephrine reduces subglottic edema via alpha‑adrenergic vasoconstriction." },
+        { q: "Oral dexamethasone is used in croup because:",
+          opts: ["Long half‑life reduces airway edema", "It is a bronchodilator", "It sedates the child", "It has antiviral effect", "It prevents bacterial superinfection"],
+          correct: 0,
+          exp: "Dexamethasone (0.6 mg/kg) reduces inflammation and need for intubation." },
+        { q: "Palivizumab is recommended for high‑risk infants during RSV season. Which infant qualifies?",
+          opts: ["Premature infants (<29 weeks), BPD, hemodynamically significant CHD", "All infants <6 months", "Infants with Down syndrome", "Infants with asthma", "All of the above"],
+          correct: 0,
+          exp: "High‑risk groups: prematurity, chronic lung disease (BPD), congenital heart disease." },
+        { q: "The first‑line treatment for infantile hemangiomas requiring systemic therapy is:",
+          opts: ["Propranolol", "Corticosteroids", "Vincristine", "Interferon", "Laser"],
+          correct: 0,
+          exp: "Oral propranolol (beta‑blocker) is first‑line to shrink hemangiomas." },
+        { q: "Which medication is used for neonatal abstinence syndrome (NAS)?",
+          opts: ["Morphine or methadone", "Phenobarbital", "Clonidine", "All of the above", "None"],
+          correct: 3,
+          exp: "Opioid replacement (morphine, methadone) is first‑line; phenobarbital and clonidine are adjunctive." },
+        { q: "What is the mechanism of action of ondansetron?",
+          opts: ["5‑HT3 receptor antagonist (anti‑emetic)", "Dopamine D2 antagonist", "H1 antihistamine", "NK1 antagonist", "Prokinetic"],
+          correct: 0,
+          exp: "Ondansetron blocks serotonin receptors in chemoreceptor trigger zone and gut." },
+        { q: "In a child with severe hyperkalemia, which agent rapidly lowers serum potassium by shifting it intracellularly?",
+          opts: ["IV calcium gluconate", "Sodium bicarbonate", "Insulin + glucose", "Albuterol", "Both C and D"],
+          correct: 4,
+          exp: "Insulin/glucose and beta‑agonists shift K⁺ intracellularly; calcium stabilizes myocardium." },
+        { q: "For treatment of iron overdose, the specific antidote is:",
+          opts: ["Deferoxamine", "Deferasirox", "Succimer", "EDTA", "Penicillamine"],
+          correct: 0,
+          exp: "Deferoxamine chelates iron; urine turns 'vin rosé' color." },
+        { q: "What is the treatment for organophosphate poisoning in a child?",
+          opts: ["Atropine + pralidoxime (2‑PAM)", "Naloxone", "Flumazenil", "N‑acetylcysteine", "Sodium bicarbonate"],
+          correct: 0,
+          exp: "Atropine blocks muscarinic effects; pralidoxime reactivates acetylcholinesterase." }
+    ];
+    // Add extra to reach 65+
+    const extra = [
+        { q: "In a child with febrile seizures, which antipyretic is preferred?",
+          opts: ["Acetaminophen or ibuprofen", "Aspirin", "Naproxen", "Ketorolac", "None (antipyretics don't prevent febrile seizures)"],
+          correct: 4,
+          exp: "Antipyretics may reduce fever but do not prevent febrile seizures; still used for comfort." },
+        { q: "For neonatal herpes simplex encephalitis, the drug of choice is:",
+          opts: ["Acyclovir IV", "Ganciclovir", "Valacyclovir", "Foscarnet", "Cidofovir"],
+          correct: 0,
+          exp: "High‑dose IV acyclovir for 21 days." },
+        { q: "Congenital toxoplasmosis is treated with:",
+          opts: ["Pyrimethamine + sulfadiazine + folinic acid", "Azithromycin", "Clindamycin", "Metronidazole", "Albendazole"],
+          correct: 0,
+          exp: "This combination treats toxoplasmosis; folinic acid prevents pyrimethamine toxicity." },
+        { q: "Which antifungal is safe for systemic use in neonates?",
+          opts: ["Amphotericin B (deoxycholate or liposomal)", "Ketoconazole", "Itraconazole", "Griseofulvin", "Terbinafine"],
+          correct: 0,
+          exp: "Amphotericin B is used for serious fungal infections; lipid formulations reduce nephrotoxicity." },
+        { q: "For treatment of intestinal helminths in children, which drug is commonly used?",
+          opts: ["Albendazole or mebendazole", "Praziquantel", "Ivermectin", "Diethylcarbamazine", "Metronidazole"],
+          correct: 0,
+          exp: "Albendazole and mebendazole are broad‑spectrum antihelminthics." },
+        { q: "In an infant with bronchiolitis, routine use of which medication is NOT recommended?",
+          opts: ["Albuterol", "Nebulized hypertonic saline", "Corticosteroids", "Ribavirin", "All of the above (none routinely recommended except supportive care)"],
+          correct: 4,
+          exp: "Bronchiolitis management is supportive; evidence for albuterol, steroids, etc., is lacking." },
+        { q: "What is the treatment for scabies in an infant?",
+          opts: ["Permethrin 5% cream", "Lindane", "Ivermectin oral", "Crotamiton", "Benzyl benzoate"],
+          correct: 0,
+          exp: "Permethrin is first‑line and safe in infants." },
+        { q: "For pediculosis capitis (head lice), first‑line treatment is:",
+          opts: ["Permethrin 1% lotion", "Malathion", "Ivermectin", "Lindane", "Spinosad"],
+          correct: 0,
+          exp: "Permethrin (pyrethroid) is first‑line; resistance may require alternatives." },
+        { q: "Which medication is used to treat neonatal tetanus?",
+          opts: ["Human tetanus immune globulin (HTIG) + metronidazole", "Penicillin G", "Doxycycline", "Ceftriaxone", "Clindamycin"],
+          correct: 0,
+          exp: "HTIG neutralizes toxin; metronidazole or penicillin eliminates bacteria." },
+        { q: "In a child with hypertrophic cardiomyopathy, which medication is contraindicated?",
+          opts: ["Digoxin (positive inotrope)", "Beta‑blockers", "Verapamil", "Disopyramide", "ACE inhibitors"],
+          correct: 0,
+          exp: "Digoxin increases contractility, worsening outflow obstruction." },
+        { q: "For treatment of juvenile idiopathic arthritis, which disease‑modifying antirheumatic drug (DMARD) is first‑line?",
+          opts: ["Methotrexate", "Sulfasalazine", "Hydroxychloroquine", "Leflunomide", "Etanercept"],
+          correct: 0,
+          exp: "Methotrexate (oral or SC) is the anchor DMARD in JIA." },
+        { q: "Which biologic is used for refractory JIA?",
+          opts: ["Etanercept (TNF inhibitor)", "Rituximab", "Abatacept", "Tocilizumab (IL‑6)", "All of the above"],
+          correct: 4,
+          exp: "Biologics include TNF inhibitors (etanercept, adalimumab), IL‑1/IL‑6 blockers, and abatacept." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

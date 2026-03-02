@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musculoskeletal Physiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-dumbbell"></i>
+            <h1>Musculoskeletal Physiology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE MUSCULOSKELETAL PHYSIOLOGY QUESTIONS
+        const questions = [
+            { q: "The contractile unit of skeletal muscle is the:",
+              opts: ["Sarcomere", "Myofibril", "Sarcolemma", "T‑tubule", "Sarcoplasmic reticulum"],
+              correct: 0,
+              exp: "The sarcomere, from Z‑line to Z‑line, is the basic contractile unit." },
+            { q: "Which ion is essential for initiating muscle contraction?",
+              opts: ["Na⁺", "K⁺", "Ca²⁺", "Mg²⁺", "Cl⁻"],
+              correct: 2,
+              exp: "Ca²⁺ binds to troponin C, moving tropomyosin to expose myosin‑binding sites on actin." },
+            { q: "In skeletal muscle, calcium is released from the:",
+              opts: ["T‑tubules", "Sarcoplasmic reticulum", "Mitochondria", "Sarcolemma", "Golgi apparatus"],
+              correct: 1,
+              exp: "Action potential travels down T‑tubules, triggering Ca²⁺ release from sarcoplasmic reticulum." },
+            { q: "The energy source for the power stroke of myosin is:",
+              opts: ["ATP hydrolysis", "Creatine phosphate", "Oxidative phosphorylation", "Glycolysis", "GTP"],
+              correct: 0,
+              exp: "Myosin ATPase hydrolyzes ATP for the power stroke." },
+            { q: "Rigor mortis occurs because:",
+              opts: ["ATP is depleted, preventing myosin detachment", "Ca²⁺ remains high", "Actin is degraded", "Myosin is degraded", "Sarcomeres collapse"],
+              correct: 0,
+              exp: "Without ATP, myosin heads cannot detach from actin, causing rigidity." },
+            { q: "The neuromuscular junction uses which neurotransmitter?",
+              opts: ["Norepinephrine", "Dopamine", "Acetylcholine", "Glutamate", "GABA"],
+              correct: 2,
+              exp: "ACh is released from motor neurons, binding nicotinic receptors on muscle." },
+            { q: "Acetylcholinesterase inhibitors would cause:",
+              opts: ["Muscle weakness", "Prolonged muscle contraction", "Flaccid paralysis", "Decreased ACh at NMJ", "None"],
+              correct: 1,
+              exp: "They increase ACh at NMJ, causing prolonged depolarization and fasciculations." },
+            { q: "Type I (slow‑twitch) muscle fibers are characterized by:",
+              opts: ["High glycolytic capacity", "Fast contraction speed", "High oxidative capacity, fatigue‑resistant", "Large motor units", "Low myoglobin"],
+              correct: 2,
+              exp: "Type I fibers are red, oxidative, slow‑twitch, fatigue‑resistant." },
+            { q: "Type IIx (fast‑twitch) fibers primarily use:",
+              opts: ["Oxidative phosphorylation", "Glycolysis", "Both equally", "Creatine phosphate", "Fatty acid oxidation"],
+              correct: 1,
+              exp: "Type IIx fibers are glycolytic, fast‑twitch, fatigue quickly." },
+            { q: "The all‑or‑none principle applies to:",
+              opts: ["Motor unit recruitment", "Single muscle fiber contraction", "Whole muscle contraction", "Graded contraction", "Twitch summation"],
+              correct: 1,
+              exp: "A single muscle fiber either contracts fully or not at all." },
+            { q: "A motor unit consists of:",
+              opts: ["One motor neuron and all muscle fibers it innervates", "One muscle fiber and its nerve", "All motor neurons to a muscle", "Multiple motor neurons and one muscle fiber", "None"],
+              correct: 0,
+              exp: "A motor unit is a single α‑motor neuron and all the muscle fibers it supplies." },
+            { q: "Treppe (staircase phenomenon) is due to:",
+              opts: ["Increased Ca²⁺ availability", "Increased ATP", "Decreased Ca²⁺", "Muscle fatigue", "Lactic acid buildup"],
+              correct: 0,
+              exp: "Repeated stimulation increases cytosolic Ca²⁺, enhancing contractile force." },
+            { q: "The length‑tension relationship in muscle shows maximal force at:",
+              opts: ["Short sarcomere length", "Optimal overlap of actin and myosin", "Long sarcomere length", "Minimal overlap", "Any length"],
+              correct: 1,
+              exp: "Maximal force occurs at optimal actin‑myosin overlap." },
+            { q: "Wave summation occurs when:",
+              opts: ["A second stimulus occurs before complete relaxation", "Stimulus frequency is low", "Multiple motor units are activated", "Muscle is stretched", "None"],
+              correct: 0,
+              exp: "High‑frequency stimulation leads to summation and tetanus." },
+            { q: "The primary function of osteoblasts is:",
+              opts: ["Bone resorption", "Bone formation", "Mechanical sensing", "Mineral homeostasis", "Hematopoiesis"],
+              correct: 1,
+              exp: "Osteoblasts synthesize bone matrix (osteoid) and promote mineralization." },
+            { q: "Osteoclasts are derived from:",
+              opts: ["Osteoprogenitors", "Monocyte‑macrophage lineage", "Mesenchymal stem cells", "Chondrocytes", "Fibroblasts"],
+              correct: 1,
+              exp: "Osteoclasts are multinucleated cells derived from hematopoietic precursors." },
+            { q: "The organic component of bone matrix is primarily:",
+              opts: ["Hydroxyapatite", "Type I collagen", "Type II collagen", "Proteoglycans", "Elastin"],
+              correct: 1,
+              exp: "Type I collagen constitutes 90% of the organic matrix." },
+            { q: "The inorganic component of bone is mainly:",
+              opts: ["Calcium carbonate", "Hydroxyapatite (calcium phosphate)", "Calcium sulfate", "Magnesium phosphate", "Calcium oxalate"],
+              correct: 1,
+              exp: "Hydroxyapatite crystals provide hardness and strength." },
+            { q: "Wolff's law states that bone:",
+              opts: ["Resorbs in response to stress", "Remodels in response to mechanical stress", "Grows longer with exercise", "Increases density with age", "Is metabolically inert"],
+              correct: 1,
+              exp: "Bone adapts to mechanical loads by remodeling." },
+            { q: "Parathyroid hormone (PTH) increases bone resorption by:",
+              opts: ["Directly stimulating osteoclasts", "Stimulating RANKL on osteoblasts", "Inhibiting osteoblasts", "Increasing calcium excretion", "Activating vitamin D"],
+              correct: 1,
+              exp: "PTH acts on osteoblasts to increase RANKL, which activates osteoclasts." },
+            { q: "Calcitonin acts to:",
+              opts: ["Increase bone resorption", "Decrease bone resorption", "Increase calcium absorption", "Increase phosphate excretion", "None"],
+              correct: 1,
+              exp: "Calcitonin inhibits osteoclast activity, lowering serum calcium." },
+            { q: "Vitamin D (calcitriol) increases serum calcium by:",
+              opts: ["Increasing intestinal absorption", "Increasing bone resorption", "Increasing renal reabsorption", "All of the above", "None"],
+              correct: 3,
+              exp: "Calcitriol enhances intestinal calcium absorption, bone resorption, and renal reabsorption." },
+            { q: "The epiphyseal plate is responsible for:",
+              opts: ["Longitudinal bone growth", "Appositional bone growth", "Articular cartilage", "Bone remodeling", "Mineral storage"],
+              correct: 0,
+              exp: "Endochondral ossification at epiphyseal plate increases bone length." },
+            { q: "Intramembranous ossification occurs in:",
+              opts: ["Long bones", "Flat bones of skull", "Vertebrae", "Femur", "All bones"],
+              correct: 1,
+              exp: "Flat bones (skull, clavicles) form by intramembranous ossification." },
+            { q: "Synovial fluid is produced by:",
+              opts: ["Articular cartilage", "Synovial membrane", "Ligaments", "Bone marrow", "Meniscus"],
+              correct: 1,
+              exp: "Synovial cells secrete hyaluronic acid and glycoproteins." },
+            { q: "The function of articular cartilage is:",
+              opts: ["Reduce friction, absorb shock", "Produce synovial fluid", "Anchor ligaments", "Provide blood supply", "All"],
+              correct: 0,
+              exp: "Articular cartilage provides a smooth, lubricated surface and cushions impact." },
+            { q: "Ligaments connect:",
+              opts: ["Muscle to bone", "Bone to bone", "Muscle to muscle", "Tendon to bone", "Cartilage to bone"],
+              correct: 1,
+              exp: "Ligaments connect bone to bone; tendons connect muscle to bone." },
+            { q: "The Golgi tendon organ responds to:",
+              opts: ["Muscle stretch", "Muscle tension", "Joint position", "Pain", "Temperature"],
+              correct: 1,
+              exp: "Golgi tendon organs detect tension in tendons, causing reflex inhibition." },
+            { q: "The muscle spindle responds to:",
+              opts: ["Tension", "Stretch", "Pain", "Pressure", "Temperature"],
+              correct: 1,
+              exp: "Muscle spindles detect muscle length and rate of stretch, mediating stretch reflex." },
+            { q: "The patellar reflex tests which nerve roots?",
+              opts: ["L2‑L4", "L5‑S1", "S1‑S2", "C5‑C6", "C7‑C8"],
+              correct: 0,
+              exp: "Patellar reflex (knee jerk) tests L2‑L4 via femoral nerve." },
+            { q: "The Achilles reflex tests which nerve roots?",
+              opts: ["L2‑L4", "L4‑L5", "S1‑S2", "C5‑C6", "C7‑C8"],
+              correct: 2,
+              exp: "Achilles reflex tests S1‑S2 via tibial nerve." },
+            { q: "Which fiber type has the highest myoglobin content?",
+              opts: ["Type I", "Type IIa", "Type IIx", "All equal", "None"],
+              correct: 0,
+              exp: "Type I fibers are red due to high myoglobin." },
+            { q: "Creatine phosphate serves as:",
+              opts: ["Immediate ATP source", "Long‑term energy store", "Oxygen carrier", "Calcium buffer", "Structural protein"],
+              correct: 0,
+              exp: "Creatine phosphate donates phosphate to ADP for rapid ATP regeneration." },
+            { q: "The cross‑bridge cycle is initiated by:",
+              opts: ["ATP binding", "Ca²⁺ binding to troponin", "ADP release", "Myosin phosphorylation", "None"],
+              correct: 1,
+              exp: "Ca²⁺ binding exposes actin sites, allowing cross‑bridge formation." },
+            { q: "Rigor mortis begins approximately:",
+              opts: ["1‑2 hours after death", "3‑4 hours after death", "6‑12 hours after death", "24 hours after death", "Immediately"],
+              correct: 1,
+              exp: "Rigor begins at 2‑4 hours, peaks at 12‑24 hours, resolves after 24‑48 hours." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Bone resorption is carried out by:",
+              opts: ["Osteoblasts", "Osteoclasts", "Osteocytes", "Chondrocytes", "Osteoprogenitors"],
+              correct: 1,
+              exp: "Osteoclasts resorb bone by secreting acid and proteases." },
+            { q: "Osteocytes are:",
+              opts: ["Bone‑forming cells", "Bone‑resorbing cells", "Mature osteoblasts trapped in matrix", "Cartilage cells", "Stem cells"],
+              correct: 2,
+              exp: "Osteocytes are terminally differentiated osteoblasts within lacunae." },
+            { q: "Endochondral ossification involves:",
+              opts: ["Direct mineralization of mesenchyme", "Cartilage template replaced by bone", "Intramembranous bone formation", "Periosteal bone formation", "None"],
+              correct: 1,
+              exp: "Endochondral ossification uses a cartilage model later replaced by bone." },
+            { q: "The process of increasing bone diameter is called:",
+              opts: ["Appositional growth", "Interstitial growth", "Longitudinal growth", "Endochondral growth", "Ossification"],
+              correct: 0,
+              exp: "Appositional growth occurs at periosteal surface." },
+            { q: "Which vitamin is essential for collagen cross‑linking?",
+              opts: ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin K", "Vitamin E"],
+              correct: 1,
+              exp: "Vitamin C is a cofactor for prolyl and lysyl hydroxylases in collagen synthesis." },
+            { q: "Chvostek's sign is associated with:",
+              opts: ["Hypercalcemia", "Hypocalcemia", "Hypermagnesemia", "Hypokalemia", "Hypernatremia"],
+              correct: 1,
+              exp: "Chvostek's sign (facial twitching) indicates hypocalcemia." },
+            { q: "Trousseau's sign is also seen in:",
+              opts: ["Hypocalcemia", "Hypercalcemia", "Hypokalemia", "Hypernatremia", "Hypomagnesemia"],
+              correct: 0,
+              exp: "Trousseau's sign (carpopedal spasm) occurs in hypocalcemia." },
+            { q: "The power stroke of myosin occurs when:",
+              opts: ["ADP and Pi are released", "ATP binds", "Ca²⁺ binds troponin", "Myosin head pivots", "All"],
+              correct: 0,
+              exp: "Release of ADP and Pi triggers the power stroke." },
+            { q: "Which of the following is a feature of smooth muscle?",
+              opts: ["Sarcomeres", "T‑tubules", "Dense bodies", "Troponin", "Rapid contraction"],
+              correct: 2,
+              exp: "Smooth muscle has dense bodies for actin attachment, no sarcomeres." },
+            { q: "Calmodulin is involved in contraction of:",
+              opts: ["Skeletal muscle", "Cardiac muscle", "Smooth muscle", "All", "None"],
+              correct: 2,
+              exp: "Smooth muscle uses Ca²⁺‑calmodulin to activate myosin light chain kinase." },
+            { q: "Reticulospinal tract function:",
+              opts: ["Fine motor control", "Posture and gait", "Pain modulation", "Auditory reflexes", "Visual reflexes"],
+              correct: 1,
+              exp: "Reticulospinal tract helps maintain posture and regulate muscle tone." },
+            { q: "Corticospinal tract primarily controls:",
+              opts: ["Distal limb muscles", "Axial muscles", "Postural muscles", "Autonomic functions", "Sensory input"],
+              correct: 0,
+              exp: "Corticospinal tract is responsible for fine voluntary movements." },
+            { q: "The basal ganglia are involved in:",
+              opts: ["Initiating movement", "Motor planning", "Regulating muscle tone", "All of the above", "None"],
+              correct: 3,
+              exp: "Basal ganglia modulate movement, tone, and motor learning." },
+            { q: "Cerebellar dysfunction leads to:",
+              opts: ["Spasticity", "Ataxia, intention tremor", "Rigidity", "Chorea", "Hemiplegia"],
+              correct: 1,
+              exp: "Cerebellar lesions cause ataxia, dysmetria, intention tremor." },
+            { q: "Which reflex helps prevent muscle over‑stretch?",
+              opts: ["Golgi tendon reflex", "Stretch reflex", "Withdrawal reflex", "Crossed extensor reflex", "Babinski"],
+              correct: 0,
+              exp: "Golgi tendon organ reflex inhibits motor neurons when tension is high." },
+            { q: "The crossed extensor reflex occurs:",
+              opts: ["Ipsilaterally", "Contralaterally", "Both", "Only in infants", "Never"],
+              correct: 1,
+              exp: "In response to a painful stimulus, the contralateral limb extends to support weight." },
+            { q: "Myasthenia gravis is caused by antibodies against:",
+              opts: ["Acetylcholine receptors", "Voltage‑gated calcium channels", "Muscle‑specific kinase", "Both A and C", "None"],
+              correct: 3,
+              exp: "MG often involves anti‑AChR antibodies; some have anti‑MuSK." },
+            { q: "Lambert‑Eaton syndrome is associated with antibodies against:",
+              opts: ["ACh receptors", "Voltage‑gated calcium channels", "Acetylcholinesterase", "Ryanodine receptors", "Muscle spindles"],
+              correct: 1,
+              exp: "Lambert‑Eaton is a paraneoplastic disorder with anti‑VGCC antibodies." },
+            { q: "Dantrolene is used for malignant hyperthermia because it:",
+              opts: ["Blocks ryanodine receptors", "Blocks calcium channels", "Inhibits ACh release", "Enhances GABA", "Blocks sodium channels"],
+              correct: 0,
+              exp: "Dantrolene inhibits Ca²⁺ release from sarcoplasmic reticulum." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

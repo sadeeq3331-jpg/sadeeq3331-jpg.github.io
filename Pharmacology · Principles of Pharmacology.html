@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacology · Principles of Pharmacology</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-pills"></i>
+        <h1>Pharmacology · Principles of Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PHARMACOKINETICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#absorption"><i class="fas fa-arrow-down"></i> 1. Absorption</a></li>
+                <li class="chapter-item"><a href="#distribution"><i class="fas fa-arrows-alt"></i> 2. Distribution</a></li>
+                <li class="chapter-item"><a href="#metabolism"><i class="fas fa-flask"></i> 3. Metabolism (Biotransformation)</a></li>
+                <li class="chapter-item"><a href="#excretion"><i class="fas fa-toilet"></i> 4. Excretion</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PHARMACODYNAMICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#receptors"><i class="fas fa-dna"></i> 5. Drug‑Receptor Interactions</a></li>
+                <li class="chapter-item"><a href="#dose-response"><i class="fas fa-chart-line"></i> 6. Dose‑Response Relationships</a></li>
+                <li class="chapter-item"><a href="#agonists-antagonists"><i class="fas fa-balance-scale"></i> 7. Agonists & Antagonists</a></li>
+                <li class="chapter-item"><a href="#therapeutic-index"><i class="fas fa-calculator"></i> 8. Therapeutic Index & Safety</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>DRUG DEVELOPMENT</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#phases"><i class="fas fa-flask"></i> 9. Clinical Trial Phases</a></li>
+                <li class="chapter-item"><a href="#regulatory"><i class="fas fa-gavel"></i> 10. Regulatory Approval</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SPECIAL POPULATIONS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#pediatric"><i class="fas fa-child"></i> 11. Pediatric Pharmacology</a></li>
+                <li class="chapter-item"><a href="#geriatric"><i class="fas fa-user"></i> 12. Geriatric Pharmacology</a></li>
+                <li class="chapter-item"><a href="#pregnancy"><i class="fas fa-fetus"></i> 13. Pregnancy & Lactation</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ADVERSE EFFECTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#adverse"><i class="fas fa-exclamation-triangle"></i> 14. Adverse Drug Reactions</a></li>
+                <li class="chapter-item"><a href="#drug-interactions"><i class="fas fa-exchange-alt"></i> 15. Drug Interactions</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== PHARMACOKINETICS ==================== -->
+        <section id="absorption" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrow-down"></i> 1. Absorption</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Absorption is the movement of a drug from its site of administration into the bloodstream.
+                </div>
+                <ul>
+                    <li><strong>Routes of administration:</strong>
+                        <ul>
+                            <li>Enteral: oral (PO), sublingual (SL), rectal (PR).</li>
+                            <li>Parenteral: intravenous (IV), intramuscular (IM), subcutaneous (SC).</li>
+                            <li>Other: topical, inhalation, transdermal.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Bioavailability (F):</strong> Fraction of administered drug that reaches systemic circulation. IV = 100%. Oral <100% due to first‑pass metabolism.</li>
+                    <li><strong>Factors affecting absorption:</strong> Lipid solubility, pH (ionization), blood flow, surface area, gastric emptying.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="distribution" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrows-alt"></i> 2. Distribution</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Volume of distribution (Vd):</strong> Apparent space into which a drug distributes. Vd = dose / plasma concentration. High Vd means extensive tissue binding.</li>
+                    <li><strong>Protein binding:</strong> Albumin (acidic drugs), α₁‑acid glycoprotein (basic drugs). Only free drug is active.</li>
+                    <li><strong>Barriers:</strong> Blood‑brain barrier, placental barrier.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="metabolism" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 3. Metabolism (Biotransformation)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Metabolism converts lipophilic drugs into more water‑soluble compounds for excretion.
+                </div>
+                <ul>
+                    <li><strong>Phase I (functionalization):</strong> Oxidation, reduction, hydrolysis (cytochrome P450 enzymes). Introduces or exposes a functional group.</li>
+                    <li><strong>Phase II (conjugation):</strong> Glucuronidation, sulfation, acetylation, glutathione conjugation. Increases water solubility.</li>
+                    <li><strong>First‑pass metabolism:</strong> Drugs absorbed from gut are metabolized in liver before reaching systemic circulation (e.g., propranolol, lidocaine).</li>
+                    <li><strong>Prodrugs:</strong> Inactive until metabolized (e.g., enalapril → enalaprilat).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="excretion" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-toilet"></i> 4. Excretion</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Renal excretion:</strong> Glomerular filtration, tubular secretion, passive reabsorption. pH‑dependent ion trapping (weak acids in alkaline urine).</li>
+                    <li><strong>Biliary excretion:</strong> Some drugs excreted in bile; enterohepatic recirculation.</li>
+                    <li><strong>Other routes:</strong> Pulmonary (volatile agents), sweat, milk.</li>
+                    <li><strong>Half‑life (t½):</strong> Time for drug concentration to decrease by 50%. Determines dosing interval.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PHARMACODYNAMICS ==================== -->
+        <section id="receptors" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 5. Drug‑Receptor Interactions</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Receptor types:</strong> G‑protein coupled (GPCRs), ion channels, enzyme‑linked (tyrosine kinase), nuclear receptors.</li>
+                    <li><strong>Affinity:</strong> Strength of binding between drug and receptor.</li>
+                    <li><strong>Efficacy (intrinsic activity):</strong> Ability to activate receptor and produce a response.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="dose-response" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 6. Dose‑Response Relationships</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Graded dose‑response:</strong> Effect increases with dose. Parameters: Emax (max effect), EC₅₀ (concentration for 50% effect).</li>
+                    <li><strong>Quantal dose‑response:</strong> All‑or‑none effect in population. ED₅₀ (median effective dose), TD₅₀ (median toxic dose), LD₅₀ (median lethal dose).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="agonists-antagonists" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-balance-scale"></i> 7. Agonists & Antagonists</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Full agonist:</strong> Maximal efficacy.</li>
+                    <li><strong>Partial agonist:</strong> Submaximal efficacy even at full receptor occupancy.</li>
+                    <li><strong>Antagonist:</strong> No efficacy, blocks agonist.
+                        <ul>
+                            <li>Competitive (surmountable): shifts dose‑response curve right, same Emax.</li>
+                            <li>Non‑competitive (insurmountable): decreases Emax.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Inverse agonist:</strong> Reduces basal receptor activity (e.g., some antihistamines).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="therapeutic-index" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-calculator"></i> 8. Therapeutic Index & Safety</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Therapeutic index (TI) = TD₅₀ / ED₅₀ (or LD₅₀/ED₅₀).</strong> Narrow TI = small safety margin (e.g., warfarin, digoxin, lithium).</li>
+                    <li><strong>Therapeutic window:</strong> Range between minimum effective concentration and minimum toxic concentration.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== DRUG DEVELOPMENT ==================== -->
+        <section id="phases" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 9. Clinical Trial Phases</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Phase I:</strong> Healthy volunteers; pharmacokinetics, safety, dose‑ranging (20‑100).</li>
+                    <li><strong>Phase II:</strong> Patients with disease; efficacy, side effects (100‑300).</li>
+                    <li><strong>Phase III:</strong> Large multicenter trials; confirm efficacy, compare to standard (1,000‑3,000).</li>
+                    <li><strong>Phase IV:</strong> Post‑marketing surveillance; long‑term safety, rare adverse effects.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="regulatory" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-gavel"></i> 10. Regulatory Approval</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>FDA (USA), EMA (Europe), MHRA (UK).</strong></li>
+                    <li>Investigational New Drug (IND) application before human trials.</li>
+                    <li>New Drug Application (NDA) for marketing approval.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SPECIAL POPULATIONS ==================== -->
+        <section id="pediatric" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> 11. Pediatric Pharmacology</div>
+            <div class="section-card">
+                <ul>
+                    <li>Immature hepatic metabolism (CYP450) and renal function.</li>
+                    <li>Higher total body water affects Vd (hydrophilic drugs).</li>
+                    <li>Doses often based on weight (mg/kg) or body surface area.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="geriatric" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-user"></i> 12. Geriatric Pharmacology</div>
+            <div class="section-card">
+                <ul>
+                    <li>Decreased renal function (↓ GFR), decreased hepatic metabolism.</li>
+                    <li>Increased sensitivity to CNS drugs (benzodiazepines, opioids).</li>
+                    <li>Polypharmacy → higher risk of drug interactions.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pregnancy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fetus"></i> 13. Pregnancy & Lactation</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>FDA pregnancy categories:</strong> A (safe), B (probably safe), C (risk not ruled out), D (positive evidence of risk), X (contraindicated).</li>
+                    <li>Drugs may cross placenta or enter breast milk.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ADVERSE EFFECTS ==================== -->
+        <section id="adverse" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-exclamation-triangle"></i> 14. Adverse Drug Reactions</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Type A (augmented):</strong> Predictable, dose‑dependent (e.g., hypotension with antihypertensives).</li>
+                    <li><strong>Type B (bizarre):</strong> Idiosyncratic, not dose‑related (e.g., anaphylaxis, Stevens‑Johnson syndrome).</li>
+                    <li><strong>Type C (chronic):</strong> Long‑term use (e.g., osteoporosis with steroids).</li>
+                    <li><strong>Type D (delayed):</strong> Carcinogenesis, teratogenesis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="drug-interactions" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-exchange-alt"></i> 15. Drug Interactions</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pharmacokinetic:</strong> Altered absorption, distribution, metabolism (CYP inhibition/induction), excretion.</li>
+                    <li><strong>Pharmacodynamic:</strong> Additive, synergistic, antagonistic effects at receptor level.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Pharmacology · Principles of Pharmacology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

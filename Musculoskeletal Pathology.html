@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musculoskeletal Pathology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-bone"></i>
+        <h1>Musculoskeletal Pathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Introduction to Musculoskeletal Pathology</a></li>
+                <li><a href="#ch2"><i class="fas fa-bone"></i> 2. Metabolic Bone Diseases</a></li>
+                <li><a href="#ch3"><i class="fas fa-dumbbell"></i> 3. Osteomyelitis & Bone Infections</a></li>
+                <li><a href="#ch4"><i class="fas fa-hand"></i> 4. Arthritis & Joint Diseases</a></li>
+                <li><a href="#ch5"><i class="fas fa-dna"></i> 5. Muscular Dystrophies & Myopathies</a></li>
+                <li><a href="#ch6"><i class="fas fa-bolt"></i> 6. Myositis & Muscle Inflammation</a></li>
+                <li><a href="#ch7"><i class="fas fa-tumor"></i> 7. Bone Tumors</a></li>
+                <li><a href="#ch8"><i class="fas fa-ribbon"></i> 8. Soft Tissue Tumors</a></li>
+                <li><a href="#ch9"><i class="fas fa-heart"></i> 9. Paget's Disease of Bone</a></li>
+                <li><a href="#ch10"><i class="fas fa-child"></i> 10. Developmental & Pediatric Conditions</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: INTRODUCTION -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Introduction to Musculoskeletal Pathology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Musculoskeletal pathology encompasses diseases of bones, joints, muscles, and soft tissues. Key categories include metabolic disorders, infections, inflammatory conditions, tumors, and developmental abnormalities.</p>
+                </div>
+                <div class="key-points">
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Bone:</strong> Osteoporosis, osteomalacia, Paget's, tumors, infections.</li>
+                        <li><i class="fas fa-check"></i> <strong>Joints:</strong> Osteoarthritis, rheumatoid arthritis, gout, septic arthritis.</li>
+                        <li><i class="fas fa-check"></i> <strong>Muscles:</strong> Dystrophies, myositis, metabolic myopathies.</li>
+                        <li><i class="fas fa-check"></i> <strong>Soft tissues:</strong> Tumors (lipoma, sarcoma), fibromatoses.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: METABOLIC BONE DISEASES -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 2. Metabolic Bone Diseases</div>
+            <div class="section-card">
+                <div class="subsection-heading">Osteoporosis</div>
+                <ul>
+                    <li><strong>Definition:</strong> Decreased bone mass and microarchitectural deterioration → increased fracture risk.</li>
+                    <li><strong>Types:</strong> Primary (postmenopausal, senile), secondary (steroids, hyperparathyroidism, immobilization).</li>
+                    <li><strong>Pathology:</strong> Thinning of trabeculae, reduced cortical thickness; bone formation normal but resorption exceeds formation.</li>
+                    <li><strong>Clinical:</strong> Fractures (hip, spine, wrist), back pain, loss of height.</li>
+                </ul>
+                <div class="subsection-heading">Osteomalacia / Rickets</div>
+                <ul>
+                    <li><strong>Definition:</strong> Defective mineralization of osteoid due to vitamin D deficiency or hypophosphatemia.</li>
+                    <li><strong>Rickets:</strong> In children, affects growth plates → bowing, widened metaphyses.</li>
+                    <li><strong>Osteomalacia:</strong> In adults, osteoid accumulates (increased osteoid seams), fractures, bone pain.</li>
+                    <li><strong>Causes:</strong> Vitamin D deficiency (nutritional, malabsorption, renal disease), hypophosphatemia, drugs.</li>
+                </ul>
+                <div class="subsection-heading">Hyperparathyroidism (Bone Effects)</div>
+                <ul>
+                    <li><strong>Primary:</strong> Increased PTH → osteoclast activity → subperiosteal resorption (especially phalanges), brown tumors (cystic lesions), "salt‑and‑pepper" skull.</li>
+                    <li><strong>Secondary:</strong> Due to renal failure; may cause osteitis fibrosa cystica.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Osteoporosis = low bone mass, normal mineralization; osteomalacia = normal bone mass, defective mineralization.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: OSTEOMYELITIS & BONE INFECTIONS -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dumbbell"></i> 3. Osteomyelitis & Bone Infections</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Osteomyelitis is inflammation of bone caused by infection (pyogenic, granulomatous).</p>
+                </div>
+                <ul>
+                    <li><strong>Pyogenic osteomyelitis:</strong> Usually Staphylococcus aureus (most common), also Strep, E. coli, Pseudomonas. Routes: hematogenous (children, long bones), contiguous spread (diabetic foot), direct inoculation (trauma, surgery).</li>
+                    <li><strong>Pathology:</strong> Acute inflammation, necrosis, sequestrum (dead bone), involucrum (new bone formation), draining sinus.</li>
+                    <li><strong>Chronic osteomyelitis:</strong> Persistent infection with sequestra, sinus tracts, may have Brodie abscess (localized abscess).</li>
+                    <li><strong>Tuberculous osteomyelitis:</strong> Pott disease (spine), caseating granulomas, cold abscess.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Fever, bone pain, elevated ESR/CRP, positive blood cultures. X‑ray changes appear late (10‑14 days).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: ARTHRITIS & JOINT DISEASES -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand"></i> 4. Arthritis & Joint Diseases</div>
+            <div class="section-card">
+                <div class="subsection-heading">Osteoarthritis (OA)</div>
+                <ul>
+                    <li><strong>Degenerative joint disease:</strong> Loss of articular cartilage, eburnation, osteophyte formation, subchondral cysts.</li>
+                    <li><strong>Pathology:</strong> Fibrillation, erosion of cartilage; later, full‑thickness loss, bone rubbing on bone.</li>
+                    <li><strong>Risk factors:</strong> Age, obesity, trauma, repetitive use, genetic.</li>
+                </ul>
+                <div class="subsection-heading">Rheumatoid Arthritis (RA)</div>
+                <ul>
+                    <li><strong>Chronic systemic autoimmune disease</strong> with symmetric inflammatory synovitis.</li>
+                    <li><strong>Pathology:</strong> Synovial hyperplasia, lymphocytic infiltrate (CD4+ T cells, plasma cells), pannus formation (granulation tissue eroding cartilage), rheumatoid nodules (subcutaneous).</li>
+                    <li><strong>Extra‑articular:</strong> Vasculitis, pleuritis, pericarditis, Felty syndrome (RA + splenomegaly + neutropenia).</li>
+                    <li><strong>Lab:</strong> Rheumatoid factor (anti‑IgG), anti‑CCP (more specific).</li>
+                </ul>
+                <div class="subsection-heading">Gout</div>
+                <ul>
+                    <li><strong>Deposition of urate crystals</strong> in joints due to hyperuricemia.</li>
+                    <li><strong>Pathology:</strong> Needle‑shaped monosodium urate crystals (negatively birefringent), tophi (collections of crystals in soft tissue), acute inflammation (neutrophils).</li>
+                    <li><strong>Stages:</strong> Asymptomatic hyperuricemia → acute gouty arthritis → intercritical periods → chronic tophaceous gout.</li>
+                </ul>
+                <div class="subsection-heading">Pseudogout (CPPD)</div>
+                <ul>
+                    <li><strong>Calcium pyrophosphate dihydrate crystals</strong> (rhomboid, weakly positive birefringence).</li>
+                    <li>Associated with aging, hyperparathyroidism, hemochromatosis.</li>
+                </ul>
+                <div class="subsection-heading">Septic Arthritis</div>
+                <ul>
+                    <li>Bacterial infection (gonococcal, staph, strep) → acute monoarthritis, purulent synovial fluid.</li>
+                </div>
+                <div class="subsection-heading">Ankylosing Spondylitis</div>
+                <ul>
+                    <li>Seronegative spondyloarthropathy, HLA‑B27 associated. Sacroiliitis, syndesmophytes (bamboo spine).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: MUSCULAR DYSTROPHIES & MYOPATHIES -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 5. Muscular Dystrophies & Myopathies</div>
+            <div class="section-card">
+                <div class="subsection-heading">Duchenne Muscular Dystrophy (DMD)</div>
+                <ul>
+                    <li><strong>X‑linked recessive,</strong> mutation in dystrophin gene → absent dystrophin.</li>
+                    <li><strong>Pathology:</strong> Muscle fibers show necrosis, regeneration, fiber size variation, endomysial fibrosis, fatty infiltration. Dystrophin stain negative.</li>
+                    <li><strong>Clinical:</strong> Onset age 2‑5, proximal weakness, calf pseudohypertrophy, Gower sign, cardiomyopathy, death by 20s (respiratory/cardiac).</li>
+                </ul>
+                <div class="subsection-heading">Becker Muscular Dystrophy (BMD)</div>
+                <ul>
+                    <li>Milder, dystrophin reduced/abnormal, onset later, slower progression.</li>
+                </ul>
+                <div class="subsection-heading">Myotonic Dystrophy (DM1)</div>
+                <ul>
+                    <li>Autosomal dominant, CTG repeat in DMPK gene. Myotonia, distal weakness, cataracts, cardiac conduction defects, frontal balding, insulin resistance.</li>
+                </ul>
+                <div class="subsection-heading">Limb‑Girdle Muscular Dystrophies</div>
+                <ul>
+                    <li>Heterogeneous group, autosomal recessive/dominant, mutations in sarcoglycans, dysferlin, etc.</li>
+                </ul>
+                <div class="subsection-heading">Facioscapulohumeral Dystrophy (FSHD)</div>
+                <ul>
+                    <li>Autosomal dominant, facial and scapular weakness.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: MYOSITIS & MUSCLE INFLAMMATION -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 6. Myositis & Muscle Inflammation</div>
+            <div class="section-card">
+                <div class="subsection-heading">Polymyositis</div>
+                <ul>
+                    <li>Cell‑mediated autoimmune attack on muscle fibers; proximal weakness, elevated CK. Pathology: CD8+ T cells invading non‑necrotic fibers.</li>
+                </ul>
+                <div class="subsection-heading">Dermatomyositis</div>
+                <ul>
+                    <li>Humoral immune process with complement deposition; characteristic rash (heliotrope, Gottron papules). Pathology: perifascicular atrophy, B cell infiltrate, MAC deposition.</li>
+                </ul>
+                <div class="subsection-heading">Inclusion Body Myositis</div>
+                <ul>
+                    <li>Most common in older men; distal and proximal weakness, vacuoles with inclusions (rimmed vacuoles). Refractory to therapy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: BONE TUMORS -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tumor"></i> 7. Bone Tumors</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Bone tumors are classified by cell origin (bone‑forming, cartilage‑forming, fibrous, etc.).</p>
+                </div>
+                <div class="premium-table">
+                    <table>
+                        <thead><tr><th>Tumor</th><th>Benign</th><th>Malignant</th></tr></thead>
+                        <tbody>
+                            <tr><td>Bone‑forming</td><td>Osteoid osteoma, osteoblastoma</td><td>Osteosarcoma</td></tr>
+                            <tr><td>Cartilage‑forming</td><td>Osteochondroma, enchondroma, chondroblastoma</td><td>Chondrosarcoma</td></tr>
+                            <tr><td>Fibrous</td><td>Fibrous cortical defect, non‑ossifying fibroma</td><td>Malignant fibrous histiocytoma</td></tr>
+                            <tr><td>Giant cell tumor</td><td>Giant cell tumor (may be locally aggressive)</td><td>Malignant GCT</td></tr>
+                            <tr><td>Marrow tumors</td><td>—</td><td>Ewing sarcoma, multiple myeloma, lymphoma</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="subsection-heading">Osteosarcoma</div>
+                <ul>
+                    <li>Most common primary malignant bone tumor (excluding myeloma). Occurs in metaphysis of long bones (distal femur, proximal tibia). Peak incidence: adolescents (growth spurt) and elderly (Paget's, radiation). Pathology: malignant spindle cells producing osteoid.</li>
+                </ul>
+                <div class="subsection-heading">Ewing Sarcoma</div>
+                <ul>
+                    <li>Primitive neuroectodermal tumor; t(11;22) translocation (EWS‑FLI1). Diaphysis, onion‑skin periosteal reaction. Small blue round cells, PAS+ (glycogen).</li>
+                </ul>
+                <div class="subsection-heading">Osteochondroma</div>
+                <ul>
+                    <li>Most common benign bone tumor; cartilage‑capped exostosis. Can be multiple in hereditary multiple exostoses.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Osteoid osteoma causes night pain relieved by NSAIDs; has a radiolucent nidus.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: SOFT TISSUE TUMORS -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ribbon"></i> 8. Soft Tissue Tumors</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Lipoma:</strong> Benign adipose tumor; common.</li>
+                    <li><strong>Liposarcoma:</strong> Malignant; myxoid, pleomorphic, well‑differentiated.</li>
+                    <li><strong>Leiomyosarcoma:</strong> Smooth muscle origin.</li>
+                    <li><strong>Rhabdomyosarcoma:</strong> Skeletal muscle malignancy; embryonal (children), alveolar (worse prognosis, PAX‑FOXO1 fusion), pleomorphic (adults).</li>
+                    <li><strong>Fibrosarcoma:</strong> Malignant fibroblasts.</li>
+                    <li><strong>Malignant fibrous histiocytoma (undifferentiated pleomorphic sarcoma):</strong> Older adults, extremities.</li>
+                    <li><strong>Synovial sarcoma:</strong> t(X;18) translocation; biphasic (epithelial and spindle cells).</li>
+                    <li><strong>Giant cell tumor of tendon sheath (nodular tenosynovitis):</strong> Benign, hemosiderin‑laden cells.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: PAGET'S DISEASE OF BONE -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 9. Paget's Disease of Bone</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Disorder of excessive bone remodeling</strong> (increased osteoclast and osteoblast activity).</li>
+                    <li><strong>Etiology:</strong> Possibly viral (paramyxovirus) + genetic susceptibility (SQSTM1 mutations).</li>
+                    <li><strong>Pathology:</strong> Mosaic pattern of lamellar bone (cement lines), osteoclasts large with many nuclei.</li>
+                    <li><strong>Stages:</strong> Lytic (osteoclastic) → mixed → sclerotic (osteoblastic).</li>
+                    <li><strong>Clinical:</strong> Bone pain, deformity, fractures, increased head size, deafness, high‑output heart failure (rare). Elevated alkaline phosphatase, normal calcium.</li>
+                    <li><strong>Complications:</strong> Osteosarcoma (rare, 1%).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: DEVELOPMENTAL & PEDIATRIC CONDITIONS -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> 10. Developmental & Pediatric Conditions</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Osteogenesis imperfecta:</strong> Collagen type I mutation (COL1A1, COL1A2). Blue sclerae, brittle bones, hearing loss, dentinogenesis imperfecta.</li>
+                    <li><strong>Achondroplasia:</strong> FGFR3 mutation; rhizomelic dwarfism, normal trunk, frontal bossing.</li>
+                    <li><strong>Marfan syndrome:</strong> FBN1 mutation (fibrillin). Tall, long limbs, arachnodactyly, lens dislocation, aortic root dilation.</li>
+                    <li><strong>Ehlers‑Danlos syndrome:</strong> Collagen defects; hypermobility, skin hyperextensibility, vascular fragility.</li>
+                    <li><strong>Fibrous dysplasia:</strong> GNAS mutation; fibrous replacement of bone, ground‑glass appearance on X‑ray, café‑au‑lait spots, precocious puberty (McCune‑Albright).</li>
+                    <li><strong>Congenital clubfoot (talipes equinovarus):</strong> Adduction, varus, equinus.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Musculoskeletal Pathology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renal Physiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-kidney"></i>
+            <h1>Renal Physiology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE RENAL PHYSIOLOGY QUESTIONS
+        const questions = [
+            { q: "Normal glomerular filtration rate (GFR) in a healthy adult is approximately:",
+              opts: ["80 mL/min", "100 mL/min", "125 mL/min", "150 mL/min", "180 mL/min"],
+              correct: 2,
+              exp: "Normal GFR is about 125 mL/min (or 180 L/day)." },
+            { q: "Which of the following is freely filtered at the glomerulus?",
+              opts: ["Albumin", "Glucose", "Red blood cells", "Platelets", "White blood cells"],
+              correct: 1,
+              exp: "Glucose is freely filtered; albumin and cells are not normally filtered due to size/charge barriers." },
+            { q: "The filtration fraction is defined as:",
+              opts: ["GFR / RPF", "RPF / GFR", "GFR × RPF", "(RPF - GFR) / RPF", "Urine flow / GFR"],
+              correct: 0,
+              exp: "Filtration fraction = GFR / RPF. Normal ~0.2." },
+            { q: "Which vessel has higher hydrostatic pressure – afferent or efferent arteriole?",
+              opts: ["Afferent", "Efferent", "Equal", "Depends on BP", "None"],
+              correct: 0,
+              exp: "Afferent arteriole pressure is higher; efferent has lower pressure due to resistance." },
+            { q: "The macula densa senses changes in:",
+              opts: ["Blood pressure", "Glomerular capillary pressure", "NaCl concentration in distal tubule", "K⁺ concentration", "Renin levels"],
+              correct: 2,
+              exp: "Macula densa detects NaCl delivery to the distal tubule." },
+            { q: "Which of the following decreases GFR?",
+              opts: ["Afferent arteriolar dilation", "Efferent arteriolar constriction", "Increased plasma protein concentration", "Decreased Bowman's capsule pressure", "Increased glomerular capillary pressure"],
+              correct: 2,
+              exp: "Increased plasma protein raises oncotic pressure, opposing filtration." },
+            { q: "Tubuloglomerular feedback involves:",
+              opts: ["Macula densa sensing high NaCl → afferent constriction", "Macula densa sensing low NaCl → afferent dilation", "Both", "Neither", "Efferent dilation only"],
+              correct: 2,
+              exp: "High NaCl signals afferent constriction (↓GFR); low NaCl signals dilation (↑GFR)." },
+            { q: "The myogenic mechanism of autoregulation is triggered by:",
+              opts: ["Increased stretch of afferent arteriole", "Increased stretch of efferent arteriole", "Decreased NaCl at macula densa", "Increased angiotensin II", "Sympathetic stimulation"],
+              correct: 0,
+              exp: "Increased BP stretches afferent arteriole, causing reflexive constriction." },
+            { q: "Angiotensin II preferentially constricts:",
+              opts: ["Afferent arteriole", "Efferent arteriole", "Both equally", "Glomerular capillaries", "Peritubular capillaries"],
+              correct: 1,
+              exp: "Angiotensin II constricts efferent arteriole more than afferent, helping maintain GFR in low BP." },
+            { q: "Glucose reabsorption occurs primarily in the:",
+              opts: ["Proximal convoluted tubule", "Loop of Henle", "Distal convoluted tubule", "Collecting duct", "Bowman's capsule"],
+              correct: 0,
+              exp: "PCT reabsorbs 100% of filtered glucose via SGLT2." },
+            { q: "The transport maximum (Tm) for glucose is about:",
+              opts: ["180 mg/dL", "200 mg/min", "375 mg/min", "500 mg/min", "125 mL/min"],
+              correct: 2,
+              exp: "Tm for glucose ~375 mg/min." },
+            { q: "Amino acids are reabsorbed in the:",
+              opts: ["Proximal tubule", "Distal tubule", "Loop of Henle", "Collecting duct", "Glomerulus"],
+              correct: 0,
+              exp: "Amino acids are almost entirely reabsorbed in the PCT." },
+            { q: "The Na⁺‑K⁺‑2Cl⁻ co‑transporter (NKCC2) is located in the:",
+              opts: ["Proximal tubule", "Thick ascending limb", "Distal convoluted tubule", "Collecting duct", "Thin descending limb"],
+              correct: 1,
+              exp: "NKCC2 in the thick ascending limb reabsorbs Na⁺, K⁺, Cl⁻; blocked by loop diuretics." },
+            { q: "Which segment is impermeable to water but permeable to NaCl?",
+              opts: ["Descending thin limb", "Thick ascending limb", "Distal convoluted tubule", "Collecting duct", "Proximal tubule"],
+              correct: 1,
+              exp: "Thick ascending limb is water‑impermeable, actively reabsorbs NaCl." },
+            { q: "The Na‑Cl co‑transporter (NCC) is inhibited by:",
+              opts: ["Furosemide", "Hydrochlorothiazide", "Spironolactone", "Amiloride", "Acetazolamide"],
+              correct: 1,
+              exp: "Thiazides inhibit NCC in DCT." },
+            { q: "Aldosterone acts on principal cells to:",
+              opts: ["Increase Na⁺ reabsorption and K⁺ secretion", "Increase Na⁺ reabsorption only", "Increase K⁺ secretion only", "Decrease Na⁺ reabsorption", "Increase H⁺ secretion"],
+              correct: 0,
+              exp: "Aldosterone upregulates ENaC and ROMK, increasing Na⁺ reabsorption and K⁺ secretion." },
+            { q: "ENaC is blocked by:",
+              opts: ["Spironolactone", "Eplerenone", "Amiloride", "Triamterene", "Both C and D"],
+              correct: 4,
+              exp: "Amiloride and triamterene block ENaC directly." },
+            { q: "The countercurrent multiplier system is established by:",
+              opts: ["Loop of Henle", "Vasa recta", "Distal tubule", "Collecting duct", "Proximal tubule"],
+              correct: 0,
+              exp: "Loop of Henle creates medullary osmotic gradient." },
+            { q: "Vasa recta function to:",
+              opts: ["Remove reabsorbed water and solutes without disrupting gradient", "Add NaCl to medulla", "Reabsorb glucose", "Secrete K⁺", "None"],
+              correct: 0,
+              exp: "Vasa recta act as countercurrent exchangers, preserving medullary gradient." },
+            { q: "Antidiuretic hormone (ADH) increases water permeability of:",
+              opts: ["Proximal tubule", "Thick ascending limb", "Distal tubule and collecting duct", "Thin descending limb", "All segments"],
+              correct: 2,
+              exp: "ADH inserts aquaporin‑2 in late DCT and collecting duct." },
+            { q: "In the absence of ADH, urine osmolality is:",
+              opts: [">300 mOsm/kg", "100-200 mOsm/kg", "50-100 mOsm/kg", ">600 mOsm/kg", "Same as plasma"],
+              correct: 1,
+              exp: "Without ADH, urine is dilute (~100 mOsm/kg)." },
+            { q: "Urea recycling occurs in the:",
+              opts: ["Proximal tubule", "Loop of Henle", "Medullary collecting duct and thin limb", "Distal tubule", "Glomerulus"],
+              correct: 2,
+              exp: "Urea is reabsorbed in medullary collecting duct and enters thin limb, contributing to medullary osmolality." },
+            { q: "The major site of titratable acid excretion is:",
+              opts: ["Proximal tubule", "Loop of Henle", "Distal tubule", "Collecting duct", "All segments"],
+              correct: 3,
+              exp: "Collecting duct (intercalated cells) secretes H⁺, buffered by phosphate." },
+            { q: "Ammonia (NH₃) excretion occurs mainly in the:",
+              opts: ["Proximal tubule", "Distal tubule", "Collecting duct", "Loop of Henle", "Glomerulus"],
+              correct: 2,
+              exp: "NH₃ diffuses into collecting duct lumen, combines with H⁺ to form NH₄⁺, trapped and excreted." },
+            { q: "The normal anion gap is:",
+              opts: ["4-8 mEq/L", "8-12 mEq/L", "12-16 mEq/L", "16-20 mEq/L", "0-4 mEq/L"],
+              correct: 1,
+              exp: "Normal anion gap = Na – (Cl + HCO₃) ≈ 8‑12 mEq/L." },
+            { q: "In metabolic acidosis, the kidney increases excretion of:",
+              opts: ["Bicarbonate", "Sodium", "Ammonium", "Potassium", "Chloride"],
+              correct: 2,
+              exp: "Ammonium excretion (NH₄⁺) increases to eliminate acid." },
+            { q: "Renal plasma flow (RPF) can be estimated by clearance of:",
+              opts: ["Inulin", "Creatinine", "Para‑aminohippurate (PAH)", "Glucose", "Urea"],
+              correct: 2,
+              exp: "PAH is almost completely extracted, so its clearance approximates RPF." },
+            { q: "If a substance is freely filtered and not reabsorbed or secreted, its clearance equals:",
+              opts: ["GFR", "RPF", "Urine flow", "Zero", "Not possible"],
+              correct: 0,
+              exp: "Inulin is such a substance; its clearance = GFR." },
+            { q: "Fractional excretion of sodium (FeNa) is calculated as:",
+              opts: ["(UNa × PNa) / (UCr × PCr)", "(UNa × PCr) / (UCr × PNa)", "(UCr × PCr) / (UNa × PNa)", "(UNa × UCr) / (PNa × PCr)", "None"],
+              correct: 1,
+              exp: "FeNa = (UNa × PCr) / (UCr × PNa) × 100." },
+            { q: "In prerenal azotemia, FeNa is typically:",
+              opts: ["<1%", "1-2%", ">2%", ">4%", ">5%"],
+              correct: 0,
+              exp: "Low FeNa (<1%) indicates prerenal state (kidneys avidly reabsorb Na⁺)." },
+            { q: "In acute tubular necrosis (ATN), FeNa is usually:",
+              opts: ["<1%", "1-2%", ">2%", ">5%", "Variable"],
+              correct: 2,
+              exp: "High FeNa (>2%) suggests intrinsic renal damage." },
+            { q: "Which hormone is produced by the kidney and stimulates red blood cell production?",
+              opts: ["Renin", "Erythropoietin", "Calcitriol", "ADH", "Aldosterone"],
+              correct: 1,
+              exp: "Erythropoietin from peritubular fibroblasts in response to hypoxia." },
+            { q: "1α‑hydroxylase in the kidney converts:",
+              opts: ["25‑OH vitamin D to 1,25‑(OH)₂ vitamin D", "7‑dehydrocholesterol to vitamin D₃", "Vitamin D₃ to 25‑OH", "Calcidiol to calcitroic acid", "None"],
+              correct: 0,
+              exp: "Kidney activates vitamin D by 1α‑hydroxylation." },
+            { q: "Renin is released from juxtaglomerular cells in response to:",
+              opts: ["Low blood pressure", "High NaCl delivery", "High blood pressure", "High K⁺", "ADH"],
+              correct: 0,
+              exp: "Renin release stimulated by low renal perfusion pressure, low NaCl, sympathetic activation." },
+            { q: "The major site of potassium secretion is:",
+              opts: ["Proximal tubule", "Loop of Henle", "Distal convoluted tubule", "Collecting duct (principal cells)", "Collecting duct (intercalated cells)"],
+              correct: 3,
+              exp: "Principal cells secrete K⁺ under aldosterone influence." },
+            { q: "In metabolic alkalosis, the kidney responds by:",
+              opts: ["Excreting bicarbonate", "Retaining bicarbonate", "Increasing H⁺ secretion", "Increasing NH₃ production", "None"],
+              correct: 0,
+              exp: "The kidney excretes excess bicarbonate to correct alkalosis." },
+            { q: "Which of the following increases calcium reabsorption in the kidney?",
+              opts: ["PTH", "Calcitonin", "High calcium intake", "Loop diuretics", "Thiazides"],
+              correct: 0,
+              exp: "PTH increases Ca²⁺ reabsorption in DCT." },
+            { q: "Phosphate excretion is increased by:",
+              opts: ["PTH", "Calcitriol", "High phosphate diet", "Thiazides", "Both A and C"],
+              correct: 4,
+              exp: "PTH and high phosphate intake increase phosphaturia." },
+            { q: "The normal range for urine specific gravity is:",
+              opts: ["1.001-1.010", "1.005-1.030", "1.010-1.020", "1.020-1.040", "1.040-1.060"],
+              correct: 1,
+              exp: "Specific gravity varies from 1.005 (dilute) to 1.030 (concentrated)." },
+            { q: "Glucosuria occurs when plasma glucose exceeds approximately:",
+              opts: ["100 mg/dL", "150 mg/dL", "180 mg/dL", "250 mg/dL", "300 mg/dL"],
+              correct: 2,
+              exp: "Renal threshold for glucose is ~180 mg/dL." },
+            { q: "The concentration of urine is primarily controlled by:",
+              opts: ["Aldosterone", "ADH", "PTH", "Renin", "ANP"],
+              correct: 1,
+              exp: "ADH determines water permeability of collecting duct." },
+            { q: "A patient with central diabetes insipidus will have:",
+              opts: ["High ADH, concentrated urine", "Low ADH, dilute urine", "Normal ADH, normal urine", "High ADH, dilute urine", "Low ADH, concentrated urine"],
+              correct: 1,
+              exp: "Central DI: ADH deficiency → dilute urine." },
+            { q: "Nephrogenic diabetes insipidus is due to:",
+              opts: ["Lack of ADH production", "Renal resistance to ADH", "Excess ADH", "Aldosterone deficiency", "Angiotensin II excess"],
+              correct: 1,
+              exp: "Kidneys do not respond to ADH." },
+            { q: "Which of the following is a direct effect of aldosterone on the kidney?",
+              opts: ["Increased Na⁺ reabsorption, increased K⁺ secretion", "Increased water reabsorption only", "Decreased Na⁺ reabsorption", "Increased Ca²⁺ reabsorption", "Increased phosphate excretion"],
+              correct: 0,
+              exp: "Aldosterone increases Na⁺ reabsorption and K⁺ secretion in principal cells." },
+            { q: "The mechanism of action of loop diuretics is inhibition of:",
+              opts: ["NKCC2", "NCC", "ENaC", "Na⁺/K⁺ ATPase", "Carbonic anhydrase"],
+              correct: 0,
+              exp: "Loop diuretics block NKCC2 in thick ascending limb." },
+            { q: "Thiazide diuretics act on:",
+              opts: ["Proximal tubule", "Thick ascending limb", "Distal convoluted tubule", "Collecting duct", "All segments"],
+              correct: 2,
+              exp: "Thiazides inhibit NCC in DCT." },
+            { q: "Acetazolamide inhibits carbonic anhydrase, leading to:",
+              opts: ["Bicarbonaturia and metabolic acidosis", "Hypokalemia", "Hyperchloremia", "All of the above", "None"],
+              correct: 3,
+              exp: "Acetazolamide causes HCO₃⁻ loss, metabolic acidosis, hypokalemia, hyperchloremia." },
+            { q: "Potassium‑sparing diuretics (amiloride) work by:",
+              opts: ["Blocking aldosterone receptors", "Blocking ENaC", "Inhibiting Na⁺/K⁺ ATPase", "Inhibiting NKCC2", "Inhibiting NCC"],
+              correct: 1,
+              exp: "Amiloride blocks ENaC in collecting duct." },
+            { q: "Spironolactone is contraindicated in:",
+              opts: ["Hypokalemia", "Hyperkalemia", "Hyponatremia", "Hypocalcemia", "Metabolic alkalosis"],
+              correct: 1,
+              exp: "Spironolactone can cause hyperkalemia." },
+            { q: "A patient on hydrochlorothiazide develops hyponatremia. This is due to:",
+              opts: ["Impaired water excretion", "Excess ADH", "Increased sodium excretion", "Increased thirst", "Adrenal insufficiency"],
+              correct: 0,
+              exp: "Thiazides impair urinary dilution, predisposing to hyponatremia." },
+            { q: "Mannitol is contraindicated in:",
+              opts: ["Cerebral edema", "Anuria", "Increased intracranial pressure", "Oliguria with hypotension", "Both B and D"],
+              correct: 4,
+              exp: "Mannitol can cause volume overload in anuric patients; contraindicated in anuria and severe pulmonary edema." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "The normal ratio of BUN to creatinine is approximately:",
+              opts: ["5:1", "10:1", "15:1", "20:1", "25:1"],
+              correct: 1,
+              exp: "Normal BUN:Cr ~10‑20:1; prerenal states >20:1." },
+            { q: "In prerenal azotemia, the BUN:Cr ratio is typically:",
+              opts: ["<10:1", "10‑20:1", ">20:1", ">50:1", "Variable"],
+              correct: 2,
+              exp: "Increased urea reabsorption raises BUN disproportionately." },
+            { q: "Atrial natriuretic peptide (ANP) causes:",
+              opts: ["Vasoconstriction", "Increased Na⁺ reabsorption", "Vasodilation and natriuresis", "Increased renin release", "ADH release"],
+              correct: 2,
+              exp: "ANP promotes natriuresis, vasodilation, and inhibits renin." },
+            { q: "Sympathetic stimulation of the kidney leads to:",
+              opts: ["Afferent arteriolar dilation", "Afferent arteriolar constriction", "Increased GFR", "Decreased renin release", "Increased urine output"],
+              correct: 1,
+              exp: "Sympathetic activation constricts afferent arterioles, reducing GFR." },
+            { q: "Prostaglandins in the kidney (PGE₂, PGI₂) promote:",
+              opts: ["Vasoconstriction", "Vasodilation and increased GFR", "Na⁺ retention", "K⁺ secretion", "Acidosis"],
+              correct: 1,
+              exp: "Renal prostaglandins vasodilate afferent arterioles, protecting GFR in low perfusion states." },
+            { q: "Which of the following is a marker of GFR?",
+              opts: ["Cystatin C", "Beta‑2 microglobulin", "Urea", "Creatinine", "All of the above"],
+              correct: 4,
+              exp: "Cystatin C is an endogenous marker; creatinine and urea are also used." },
+            { q: "Inulin clearance measures:",
+              opts: ["RPF", "GFR", "FF", "Tubular secretion", "Tubular reabsorption"],
+              correct: 1,
+              exp: "Inulin is freely filtered and not handled by tubules, so its clearance = GFR." },
+            { q: "PAH clearance estimates:",
+              opts: ["GFR", "RPF", "RBF", "FF", "Tubular secretion"],
+              correct: 1,
+              exp: "PAH is almost completely extracted, approximating RPF." },
+            { q: "The filtration fraction is increased in:",
+              opts: ["Afferent dilation", "Efferent constriction", "Low BP", "Low protein diet", "Pregnancy"],
+              correct: 1,
+              exp: "Efferent constriction (angiotensin II) increases FF." },
+            { q: "Hyperkalemia is a side effect of:",
+              opts: ["Furosemide", "Hydrochlorothiazide", "Spironolactone", "Acetazolamide", "Mannitol"],
+              correct: 2,
+              exp: "Spironolactone is potassium‑sparing." },
+            { q: "Which diuretic can cause ototoxicity?",
+              opts: ["Furosemide", "Hydrochlorothiazide", "Spironolactone", "Acetazolamide", "Mannitol"],
+              correct: 0,
+              exp: "Loop diuretics (especially ethacrynic acid) can cause ototoxicity." },
+            { q: "The most common cause of hypomagnesemia among diuretics is:",
+              opts: ["Loop diuretics", "Thiazides", "Potassium‑sparing", "Acetazolamide", "Mannitol"],
+              correct: 0,
+              exp: "Loop diuretics increase Mg²⁺ excretion." },
+            { q: "Thiazides decrease urinary excretion of:",
+              opts: ["Sodium", "Potassium", "Calcium", "Magnesium", "Uric acid"],
+              correct: 2,
+              exp: "Thiazides increase calcium reabsorption, useful for hypercalciuria." },
+            { q: "The main action of calcitonin on the kidney is:",
+              opts: ["Increase Ca²⁺ reabsorption", "Decrease Ca²⁺ reabsorption", "Increase phosphate excretion", "Increase calcitriol production", "None"],
+              correct: 1,
+              exp: "Calcitonin decreases renal Ca²⁺ reabsorption." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>
