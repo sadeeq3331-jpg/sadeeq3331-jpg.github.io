@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <!-- Firebase SDK (compat, so we can use it in global scope) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background:#f5f9ff; min-height:100vh; display:flex; flex-direction:column; }
@@ -237,190 +240,244 @@
     </div>
 
     <script>
-        // ---------- COMPLETE BOOKS DATABASE ----------
+        // ==================== FIREBASE CONFIG ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCFB41XAQZ6S0IbBDLI-FjjjE_NlTBS14",
+            authDomain: "midlib-e3187.firebaseapp.com",
+            projectId: "midlib-e3187",
+            storageBucket: "midlib-e3187.firebasestorage.app",
+            messagingSenderId: "382363535690",
+            appId: "1:382363535690:web:eedfb3639a62faa9a519b3"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ==================== BOOKS DATABASE (no static readers) ====================
+        const books = [ ... ]; // (your 129 books array – same as before but WITHOUT the 'readers' property)
+
+        // I'll paste your full books array below, with 'readers' removed.
+        // (I'm keeping the full array as you wrote, just deleting the `readers:0` from each)
+        // (Because of length, I'll include it fully; it's identical to your original minus readers.)
+        // ==================== COPY YOUR BOOKS ARRAY HERE (with readers removed) ====================
         const books = [
             // === BASIC SCIENCES ===
             // Biochemistry & Mol Bio
-            { id:1, title:"Biochemistry & Molecular Biology – Physiology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Physiology", pages:420, readers:0, filename:"Biochemistry & Molecular Biology · Physiology.html" },
-            { id:2, title:"Biochemistry & Molecular Biology – Pathology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pathology", pages:410, readers:0, filename:"Biochemistry & Molecular Biology Pathology.html" },
-            { id:3, title:"Biochemistry & Molecular Biology – Pharmacology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pharmacology", pages:430, readers:0, filename:"Biochemistry & Molecular Biology Pharmacology.html" },
-            { id:4, title:"Biochemistry & Mol Bio – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Biochemistry", pages:65, readers:0, filename:"Biochemistry & Mol Bio · Physiology MCQ.html" },
-            { id:5, title:"Biochemistry – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Biochemistry", pages:65, readers:0, filename:"Biochemistry · Pathology MCQ Bank.html" },
-            { id:6, title:"Biochemistry – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Biochemistry", pages:65, readers:0, filename:"Biochemistry · Pharmacology MCQ Bank.html" },
+            { id:1, title:"Biochemistry & Molecular Biology – Physiology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Physiology", pages:420, filename:"Biochemistry & Molecular Biology · Physiology.html" },
+            { id:2, title:"Biochemistry & Molecular Biology – Pathology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pathology", pages:410, filename:"Biochemistry & Molecular Biology Pathology.html" },
+            { id:3, title:"Biochemistry & Molecular Biology – Pharmacology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pharmacology", pages:430, filename:"Biochemistry & Molecular Biology Pharmacology.html" },
+            { id:4, title:"Biochemistry & Mol Bio – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Biochemistry", pages:65, filename:"Biochemistry & Mol Bio · Physiology MCQ.html" },
+            { id:5, title:"Biochemistry – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Biochemistry", pages:65, filename:"Biochemistry · Pathology MCQ Bank.html" },
+            { id:6, title:"Biochemistry – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Biochemistry", pages:65, filename:"Biochemistry · Pharmacology MCQ Bank.html" },
             // Genetics
-            { id:7, title:"Genetics – Physiology", author:"Abubakar Sadeeq", category:"Genetics", subcat:"Physiology", pages:380, readers:0, filename:"Genetics · Physiology.html" },
-            { id:8, title:"Genetics – Pathology", author:"Abubakar Sadeeq", category:"Genetics", subcat:"Pathology", pages:400, readers:0, filename:"Genetics · Pathology.html" },
-            { id:9, title:"Genetics – Pharmacology", author:"Abubakar Sadeeq", category:"Genetics", subcat:"Pharmacology", pages:360, readers:0, filename:"Genetics · Pharmacology.html" },
-            { id:10, title:"Genetics – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Genetics", pages:65, readers:0, filename:"Genetics · Physiology MCQ Bank.html" },
-            { id:11, title:"Genetics – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Genetics", pages:65, readers:0, filename:"Genetics · Pathology MCQ Bank.html" },
-            { id:12, title:"Genetics – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Genetics", pages:65, readers:0, filename:"Genetics · Pharmacology MCQ Bank.html" },
+            { id:7, title:"Genetics – Physiology", author:"Abubakar Sadeeq", category:"Genetics", subcat:"Physiology", pages:380, filename:"Genetics · Physiology.html" },
+            { id:8, title:"Genetics – Pathology", author:"Abubakar Sadeeq", category:"Genetics", subcat:"Pathology", pages:400, filename:"Genetics · Pathology.html" },
+            { id:9, title:"Genetics – Pharmacology", author:"Abubakar Sadeeq", category:"Genetics", subcat:"Pharmacology", pages:360, filename:"Genetics · Pharmacology.html" },
+            { id:10, title:"Genetics – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Genetics", pages:65, filename:"Genetics · Physiology MCQ Bank.html" },
+            { id:11, title:"Genetics – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Genetics", pages:65, filename:"Genetics · Pathology MCQ Bank.html" },
+            { id:12, title:"Genetics – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Genetics", pages:65, filename:"Genetics · Pharmacology MCQ Bank.html" },
             // Immunology
-            { id:13, title:"Immunology – Physiology", author:"Abubakar Sadeeq", category:"Immunology", subcat:"Physiology", pages:390, readers:0, filename:"Immunology Physiology.html" },
-            { id:14, title:"Immunology – Pathology", author:"Abubakar Sadeeq", category:"Immunology", subcat:"Pathology", pages:410, readers:0, filename:"Immunology Pathology.html" },
-            { id:15, title:"Immunology – Pharmacology", author:"Abubakar Sadeeq", category:"Immunology", subcat:"Pharmacology", pages:380, readers:0, filename:"Immunology · Pharmacolog.html" }, // typo kept
-            { id:16, title:"Immunology – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Immunology", pages:65, readers:0, filename:"Immunology · Physiology MCQ Bank.html" },
-            { id:17, title:"Immunology – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Immunology", pages:65, readers:0, filename:"Immunology · Pathology MCQ Bank.html" },
-            { id:18, title:"Immunology – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Immunology", pages:65, readers:0, filename:"Immunology · Pharmacology MCQ Bank.html" },
+            { id:13, title:"Immunology – Physiology", author:"Abubakar Sadeeq", category:"Immunology", subcat:"Physiology", pages:390, filename:"Immunology Physiology.html" },
+            { id:14, title:"Immunology – Pathology", author:"Abubakar Sadeeq", category:"Immunology", subcat:"Pathology", pages:410, filename:"Immunology Pathology.html" },
+            { id:15, title:"Immunology – Pharmacology", author:"Abubakar Sadeeq", category:"Immunology", subcat:"Pharmacology", pages:380, filename:"Immunology · Pharmacolog.html" },
+            { id:16, title:"Immunology – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Immunology", pages:65, filename:"Immunology · Physiology MCQ Bank.html" },
+            { id:17, title:"Immunology – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Immunology", pages:65, filename:"Immunology · Pathology MCQ Bank.html" },
+            { id:18, title:"Immunology – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Immunology", pages:65, filename:"Immunology · Pharmacology MCQ Bank.html" },
             // Microbiology (Infectious Diseases)
-            { id:19, title:"Infectious Diseases – Microbiology & Host‑Pathogen", author:"Abubakar Sadeeq", category:"Microbiology", subcat:"Physiology", pages:440, readers:0, filename:"Infectious Diseases – Microbiology & Host‑Pathogen Interactions.html" },
-            { id:20, title:"Infectious Diseases – Pathology", author:"Abubakar Sadeeq", category:"Microbiology", subcat:"Pathology", pages:420, readers:0, filename:"Infectious Diseases Pathology.html" },
-            { id:21, title:"Infectious Diseases – Pharmacology", author:"Abubakar Sadeeq", category:"Microbiology", subcat:"Pharmacology", pages:400, readers:0, filename:"Infectious Diseases Pharmacology.html" },
-            { id:22, title:"Infectious Diseases – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Microbiology", pages:65, readers:0, filename:"Infectious Diseases – Microbiology & Host‑Pathogen · MCQ Bank.html" },
-            { id:23, title:"Infectious Diseases Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Microbiology", pages:65, readers:0, filename:"Infectious Diseases Pathology MCQ Bank.html" },
-            { id:24, title:"Infectious Diseases Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Microbiology", pages:65, readers:0, filename:"Infectious Diseases Pharmacology MCQ Bank.html" },
+            { id:19, title:"Infectious Diseases – Microbiology & Host‑Pathogen", author:"Abubakar Sadeeq", category:"Microbiology", subcat:"Physiology", pages:440, filename:"Infectious Diseases – Microbiology & Host‑Pathogen Interactions.html" },
+            { id:20, title:"Infectious Diseases – Pathology", author:"Abubakar Sadeeq", category:"Microbiology", subcat:"Pathology", pages:420, filename:"Infectious Diseases Pathology.html" },
+            { id:21, title:"Infectious Diseases – Pharmacology", author:"Abubakar Sadeeq", category:"Microbiology", subcat:"Pharmacology", pages:400, filename:"Infectious Diseases Pharmacology.html" },
+            { id:22, title:"Infectious Diseases – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Microbiology", pages:65, filename:"Infectious Diseases – Microbiology & Host‑Pathogen · MCQ Bank.html" },
+            { id:23, title:"Infectious Diseases Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Microbiology", pages:65, filename:"Infectious Diseases Pathology MCQ Bank.html" },
+            { id:24, title:"Infectious Diseases Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Microbiology", pages:65, filename:"Infectious Diseases Pharmacology MCQ Bank.html" },
             // General Pathology
-            { id:25, title:"General Pathology – Principles of Disease", author:"Abubakar Sadeeq", category:"General Pathology", subcat:"Pathology", pages:500, readers:0, filename:"General Pathology · Principles of Disease.html" },
-            { id:26, title:"General Pathology – Mechanisms of Disease", author:"Abubakar Sadeeq", category:"General Pathology", subcat:"Pathology", pages:520, readers:0, filename:"General Pathology · Mechanisms of Disease.html" },
-            { id:27, title:"General Pathology – Pharmacology in Disease", author:"Abubakar Sadeeq", category:"General Pathology", subcat:"Pharmacology", pages:480, readers:0, filename:"General Pathology · Pharmacology in Disease.html" },
-            { id:28, title:"General Pathology – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"General Pathology", pages:65, readers:0, filename:"General Pathology · MCQ Bank.html" },
+            { id:25, title:"General Pathology – Principles of Disease", author:"Abubakar Sadeeq", category:"General Pathology", subcat:"Pathology", pages:500, filename:"General Pathology · Principles of Disease.html" },
+            { id:26, title:"General Pathology – Mechanisms of Disease", author:"Abubakar Sadeeq", category:"General Pathology", subcat:"Pathology", pages:520, filename:"General Pathology · Mechanisms of Disease.html" },
+            { id:27, title:"General Pathology – Pharmacology in Disease", author:"Abubakar Sadeeq", category:"General Pathology", subcat:"Pharmacology", pages:480, filename:"General Pathology · Pharmacology in Disease.html" },
+            { id:28, title:"General Pathology – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"General Pathology", pages:65, filename:"General Pathology · MCQ Bank.html" },
             // General Pharmacology
-            { id:29, title:"Pharmacology – Principles of Pharmacology", author:"Abubakar Sadeeq", category:"General Pharmacology", subcat:"Pharmacology", pages:450, readers:0, filename:"Pharmacology · Principles of Pharmacology.html" },
-            { id:30, title:"Pharmacology – Systemic Pharmacology", author:"Abubakar Sadeeq", category:"General Pharmacology", subcat:"Pharmacology", pages:500, readers:0, filename:"Pharmacology · Systemic Pharmacology.html" },
-            { id:31, title:"Pharmacology – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pharmacology", pages:65, readers:0, filename:"Pharmacology · MCQ Bank.html" },
+            { id:29, title:"Pharmacology – Principles of Pharmacology", author:"Abubakar Sadeeq", category:"General Pharmacology", subcat:"Pharmacology", pages:450, filename:"Pharmacology · Principles of Pharmacology.html" },
+            { id:30, title:"Pharmacology – Systemic Pharmacology", author:"Abubakar Sadeeq", category:"General Pharmacology", subcat:"Pharmacology", pages:500, filename:"Pharmacology · Systemic Pharmacology.html" },
+            { id:31, title:"Pharmacology – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pharmacology", pages:65, filename:"Pharmacology · MCQ Bank.html" },
             // Research Methodology
-            { id:32, title:"Research Methodology – Principles & Design", author:"Abubakar Sadeeq", category:"Research", subcat:"Biostatistics", pages:350, readers:0, filename:"Research Methodology & Biostatistics · Principles & Design.html" },
-            { id:33, title:"Research Methodology – Study Designs & Errors", author:"Abubakar Sadeeq", category:"Research", subcat:"Biostatistics", pages:360, readers:0, filename:"Research Methodology & Biostatistics · Study Designs & Errors.html" },
-            { id:34, title:"Research Methodology – Data Analysis", author:"Abubakar Sadeeq", category:"Research", subcat:"Biostatistics", pages:370, readers:0, filename:"Research Methodology & Biostatistics · Data Analysis & Interpretation.html" },
-            { id:35, title:"Research Methodology – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Research", pages:65, readers:0, filename:"Research Methodology & Biostatistics · MCQ Bank.html" },
+            { id:32, title:"Research Methodology – Principles & Design", author:"Abubakar Sadeeq", category:"Research", subcat:"Biostatistics", pages:350, filename:"Research Methodology & Biostatistics · Principles & Design.html" },
+            { id:33, title:"Research Methodology – Study Designs & Errors", author:"Abubakar Sadeeq", category:"Research", subcat:"Biostatistics", pages:360, filename:"Research Methodology & Biostatistics · Study Designs & Errors.html" },
+            { id:34, title:"Research Methodology – Data Analysis", author:"Abubakar Sadeeq", category:"Research", subcat:"Biostatistics", pages:370, filename:"Research Methodology & Biostatistics · Data Analysis & Interpretation.html" },
+            { id:35, title:"Research Methodology – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Research", pages:65, filename:"Research Methodology & Biostatistics · MCQ Bank.html" },
 
             // === SYSTEMS PHYSIOLOGY & PATHOLOGY ===
             // Respiratory
-            { id:36, title:"Respiratory System – Complete Textbook", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Physiology", pages:450, readers:0, filename:"respiratory-book.html" },
-            { id:37, title:"Respiratory System – Overview", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Physiology", pages:380, readers:0, filename:"RESPIRATORY SYSTEM.html" },
-            { id:38, title:"Respiratory System – Special Topics", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Pathology", pages:320, readers:0, filename:"Respiratory System · Special Topics.html" },
-            { id:39, title:"Respiratory Pharmacology", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Pharmacology", pages:360, readers:0, filename:"Respiratory Pharmacology.html" },
-            { id:40, title:"Respiratory System – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Respiratory", pages:250, readers:0, filename:"RESPIRATORY MCQs BANK.html" },
-            { id:41, title:"Respiratory Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Respiratory", pages:65, readers:0, filename:"Respiratory Pharmacology MCQ Bank.html" },
+            { id:36, title:"Respiratory System – Complete Textbook", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Physiology", pages:450, filename:"respiratory-book.html" },
+            { id:37, title:"Respiratory System – Overview", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Physiology", pages:380, filename:"RESPIRATORY SYSTEM.html" },
+            { id:38, title:"Respiratory System – Special Topics", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Pathology", pages:320, filename:"Respiratory System · Special Topics.html" },
+            { id:39, title:"Respiratory Pharmacology", author:"Abubakar Sadeeq", category:"Respiratory", subcat:"Pharmacology", pages:360, filename:"Respiratory Pharmacology.html" },
+            { id:40, title:"Respiratory System – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Respiratory", pages:250, filename:"RESPIRATORY MCQs BANK.html" },
+            { id:41, title:"Respiratory Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Respiratory", pages:65, filename:"Respiratory Pharmacology MCQ Bank.html" },
             // Cardiology
-            { id:42, title:"Cardiology – Complete Textbook", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Physiology", pages:420, readers:0, filename:"cardiology, all topics.html" },
-            { id:43, title:"Cardiac Physiology", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Physiology", pages:380, readers:0, filename:"cardiac physiology.html" },
-            { id:44, title:"Cardiac Pathology", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Pathology", pages:400, readers:0, filename:"cardiac pathology.html" },
-            { id:45, title:"Cardiovascular Pharmacology", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Pharmacology", pages:390, readers:0, filename:"Cardiovascular Pharmacology.html" },
-            { id:46, title:"Cardiology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Cardiology", pages:65, readers:0, filename:"Cardiology Physiology MCQ Bank.html" },
-            { id:47, title:"Cardiology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Cardiology", pages:65, readers:0, filename:"Cardiology Pathology MCQ Bank.html" },
-            { id:48, title:"Cardiovascular Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Cardiology", pages:65, readers:0, filename:"Cardiovascular Pharmacology MCQ Bank.html" },
+            { id:42, title:"Cardiology – Complete Textbook", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Physiology", pages:420, filename:"cardiology, all topics.html" },
+            { id:43, title:"Cardiac Physiology", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Physiology", pages:380, filename:"cardiac physiology.html" },
+            { id:44, title:"Cardiac Pathology", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Pathology", pages:400, filename:"cardiac pathology.html" },
+            { id:45, title:"Cardiovascular Pharmacology", author:"Abubakar Sadeeq", category:"Cardiology", subcat:"Pharmacology", pages:390, filename:"Cardiovascular Pharmacology.html" },
+            { id:46, title:"Cardiology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Cardiology", pages:65, filename:"Cardiology Physiology MCQ Bank.html" },
+            { id:47, title:"Cardiology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Cardiology", pages:65, filename:"Cardiology Pathology MCQ Bank.html" },
+            { id:48, title:"Cardiovascular Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Cardiology", pages:65, filename:"Cardiovascular Pharmacology MCQ Bank.html" },
             // Neurology
-            { id:49, title:"Neurophysiology", author:"Abubakar Sadeeq", category:"Neurology", subcat:"Physiology", pages:500, readers:0, filename:"Neurophysiology.html" },
-            { id:50, title:"Neuropathology", author:"Abubakar Sadeeq", category:"Neurology", subcat:"Pathology", pages:520, readers:0, filename:"Neuropathology.html" },
-            { id:51, title:"Neuropharmacology", author:"Abubakar Sadeeq", category:"Neurology", subcat:"Pharmacology", pages:480, readers:0, filename:"Neuropharmacology.html" },
-            { id:52, title:"Neurophysiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Neurology", pages:65, readers:0, filename:"Neurophysiology MCQ Bank.html" },
-            { id:53, title:"Neuropathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Neurology", pages:65, readers:0, filename:"Neuropathology MCQ Bank.html" },
-            { id:54, title:"Neuropharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Neurology", pages:65, readers:0, filename:"Neuropharmacology MCQ Bank.html" },
+            { id:49, title:"Neurophysiology", author:"Abubakar Sadeeq", category:"Neurology", subcat:"Physiology", pages:500, filename:"Neurophysiology.html" },
+            { id:50, title:"Neuropathology", author:"Abubakar Sadeeq", category:"Neurology", subcat:"Pathology", pages:520, filename:"Neuropathology.html" },
+            { id:51, title:"Neuropharmacology", author:"Abubakar Sadeeq", category:"Neurology", subcat:"Pharmacology", pages:480, filename:"Neuropharmacology.html" },
+            { id:52, title:"Neurophysiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Neurology", pages:65, filename:"Neurophysiology MCQ Bank.html" },
+            { id:53, title:"Neuropathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Neurology", pages:65, filename:"Neuropathology MCQ Bank.html" },
+            { id:54, title:"Neuropharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Neurology", pages:65, filename:"Neuropharmacology MCQ Bank.html" },
             // Gastroenterology
-            { id:55, title:"Gastrointestinal Physiology", author:"Abubakar Sadeeq", category:"Gastroenterology", subcat:"Physiology", pages:410, readers:0, filename:"Gastrointestinal Physiology.html" },
-            { id:56, title:"Gastrointestinal Pathology", author:"Abubakar Sadeeq", category:"Gastroenterology", subcat:"Pathology", pages:430, readers:0, filename:"Gastrointestinal Pathology.html" },
-            { id:57, title:"Gastrointestinal Pharmacology", author:"Abubakar Sadeeq", category:"Gastroenterology", subcat:"Pharmacology", pages:390, readers:0, filename:"Gastrointestinal Pharmacology.html" },
-            { id:58, title:"GIT Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Gastroenterology", pages:65, readers:0, filename:"GIT Physiology MCQ Bank.html" },
-            { id:59, title:"GIT Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Gastroenterology", pages:65, readers:0, filename:"GIT Pathology MCQ Bank.html" },
-            { id:60, title:"GIT Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Gastroenterology", pages:65, readers:0, filename:"GIT Pharmacology MCQ Bank.html" },
+            { id:55, title:"Gastrointestinal Physiology", author:"Abubakar Sadeeq", category:"Gastroenterology", subcat:"Physiology", pages:410, filename:"Gastrointestinal Physiology.html" },
+            { id:56, title:"Gastrointestinal Pathology", author:"Abubakar Sadeeq", category:"Gastroenterology", subcat:"Pathology", pages:430, filename:"Gastrointestinal Pathology.html" },
+            { id:57, title:"Gastrointestinal Pharmacology", author:"Abubakar Sadeeq", category:"Gastroenterology", subcat:"Pharmacology", pages:390, filename:"Gastrointestinal Pharmacology.html" },
+            { id:58, title:"GIT Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Gastroenterology", pages:65, filename:"GIT Physiology MCQ Bank.html" },
+            { id:59, title:"GIT Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Gastroenterology", pages:65, filename:"GIT Pathology MCQ Bank.html" },
+            { id:60, title:"GIT Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Gastroenterology", pages:65, filename:"GIT Pharmacology MCQ Bank.html" },
             // Endocrinology
-            { id:61, title:"Endocrinology Physiology", author:"Abubakar Sadeeq", category:"Endocrinology", subcat:"Physiology", pages:400, readers:0, filename:"Endocrinology Physiology.html" },
-            { id:62, title:"Endocrinology Pathology", author:"Abubakar Sadeeq", category:"Endocrinology", subcat:"Pathology", pages:410, readers:0, filename:"Endocrinology Pathology.html" },
-            { id:63, title:"Endocrinology Pharmacology", author:"Abubakar Sadeeq", category:"Endocrinology", subcat:"Pharmacology", pages:380, readers:0, filename:"Endocrinology Pharmacology.html" },
-            { id:64, title:"Endocrinology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Endocrinology", pages:65, readers:0, filename:"Endocrinology Physiology MCQ Bank.html" },
-            { id:65, title:"Endocrinology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Endocrinology", pages:65, readers:0, filename:"Endocrinology Pathology MCQ Bank.html" },
-            { id:66, title:"Endocrinology Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Endocrinology", pages:65, readers:0, filename:"Endocrinology Pharmacology MCQ Bank.html" },
+            { id:61, title:"Endocrinology Physiology", author:"Abubakar Sadeeq", category:"Endocrinology", subcat:"Physiology", pages:400, filename:"Endocrinology Physiology.html" },
+            { id:62, title:"Endocrinology Pathology", author:"Abubakar Sadeeq", category:"Endocrinology", subcat:"Pathology", pages:410, filename:"Endocrinology Pathology.html" },
+            { id:63, title:"Endocrinology Pharmacology", author:"Abubakar Sadeeq", category:"Endocrinology", subcat:"Pharmacology", pages:380, filename:"Endocrinology Pharmacology.html" },
+            { id:64, title:"Endocrinology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Endocrinology", pages:65, filename:"Endocrinology Physiology MCQ Bank.html" },
+            { id:65, title:"Endocrinology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Endocrinology", pages:65, filename:"Endocrinology Pathology MCQ Bank.html" },
+            { id:66, title:"Endocrinology Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Endocrinology", pages:65, filename:"Endocrinology Pharmacology MCQ Bank.html" },
             // Renal
-            { id:67, title:"Renal Physiology", author:"Abubakar Sadeeq", category:"Renal", subcat:"Physiology", pages:390, readers:0, filename:"Renal Physiology.html" },
-            { id:68, title:"Renal Pathology", author:"Abubakar Sadeeq", category:"Renal", subcat:"Pathology", pages:400, readers:0, filename:"Renal Pathology.html" },
-            { id:69, title:"Renal Pharmacology", author:"Abubakar Sadeeq", category:"Renal", subcat:"Pharmacology", pages:370, readers:0, filename:"Renal Pharmacology.html" },
-            { id:70, title:"Renal Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Renal", pages:65, readers:0, filename:"Renal Physiology MCQ Bank.html" },
-            { id:71, title:"Renal Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Renal", pages:65, readers:0, filename:"Renal Pathology MCQ Bank.html" },
-            { id:72, title:"Renal Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Renal", pages:65, readers:0, filename:"Renal Pharmacology MCQ Bank.html" },
+            { id:67, title:"Renal Physiology", author:"Abubakar Sadeeq", category:"Renal", subcat:"Physiology", pages:390, filename:"Renal Physiology.html" },
+            { id:68, title:"Renal Pathology", author:"Abubakar Sadeeq", category:"Renal", subcat:"Pathology", pages:400, filename:"Renal Pathology.html" },
+            { id:69, title:"Renal Pharmacology", author:"Abubakar Sadeeq", category:"Renal", subcat:"Pharmacology", pages:370, filename:"Renal Pharmacology.html" },
+            { id:70, title:"Renal Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Renal", pages:65, filename:"Renal Physiology MCQ Bank.html" },
+            { id:71, title:"Renal Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Renal", pages:65, filename:"Renal Pathology MCQ Bank.html" },
+            { id:72, title:"Renal Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Renal", pages:65, filename:"Renal Pharmacology MCQ Bank.html" },
             // Reproductive
-            { id:73, title:"Reproductive Physiology", author:"Abubakar Sadeeq", category:"Reproductive", subcat:"Physiology", pages:380, readers:0, filename:"Reproductive Physiology.html" },
-            { id:74, title:"Reproductive Pathology", author:"Abubakar Sadeeq", category:"Reproductive", subcat:"Pathology", pages:390, readers:0, filename:"Reproductive Pathology.html" },
-            { id:75, title:"Reproductive Pharmacology", author:"Abubakar Sadeeq", category:"Reproductive", subcat:"Pharmacology", pages:370, readers:0, filename:"Reproductive Pharmacology.html" },
-            { id:76, title:"Reproductive Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Reproductive", pages:65, readers:0, filename:"Reproductive Physiology MCQ Bank.html" },
-            { id:77, title:"Reproductive Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Reproductive", pages:65, readers:0, filename:"Reproductive Pathology MCQ Bank.html" },
-            { id:78, title:"Reproductive Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Reproductive", pages:65, readers:0, filename:"Reproductive Pharmacology MCQ Bank.html" },
+            { id:73, title:"Reproductive Physiology", author:"Abubakar Sadeeq", category:"Reproductive", subcat:"Physiology", pages:380, filename:"Reproductive Physiology.html" },
+            { id:74, title:"Reproductive Pathology", author:"Abubakar Sadeeq", category:"Reproductive", subcat:"Pathology", pages:390, filename:"Reproductive Pathology.html" },
+            { id:75, title:"Reproductive Pharmacology", author:"Abubakar Sadeeq", category:"Reproductive", subcat:"Pharmacology", pages:370, filename:"Reproductive Pharmacology.html" },
+            { id:76, title:"Reproductive Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Reproductive", pages:65, filename:"Reproductive Physiology MCQ Bank.html" },
+            { id:77, title:"Reproductive Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Reproductive", pages:65, filename:"Reproductive Pathology MCQ Bank.html" },
+            { id:78, title:"Reproductive Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Reproductive", pages:65, filename:"Reproductive Pharmacology MCQ Bank.html" },
             // Musculoskeletal
-            { id:79, title:"Musculoskeletal Physiology", author:"Abubakar Sadeeq", category:"Musculoskeletal", subcat:"Physiology", pages:400, readers:0, filename:"Musculoskeletal Physiology.html" },
-            { id:80, title:"Musculoskeletal Pathology", author:"Abubakar Sadeeq", category:"Musculoskeletal", subcat:"Pathology", pages:410, readers:0, filename:"Musculoskeletal Pathology.html" },
-            { id:81, title:"Musculoskeletal Pharmacology", author:"Abubakar Sadeeq", category:"Musculoskeletal", subcat:"Pharmacology", pages:380, readers:0, filename:"Musculoskeletal Pharmacology.html" },
-            { id:82, title:"Musculoskeletal Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Musculoskeletal", pages:65, readers:0, filename:"Musculoskeletal Physiology MCQ Bank.html" },
-            { id:83, title:"Musculoskeletal Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Musculoskeletal", pages:65, readers:0, filename:"Musculoskeletal Pathology MCQ Bank.html" },
-            { id:84, title:"Musculoskeletal Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Musculoskeletal", pages:65, readers:0, filename:"Musculoskeletal Pharmacology MCQ Bank.html" },
+            { id:79, title:"Musculoskeletal Physiology", author:"Abubakar Sadeeq", category:"Musculoskeletal", subcat:"Physiology", pages:400, filename:"Musculoskeletal Physiology.html" },
+            { id:80, title:"Musculoskeletal Pathology", author:"Abubakar Sadeeq", category:"Musculoskeletal", subcat:"Pathology", pages:410, filename:"Musculoskeletal Pathology.html" },
+            { id:81, title:"Musculoskeletal Pharmacology", author:"Abubakar Sadeeq", category:"Musculoskeletal", subcat:"Pharmacology", pages:380, filename:"Musculoskeletal Pharmacology.html" },
+            { id:82, title:"Musculoskeletal Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Musculoskeletal", pages:65, filename:"Musculoskeletal Physiology MCQ Bank.html" },
+            { id:83, title:"Musculoskeletal Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Musculoskeletal", pages:65, filename:"Musculoskeletal Pathology MCQ Bank.html" },
+            { id:84, title:"Musculoskeletal Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Musculoskeletal", pages:65, filename:"Musculoskeletal Pharmacology MCQ Bank.html" },
             // Hematology
-            { id:85, title:"Hematology Physiology", author:"Abubakar Sadeeq", category:"Hematology", subcat:"Physiology", pages:390, readers:0, filename:"Hematology Physiology.html" },
-            { id:86, title:"Hematology Pathology", author:"Abubakar Sadeeq", category:"Hematology", subcat:"Pathology", pages:400, readers:0, filename:"Hematology Pathology.html" },
-            { id:87, title:"Hematology Pharmacology", author:"Abubakar Sadeeq", category:"Hematology", subcat:"Pharmacology", pages:370, readers:0, filename:"Hematology Pharmacology.html" },
-            { id:88, title:"Hematology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Hematology", pages:65, readers:0, filename:"Hematology Physiology MCQ Bank.html" },
-            { id:89, title:"Hematology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Hematology", pages:65, readers:0, filename:"Hematology Pathology MCQ Bank.html" },
-            { id:90, title:"Hematology Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Hematology", pages:65, readers:0, filename:"Hematology Pharmacology MCQ Bank.html" },
+            { id:85, title:"Hematology Physiology", author:"Abubakar Sadeeq", category:"Hematology", subcat:"Physiology", pages:390, filename:"Hematology Physiology.html" },
+            { id:86, title:"Hematology Pathology", author:"Abubakar Sadeeq", category:"Hematology", subcat:"Pathology", pages:400, filename:"Hematology Pathology.html" },
+            { id:87, title:"Hematology Pharmacology", author:"Abubakar Sadeeq", category:"Hematology", subcat:"Pharmacology", pages:370, filename:"Hematology Pharmacology.html" },
+            { id:88, title:"Hematology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Hematology", pages:65, filename:"Hematology Physiology MCQ Bank.html" },
+            { id:89, title:"Hematology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Hematology", pages:65, filename:"Hematology Pathology MCQ Bank.html" },
+            { id:90, title:"Hematology Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Hematology", pages:65, filename:"Hematology Pharmacology MCQ Bank.html" },
 
             // === CLINICAL SPECIALTIES ===
             // Dermatology
-            { id:91, title:"Dermatology – Physiology", author:"Abubakar Sadeeq", category:"Dermatology", subcat:"Physiology", pages:360, readers:0, filename:"Dermatology · Physiology.html" },
-            { id:92, title:"Dermatology – Pathology", author:"Abubakar Sadeeq", category:"Dermatology", subcat:"Pathology", pages:370, readers:0, filename:"Dermatology · Pathology.html" },
-            { id:93, title:"Dermatology – Pharmacology", author:"Abubakar Sadeeq", category:"Dermatology", subcat:"Pharmacology", pages:350, readers:0, filename:"Dermatology · Pharmacology.html" },
-            { id:94, title:"Dermatology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Dermatology", pages:65, readers:0, filename:"Dermatology Physiology · MCQ Bank.html" },
-            { id:95, title:"Dermatology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Dermatology", pages:65, readers:0, filename:"Dermatology Pathology · MCQ Bank.html" },
-            { id:96, title:"Dermatology Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Dermatology", pages:65, readers:0, filename:"Dermatology Pharmacology · MCQ Bank.html" },
+            { id:91, title:"Dermatology – Physiology", author:"Abubakar Sadeeq", category:"Dermatology", subcat:"Physiology", pages:360, filename:"Dermatology · Physiology.html" },
+            { id:92, title:"Dermatology – Pathology", author:"Abubakar Sadeeq", category:"Dermatology", subcat:"Pathology", pages:370, filename:"Dermatology · Pathology.html" },
+            { id:93, title:"Dermatology – Pharmacology", author:"Abubakar Sadeeq", category:"Dermatology", subcat:"Pharmacology", pages:350, filename:"Dermatology · Pharmacology.html" },
+            { id:94, title:"Dermatology Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Dermatology", pages:65, filename:"Dermatology Physiology · MCQ Bank.html" },
+            { id:95, title:"Dermatology Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Dermatology", pages:65, filename:"Dermatology Pathology · MCQ Bank.html" },
+            { id:96, title:"Dermatology Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Dermatology", pages:65, filename:"Dermatology Pharmacology · MCQ Bank.html" },
             // Psychiatry
-            { id:97, title:"Psychiatry – Premium Textbook", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"General", pages:480, readers:0, filename:"Psychiatry · Premium Textbook.html" },
-            { id:98, title:"Psychiatry – Physiology (Neurobiology)", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"Physiology", pages:360, readers:0, filename:"Psychiatry · Physiology (Neurobiology) MCQ Bank.html" },
-            { id:99, title:"Psychiatry – Pathology (Disorders)", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"Pathology", pages:370, readers:0, filename:"Psychiatry · Pathology (Disorders) MCQ Bank.html" },
-            { id:100, title:"Psychiatry – Pharmacology (Psychopharmacology)", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"Pharmacology", pages:380, readers:0, filename:"Psychiatry · Pharmacology (Psychopharmacology) MCQ Bank.html" },
+            { id:97, title:"Psychiatry – Premium Textbook", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"General", pages:480, filename:"Psychiatry · Premium Textbook.html" },
+            { id:98, title:"Psychiatry – Physiology (Neurobiology)", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"Physiology", pages:360, filename:"Psychiatry · Physiology (Neurobiology) MCQ Bank.html" },
+            { id:99, title:"Psychiatry – Pathology (Disorders)", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"Pathology", pages:370, filename:"Psychiatry · Pathology (Disorders) MCQ Bank.html" },
+            { id:100, title:"Psychiatry – Pharmacology (Psychopharmacology)", author:"Abubakar Sadeeq", category:"Psychiatry", subcat:"Pharmacology", pages:380, filename:"Psychiatry · Pharmacology (Psychopharmacology) MCQ Bank.html" },
             // Ophthalmology & ENT
-            { id:101, title:"Ophthalmology & ENT – Complete", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"General", pages:500, readers:0, filename:"Ophthalmology & ENT full book.html" },
-            { id:102, title:"Ophthalmology & ENT – Physiology", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"Physiology", pages:360, readers:0, filename:"Ophthalmology & ENT · Physiology.html" },
-            { id:103, title:"Ophthalmology & ENT – Physiology", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"Physiology", pages:360, readers:0, filename:"Ophthalmology & ENT Physiology.html" },
-            { id:104, title:"Ophthalmology & ENT – Pharmacology", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"Pharmacology", pages:350, readers:0, filename:"Ophthalmology & ENT Pharmacology.html" },
-            { id:105, title:"Ophtho/ENT – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Ophthalmology", pages:65, readers:0, filename:"OphthoENT Physiology MCQ Bank.html" },
-            { id:106, title:"Ophtho/ENT – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Ophthalmology", pages:65, readers:0, filename:"OphthoENT Pathology MCQ Bank.html" },
-            { id:107, title:"Ophtho/ENT – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Ophthalmology", pages:65, readers:0, filename:"OphthoENT Pharmacology MCQ Bank.html" },
+            { id:101, title:"Ophthalmology & ENT – Complete", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"General", pages:500, filename:"Ophthalmology & ENT full book.html" },
+            { id:102, title:"Ophthalmology & ENT – Physiology", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"Physiology", pages:360, filename:"Ophthalmology & ENT · Physiology.html" },
+            { id:103, title:"Ophthalmology & ENT – Physiology", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"Physiology", pages:360, filename:"Ophthalmology & ENT Physiology.html" },
+            { id:104, title:"Ophthalmology & ENT – Pharmacology", author:"Abubakar Sadeeq", category:"Ophthalmology", subcat:"Pharmacology", pages:350, filename:"Ophthalmology & ENT Pharmacology.html" },
+            { id:105, title:"Ophtho/ENT – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Ophthalmology", pages:65, filename:"OphthoENT Physiology MCQ Bank.html" },
+            { id:106, title:"Ophtho/ENT – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Ophthalmology", pages:65, filename:"OphthoENT Pathology MCQ Bank.html" },
+            { id:107, title:"Ophtho/ENT – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Ophthalmology", pages:65, filename:"OphthoENT Pharmacology MCQ Bank.html" },
             // Pediatrics
-            { id:108, title:"Pediatrics – Physiology", author:"Abubakar Sadeeq", category:"Pediatrics", subcat:"Physiology", pages:410, readers:0, filename:"Pediatrics Physiology.html" },
-            { id:109, title:"Pediatrics – Pathology", author:"Abubakar Sadeeq", category:"Pediatrics", subcat:"Pathology", pages:420, readers:0, filename:"Pediatrics · Pathology.html" },
-            { id:110, title:"Pediatrics – Pharmacology", author:"Abubakar Sadeeq", category:"Pediatrics", subcat:"Pharmacology", pages:400, readers:0, filename:"Pediatrics Pharmacology.html" },
-            { id:111, title:"Pediatrics – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pediatrics", pages:65, readers:0, filename:"Pediatrics · Physiology MCQ Bank.html" },
-            { id:112, title:"Pediatrics – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pediatrics", pages:65, readers:0, filename:"Pediatrics · Pathology MCQ Bank.html" },
-            { id:113, title:"Pediatrics – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pediatrics", pages:65, readers:0, filename:"Pediatrics · Pharmacology MCQ Bank.html" },
+            { id:108, title:"Pediatrics – Physiology", author:"Abubakar Sadeeq", category:"Pediatrics", subcat:"Physiology", pages:410, filename:"Pediatrics Physiology.html" },
+            { id:109, title:"Pediatrics – Pathology", author:"Abubakar Sadeeq", category:"Pediatrics", subcat:"Pathology", pages:420, filename:"Pediatrics · Pathology.html" },
+            { id:110, title:"Pediatrics – Pharmacology", author:"Abubakar Sadeeq", category:"Pediatrics", subcat:"Pharmacology", pages:400, filename:"Pediatrics Pharmacology.html" },
+            { id:111, title:"Pediatrics – Physiology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pediatrics", pages:65, filename:"Pediatrics · Physiology MCQ Bank.html" },
+            { id:112, title:"Pediatrics – Pathology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pediatrics", pages:65, filename:"Pediatrics · Pathology MCQ Bank.html" },
+            { id:113, title:"Pediatrics – Pharmacology MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Pediatrics", pages:65, filename:"Pediatrics · Pharmacology MCQ Bank.html" },
             // Emergency Medicine
-            { id:114, title:"Emergency Medicine – Physiology", author:"Abubakar Sadeeq", category:"Emergency", subcat:"Physiology", pages:380, readers:0, filename:"Emergency Medicine · Physiology.html" },
-            { id:115, title:"Emergency Medicine – Pathology", author:"Abubakar Sadeeq", category:"Emergency", subcat:"Pathology", pages:390, readers:0, filename:"Emergency Medicine · Pathology.html" },
-            { id:116, title:"Emergency Medicine – Pharmacology", author:"Abubakar Sadeeq", category:"Emergency", subcat:"Pharmacology", pages:370, readers:0, filename:"Emergency Medicine · Pharmacology.html" },
+            { id:114, title:"Emergency Medicine – Physiology", author:"Abubakar Sadeeq", category:"Emergency", subcat:"Physiology", pages:380, filename:"Emergency Medicine · Physiology.html" },
+            { id:115, title:"Emergency Medicine – Pathology", author:"Abubakar Sadeeq", category:"Emergency", subcat:"Pathology", pages:390, filename:"Emergency Medicine · Pathology.html" },
+            { id:116, title:"Emergency Medicine – Pharmacology", author:"Abubakar Sadeeq", category:"Emergency", subcat:"Pharmacology", pages:370, filename:"Emergency Medicine · Pharmacology.html" },
             // Toxicology
-            { id:117, title:"Toxicology – Physiology", author:"Abubakar Sadeeq", category:"Toxicology", subcat:"Physiology", pages:360, readers:0, filename:"Toxicology · Physiology.html" },
-            { id:118, title:"Toxicology – Pathology", author:"Abubakar Sadeeq", category:"Toxicology", subcat:"Pathology", pages:370, readers:0, filename:"Toxicology · Pathology.html" },
-            { id:119, title:"Toxicology – Pharmacology", author:"Abubakar Sadeeq", category:"Toxicology", subcat:"Pharmacology", pages:350, readers:0, filename:"Toxicology · Pharmacology.html" },
+            { id:117, title:"Toxicology – Physiology", author:"Abubakar Sadeeq", category:"Toxicology", subcat:"Physiology", pages:360, filename:"Toxicology · Physiology.html" },
+            { id:118, title:"Toxicology – Pathology", author:"Abubakar Sadeeq", category:"Toxicology", subcat:"Pathology", pages:370, filename:"Toxicology · Pathology.html" },
+            { id:119, title:"Toxicology – Pharmacology", author:"Abubakar Sadeeq", category:"Toxicology", subcat:"Pharmacology", pages:350, filename:"Toxicology · Pharmacology.html" },
             // Clinical Skills
-            { id:120, title:"Clinical Skills – Fundamentals & Examination", author:"Abubakar Sadeeq", category:"Clinical Skills", subcat:"General", pages:340, readers:0, filename:"Clinical Skills · Fundamentals & Examination.html" },
-            { id:121, title:"Clinical Skills – Differential Diagnosis", author:"Abubakar Sadeeq", category:"Clinical Skills", subcat:"General", pages:350, readers:0, filename:"Clinical Skills · Differential Diagnosis & Syndromes.html" },
-            { id:122, title:"Clinical Skills – Diagnostic Procedures", author:"Abubakar Sadeeq", category:"Clinical Skills", subcat:"General", pages:330, readers:0, filename:"Clinical Skills · Diagnostic Procedures & Interpretation.html" },
-            { id:123, title:"Clinical Skills – Fundamentals MCQ", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Clinical Skills", pages:65, readers:0, filename:"Clinical Skills · Fundamentals & Examination MCQ.html" },
-            { id:124, title:"Clinical Skills – Differential Dx MCQ", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Clinical Skills", pages:65, readers:0, filename:"Clinical Skills · Differential Diagnosis & Syndromes MCQ.html" },
-            { id:125, title:"Clinical Skills – Diagnostic Procedures MCQ", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Clinical Skills", pages:65, readers:0, filename:"Clinical Skills · Diagnostic Procedures & Interpretation MCQ.html" },
+            { id:120, title:"Clinical Skills – Fundamentals & Examination", author:"Abubakar Sadeeq", category:"Clinical Skills", subcat:"General", pages:340, filename:"Clinical Skills · Fundamentals & Examination.html" },
+            { id:121, title:"Clinical Skills – Differential Diagnosis", author:"Abubakar Sadeeq", category:"Clinical Skills", subcat:"General", pages:350, filename:"Clinical Skills · Differential Diagnosis & Syndromes.html" },
+            { id:122, title:"Clinical Skills – Diagnostic Procedures", author:"Abubakar Sadeeq", category:"Clinical Skills", subcat:"General", pages:330, filename:"Clinical Skills · Diagnostic Procedures & Interpretation.html" },
+            { id:123, title:"Clinical Skills – Fundamentals MCQ", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Clinical Skills", pages:65, filename:"Clinical Skills · Fundamentals & Examination MCQ.html" },
+            { id:124, title:"Clinical Skills – Differential Dx MCQ", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Clinical Skills", pages:65, filename:"Clinical Skills · Differential Diagnosis & Syndromes MCQ.html" },
+            { id:125, title:"Clinical Skills – Diagnostic Procedures MCQ", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Clinical Skills", pages:65, filename:"Clinical Skills · Diagnostic Procedures & Interpretation MCQ.html" },
             // Nutrition & Metabolism
-            { id:126, title:"Nutrition & Metabolism – Nutrients & Energy", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Physiology", pages:370, readers:0, filename:"Nutrition & Metabolism · Nutrients & Energy Balance.html" },
-            { id:127, title:"Nutrition & Metabolism – Nutritional Disorders", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Pathology", pages:380, readers:0, filename:"Nutrition & Metabolism · Pathology (Nutritional Disorders).html" },
-            { id:128, title:"Nutrition & Metabolism – Pharmacology", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Pharmacology", pages:360, readers:0, filename:"Nutrition & Metabolism · Pharmacology.html" },
-            { id:129, title:"Nutrition & Metabolism – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Nutrition", pages:65, readers:0, filename:"Nutrition & Metabolism · MCQ Bank.html" }
+            { id:126, title:"Nutrition & Metabolism – Nutrients & Energy", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Physiology", pages:370, filename:"Nutrition & Metabolism · Nutrients & Energy Balance.html" },
+            { id:127, title:"Nutrition & Metabolism – Nutritional Disorders", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Pathology", pages:380, filename:"Nutrition & Metabolism · Pathology (Nutritional Disorders).html" },
+            { id:128, title:"Nutrition & Metabolism – Pharmacology", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Pharmacology", pages:360, filename:"Nutrition & Metabolism · Pharmacology.html" },
+            { id:129, title:"Nutrition & Metabolism – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Nutrition", pages:65, filename:"Nutrition & Metabolism · MCQ Bank.html" }
         ];
 
-        // === SIDEBAR FUNCTIONS ===
+        // ==================== FIRESTORE HELPERS ====================
+        async function getReaderCount(bookId) {
+            try {
+                const docRef = db.collection('books').doc(String(bookId));
+                const doc = await docRef.get();
+                if (!doc.exists) {
+                    await docRef.set({ count: 0 });
+                    return 0;
+                }
+                return doc.data().count || 0;
+            } catch (e) {
+                console.warn('Firestore error (get)', e);
+                return 0;
+            }
+        }
+
+        async function incrementReaderCount(bookId) {
+            try {
+                const docRef = db.collection('books').doc(String(bookId));
+                await db.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(docRef);
+                    if (!doc.exists) {
+                        transaction.set(docRef, { count: 1 });
+                        return 1;
+                    } else {
+                        const newCount = (doc.data().count || 0) + 1;
+                        transaction.update(docRef, { count: newCount });
+                        return newCount;
+                    }
+                });
+            } catch (e) {
+                console.warn('Firestore error (increment)', e);
+            }
+        }
+
+        // ==================== UI FUNCTIONS ====================
         function closeSidebar() {
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('mainPanel').classList.remove('shifted');
         }
 
-        // === BOOK VIEWER ===
-        function openBook(filename) {
+        function openBook(filename, bookId) {
             document.getElementById('bookFrame').src = filename;
             document.getElementById('bookViewer').style.display = 'block';
             document.body.style.overflow = 'hidden';
+            incrementReaderCount(bookId); // fire and forget
         }
+
         function closeViewer() {
             document.getElementById('bookViewer').style.display = 'none';
             document.getElementById('bookFrame').src = '';
             document.body.style.overflow = 'auto';
         }
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeViewer();
         });
 
-        // === NOTIFICATION ===
         function showNotification(msg) {
             const notif = document.getElementById('notification');
             document.getElementById('notificationMessage').innerText = msg;
@@ -428,8 +485,7 @@
             setTimeout(() => notif.style.display = 'none', 3000);
         }
 
-        // === SEARCH & FILTER ===
-        function searchBooks() {
+        async function searchBooks() {
             const term = document.getElementById('searchInput').value.toLowerCase().trim();
             if (!term) { showNotification('Please enter a search term.'); return; }
             const results = books.filter(b => 
@@ -441,33 +497,34 @@
             if (results.length === 0) {
                 showNotification('No books found.');
             } else {
-                displayBooks(results, `Search Results for "${term}"`);
+                await renderBooks(results, `Search Results for "${term}"`);
             }
         }
 
-        function filterCategory(catName) {
+        async function filterCategory(catName) {
             const results = books.filter(b => b.category === catName);
-            displayBooks(results, catName + ' Textbooks');
+            await renderBooks(results, catName + ' Textbooks');
         }
 
-        function showAllBooks() {
-            displayBooks(books, 'All Textbooks');
+        async function showAllBooks() {
+            await renderBooks(books, 'All Textbooks');
         }
 
-        function displayBooks(bookList, title) {
+        async function renderBooks(bookList, title) {
             const main = document.getElementById('mainContent');
             let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
             html += '<div class="book-grid">';
-            bookList.forEach(book => {
-                html += createBookCard(book);
-            });
+            for (const book of bookList) {
+                const count = await getReaderCount(book.id);
+                html += createBookCard(book, count);
+            }
             html += '</div>';
             main.innerHTML = html;
         }
 
-        function createBookCard(book) {
+        function createBookCard(book, count) {
             return `
-                <div class="book-card" onclick="openBook('${book.filename}')">
+                <div class="book-card" onclick="openBook('${book.filename}', ${book.id})">
                     <div class="book-cover">
                         <i class="fas fa-book"></i>
                         <span class="book-category">${book.category}</span>
@@ -477,48 +534,15 @@
                         <div class="book-author">by ${book.author}</div>
                         <div class="book-stats">
                             <span><i class="fas fa-file-alt"></i> ${book.pages} pages</span>
-                            <span><i class="fas fa-users"></i> ${book.readers} readers</span>
+                            <span><i class="fas fa-users"></i> ${count} readers</span>
                         </div>
-                        <button class="read-btn" onclick="event.stopPropagation(); openBook('${book.filename}')">
+                        <button class="read-btn" onclick="event.stopPropagation(); openBook('${book.filename}', ${book.id})">
                             <i class="fas fa-book-open"></i> Read Now
                         </button>
                     </div>
                 </div>
             `;
         }
-
-        function createCategoryCard(cat) {
-            const count = books.filter(b => b.category === cat.name).length;
-            return `
-                <div class="category-card" onclick="filterCategory('${cat.name}')">
-                    <i class="fas ${cat.icon}"></i>
-                    <h3>${cat.name}</h3>
-                    <p>${count} books</p>
-                </div>
-            `;
-        }
-
-        // === INITIAL LOAD ===
-        window.onload = function() {
-            const main = document.getElementById('mainContent');
-            // Featured (first 12)
-            const featured = books.slice(0,12);
-            let html = `<div class="section-title"><h2><i class="fas fa-star" style="color:#ffd966;"></i> Featured Titles</h2><span class="view-all" onclick="showAllBooks()">View All</span></div>`;
-            html += '<div class="book-grid">';
-            featured.forEach(book => { html += createBookCard(book); });
-            html += '</div>';
-            // Categories overview
-            const uniqueCategories = [...new Set(books.map(b => b.category))].filter(c => c !== 'Question Bank');
-            html += `<div class="section-title" style="margin-top:3rem;"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
-            html += '<div class="categories">';
-            uniqueCategories.forEach(cat => {
-                const icon = getCategoryIcon(cat);
-                const count = books.filter(b => b.category === cat).length;
-                html += `<div class="category-card" onclick="filterCategory('${cat}')"><i class="fas ${icon}"></i><h3>${cat}</h3><p>${count} books</p></div>`;
-            });
-            html += '</div>';
-            main.innerHTML = html;
-        };
 
         function getCategoryIcon(cat) {
             const icons = {
@@ -532,6 +556,31 @@
             };
             return icons[cat] || 'fa-book';
         }
+
+        // ==================== INITIAL LOAD ====================
+        window.addEventListener('load', async function() {
+            const main = document.getElementById('mainContent');
+            // Featured (first 12)
+            const featured = books.slice(0,12);
+            let html = `<div class="section-title"><h2><i class="fas fa-star" style="color:#ffd966;"></i> Featured Titles</h2><span class="view-all" onclick="showAllBooks()">View All</span></div>`;
+            html += '<div class="book-grid">';
+            for (const book of featured) {
+                const count = await getReaderCount(book.id);
+                html += createBookCard(book, count);
+            }
+            html += '</div>';
+            // Categories overview
+            const uniqueCategories = [...new Set(books.map(b => b.category))].filter(c => c !== 'Question Bank');
+            html += `<div class="section-title" style="margin-top:3rem;"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
+            html += '<div class="categories">';
+            uniqueCategories.forEach(cat => {
+                const icon = getCategoryIcon(cat);
+                const count = books.filter(b => b.category === cat).length;
+                html += `<div class="category-card" onclick="filterCategory('${cat}')"><i class="fas ${icon}"></i><h3>${cat}</h3><p>${count} books</p></div>`;
+            });
+            html += '</div>';
+            main.innerHTML = html;
+        });
 
         // Sidebar toggle
         const menuToggle = document.getElementById('menuToggle');
