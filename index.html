@@ -13,7 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://js.puter.com/v2/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/dist/web-llm.umd.js"></script>
     
     <title>MedLib · Complete Medical Textbook Library</title>
     <!-- Font Awesome Icons -->
@@ -615,10 +615,10 @@
     });
 </script>
 
-   <script>
+<script>
 (function() {
-    // ==================== DUAL AI ASSISTANT ====================
-    // Nexus (cloud) via Puter.js , Osmos (local) via WebLLM
+    // ==================== DUAL AI ASSISTANT (FIXED) ====================
+    // Nexus (cloud) via Puter.js , Osmos (local) via WebLLM (UMD)
     // Features: draggable panel, stacked selection popup, flashcards, feedback.
 
     // --- State ---
@@ -632,7 +632,7 @@
     let isDragging = false;
     let dragOffsetX, dragOffsetY;
 
-    // --- UI Creation ---
+    // --- UI Creation (unchanged) ---
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'ai-assistant-container';
@@ -986,15 +986,18 @@
         });
     }
 
-    // --- Render messages ---
+    // --- Render messages (with safety check) ---
     function renderMessages() {
         const messagesDiv = document.getElementById('ai-messages');
+        if (!messagesDiv) return;
         const conv = conversations[currentMode];
         messagesDiv.innerHTML = conv.map((msg, idx) => {
             const isUser = msg.role === 'user';
+            // Ensure content is a string
+            const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
             return `
                 <div class="message ${msg.role}">
-                    <div class="message-bubble">${msg.content.replace(/\n/g, '<br>')}</div>
+                    <div class="message-bubble">${content.replace(/\n/g, '<br>')}</div>
                     ${!isUser ? `
                         <div class="assistant-label">via ${currentMode === 'nexus' ? 'Nexus (Cloud)' : 'Osmos (Local)'}</div>
                         <div class="feedback">
@@ -1032,16 +1035,18 @@
         renderMessages();
     }
 
-    // --- Load WebLLM model on demand ---
+    // --- Load WebLLM model on demand (UMD version) ---
     async function loadOsmosModel() {
         if (osmosEngine || modelLoading) return;
+        // Check if WebLLM is available (global `webllm`)
         if (!window.webllm) {
-            addMessage('assistant', 'Osmos requires WebGPU. Please use Chrome or Edge.', 'osmos');
+            addMessage('assistant', 'Osmos requires WebGPU and the WebLLM library. Please ensure WebLLM script is loaded.', 'osmos');
             return;
         }
         modelLoading = true;
         addMessage('assistant', '📦 Downloading Osmos AI model (first time only, ~2GB). Please wait...', 'osmos');
         try {
+            // Use the global webllm object
             osmosEngine = await webllm.CreateMLCEngine(
                 "Phi-3-mini-4k-instruct-q4f16_1-MLC",
                 {
@@ -1078,6 +1083,7 @@
         const sendBtn = document.getElementById('ai-send');
         sendBtn.disabled = true;
 
+        // Add thinking message
         addMessage('assistant', 'Thinking...');
 
         if (currentMode === 'nexus') {
@@ -1088,19 +1094,23 @@
                         model: 'google/gemini-2.0-flash-lite-001'
                     });
                     // Replace the "Thinking..." message
-                    conversations.nexus[conversations.nexus.length - 1] = { role: 'assistant', content: response };
+                    const lastIndex = conversations.nexus.length - 1;
+                    conversations.nexus[lastIndex] = { role: 'assistant', content: response };
                 } catch (e) {
-                    conversations.nexus[conversations.nexus.length - 1] = { role: 'assistant', content: 'Nexus error: ' + (e.message || 'Request failed.') };
+                    const lastIndex = conversations.nexus.length - 1;
+                    conversations.nexus[lastIndex] = { role: 'assistant', content: 'Nexus error: ' + (e.message || 'Request failed.') };
                 }
             } else {
-                conversations.nexus[conversations.nexus.length - 1] = { role: 'assistant', content: 'Nexus not available. Make sure Puter is loaded.' };
+                const lastIndex = conversations.nexus.length - 1;
+                conversations.nexus[lastIndex] = { role: 'assistant', content: 'Nexus not available. Make sure Puter is loaded.' };
             }
         } else {
             // Osmos via WebLLM
             if (!osmosEngine) {
                 await loadOsmosModel();
                 if (!osmosEngine) {
-                    conversations.osmos[conversations.osmos.length - 1] = { role: 'assistant', content: 'Osmos failed to load. Please try Nexus.' };
+                    const lastIndex = conversations.osmos.length - 1;
+                    conversations.osmos[lastIndex] = { role: 'assistant', content: 'Osmos failed to load. Please try Nexus.' };
                     sendBtn.disabled = false;
                     renderMessages();
                     return;
@@ -1115,9 +1125,11 @@
                     temperature: 0.7,
                     max_tokens: 500
                 });
-                conversations.osmos[conversations.osmos.length - 1] = { role: 'assistant', content: reply.choices[0].message.content };
+                const lastIndex = conversations.osmos.length - 1;
+                conversations.osmos[lastIndex] = { role: 'assistant', content: reply.choices[0].message.content };
             } catch (e) {
-                conversations.osmos[conversations.osmos.length - 1] = { role: 'assistant', content: 'Osmos error: ' + e.message };
+                const lastIndex = conversations.osmos.length - 1;
+                conversations.osmos[lastIndex] = { role: 'assistant', content: 'Osmos error: ' + e.message };
             }
         }
 
