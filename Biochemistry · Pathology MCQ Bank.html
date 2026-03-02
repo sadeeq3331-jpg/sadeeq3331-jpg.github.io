@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biochemistry & Mol Bio · Pathology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-flask"></i>
+        <h1>Biochemistry · Pathology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ BIOCHEMISTRY PATHOLOGY (INBORN ERRORS & DISORDERS) QUESTIONS
+    const questions = [
+        { q: "Glycogen storage disease type I (von Gierke disease) is caused by deficiency of:",
+          opts: ["Glucose‑6‑phosphatase", "Debranching enzyme", "Branching enzyme", "Muscle phosphorylase", "Liver phosphorylase"],
+          correct: 0,
+          exp: "GSD I: glucose‑6‑phosphatase deficiency → severe fasting hypoglycemia, hepatomegaly, lactic acidosis, hyperuricemia." },
+        { q: "Pompe disease (GSD II) involves deficiency of:",
+          opts: ["Lysosomal α‑1,4‑glucosidase (acid maltase)", "Debranching enzyme", "Branching enzyme", "Myophosphorylase", "Liver phosphorylase"],
+          correct: 0,
+          exp: "Pompe: glycogen accumulation in lysosomes → cardiomegaly, hypotonia, death in infancy." },
+        { q: "McArdle disease (GSD V) presents with:",
+          opts: ["Exercise intolerance, cramps, myoglobinuria", "Hypoglycemia, hepatomegaly", "Cardiomegaly, hypotonia", "Cirrhosis, failure to thrive", "Hemolytic anemia"],
+          correct: 0,
+          exp: "McArdle: muscle phosphorylase deficiency → exercise‑induced pain and myoglobinuria." },
+        { q: "Cori disease (GSD III) is due to deficiency of:",
+          opts: ["Debranching enzyme (amylo‑1,6‑glucosidase)", "Branching enzyme", "Glucose‑6‑phosphatase", "Muscle phosphorylase", "Liver phosphorylase"],
+          correct: 0,
+          exp: "GSD III: debrancher deficiency → hypoglycemia, myopathy; milder than GSD I." },
+        { q: "Andersen disease (GSD IV) is caused by deficiency of:",
+          opts: ["Branching enzyme", "Debranching enzyme", "Glucose‑6‑phosphatase", "Myophosphorylase", "Liver phosphorylase"],
+          correct: 0,
+          exp: "GSD IV: branching enzyme deficiency → abnormal glycogen (amylopectin‑like) → cirrhosis, death early childhood." },
+        { q: "Hers disease (GSD VI) is due to deficiency of:",
+          opts: ["Liver phosphorylase", "Muscle phosphorylase", "Phosphorylase kinase", "Debranching enzyme", "Glucose‑6‑phosphatase"],
+          correct: 0,
+          exp: "GSD VI: liver phosphorylase deficiency → hepatomegaly, mild hypoglycemia." },
+        { q: "Galactosemia (classic) is due to deficiency of:",
+          opts: ["Galactose‑1‑phosphate uridylyltransferase (GALT)", "Galactokinase", "UDP‑galactose‑4‑epimerase", "Aldolase B", "Fructokinase"],
+          correct: 0,
+          exp: "GALT deficiency → galactose‑1‑phosphate accumulation; presents after milk feeding: jaundice, cataracts, E. coli sepsis." },
+        { q: "Galactokinase deficiency (galactosemia type II) presents with:",
+          opts: ["Cataracts only (no liver disease)", "Jaundice, hepatomegaly", "Hypoglycemia", "Intellectual disability", "Coagulopathy"],
+          correct: 0,
+          exp: "Galactokinase deficiency leads to galactitol accumulation, causing cataracts." },
+        { q: "Hereditary fructose intolerance is caused by deficiency of:",
+          opts: ["Aldolase B (fructose‑1‑phosphate aldolase)", "Fructokinase", "Phosphofructokinase", "Pyruvate kinase", "Glucokinase"],
+          correct: 0,
+          exp: "Aldolase B deficiency → fructose‑1‑phosphate accumulation → hypoglycemia, vomiting, liver failure after fructose ingestion." },
+        { q: "Essential fructosuria is due to deficiency of:",
+          opts: ["Fructokinase", "Aldolase B", "Phosphofructokinase", "Fructose‑1,6‑bisphosphatase", "Pyruvate kinase"],
+          correct: 0,
+          exp: "Fructokinase deficiency → benign condition with fructose in urine after ingestion." },
+        { q: "Phenylketonuria (PKU) results from deficiency of:",
+          opts: ["Phenylalanine hydroxylase", "Tyrosine hydroxylase", "DOPA decarboxylase", "Homogentisate oxidase", "Biopterin reductase"],
+          correct: 0,
+          exp: "PAH deficiency → ↑ phenylalanine; musty odor, eczema, intellectual disability; treat with low‑phenylalanine diet." },
+        { q: "Maternal PKU syndrome (in fetus of mother with PKU) causes:",
+          opts: ["Microcephaly, intellectual disability, congenital heart disease", "No effects", "Macrosomia", "Neural tube defects", "Cleft lip/palate"],
+          correct: 0,
+          exp: "High maternal phenylalanine is teratogenic; diet must be resumed before conception." },
+        { q: "Tyrosinemia type I is due to deficiency of:",
+          opts: ["Fumarylacetoacetate hydrolase (FAH)", "Tyrosine aminotransferase", "4‑hydroxyphenylpyruvate dioxygenase", "Homogentisate oxidase", "Phenylalanine hydroxylase"],
+          correct: 0,
+          exp: "Tyrosinemia I → liver failure, renal tubular dysfunction, neurological crises; treated with nitisinone (NTBC)." },
+        { q: "Tyrosinemia type II (Richner‑Hanhart syndrome) is due to deficiency of:",
+          opts: ["Tyrosine aminotransferase", "Fumarylacetoacetate hydrolase", "4‑hydroxyphenylpyruvate dioxygenase", "Homogentisate oxidase", "Phenylalanine hydroxylase"],
+          correct: 0,
+          exp: "Tyrosinemia II → corneal ulcers, palmoplantar hyperkeratosis, intellectual disability." },
+        { q: "Alkaptonuria (ochronosis) is caused by deficiency of:",
+          opts: ["Homogentisate oxidase", "Tyrosinase", "Phenylalanine hydroxylase", "Tyrosine aminotransferase", "Fumarylacetoacetate hydrolase"],
+          correct: 0,
+          exp: "Homogentisate oxidase deficiency → homogentisic acid accumulation → dark urine, ochronosis, arthritis." },
+        { q: "Homocystinuria (classic) is most commonly due to deficiency of:",
+          opts: ["Cystathionine β‑synthase", "Methionine synthase", "MTHFR", "Cystathionine γ‑lyase", "Betaine‑homocysteine methyltransferase"],
+          correct: 0,
+          exp: "Cystathionine β‑synthase deficiency → ↑ homocysteine, ↓ cysteine; lens dislocation (downward), marfanoid habitus, thromboembolism." },
+        { q: "Maple syrup urine disease (MSUD) is caused by deficiency of:",
+          opts: ["Branched‑chain α‑ketoacid dehydrogenase", "Phenylalanine hydroxylase", "Homogentisate oxidase", "Tyrosine aminotransferase", "Methylmalonyl‑CoA mutase"],
+          correct: 0,
+          exp: "MSUD: BCKD deficiency → ↑ leucine, isoleucine, valine; urine smells like maple syrup; neurological deterioration." },
+        { q: "Isovaleric acidemia is due to deficiency of:",
+          opts: ["Isovaleryl‑CoA dehydrogenase", "Methylmalonyl‑CoA mutase", "Propionyl‑CoA carboxylase", "Medium‑chain acyl‑CoA dehydrogenase", "Biotinidase"],
+          correct: 0,
+          exp: "Isovaleryl‑CoA dehydrogenase deficiency → isovaleric acid accumulation → sweaty feet odor, metabolic acidosis." },
+        { q: "Methylmalonic acidemia is most commonly due to deficiency of:",
+          opts: ["Methylmalonyl‑CoA mutase", "Propionyl‑CoA carboxylase", "Biotinidase", "Holocarboxylase synthetase", "Cobalamin metabolism defects"],
+          correct: 0,
+          exp: "Methylmalonyl‑CoA mutase (or cobalamin defects) → methylmalonic acid accumulation, metabolic acidosis." },
+        { q: "Propionic acidemia is caused by deficiency of:",
+          opts: ["Propionyl‑CoA carboxylase", "Methylmalonyl‑CoA mutase", "Isovaleryl‑CoA dehydrogenase", "Biotinidase", "Holocarboxylase synthetase"],
+          correct: 0,
+          exp: "Propionyl‑CoA carboxylase (biotin‑dependent) deficiency → propionic acid, metabolic acidosis, hyperammonemia." },
+        { q: "Multiple carboxylase deficiency can result from deficiency of:",
+          opts: ["Biotinidase or holocarboxylase synthetase", "Propionyl‑CoA carboxylase only", "Methylmalonyl‑CoA mutase", "Pyruvate carboxylase", "Acetyl‑CoA carboxylase"],
+          correct: 0,
+          exp: "Biotinidase deficiency (late‑onset) or holocarboxylase synthetase deficiency (neonatal) cause multiple carboxylase deficiency." },
+        { q: "Ornithine transcarbamylase (OTC) deficiency is an X‑linked urea cycle defect that presents with:",
+          opts: ["Hyperammonemia, orotic aciduria, respiratory alkalosis", "Hyperuricemia", "Lactic acidosis", "Hypoglycemia", "Jaundice"],
+          correct: 0,
+          exp: "OTC deficiency → carbamoyl phosphate accumulates and enters pyrimidine pathway → orotic acid; males severely affected." },
+        { q: "Carbamoyl phosphate synthetase I (CPS I) deficiency presents with hyperammonemia but WITHOUT:",
+          opts: ["Orotic aciduria", "Respiratory alkalosis", "Lactic acidosis", "Hypoglycemia", "Hepatomegaly"],
+          correct: 0,
+          exp: "CPS I deficiency causes hyperammonemia but carbamoyl phosphate does not accumulate, so no orotic aciduria." },
+        { q: "N‑acetylglutamate (NAG) is an allosteric activator of which enzyme?",
+          opts: ["CPS I", "OTC", "Argininosuccinate synthetase", "Argininosuccinate lyase", "Arginase"],
+          correct: 0,
+          exp: "NAG activates CPS I; NAG synthase deficiency causes hyperammonemia." },
+        { q: "Lesch‑Nyhan syndrome is caused by deficiency of:",
+          opts: ["HGPRT (hypoxanthine‑guanine phosphoribosyltransferase)", "APRT", "Xanthine oxidase", "Adenosine deaminase", "Purine nucleoside phosphorylase"],
+          correct: 0,
+          exp: "HGPRT deficiency → ↑ uric acid, self‑mutilation, choreoathetosis, intellectual disability." },
+        { q: "Severe combined immunodeficiency (SCID) can result from deficiency of:",
+          opts: ["Adenosine deaminase (ADA)", "Purine nucleoside phosphorylase", "Xanthine oxidase", "HGPRT", "APRT"],
+          correct: 0,
+          exp: "ADA deficiency → accumulation of adenosine and deoxyadenosine, toxic to lymphocytes." },
+        { q: "Purine nucleoside phosphorylase (PNP) deficiency leads to:",
+          opts: ["T‑cell deficiency (mainly)", "B‑cell deficiency", "SCID", "Hemolytic anemia", "Gout"],
+          correct: 0,
+          exp: "PNP deficiency causes severe T‑cell immunodeficiency (neurological symptoms may also occur)." },
+        { q: "Xanthinuria is caused by deficiency of:",
+          opts: ["Xanthine oxidase", "HGPRT", "APRT", "Adenosine deaminase", "Uricase"],
+          correct: 0,
+          exp: "Xanthine oxidase deficiency → hypouricemia, xanthine stones (radiolucent)." },
+        { q: "Gout can be caused by overproduction of uric acid due to partial deficiency of:",
+          opts: ["HGPRT", "APRT", "Xanthine oxidase", "PRPP synthetase (overactivity)", "Both A and D"],
+          correct: 3,
+          exp: "HGPRT deficiency (partial) or PRPP synthetase overactivity cause purine overproduction." },
+        { q: "Orotic aciduria (type I) is due to deficiency of:",
+          opts: ["UMP synthase (OPRT + OMPDC)", "Orotate phosphoribosyltransferase", "OMP decarboxylase", "Carbamoyl phosphate synthetase II", "Dihydroorotate dehydrogenase"],
+          correct: 0,
+          exp: "UMP synthase deficiency → orotic acid in urine, megaloblastic anemia (not responsive to B12/folate)." },
+        { q: "Orotic aciduria can also occur in:",
+          opts: ["OTC deficiency (due to carbamoyl phosphate spillover)", "Lesch‑Nyhan syndrome", "ADA deficiency", "PNP deficiency", "Gout"],
+          correct: 0,
+          exp: "In OTC deficiency, carbamoyl phosphate accumulates and enters pyrimidine pathway, causing orotic aciduria." },
+        { q: "Tay‑Sachs disease is a lysosomal storage disorder caused by deficiency of:",
+          opts: ["Hexosaminidase A", "Sphingomyelinase", "Glucocerebrosidase", "Galactocerebrosidase", "α‑galactosidase A"],
+          correct: 0,
+          exp: "Hexosaminidase A deficiency → GM2 ganglioside accumulation → cherry‑red spot, neurodegeneration." },
+        { q: "Niemann‑Pick type A and B are due to deficiency of:",
+          opts: ["Sphingomyelinase", "Glucocerebrosidase", "Hexosaminidase A", "Arylsulfatase A", "α‑iduronidase"],
+          correct: 0,
+          exp: "Sphingomyelinase deficiency → foam cells, hepatosplenomegaly, neurodegeneration (type A)." },
+        { q: "Gaucher disease (most common lysosomal storage disease) is caused by deficiency of:",
+          opts: ["Glucocerebrosidase", "Sphingomyelinase", "β‑galactosidase", "α‑galactosidase A", "Iduronate‑2‑sulfatase"],
+          correct: 0,
+          exp: "Glucocerebrosidase deficiency → Gaucher cells (crumpled tissue paper), hepatosplenomegaly, bone pain." },
+        { q: "Fabry disease (X‑linked) results from deficiency of:",
+          opts: ["α‑galactosidase A", "β‑galactosidase", "Glucocerebrosidase", "Sphingomyelinase", "Iduronate‑2‑sulfatase"],
+          correct: 0,
+          exp: "α‑galactosidase A deficiency → angiokeratomas, acroparesthesias, renal failure, cardiovascular disease." },
+        { q: "Krabbe disease (globoid cell leukodystrophy) is due to deficiency of:",
+          opts: ["Galactocerebrosidase", "Arylsulfatase A", "β‑galactosidase", "Hexosaminidase A", "Iduronidase"],
+          correct: 0,
+          exp: "Galactocerebrosidase deficiency → globoid cells, severe CNS demyelination, early death." },
+        { q: "Metachromatic leukodystrophy involves deficiency of:",
+          opts: ["Arylsulfatase A", "Galactocerebrosidase", "β‑galactosidase", "Hexosaminidase A", "Sphingomyelinase"],
+          correct: 0,
+          exp: "Arylsulfatase A deficiency → accumulation of sulfatides → demyelination, peripheral neuropathy." },
+        { q: "Hurler syndrome (MPS I) is caused by deficiency of:",
+          opts: ["α‑L‑iduronidase", "Iduronate‑2‑sulfatase", "Heparan N‑sulfatase", "Galactosamine‑6‑sulfatase", "β‑glucuronidase"],
+          correct: 0,
+          exp: "α‑L‑iduronidase deficiency → coarse facies, hepatosplenomegaly, corneal clouding, intellectual disability." },
+        { q: "Hunter syndrome (MPS II) is X‑linked and due to deficiency of:",
+          opts: ["Iduronate‑2‑sulfatase", "α‑L‑iduronidase", "Heparan N‑sulfatase", "Galactosamine‑6‑sulfatase", "β‑glucuronidase"],
+          correct: 0,
+          exp: "Iduronate‑2‑sulfatase deficiency; similar to Hurler but milder, no corneal clouding." },
+        { q: "Sanfilippo syndrome (MPS III) is characterized by:",
+          opts: ["Severe neurological deterioration, mild somatic features", "Coarse facies, hepatosplenomegaly", "Corneal clouding", "Cardiac involvement", "Joint stiffness"],
+          correct: 0,
+          exp: "MPS III: heparan sulfate degradation defect → progressive CNS degeneration." },
+        { q: "Morquio syndrome (MPS IV) involves deficiency of:",
+          opts: ["Galactosamine‑6‑sulfatase or β‑galactosidase", "α‑L‑iduronidase", "Iduronate‑2‑sulfatase", "Heparan N‑sulfatase", "β‑glucuronidase"],
+          correct: 0,
+          exp: "MPS IV: keratan sulfate accumulation → skeletal dysplasia, normal intelligence." },
+        { q: "G6PD deficiency is an X‑linked disorder that causes:",
+          opts: ["Hemolytic anemia triggered by oxidative stress (drugs, fava beans)", "Bleeding disorder", "Thrombophilia", "Immunodeficiency", "Neurological deterioration"],
+          correct: 0,
+          exp: "G6PD deficiency → NADPH deficiency → RBCs vulnerable to oxidative damage → Heinz bodies, bite cells." },
+        { q: "Pyruvate kinase deficiency causes:",
+          opts: ["Hemolytic anemia (congenital nonspherocytic hemolytic anemia)", "Megaloblastic anemia", "Sideroblastic anemia", "Aplastic anemia", "Thalassemia"],
+          correct: 0,
+          exp: "Pyruvate kinase deficiency → ATP depletion in RBCs → hemolytic anemia." },
+        { q: "Hereditary spherocytosis is most commonly due to defects in:",
+          opts: ["Spectrin, ankyrin, band 3, or protein 4.2", "Pyruvate kinase", "G6PD", "Globin genes", "Membrane lipids"],
+          correct: 0,
+          exp: "Defects in RBC membrane cytoskeleton → spherocytes, hemolytic anemia, splenomegaly." },
+        { q: "Sickle cell disease is caused by a point mutation in the β‑globin gene resulting in:",
+          opts: ["Glu6Val (missense)", "Glu6Lys", "Val6Glu", "Deletion of codon 6", "Frameshift"],
+          correct: 0,
+          exp: "GAG (Glu) → GTG (Val) at β6; causes HbS polymerization under low oxygen." },
+        { q: "β‑Thalassemia is caused by:",
+          opts: ["Reduced or absent β‑globin chain synthesis", "Reduced α‑globin synthesis", "Structural hemoglobin variant", "Impaired heme synthesis", "Defective globin folding"],
+          correct: 0,
+          exp: "β‑thalassemia: mutations in β‑globin gene lead to reduced β‑chain production." },
+        { q: "α‑Thalassemia is most commonly caused by:",
+          opts: ["Deletion of α‑globin genes", "Point mutations in α‑globin", "Impaired α‑chain synthesis", "Increased γ‑chain production", "HbH or Bart's"],
+          correct: 0,
+          exp: "α‑thalassemia usually results from deletion of one or more α‑globin genes (chromosome 16)." },
+        { q: "Hb Bart's (γ4) is seen in:",
+          opts: ["α‑thalassemia major (deletion of all 4 α genes)", "β‑thalassemia major", "Sickle cell disease", "HbC disease", "HbE disease"],
+          correct: 0,
+          exp: "No α chains → excess γ chains form γ4 (Hb Bart's) → hydrops fetalis." },
+        { q: "HbH (β4) is seen in:",
+          opts: ["α‑thalassemia with 3 gene deletions (HbH disease)", "α‑thalassemia trait", "β‑thalassemia", "Sickle cell trait", "Normal newborn"],
+          correct: 0,
+          exp: "HbH disease: only one α gene present → excess β chains form β4 (HbH)." },
+        { q: "Porphyrias are disorders of:",
+          opts: ["Heme biosynthesis", "Bilirubin metabolism", "Hemoglobin synthesis", "Iron metabolism", "Globin synthesis"],
+          correct: 0,
+          exp: "Porphyrias result from enzyme deficiencies in heme synthesis pathway." },
+        { q: "Acute intermittent porphyria (AIP) is due to deficiency of:",
+          opts: ["PBG deaminase (hydroxymethylbilane synthase)", "Uroporphyrinogen decarboxylase", "Coproporphyrinogen oxidase", "Protoporphyrinogen oxidase", "ALA dehydratase"],
+          correct: 0,
+          exp: "AIP: PBG deaminase deficiency → acute neurovisceral attacks, ↑ ALA and PBG; no photosensitivity." },
+        { q: "Porphyria cutanea tarda (PCT) is due to deficiency of:",
+          opts: ["Uroporphyrinogen decarboxylase", "PBG deaminase", "Coproporphyrinogen oxidase", "Protoporphyrinogen oxidase", "ALA dehydratase"],
+          correct: 0,
+          exp: "PCT: photosensitivity, blistering, hypertrichosis; associated with hepatitis C, alcohol, estrogen." },
+        { q: "Variegate porphyria (VP) and hereditary coproporphyria (HCP) present with:",
+          opts: ["Both neurovisceral and cutaneous symptoms", "Only neurovisceral", "Only cutaneous", "No symptoms", "Hemolytic anemia"],
+          correct: 0,
+          exp: "VP and HCP have both neurological and skin manifestations." },
+        { q: "Congenital erythropoietic porphyria (Günther disease) is due to deficiency of:",
+          opts: ["Uroporphyrinogen III synthase", "Uroporphyrinogen decarboxylase", "Coproporphyrinogen oxidase", "PBG deaminase", "ALA dehydratase"],
+          correct: 0,
+          exp: "Uroporphyrinogen III synthase deficiency → severe photosensitivity, red urine, hemolytic anemia." },
+        { q: "Zellweger syndrome (cerebrohepatorenal syndrome) is a peroxisomal disorder characterized by:",
+          opts: ["Severe hypotonia, seizures, hepatic dysfunction, stippled epiphyses", "Adrenal insufficiency, neurodegeneration", "Megaloblastic anemia", "Coarse facies, hepatosplenomegaly", "Progressive spasticity"],
+          correct: 0,
+          exp: "Zellweger: peroxisome biogenesis defect → accumulation of VLCFA, bile acid intermediates." },
+        { q: "X‑linked adrenoleukodystrophy is caused by mutations in ABCD1, leading to accumulation of:",
+          opts: ["Very long chain fatty acids (VLCFA)", "Phytanic acid", "Pipecolic acid", "Bile acids", "Cholesterol"],
+          correct: 0,
+          exp: "X‑ALD: impaired peroxisomal β‑oxidation of VLCFA → progressive neurodegeneration, adrenal insufficiency." },
+        { q: "Refsum disease (adult) is caused by deficiency of:",
+          opts: ["Phytanoyl‑CoA hydroxylase (phytanic acid accumulation)", "Peroxisomal biogenesis", "VLCFA oxidation", "Bile acid synthesis", "Ether phospholipid synthesis"],
+          correct: 0,
+          exp: "Refsum disease: phytanic acid accumulation → retinitis pigmentosa, peripheral neuropathy, ataxia." },
+        { q: "Mitochondrial disorders (e.g., MELAS, MERRF) are characterized by:",
+          opts: ["Maternal inheritance, heteroplasmy, ragged red fibers on muscle biopsy", "Autosomal dominant inheritance", "X‑linked inheritance", "No genetic basis", "Early onset only"],
+          correct: 0,
+          exp: "Mitochondrial DNA mutations affect tissues with high energy demand (CNS, muscle, heart)." },
+        { q: "Leber hereditary optic neuropathy (LHON) is a mitochondrial disorder that causes:",
+          opts: ["Acute or subacute vision loss (optic atrophy)", "Progressive external ophthalmoplegia", "Stroke‑like episodes", "Myoclonic epilepsy", "Cardiomyopathy"],
+          correct: 0,
+          exp: "LHON: mutations in mitochondrial genes (complex I) → bilateral vision loss, young adults." },
+        { q: "Ragged red fibers on muscle biopsy are characteristic of:",
+          opts: ["Mitochondrial myopathies", "Duchenne muscular dystrophy", "Polymyositis", "Glycogen storage diseases", "Lipid storage myopathies"],
+          correct: 0,
+          exp: "Ragged red fibers result from mitochondrial proliferation in subsarcolemmal region." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Carnitine palmitoyltransferase II (CPT II) deficiency presents with:",
+          opts: ["Exercise‑induced myoglobinuria, muscle pain", "Hypoglycemia, hepatomegaly", "Cardiomyopathy", "Sudden infant death", "Peripheral neuropathy"],
+          correct: 0,
+          exp: "CPT II deficiency (adult form) causes recurrent rhabdomyolysis with exercise." },
+        { q: "Medium‑chain acyl‑CoA dehydrogenase (MCAD) deficiency presents with:",
+          opts: ["Hypoketotic hypoglycemia, vomiting, lethargy, sudden death", "Cardiomyopathy", "Myopathy", "Hyperammonemia", "Lactic acidosis"],
+          correct: 0,
+          exp: "MCAD deficiency is the most common fatty acid oxidation defect; avoid fasting." },
+        { q: "Very long‑chain acyl‑CoA dehydrogenase (VLCAD) deficiency can present with:",
+          opts: ["Cardiomyopathy, rhabdomyolysis, hypoglycemia", "Only hypoglycemia", "Only myopathy", "Sudden infant death", "Hepatomegaly"],
+          correct: 0,
+          exp: "VLCAD deficiency has severe early‑onset cardiac form and later‑onset myopathic form." },
+        { q: "Glutaric acidemia type I is due to deficiency of:",
+          opts: ["Glutaryl‑CoA dehydrogenase", "Isovaleryl‑CoA dehydrogenase", "Methylmalonyl‑CoA mutase", "Propionyl‑CoA carboxylase", "Medium‑chain acyl‑CoA dehydrogenase"],
+          correct: 0,
+          exp: "Glutaric acidemia I → macrocephaly, dystonia, acute encephalopathic crises." },
+        { q: "Canavan disease (spongy degeneration of brain) is due to deficiency of:",
+          opts: ["Aspartoacylase", "Arylsulfatase A", "Galactocerebrosidase", "Hexosaminidase A", "β‑galactosidase"],
+          correct: 0,
+          exp: "Aspartoacylase deficiency → N‑acetylaspartic acid accumulation → leukodystrophy." },
+        { q: "Menkes disease (kinky hair syndrome) is an X‑linked disorder of copper metabolism caused by mutations in:",
+          opts: ["ATP7A (copper‑transporting ATPase)", "ATP7B", "SOD1", "Ceruloplasmin", "COMMD1"],
+          correct: 0,
+          exp: "Menkes: defective copper transport → low copper in brain/liver, brittle hair, neurodegeneration." },
+        { q: "Wilson disease is caused by mutations in:",
+          opts: ["ATP7B (copper‑transporting ATPase in liver)", "ATP7A", "Ceruloplasmin", "Apo‑E", "MT‑1"],
+          correct: 0,
+          exp: "Wilson: copper accumulation in liver, brain, cornea (Kayser‑Fleischer rings); treat with penicillamine, zinc." },
+        { q: "Hemochromatosis (hereditary) is most commonly due to mutations in:",
+          opts: ["HFE gene (C282Y)", "Ferroportin", "Hepcidin", "Transferrin receptor", "Ferritin"],
+          correct: 0,
+          exp: "HFE mutations cause increased iron absorption → cirrhosis, diabetes, bronze skin, cardiomyopathy." },
+        { q: "Alpha‑1 antitrypsin deficiency (PiZZ) is associated with:",
+          opts: ["Panacinar emphysema (lower lobes) and cirrhosis", "Centriacinar emphysema", "Asthma", "Bronchiectasis", "Interstitial lung disease"],
+          correct: 0,
+          exp: "α1‑AT deficiency (PiZZ) → loss of neutrophil elastase inhibition → early‑onset panacinar emphysema." },
+        { q: "Cystic fibrosis (CFTR mutations) leads to:",
+          opts: ["Thick mucus, lung infections, pancreatic insufficiency, male infertility", "Liver cirrhosis", "Neurological deterioration", "Cardiomyopathy", "Coagulation defects"],
+          correct: 0,
+          exp: "CF: defective chloride channel → multisystem exocrine gland dysfunction." },
+        { q: "Hereditary angioedema is caused by deficiency of:",
+          opts: ["C1 inhibitor (SERPING1)", "C3", "C4", "Factor B", "Properdin"],
+          correct: 0,
+          exp: "C1‑INH deficiency → uncontrolled bradykinin production → recurrent angioedema without urticaria." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

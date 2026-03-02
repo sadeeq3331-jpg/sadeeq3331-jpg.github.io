@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biochemistry & Mol Bio · Pharmacology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-flask"></i>
+        <h1>Biochemistry · Pharmacology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ BIOCHEMISTRY PHARMACOLOGY (DRUGS AFFECTING METABOLIC PATHWAYS) QUESTIONS
+    const questions = [
+        { q: "Statins (e.g., atorvastatin) lower cholesterol by inhibiting which enzyme?",
+          opts: ["HMG‑CoA reductase", "ACAT", "LDL receptor", "CETP", "PCSK9"],
+          correct: 0,
+          exp: "Statins competitively inhibit HMG‑CoA reductase, the rate‑limiting enzyme in cholesterol synthesis." },
+        { q: "Fibrates (e.g., gemfibrozil) lower triglycerides primarily by activating:",
+          opts: ["PPAR‑α", "PPAR‑γ", "LXR", "FXR", "RXR"],
+          correct: 0,
+          exp: "Fibrates are PPAR‑α agonists, increasing fatty acid oxidation and decreasing VLDL production." },
+        { q: "Niacin lowers lipids by inhibiting:",
+          opts: ["Hormone‑sensitive lipase in adipose tissue", "HMG‑CoA reductase", "CETP", "PCSK9", "ACAT"],
+          correct: 0,
+          exp: "Niacin inhibits lipolysis, reducing free fatty acid flux to liver and decreasing VLDL synthesis." },
+        { q: "Ezetimibe lowers cholesterol by inhibiting:",
+          opts: ["NPC1L1 (intestinal cholesterol absorption)", "HMG‑CoA reductase", "PCSK9", "CETP", "ACAT"],
+          correct: 0,
+          exp: "Ezetimibe blocks the NPC1L1 transporter in the gut, reducing cholesterol absorption." },
+        { q: "PCSK9 inhibitors (e.g., evolocumab) lower LDL by:",
+          opts: ["Increasing LDL receptor recycling", "Inhibiting HMG‑CoA reductase", "Blocking cholesterol absorption", "Activating PPAR‑α", "Inhibiting CETP"],
+          correct: 0,
+          exp: "PCSK9 normally degrades LDL receptors; inhibitors prevent this, increasing LDL receptor density." },
+        { q: "Metformin lowers blood glucose primarily by:",
+          opts: ["Activating AMPK, decreasing hepatic gluconeogenesis", "Increasing insulin secretion", "Increasing peripheral glucose uptake", "Delaying carbohydrate absorption", "Inhibiting SGLT2"],
+          correct: 0,
+          exp: "Metformin activates AMPK, reducing gluconeogenesis and increasing insulin sensitivity." },
+        { q: "Sulfonylureas (e.g., glipizide) stimulate insulin secretion by:",
+          opts: ["Closing K‑ATP channels on β‑cells", "Opening K‑ATP channels", "Activating PPAR‑γ", "Increasing cAMP", "Inhibiting DPP‑4"],
+          correct: 0,
+          exp: "Sulfonylureas bind to SUR1, closing K‑ATP channels, depolarizing the cell, and triggering insulin release." },
+        { q: "Thiazolidinediones (e.g., pioglitazone) improve insulin sensitivity by activating:",
+          opts: ["PPAR‑γ", "PPAR‑α", "AMPK", "GLP‑1 receptor", "DPP‑4"],
+          correct: 0,
+          exp: "TZDs are PPAR‑γ agonists, promoting adipocyte differentiation and increasing insulin sensitivity." },
+        { q: "GLP‑1 receptor agonists (e.g., liraglutide) lower glucose by:",
+          opts: ["Increasing insulin, decreasing glucagon, slowing gastric emptying", "Blocking SGLT2", "Inhibiting DPP‑4", "Activating PPAR‑γ", "Increasing insulin secretion only"],
+          correct: 0,
+          exp: "GLP‑1 agonists enhance glucose‑dependent insulin secretion, suppress glucagon, and delay gastric emptying." },
+        { q: "DPP‑4 inhibitors (e.g., sitagliptin) work by:",
+          opts: ["Preventing degradation of GLP‑1 and GIP", "Blocking SGLT2", "Activating PPAR‑γ", "Stimulating insulin release", "Inhibiting α‑glucosidase"],
+          correct: 0,
+          exp: "DPP‑4 inhibitors increase active incretin levels, enhancing insulin secretion." },
+        { q: "SGLT2 inhibitors (e.g., empagliflozin) lower glucose by:",
+          opts: ["Blocking renal glucose reabsorption", "Increasing insulin secretion", "Decreasing gluconeogenesis", "Delaying carbohydrate absorption", "Activating AMPK"],
+          correct: 0,
+          exp: "SGLT2 inhibitors prevent glucose reabsorption in proximal tubule, causing glucosuria." },
+        { q: "Acarbose, an α‑glucosidase inhibitor, lowers postprandial glucose by:",
+          opts: ["Delaying carbohydrate digestion in gut", "Increasing insulin secretion", "Blocking SGLT2", "Decreasing hepatic glucose output", "Activating AMPK"],
+          correct: 0,
+          exp: "Acarbose inhibits intestinal α‑glucosidases, slowing breakdown of complex carbs." },
+        { q: "Allopurinol treats gout by inhibiting:",
+          opts: ["Xanthine oxidase", "HGPRT", "PRPP synthetase", "Adenosine deaminase", "Uricase"],
+          correct: 0,
+          exp: "Allopurinol inhibits xanthine oxidase, reducing uric acid production." },
+        { q: "Febuxostat is another xanthine oxidase inhibitor, but unlike allopurinol, it:",
+          opts: ["Is non‑purine and can be used in allopurinol‑allergic patients", "Also inhibits HGPRT", "Increases uric acid excretion", "Has no drug interactions", "Is safer in renal impairment"],
+          correct: 0,
+          exp: "Febuxostat is a non‑purine xanthine oxidase inhibitor; no cross‑allergy with allopurinol." },
+        { q: "Probenecid treats gout by:",
+          opts: ["Increasing renal excretion of uric acid (URAT1 inhibitor)", "Inhibiting xanthine oxidase", "Decreasing uric acid production", "Increasing metabolism of purines", "Alkalizing urine"],
+          correct: 0,
+          exp: "Probenecid inhibits URAT1, reducing uric acid reabsorption in proximal tubule." },
+        { q: "Pegloticase is a recombinant uricase used for refractory gout. It is contraindicated in patients with:",
+          opts: ["G6PD deficiency (risk of methemoglobinemia/hemolysis)", "Renal failure", "Liver disease", "Pregnancy", "Hypertension"],
+          correct: 0,
+          exp: "Uricase converts uric acid to allantoin and hydrogen peroxide; G6PD deficiency increases oxidative stress." },
+        { q: "Methotrexate is a folate antagonist that inhibits:",
+          opts: ["Dihydrofolate reductase (DHFR)", "Thymidylate synthase", "AICAR transformylase", "GAR transformylase", "All of the above"],
+          correct: 4,
+          exp: "Methotrexate inhibits DHFR and also affects purine synthesis; used in cancer, RA, psoriasis." },
+        { q: "Leucovorin (folinic acid) is given with methotrexate to:",
+          opts: ["Rescue normal cells from methotrexate toxicity", "Increase methotrexate efficacy", "Prevent renal toxicity", "Reduce nausea", "Enhance absorption"],
+          correct: 0,
+          exp: "Leucovorin bypasses DHFR inhibition, providing reduced folate to normal cells." },
+        { q: "5‑Fluorouracil (5‑FU) exerts its anticancer effect by inhibiting:",
+          opts: ["Thymidylate synthase", "DHFR", "Ribonucleotide reductase", "DNA polymerase", "Topoisomerase"],
+          correct: 0,
+          exp: "5‑FU metabolite FdUMP inhibits thymidylate synthase, depleting dTMP and disrupting DNA synthesis." },
+        { q: "Capecitabine is an oral prodrug of:",
+          opts: ["5‑FU", "Cytarabine", "Gemcitabine", "Methotrexate", "Pemetrexed"],
+          correct: 0,
+          exp: "Capecitabine is converted to 5‑FU in tissues; used in breast and colon cancer." },
+        { q: "Gemcitabine, a cytidine analog, is used in pancreatic cancer and acts by:",
+          opts: ["Incorporation into DNA/RNA, inhibiting DNA synthesis", "Inhibiting thymidylate synthase", "Inhibiting DHFR", "Blocking ribonucleotide reductase", "Cross‑linking DNA"],
+          correct: 0,
+          exp: "Gemcitabine is phosphorylated to active metabolites that incorporate into DNA, causing chain termination." },
+        { q: "Cytarabine (Ara‑C) is used in acute leukemias and works by:",
+          opts: ["Inhibiting DNA polymerase after incorporation", "Inhibiting ribonucleotide reductase", "Blocking purine synthesis", "Inhibiting topoisomerase", "Cross‑linking DNA"],
+          correct: 0,
+          exp: "Cytarabine triphosphate inhibits DNA polymerase and is incorporated into DNA." },
+        { q: "6‑Mercaptopurine (6‑MP) and azathioprine are prodrugs that require activation to thioguanine nucleotides. Their toxicity is increased in patients with deficiency of:",
+          opts: ["TPMT (thiopurine methyltransferase)", "DPYD", "UGT1A1", "CYP2D6", "NAT2"],
+          correct: 0,
+          exp: "TPMT deficiency leads to accumulation of active thioguanine nucleotides, causing severe myelosuppression." },
+        { q: "Allopurinol interacts with azathioprine/6‑MP because it:",
+          opts: ["Inhibits xanthine oxidase, reducing 6‑MP metabolism", "Increases 6‑MP absorption", "Decreases 6‑MP excretion", "Competes for protein binding", "Induces CYP450"],
+          correct: 0,
+          exp: "Xanthine oxidase metabolizes 6‑MP; allopurinol inhibits it, so 6‑MP dose must be reduced." },
+        { q: "Mycophenolate mofetil is an immunosuppressant that inhibits:",
+          opts: ["Inosine monophosphate dehydrogenase (IMPDH)", "DHFR", "Thymidylate synthase", "DNA polymerase", "Calcineurin"],
+          correct: 0,
+          exp: "IMPDH inhibition depletes guanine nucleotides, selectively inhibiting lymphocyte proliferation." },
+        { q: "Leflunomide, used in rheumatoid arthritis, inhibits:",
+          opts: ["Dihydroorotate dehydrogenase (DHODH)", "IMPDH", "DHFR", "Thymidylate synthase", "COX"],
+          correct: 0,
+          exp: "Leflunomide inhibits DHODH, blocking pyrimidine synthesis and lymphocyte activation." },
+        { q: "Hydroxyurea (hydroxycarbamide) is used in sickle cell disease and myeloproliferative disorders. It inhibits:",
+          opts: ["Ribonucleotide reductase", "DNA polymerase", "Thymidylate synthase", "DHFR", "Topoisomerase"],
+          correct: 0,
+          exp: "Hydroxyurea inhibits ribonucleotide reductase, reducing dNTP pools and DNA synthesis; also increases HbF." },
+        { q: "Cyclophosphamide is an alkylating agent that requires hepatic activation by:",
+          opts: ["CYP450 (to form phosphoramide mustard)", "Non‑enzymatic hydrolysis", "Aldehyde dehydrogenase", "Glucuronidation", "Reduction"],
+          correct: 0,
+          exp: "Cyclophosphamide is converted to active metabolites (phosphoramide mustard) by CYP450." },
+        { q: "Ifosfamide, similar to cyclophosphamide, can cause hemorrhagic cystitis. This is prevented by:",
+          opts: ["Mesna (binds acrolein)", "Sodium bicarbonate", "Hyperhydration", "Amifostine", "N‑acetylcysteine"],
+          correct: 0,
+          exp: "Acrolein, a metabolite, causes bladder toxicity; mesna binds and neutralizes it." },
+        { q: "Cisplatin exerts its anticancer effect by:",
+          opts: ["Cross‑linking DNA (intrastrand crosslinks)", "Intercalating DNA", "Inhibiting topoisomerase", "Blocking microtubules", "Inhibiting DNA synthesis"],
+          correct: 0,
+          exp: "Cisplatin forms DNA crosslinks, especially intrastrand guanine‑guanine, leading to apoptosis." },
+        { q: "The dose‑limiting toxicity of cisplatin is:",
+          opts: ["Nephrotoxicity", "Neurotoxicity", "Ototoxicity", "Myelosuppression", "Cardiotoxicity"],
+          correct: 0,
+          exp: "Cisplatin nephrotoxicity is managed with hydration and amifostine; cumulative neuropathy also occurs." },
+        { q: "Oxaliplatin, used in colorectal cancer, is associated with:",
+          opts: ["Acute peripheral neuropathy (cold‑sensitive)", "Nephrotoxicity", "Ototoxicity", "Cardiotoxicity", "Hemorrhagic cystitis"],
+          correct: 0,
+          exp: "Oxaliplatin causes acute dysesthesias triggered by cold; chronic neuropathy also occurs." },
+        { q: "Doxorubicin (an anthracycline) causes cardiotoxicity due to:",
+          opts: ["Free radical formation (oxidative stress)", "DNA intercalation", "Topoisomerase II inhibition", "Mitochondrial damage", "Calcium overload"],
+          correct: 0,
+          exp: "Doxorubicin generates reactive oxygen species; cumulative dose‑related cardiomyopathy." },
+        { q: "Dexrazoxane is used to prevent cardiotoxicity from:",
+          opts: ["Doxorubicin (iron chelation)", "Cisplatin", "Cyclophosphamide", "5‑FU", "Methotrexate"],
+          correct: 0,
+          exp: "Dexrazoxane chelates iron and reduces free radical formation from anthracyclines." },
+        { q: "Etoposide (VP‑16) inhibits:",
+          opts: ["Topoisomerase II", "Topoisomerase I", "Microtubules", "DNA polymerase", "Ribonucleotide reductase"],
+          correct: 0,
+          exp: "Etoposide stabilizes topoisomerase II‑DNA complexes, causing DNA breaks." },
+        { q: "Irinotecan, a topoisomerase I inhibitor, is used in colon cancer. Its active metabolite is SN‑38, which is glucuronidated by:",
+          opts: ["UGT1A1", "UGT2B7", "CYP3A4", "GST", "NAT2"],
+          correct: 0,
+          exp: "UGT1A1*28 polymorphism reduces SN‑38 glucuronidation, increasing toxicity (diarrhea, neutropenia)." },
+        { q: "Vincristine, a vinca alkaloid, acts by:",
+          opts: ["Binding tubulin, inhibiting microtubule polymerization", "Stabilizing microtubules", "Inhibiting topoisomerase", "Intercalating DNA", "Blocking DNA synthesis"],
+          correct: 0,
+          exp: "Vinca alkaloids bind tubulin, preventing microtubule formation → M phase arrest." },
+        { q: "Paclitaxel, a taxane, acts by:",
+          opts: ["Stabilizing microtubules (preventing depolymerization)", "Inhibiting microtubule polymerization", "Inhibiting topoisomerase", "Cross‑linking DNA", "Blocking thymidylate synthase"],
+          correct: 0,
+          exp: "Taxanes promote microtubule assembly and stabilization, blocking mitosis." },
+        { q: "Bleomycin is a chemotherapeutic agent that causes:",
+          opts: ["Pulmonary fibrosis (dose‑limiting)", "Cardiomyopathy", "Nephrotoxicity", "Neurotoxicity", "Myelosuppression"],
+          correct: 0,
+          exp: "Bleomycin causes lung toxicity (fibrosis, pneumonitis); myelosuppression is minimal." },
+        { q: "L‑asparaginase treats ALL by:",
+          opts: ["Depleting asparagine (leukemic cells cannot synthesize it)", "Inhibiting protein synthesis", "Cross‑linking DNA", "Blocking purine synthesis", "Inhibiting topoisomerase"],
+          correct: 0,
+          exp: "Asparaginase hydrolyzes asparagine to aspartic acid; ALL cells lack asparagine synthetase." },
+        { q: "Rituximab is a monoclonal antibody against:",
+          opts: ["CD20", "CD19", "CD22", "CD52", "HER2"],
+          correct: 0,
+          exp: "Rituximab targets CD20 on B cells; used in B‑cell lymphomas, autoimmune diseases." },
+        { q: "Trastuzumab (Herceptin) is used in HER2‑positive breast cancer. Its mechanism includes:",
+          opts: ["HER2 receptor blockade, ADCC", "Inhibition of tyrosine kinase", "Microtubule disruption", "Topoisomerase inhibition", "DNA cross‑linking"],
+          correct: 0,
+          exp: "Trastuzumab binds HER2, inhibiting signaling and recruiting immune cells (ADCC)." },
+        { q: "Imatinib (Gleevec) is a tyrosine kinase inhibitor effective in CML and GIST because it targets:",
+          opts: ["BCR‑ABL, c‑KIT, PDGFR", "EGFR", "HER2", "VEGFR", "ALK"],
+          correct: 0,
+          exp: "Imatinib inhibits BCR‑ABL (CML), c‑KIT (GIST), and PDGFR." },
+        { q: "Gefitinib and erlotinib are EGFR tyrosine kinase inhibitors used in NSCLC with:",
+          opts: ["EGFR activating mutations (exon 19 del, L858R)", "ALK rearrangements", "ROS1 fusions", "KRAS mutations", "BRAF mutations"],
+          correct: 0,
+          exp: "EGFR TKIs are most effective in tumors with EGFR mutations; KRAS mutations predict resistance." },
+        { q: "Vemurafenib is a BRAF inhibitor used in melanoma with:",
+          opts: ["BRAF V600E mutation", "NRAS mutation", "c‑KIT mutation", "GNAQ mutation", "ALK fusion"],
+          correct: 0,
+          exp: "Vemurafenib targets BRAF V600E mutant melanoma; resistance often occurs via MAPK pathway reactivation." },
+        { q: "Crizotinib is an ALK inhibitor used in NSCLC with:",
+          opts: ["ALK rearrangements", "EGFR mutations", "KRAS mutations", "ROS1 rearrangements (also)", "Both A and D"],
+          correct: 4,
+          exp: "Crizotinib targets ALK and ROS1 fusions." },
+        { q: "Methotrexate is used in high doses for osteosarcoma, followed by leucovorin rescue. It also treats:",
+          opts: ["Rheumatoid arthritis, psoriasis, ectopic pregnancy", "Gout", "Diabetes", "Hypertension", "Infections"],
+          correct: 0,
+          exp: "Low‑dose methotrexate is used in autoimmune diseases." },
+        { q: "Sulfasalazine is used in inflammatory bowel disease and rheumatoid arthritis. It is broken down in the colon to:",
+          opts: ["5‑aminosalicylic acid (5‑ASA) and sulfapyridine", "Mesalamine", "Sulfamethoxazole", "Trimethoprim", "Salicylic acid"],
+          correct: 0,
+          exp: "5‑ASA is the active anti‑inflammatory component; sulfapyridine causes most side effects." },
+        { q: "Mesalamine (5‑ASA) is used in ulcerative colitis and acts by:",
+          opts: ["Inhibiting prostaglandin synthesis, anti‑inflammatory", "Blocking TNF‑α", "Inhibiting leukotrienes", "Immunosuppression", "Antibacterial"],
+          correct: 0,
+          exp: "5‑ASA inhibits cyclooxygenase and lipoxygenase pathways, reducing colonic inflammation." },
+        { q: "Allopurinol can cause hypersensitivity syndrome, particularly in patients with:",
+          opts: ["HLA‑B*5801", "CYP2C9 variants", "TPMT deficiency", "G6PD deficiency", "NAT2 slow acetylators"],
+          correct: 0,
+          exp: "HLA‑B*5801 strongly predicts severe allopurinol hypersensitivity (SJS/TEN)." },
+        { q: "Atropine is used to treat bradycardia and organophosphate poisoning. Its mechanism is:",
+          opts: ["Muscarinic acetylcholine receptor antagonist", "Nicotinic antagonist", "Cholinesterase reactivator", "Adrenergic agonist", "Calcium channel blocker"],
+          correct: 0,
+          exp: "Atropine blocks muscarinic receptors, counteracting excessive acetylcholine." },
+        { q: "Pralidoxime (2‑PAM) is used in organophosphate poisoning to:",
+          opts: ["Reactivate acetylcholinesterase", "Block acetylcholine receptors", "Increase acetylcholine release", "Induce vomiting", "Sedate the patient"],
+          correct: 0,
+          exp: "Pralidoxime reactivates phosphorylated acetylcholinesterase, reversing paralysis." },
+        { q: "N‑acetylcysteine (NAC) is the antidote for acetaminophen overdose because it:",
+          opts: ["Replenishes glutathione, conjugates NAPQI", "Increases acetaminophen excretion", "Blocks CYP2E1", "Induces glucuronidation", "Alkalinizes urine"],
+          correct: 0,
+          exp: "NAC provides cysteine for glutathione synthesis, detoxifying the reactive metabolite NAPQI." },
+        { q: "Flumazenil is a competitive antagonist at the benzodiazepine binding site on GABAₐ receptors. It can precipitate seizures in:",
+          opts: ["Patients with benzodiazepine dependence or mixed overdose", "All patients", "Patients with epilepsy", "Children", "Elderly"],
+          correct: 0,
+          exp: "Flumazenil can cause withdrawal seizures in benzodiazepine‑dependent patients." },
+        { q: "Naloxone is an opioid antagonist used to reverse opioid overdose. Its duration of action is:",
+          opts: ["Shorter than most opioids (may require repeat doses)", "Longer than most opioids", "Same as morphine", "Hours", "Days"],
+          correct: 0,
+          exp: "Naloxone has a short half‑life (~1 hour), so repeat doses may be needed for long‑acting opioids." },
+        { q: "Deferoxamine is the antidote for iron poisoning. It chelates iron and the complex is excreted in urine, causing:",
+          opts: ["Vin rosé (pinkish) urine", "Blue urine", "Green urine", "Orange urine", "Brown urine"],
+          correct: 0,
+          exp: "Iron‑deferoxamine complex colors urine pinkish (vin rosé)." },
+        { q: "Dimercaprol (BAL) is used as an antidote for poisoning with:",
+          opts: ["Arsenic, mercury, lead (with EDTA)", "Cyanide", "Organophosphates", "Carbon monoxide", "Acetaminophen"],
+          correct: 0,
+          exp: "Dimercaprol chelates heavy metals like arsenic, mercury, and lead (often combined with EDTA)." },
+        { q: "EDTA (calcium disodium edetate) is used in lead poisoning. It can cause:",
+          opts: ["Nephrotoxicity", "Hepatotoxicity", "Neurotoxicity", "Cardiotoxicity", "Bone marrow suppression"],
+          correct: 0,
+          exp: "EDTA can cause renal tubular necrosis; hydration is important." },
+        { q: "Succimer (DMSA) is an oral chelating agent used for:",
+          opts: ["Lead, mercury, arsenic poisoning", "Iron poisoning", "Copper poisoning (Wilson's)", "Cyanide poisoning", "Organophosphates"],
+          correct: 0,
+          exp: "Succimer is less toxic than dimercaprol and can be given orally for mild‑moderate lead poisoning." },
+        { q: "Penicillamine is used in Wilson's disease (copper chelation) and also in:",
+          opts: ["Cystinuria (prevents cystine stones)", "Lead poisoning", "Arsenic poisoning", "Rheumatoid arthritis (DMARD)", "Both A and D"],
+          correct: 4,
+          exp: "Penicillamine chelates copper and also reduces cystine excretion; used in RA but less now." },
+        { q: "Sodium thiosulfate is used with sodium nitrite in cyanide poisoning. The nitrite induces methemoglobinemia, which:",
+          opts: ["Binds cyanide, forming cyanomethemoglobin", "Reduces cyanide toxicity", "Increases cyanide excretion", "Blocks cytochrome oxidase", "None"],
+          correct: 0,
+          exp: "Nitrite forms methemoglobin, which binds cyanide; thiosulfate converts cyanide to thiocyanate." },
+        { q: "Hydroxocobalamin (vitamin B12a) is an alternative antidote for cyanide poisoning. It works by:",
+          opts: ["Binding cyanide to form cyanocobalamin", "Inducing methemoglobin", "Chelating cyanide", "Blocking cytochrome oxidase", "Increasing excretion"],
+          correct: 0,
+          exp: "Hydroxocobalamin directly binds cyanide to form non‑toxic cyanocobalamin (vitamin B12)." },
+        { q: "Methylene blue is used to treat methemoglobinemia. It acts by:",
+          opts: ["Reducing methemoglobin via NADPH methemoglobin reductase", "Oxidizing hemoglobin", "Chelating iron", "Inducing CYP450", "Blocking oxidative stress"],
+          correct: 0,
+          exp: "Methylene blue (IV) accelerates NADPH‑dependent reduction of methemoglobin to hemoglobin." },
+        { q: "Methylene blue is contraindicated in G6PD deficiency because:",
+          opts: ["It can cause hemolysis (due to oxidative stress)", "It is ineffective", "It causes methemoglobinemia", "It causes hypotension", "It causes seizures"],
+          correct: 0,
+          exp: "In G6PD deficiency, methylene blue can worsen oxidative stress and precipitate hemolysis." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Amifostine is a cytoprotective agent used to reduce cisplatin‑induced nephrotoxicity. It also protects against:",
+          opts: ["Radiation‑induced xerostomia", "Doxorubicin cardiotoxicity", "Cyclophosphamide cystitis", "Methotrexate hepatotoxicity", "5‑FU mucositis"],
+          correct: 0,
+          exp: "Amifostine (WR‑2721) is a free radical scavenger; approved for radiation‑induced xerostomia and cisplatin nephrotoxicity." },
+        { q: "Palifermin (recombinant human keratinocyte growth factor) is used to reduce mucositis in patients receiving:",
+          opts: ["Chemoradiotherapy for hematologic cancers", "Cisplatin", "Doxorubicin", "Taxanes", "5‑FU"],
+          correct: 0,
+          exp: "Palifermin stimulates epithelial cell growth, reducing oral mucositis." },
+        { q: "Rasburicase (recombinant urate oxidase) is used in tumor lysis syndrome. It is contraindicated in G6PD deficiency because:",
+          opts: ["It produces hydrogen peroxide (oxidant stress)", "It causes hemolysis", "It is ineffective", "It causes methemoglobinemia", "Both A and B"],
+          correct: 4,
+          exp: "Urate oxidase converts uric acid to allantoin and H₂O₂; G6PD deficiency increases oxidative damage." },
+        { q: "Levocarnitine (L‑carnitine) is used in primary and secondary carnitine deficiency. It is also used in:",
+          opts: ["Valproic acid overdose (to reduce hyperammonemia)", "Statins for myopathy", "Dialysis", "Inborn errors of metabolism", "All of the above"],
+          correct: 4,
+          exp: "Carnitine binds valproate metabolites and restores mitochondrial function." },
+        { q: "Sapropterin (Kuvan) is a synthetic form of tetrahydrobiopterin (BH4) used to treat:",
+          opts: ["Phenylketonuria (BH4‑responsive patients)", "Tyrosinemia", "Homocystinuria", "Maple syrup urine disease", "Alkaptonuria"],
+          correct: 0,
+          exp: "Sapropterin enhances residual phenylalanine hydroxylase activity in some PKU patients." },
+        { q: "Nitisinone (NTBC) is used in tyrosinemia type I. It inhibits:",
+          opts: ["4‑hydroxyphenylpyruvate dioxygenase (HPPD)", "Fumarylacetoacetate hydrolase", "Tyrosine aminotransferase", "Homogentisate oxidase", "Phenylalanine hydroxylase"],
+          correct: 0,
+          exp: "Nitisinone prevents accumulation of toxic metabolites upstream of fumarylacetoacetate." },
+        { q: "Cysteamine (mercaptamine) is used in nephropathic cystinosis. It works by:",
+          opts: ["Depleting cystine by converting to cysteine and mixed disulfide", "Chelating cystine", "Increasing cystine excretion", "Inhibiting cystine synthesis", "Replacing cysteine"],
+          correct: 0,
+          exp: "Cysteamine reacts with cystine to form cysteine‑cysteamine mixed disulfide, which exits lysosomes." },
+        { q: "Betaine is used in homocystinuria to:",
+          opts: ["Lower homocysteine by converting it to methionine (betaine:homocysteine methyltransferase)", "Increase cystathionine", "Inhibit homocysteine synthesis", "Provide methyl groups", "Chelate homocysteine"],
+          correct: 0,
+          exp: "Betaine donates a methyl group to homocysteine, forming methionine." },
+        { q: "Miglitol and acarbose are α‑glucosidase inhibitors. Miglitol differs from acarbose in that:",
+          opts: ["It is a monosaccharide derivative and absorbed", "It is more potent", "It has fewer GI side effects", "It also inhibits pancreatic amylase", "It is longer acting"],
+          correct: 0,
+          exp: "Miglitol is a monosaccharide analog that is absorbed, while acarbose is a tetrasaccharide that acts locally." },
+        { q: "Pramlintide is an amylin analog used in diabetes. It works by:",
+          opts: ["Slowing gastric emptying, suppressing glucagon", "Increasing insulin secretion", "Blocking SGLT2", "Activating GLP‑1 receptors", "Inhibiting DPP‑4"],
+          correct: 0,
+          exp: "Pramlintide (amylin mimetic) is given with insulin to improve glycemic control." },
+        { q: "Exenatide is a GLP‑1 receptor agonist derived from Gila monster saliva. Its half‑life is short; a once‑weekly formulation uses:",
+          opts: ["Microspheres (exenatide extended‑release)", "PEGylation", "Albumin fusion", "Liposomes", "Prodrug"],
+          correct: 0,
+          exp: "Exenatide once‑weekly (Bydureon) uses microsphere technology for sustained release." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

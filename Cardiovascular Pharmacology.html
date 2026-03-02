@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiovascular Pharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-heartbeat"></i>
+        <h1>Cardiovascular Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>ANTIHYPERTENSIVES</h3>
+            <ul class="chapter-list">
+                <li><a href="#diuretics"><i class="fas fa-tint"></i> 1. Diuretics</a></li>
+                <li><a href="#ace-inhibitors"><i class="fas fa-flask"></i> 2. ACE Inhibitors</a></li>
+                <li><a href="#arbs"><i class="fas fa-flask"></i> 3. Angiotensin II Receptor Blockers</a></li>
+                <li><a href="#ccb"><i class="fas fa-bolt"></i> 4. Calcium Channel Blockers</a></li>
+                <li><a href="#beta-blockers"><i class="fas fa-heart"></i> 5. Beta‑Adrenergic Blockers</a></li>
+                <li><a href="#alpha-blockers"><i class="fas fa-bolt"></i> 6. Alpha‑Blockers & Central Agents</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIANGINAL & ANTIISCHEMIC</h3>
+            <ul class="chapter-list">
+                <li><a href="#nitrates"><i class="fas fa-bolt"></i> 7. Nitrates</a></li>
+                <li><a href="#beta-blockers-angina"><i class="fas fa-heart"></i> 8. Beta‑Blockers in Angina</a></li>
+                <li><a href="#ccb-angina"><i class="fas fa-bolt"></i> 9. Calcium Channel Blockers in Angina</a></li>
+                <li><a href="#ranolazine"><i class="fas fa-flask"></i> 10. Ranolazine</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>HEART FAILURE</h3>
+            <ul class="chapter-list">
+                <li><a href="#hf-drugs"><i class="fas fa-heartbeat"></i> 11. Drugs for Heart Failure</a></li>
+                <li><a href="#digoxin"><i class="fas fa-leaf"></i> 12. Digoxin</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIARRHYTHMICS</h3>
+            <ul class="chapter-list">
+                <li><a href="#class1"><i class="fas fa-bolt"></i> 13. Class I – Sodium Channel Blockers</a></li>
+                <li><a href="#class2"><i class="fas fa-heart"></i> 14. Class II – Beta‑Blockers</a></li>
+                <li><a href="#class3"><i class="fas fa-bolt"></i> 15. Class III – Potassium Channel Blockers</a></li>
+                <li><a href="#class4"><i class="fas fa-bolt"></i> 16. Class IV – Calcium Channel Blockers</a></li>
+                <li><a href="#misc-antiarrhythmics"><i class="fas fa-flask"></i> 17. Miscellaneous Antiarrhythmics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>LIPID‑LOWERING DRUGS</h3>
+            <ul class="chapter-list">
+                <li><a href="#statins"><i class="fas fa-capsules"></i> 18. Statins</a></li>
+                <li><a href="#other-lipid"><i class="fas fa-capsules"></i> 19. Other Lipid‑Lowering Agents</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIPLATELET & ANTICOAGULANT</h3>
+            <ul class="chapter-list">
+                <li><a href="#antiplatelet"><i class="fas fa-tint"></i> 20. Antiplatelet Drugs</a></li>
+                <li><a href="#anticoagulants"><i class="fas fa-tint"></i> 21. Anticoagulants</a></li>
+                <li><a href="#thrombolytics"><i class="fas fa-bolt"></i> 22. Thrombolytics</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CHAPTER 1: DIURETICS ==================== -->
+        <section id="diuretics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 1. Diuretics</div>
+            <div class="section-card">
+                <div class="section-heading">Overview & Sites of Action</div>
+                <div class="body-text">
+                    <p>Diuretics increase urine output by inhibiting sodium reabsorption at specific nephron sites. They are used in hypertension, heart failure, edema, and certain renal disorders.</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Site of Action</th><th>Examples</th><th>Mechanism</th></tr></thead>
+                    <tbody>
+                        <tr><td>Loop diuretics</td><td>Thick ascending limb (Na‑K‑2Cl cotransporter)</td><td>Furosemide, bumetanide, torsemide</td><td>Inhibit NKCC2 → ↑ Na, Cl, K excretion</td></tr>
+                        <tr><td>Thiazides</td><td>Distal convoluted tubule (Na‑Cl cotransporter)</td><td>Hydrochlorothiazide, chlorthalidone</td><td>Inhibit NCC → ↑ Na, Cl excretion</td></tr>
+                        <tr><td>K‑sparing (aldosterone antagonists)</td><td>Collecting duct</td><td>Spironolactone, eplerenone</td><td>Antagonize aldosterone → ↓ Na reabsorption, ↓ K secretion</td></tr>
+                        <tr><td>K‑sparing (ENaC blockers)</td><td>Collecting duct</td><td>Amiloride, triamterene</td><td>Block ENaC → ↓ Na reabsorption, ↓ K secretion</td></tr>
+                        <tr><td>Carbonic anhydrase inhibitors</td><td>Proximal tubule</td><td>Acetazolamide</td><td>Inhibit CA → ↓ HCO₃ reabsorption → alkaline diuresis</td></tr>
+                        <tr><td>Osmotic diuretics</td><td>Proximal tubule, loop of Henle</td><td>Mannitol</td><td>Increase osmotic pressure of filtrate → water diuresis</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Loop Diuretics</div>
+                <ul>
+                    <li><strong>Pharmacokinetics:</strong> Oral/IV, highly protein‑bound, secreted into proximal tubule.</li>
+                    <li><strong>Uses:</strong> Pulmonary edema, heart failure, renal insufficiency, hypertension (add‑on), hypercalcemia (increase Ca excretion).</li>
+                    <li><strong>Adverse effects:</strong> Hypokalemia, hypomagnesemia, metabolic alkalosis, ototoxicity (high doses), dehydration.</li>
+                </ul>
+                <div class="subsection-heading">Thiazides</div>
+                <ul>
+                    <li><strong>Uses:</strong> Mild‑moderate hypertension, heart failure, nephrolithiasis (hypercalciuria), diabetes insipidus (paradoxical antidiuresis).</li>
+                    <li><strong>Adverse effects:</strong> Hypokalemia, hyponatremia, hyperuricemia, hyperglycemia, hyperlipidemia, photosensitivity.</li>
+                </ul>
+                <div class="subsection-heading">Potassium‑Sparing Diuretics</div>
+                <ul>
+                    <li><strong>Spironolactone/eplerenone:</strong> Aldosterone antagonists; used in heart failure (improve survival), primary aldosteronism, cirrhosis. Side effects: hyperkalemia, gynecomastia (spironolactone).</li>
+                    <li><strong>Amiloride/triamterene:</strong> ENaC blockers; used for hypertension, often in combo with thiazides. Side effects: hyperkalemia, GI upset.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> In heart failure, loop diuretics relieve congestion, but aldosterone antagonists reduce mortality. Monitor potassium closely.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 2: ACE INHIBITORS ==================== -->
+        <section id="ace-inhibitors" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 2. ACE Inhibitors</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>ACE inhibitors block angiotensin‑converting enzyme, preventing conversion of angiotensin I to angiotensin II. This leads to vasodilation, reduced aldosterone secretion, and decreased degradation of bradykinin.</p>
+                </div>
+                <div class="subsection-heading">Examples</div>
+                <ul>
+                    <li><strong>Captopril</strong> (short‑acting, sulfhydryl group, taste disturbances, rash)</li>
+                    <li><strong>Enalapril, lisinopril, ramipril, trandolapril, fosinopril</strong> (longer‑acting)</li>
+                </ul>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li>Hypertension (first‑line, especially in diabetics, CKD)</li>
+                    <li>Heart failure with reduced ejection fraction (reduce mortality)</li>
+                    <li>Post‑MI (reduce remodeling, mortality)</li>
+                    <li>Diabetic nephropathy, proteinuric CKD</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li><strong>Dry cough</strong> (due to bradykinin accumulation) – most common reason for discontinuation.</li>
+                    <li><strong>Angioedema</strong> (rare but life‑threatening).</li>
+                    <li><strong>Hyperkalemia</strong> (due to reduced aldosterone).</li>
+                    <li><strong>Acute kidney injury</strong> if bilateral renal artery stenosis.</li>
+                    <li><strong>Teratogenicity</strong> (contraindicated in pregnancy).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> ACE inhibitors are first‑line in diabetes and CKD to slow progression of nephropathy. Monitor renal function and potassium after initiation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 3: ANGIOTENSIN II RECEPTOR BLOCKERS ==================== -->
+        <section id="arbs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 3. Angiotensin II Receptor Blockers (ARBs)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>ARBs selectively block the AT₁ receptor of angiotensin II, resulting in vasodilation, reduced aldosterone secretion, and sympathetic inhibition. Unlike ACE inhibitors, they do not affect bradykinin metabolism.</p>
+                </div>
+                <div class="subsection-heading">Examples</div>
+                <ul>
+                    <li>Losartan, valsartan, candesartan, irbesartan, telmisartan, olmesartan, azilsartan</li>
+                </ul>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li>Hypertension (alternative to ACE inhibitors, especially when cough occurs)</li>
+                    <li>Heart failure (reduces hospitalization, mortality)</li>
+                    <li>Diabetic nephropathy, proteinuric CKD</li>
+                    <li>Post‑MI (if ACE intolerant)</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li>No cough, lower risk of angioedema.</li>
+                    <li>Hyperkalemia, renal impairment, hypotension – similar to ACE inhibitors.</li>
+                    <li>Teratogenic – contraindicated in pregnancy.</li>
+                </ul>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “ARBs – Angry Receptors Blocked – same benefits as ACE, without the cough.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 4: CALCIUM CHANNEL BLOCKERS ==================== -->
+        <section id="ccb" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 4. Calcium Channel Blockers</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>CCBs inhibit L‑type calcium channels in vascular smooth muscle and myocardium. They are divided into dihydropyridines (primarily vasodilators) and non‑dihydropyridines (more cardiac‑active).</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Dihydropyridines</td><td>Nifedipine, amlodipine, felodipine, nicardipine</td><td>Vasodilation (↓ BP), minimal cardiac depression</td></tr>
+                        <tr><td>Non‑dihydropyridines</td><td>Verapamil, diltiazem</td><td>↓ HR, ↓ contractility, ↓ AV conduction; also vasodilation</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li><strong>Hypertension:</strong> All CCBs, especially dihydropyridines (amlodipine).</li>
+                    <li><strong>Angina:</strong> Verapamil, diltiazem (reduce O2 demand); nifedipine (may cause reflex tachycardia).</li>
+                    <li><strong>Supraventricular tachycardia:</strong> Verapamil, diltiazem (slow AV nodal conduction).</li>
+                    <li><strong>Raynaud phenomenon:</strong> Dihydropyridines (vasodilation).</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li><strong>Dihydropyridines:</strong> Flushing, headache, dizziness, peripheral edema (not due to heart failure), reflex tachycardia.</li>
+                    <li><strong>Verapamil/diltiazem:</strong> Bradycardia, AV block, constipation (verapamil), negative inotropy (avoid in heart failure).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Avoid verapamil in patients with heart failure with reduced EF due to negative inotropy. Dihydropyridines are safe in combination with beta‑blockers for angina.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 5: BETA‑ADRENERGIC BLOCKERS ==================== -->
+        <section id="beta-blockers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 5. Beta‑Adrenergic Blockers</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Beta‑blockers competitively antagonize catecholamines at β‑adrenergic receptors. They are classified as cardioselective (β₁), non‑selective (β₁ + β₂), or with additional α‑blockade.</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Examples</th><th>Properties</th></tr></thead>
+                    <tbody>
+                        <tr><td>β₁‑selective</td><td>Metoprolol, atenolol, bisoprolol, esmolol</td><td>Less bronchospasm, less peripheral vasoconstriction</td></tr>
+                        <tr><td>Non‑selective</td><td>Propranolol, nadolol, timolol</td><td>Block β₂ as well; risk of bronchospasm</td></tr>
+                        <tr><td>With ISA</td><td>Pindolol, acebutolol</td><td>Partial agonist activity – less bradycardia</td></tr>
+                        <tr><td>With α‑blockade</td><td>Carvedilol, labetalol</td><td>Vasodilation; used in heart failure, hypertensive emergencies</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li><strong>Hypertension:</strong> Reduce cardiac output, renin release.</li>
+                    <li><strong>Angina pectoris:</strong> Reduce O2 demand by ↓HR, ↓contractility.</li>
+                    <li><strong>Heart failure (HFrEF):</strong> Carvedilol, bisoprolol, metoprolol succinate – improve survival.</li>
+                    <li><strong>Post‑MI:</strong> Reduce mortality, prevent remodeling.</li>
+                    <li><strong>Supraventricular arrhythmias:</strong> Slow AV conduction.</li>
+                    <li><strong>Migraine prophylaxis, essential tremor, thyrotoxicosis, glaucoma (timolol).</strong></li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li>Bradycardia, AV block, hypotension, fatigue, decreased exercise tolerance.</li>
+                    <li>Bronchospasm (non‑selective; caution in asthma/COPD).</li>
+                    <li>Mask hypoglycemia symptoms (tachycardia) – use cardioselective with caution in diabetics.</li>
+                    <li>Abrupt withdrawal can cause rebound hypertension/angina.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> In heart failure, start low and titrate slowly. Never withdraw beta‑blockers abruptly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 6: ALPHA‑BLOCKERS & CENTRAL AGENTS ==================== -->
+        <section id="alpha-blockers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 6. Alpha‑Blockers & Central Sympatholytics</div>
+            <div class="section-card">
+                <div class="subsection-heading">Alpha‑1 Blockers</div>
+                <ul>
+                    <li><strong>Examples:</strong> Prazosin, doxazosin, terazosin, tamsulosin (uroselective).</li>
+                    <li><strong>Mechanism:</strong> Block α₁ receptors on vascular smooth muscle → vasodilation.</li>
+                    <li><strong>Uses:</strong> Hypertension (add‑on), benign prostatic hyperplasia (tamsulosin).</li>
+                    <li><strong>Adverse effects:</strong> First‑dose hypotension (syncope), dizziness, reflex tachycardia.</li>
+                </ul>
+                <div class="subsection-heading">Central Alpha‑2 Agonists</div>
+                <ul>
+                    <li><strong>Clonidine, methyldopa, guanfacine.</strong></li>
+                    <li><strong>Mechanism:</strong> Stimulate α₂ receptors in brainstem → reduced sympathetic outflow.</li>
+                    <li><strong>Uses:</strong> Hypertension (especially in pregnancy – methyldopa), opioid withdrawal, ADHD (guanfacine).</li>
+                    <li><strong>Adverse effects:</strong> Sedation, dry mouth, rebound hypertension (clonidine withdrawal).</li>
+                </ul>
+                <div class="subsection-heading">Vasodilators</div>
+                <ul>
+                    <li><strong>Hydralazine:</strong> Direct arteriolar vasodilator; used in hypertension, heart failure (in combo with isosorbide dinitrate in African‑Americans). Side effects: reflex tachycardia, fluid retention, lupus‑like syndrome (slow acetylators).</li>
+                    <li><strong>Minoxidil:</strong> Potent arteriolar vasodilator; used for refractory hypertension. Side effects: hypertrichosis, pericardial effusion.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 7: NITRATES ==================== -->
+        <section id="nitrates" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 7. Nitrates</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Nitrates are prodrugs converted to nitric oxide (NO) in vascular smooth muscle, activating guanylyl cyclase → ↑ cGMP → smooth muscle relaxation (venodilation predominates at low doses, arteriodilation at higher doses).</p>
+                </div>
+                <div class="subsection-heading">Examples</div>
+                <ul>
+                    <li><strong>Short‑acting:</strong> Nitroglycerin (sublingual, spray, IV) – rapid onset (2‑5 min).</li>
+                    <li><strong>Long‑acting:</strong> Isosorbide dinitrate, isosorbide mononitrate – oral.</li>
+                </ul>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li>Acute angina (sublingual NTG).</li>
+                    <li>Prophylaxis of angina (long‑acting).</li>
+                    <li>Heart failure (especially with hydralazine in African‑Americans).</li>
+                    <li>Acute pulmonary edema (IV nitroglycerin).</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li>Headache, flushing, hypotension, reflex tachycardia.</li>
+                    <li>Tolerance develops with continuous use – needs nitrate‑free interval (10‑12h).</li>
+                    <li>Contraindicated with PDE‑5 inhibitors (sildenafil, tadalafil) – severe hypotension.</li>
+                </ul>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “Nitrates need a break – 10‑12 hours nitrate‑free interval to avoid tolerance.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 8: BETA‑BLOCKERS IN ANGINA ==================== -->
+        <section id="beta-blockers-angina" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 8. Beta‑Blockers in Angina</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Beta‑blockers reduce myocardial oxygen demand by decreasing heart rate, contractility, and blood pressure. They are first‑line for chronic stable angina and post‑MI. They also reduce exercise‑induced tachycardia and improve exercise tolerance.</p>
+                    <p>Preferred: cardioselective (atenolol, metoprolol) to minimize bronchospasm. Carvedilol also used in heart failure.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 9: CCB IN ANGINA ==================== -->
+        <section id="ccb-angina" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 9. Calcium Channel Blockers in Angina</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Verapamil and diltiazem</strong> reduce O2 demand by decreasing HR and contractility; also cause coronary vasodilation. <strong>Dihydropyridines</strong> (nifedipine) may cause reflex tachycardia; they are often combined with beta‑blockers to offset this.</p>
+                    <p><strong>Variant (Prinzmetal) angina:</strong> CCBs are first‑line because they relieve coronary vasospasm.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 10: RANOLAZINE ==================== -->
+        <section id="ranolazine" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 10. Ranolazine</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Ranolazine is an antianginal agent that inhibits late sodium current in cardiac cells, reducing intracellular calcium overload and improving diastolic relaxation. It does not affect HR or BP. Used for chronic angina when other drugs are insufficient. Side effects: QT prolongation, dizziness, constipation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 11: DRUGS FOR HEART FAILURE ==================== -->
+        <section id="hf-drugs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 11. Drugs for Heart Failure (HFrEF)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Standard therapy for HFrEF includes multiple drug classes that improve symptoms and survival.</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug Class</th><th>Examples</th><th>Mechanism</th></tr></thead>
+                    <tbody>
+                        <tr><td>ACE inhibitors / ARBs</td><td>Enalapril, losartan</td><td>↓ afterload, ↓ aldosterone, reverse remodeling</td></tr>
+                        <tr><td>Beta‑blockers</td><td>Carvedilol, bisoprolol, metoprolol succinate</td><td>↓ HR, ↓ remodeling, ↓ mortality</td></tr>
+                        <tr><td>Mineralocorticoid antagonists</td><td>Spironolactone, eplerenone</td><td>↓ fibrosis, ↓ mortality</td></tr>
+                        <tr><td>ARNI (sacubitril/valsartan)</td><td>Sacubitril/valsartan</td><td>Neprilysin inhibitor + ARB; ↑ natriuretic peptides, ↓ mortality</td></tr>
+                        <tr><td>SGLT2 inhibitors</td><td>Empagliflozin, dapagliflozin</td><td>↓ HF hospitalization, ↓ cardiovascular death (mechanisms unclear)</td></tr>
+                        <tr><td>Diuretics</td><td>Furosemide, torsemide</td><td>Relieve congestion (symptom relief, not mortality benefit)</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Hydralazine + Isosorbide Dinitrate</div>
+                <ul>
+                    <li>Combination of arteriolar and venodilator; used as add‑on in African‑American patients with HFrEF, or when ACE/ARB intolerant.</li>
+                    <li>Improves survival in African‑Americans.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 12: DIGOXIN ==================== -->
+        <section id="digoxin" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-leaf"></i> 12. Digoxin</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Digoxin inhibits Na⁺/K⁺ ATPase, increasing intracellular Na⁺, which then reduces activity of Na⁺/Ca²⁺ exchanger → ↑ intracellular Ca²⁺ → increased contractility (positive inotropy). It also increases vagal tone (negative chronotropy).</p>
+                </div>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li>Heart failure with reduced EF (especially with atrial fibrillation).</li>
+                    <li>Atrial fibrillation (rate control).</li>
+                </ul>
+                <div class="subsection-heading">Pharmacokinetics</div>
+                <ul>
+                    <li>Narrow therapeutic window (0.5‑0.9 ng/mL).</li>
+                    <li>Renal excretion; dose adjust in renal impairment.</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects (toxicity)</div>
+                <ul>
+                    <li>Cardiac: arrhythmias (PVCs, VT, AV block, atrial tachycardia with block).</li>
+                    <li>Extracardiac: nausea, vomiting, anorexia, visual disturbances (yellow‑green halos).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Management of toxicity:</strong> Stop digoxin, correct hypokalemia, consider digoxin‑specific Fab antibodies.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 13: CLASS I ANTIARRHYTHMICS ==================== -->
+        <section id="class1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 13. Class I – Sodium Channel Blockers</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Subclass</th><th>Examples</th><th>Effect</th><th>Uses</th><th>Adverse</th></tr></thead>
+                    <tbody>
+                        <tr><td>Ia (moderate blockade)</td><td>Quinidine, procainamide, disopyramide</td><td>↑ APD, ↑ QT</td><td>Atrial/ventricular arrhythmias</td><td>Cinchonism (quinidine), SLE (procainamide)</td></tr>
+                        <tr><td>Ib (mild blockade)</td><td>Lidocaine, mexiletine</td><td>↓ APD (Purkinje)</td><td>Ventricular arrhythmias (especially post‑MI)</td><td>CNS: dizziness, paresthesias</td></tr>
+                        <tr><td>Ic (strong blockade)</td><td>Flecainide, propafenone</td><td>Markedly slow conduction</td><td>Atrial fibrillation, PSVT (no structural heart disease)</td><td>Proarrhythmia (CAST trial); contraindicated in CAD</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>CAST trial warning:</strong> Ic agents increased mortality post‑MI; avoid in patients with structural heart disease.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 14: CLASS II – BETA‑BLOCKERS ==================== -->
+        <section id="class2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 14. Class II – Beta‑Blockers</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Beta‑blockers (e.g., metoprolol, propranolol) suppress arrhythmias by reducing sympathetic activity, slowing sinus rate, and prolonging AV nodal conduction. They are used for sinus tachycardia, atrial fibrillation (rate control), and prevention of sudden death post‑MI.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 15: CLASS III – POTASSIUM CHANNEL BLOCKERS ==================== -->
+        <section id="class3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 15. Class III – Potassium Channel Blockers</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Amiodarone:</strong> Multichannel blocker (also I, II, IV); most effective antiarrhythmic but toxic (pulmonary fibrosis, thyroid dysfunction, hepatotoxicity, corneal deposits, blue‑gray skin).</li>
+                    <li><strong>Dofetilide:</strong> Pure class III; used in AF; requires hospital initiation due to torsades risk.</li>
+                    <li><strong>Ibutilide:</strong> IV for acute conversion of AF/AFL.</li>
+                    <li><strong>Sotalol:</strong> Combined β‑blocker + class III; used for AF, ventricular arrhythmias; risk of torsades.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 16: CLASS IV – CALCIUM CHANNEL BLOCKERS ==================== -->
+        <section id="class4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 16. Class IV – Calcium Channel Blockers</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Verapamil and diltiazem slow AV nodal conduction, used for rate control in atrial fibrillation and for terminating AVNRT. Contraindicated in wide QRS tachycardia of unknown origin.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 17: MISCELLANEOUS ANTIARRHYTHMICS ==================== -->
+        <section id="misc-antiarrhythmics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 17. Miscellaneous Antiarrhythmics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Adenosine:</strong> Endogenous nucleoside, transiently blocks AV node via A₁ receptors. Used for acute termination of PSVT. Causes flushing, chest discomfort, bronchospasm.</li>
+                    <li><strong>Magnesium:</strong> Used in torsades de pointes, especially if hypomagnesemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 18: STATINS ==================== -->
+        <section id="statins" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 18. Statins (HMG‑CoA Reductase Inhibitors)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Statins competitively inhibit HMG‑CoA reductase, reducing cholesterol synthesis in the liver, leading to upregulation of LDL receptors and decreased plasma LDL‑C. They also have pleiotropic effects (anti‑inflammatory, plaque stabilization).</p>
+                </div>
+                <div class="subsection-heading">Examples</div>
+                <ul>
+                    <li><strong>High‑intensity:</strong> Atorvastatin, rosuvastatin.</li>
+                    <li><strong>Moderate‑intensity:</strong> Simvastatin, pravastatin, lovastatin, fluvastatin, pitavastatin.</li>
+                </ul>
+                <div class="subsection-heading">Clinical Uses</div>
+                <ul>
+                    <li>Primary and secondary prevention of cardiovascular events.</li>
+                    <li>Hypercholesterolemia.</li>
+                </ul>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li>Myalgia, myopathy, rhabdomyolysis (↑ risk with fibrates, niacin, gemfibrozil).</li>
+                    <li>Hepatotoxicity (elevated transaminases) – monitor.</li>
+                    <li>Increased risk of new‑onset diabetes (small).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Statins are best taken in the evening (except atorvastatin, rosuvastatin) because cholesterol synthesis peaks overnight. Monitor for muscle symptoms.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 19: OTHER LIPID‑LOWERING AGENTS ==================== -->
+        <section id="other-lipid" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 19. Other Lipid‑Lowering Agents</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Ezetimibe:</strong> Inhibits intestinal cholesterol absorption (NPC1L1); used alone or with statin. Minimal side effects.</li>
+                    <li><strong>PCSK9 inhibitors:</strong> Alirocumab, evolocumab – monoclonal antibodies increase LDL receptor recycling; potent LDL lowering; SC injection.</li>
+                    <li><strong>Bile acid sequestrants:</strong> Cholestyramine, colesevelam – bind bile acids in gut, interrupting enterohepatic circulation. May ↑ TG, constipation.</li>
+                    <li><strong>Fibrates:</strong> Fenofibrate, gemfibrozil – PPAR‑α agonists; ↓ TG, ↑ HDL. Risk of myopathy with statins (gemfibrozil contraindicated with statins).</li>
+                    <li><strong>Niacin:</strong> ↓ VLDL, ↑ HDL; side effects: flushing, hyperglycemia, hepatotoxicity.</li>
+                    <li><strong>Icosapent ethyl:</strong> Pure EPA; reduces CV events in high‑risk patients with elevated TG.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 20: ANTIPLATELET DRUGS ==================== -->
+        <section id="antiplatelet" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 20. Antiplatelet Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Aspirin:</strong> Irreversibly inhibits COX‑1 → ↓ thromboxane A₂. Used for secondary prevention of CV events. Side effects: GI bleeding, ulcers.</li>
+                    <li><strong>P2Y₁₂ inhibitors:</strong> Clopidogrel, prasugrel, ticagrelor. Block ADP receptor on platelets. Used in ACS and after stent placement. Clopidogrel is prodrug (CYP2C19); prasugrel more potent, contraindicated in prior stroke; ticagrelor reversible, direct‑acting.</li>
+                    <li><strong>GP IIb/IIIa inhibitors:</strong> Abciximab, eptifibatide, tirofiban – IV; block final common pathway of platelet aggregation; used in high‑risk PCI.</li>
+                    <li><strong>Dipyridamole:</strong> Inhibits phosphodiesterase; often combined with aspirin (Aggrenox) for stroke prevention.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 21: ANTICOAGULANTS ==================== -->
+        <section id="anticoagulants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 21. Anticoagulants</div>
+            <div class="section-card">
+                <div class="subsection-heading">Heparin & Derivatives</div>
+                <ul>
+                    <li><strong>Unfractionated heparin (UFH):</strong> Activates antithrombin III, inhibiting thrombin and factor Xa. IV/SC; monitor aPTT. Side effects: bleeding, HIT.</li>
+                    <li><strong>Low molecular weight heparin (LMWH):</strong> Enoxaparin, dalteparin – more predictable, anti‑Xa > anti‑IIa, SC, lower HIT risk.</li>
+                    <li><strong>Fondaparinux:</strong> Synthetic pentasaccharide, selective anti‑Xa; no HIT.</li>
+                </ul>
+                <div class="subsection-heading">Warfarin</div>
+                <ul>
+                    <li>Vitamin K antagonist; inhibits synthesis of factors II, VII, IX, X, proteins C, S. Monitor INR (target 2‑3 for most indications). Narrow therapeutic index, many drug/food interactions. Side effects: bleeding, skin necrosis.</li>
+                </ul>
+                <div class="subsection-heading">Direct Oral Anticoagulants (DOACs)</div>
+                <ul>
+                    <li><strong>Direct thrombin inhibitor:</strong> Dabigatran (prodrug).</li>
+                    <li><strong>Factor Xa inhibitors:</strong> Rivaroxaban, apixaban, edoxaban.</li>
+                    <li>Advantages over warfarin: no routine monitoring, fewer drug interactions, rapid onset. Disadvantages: cost, lack of reversal agents (except dabigatran has idarucizumab; andexanet alfa for Xa inhibitors).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 22: THROMBOLYTICS ==================== -->
+        <section id="thrombolytics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 22. Thrombolytics (Fibrinolytics)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Thrombolytics activate plasminogen to plasmin, which degrades fibrin clots. Used in STEMI, acute ischemic stroke (selected), massive PE.</p>
+                    <ul>
+                        <li><strong>Streptokinase:</strong> Antigenic, may cause allergic reactions; rarely used now.</li>
+                        <li><strong>Alteplase (tPA):</strong> Tissue plasminogen activator; fibrin‑selective.</li>
+                        <li><strong>Tenecteplase:</strong> Modified tPA, longer half‑life, single bolus.</li>
+                    </ul>
+                    <p><strong>Contraindications:</strong> Active bleeding, recent surgery, history of intracranial hemorrhage, severe hypertension.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Cardiovascular Pharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Skills · Differential Diagnosis & Syndromes MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-notes-medical"></i>
+        <h1>Clinical Skills · Differential Diagnosis & Syndromes MCQ</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ CLINICAL SKILLS (DIFFERENTIAL DIAGNOSIS & SYNDROMES) MCQ QUESTIONS
+    const questions = [
+        { q: "A 60-year-old man presents with sudden, severe tearing chest pain radiating to the back, with a pulse deficit in the left arm. The most likely diagnosis is:",
+          opts: ["Aortic dissection", "Acute myocardial infarction", "Pulmonary embolism", "Pericarditis", "Esophageal rupture"],
+          correct: 0,
+          exp: "Aortic dissection presents with sudden, tearing chest pain that may radiate to the back, and pulse/blood pressure differential between arms." },
+        { q: "A 25-year-old woman with pleuritic chest pain, dyspnea, and a history of oral contraceptive use. Vital signs: HR 110, BP 110/70, RR 24, O2 sat 92%. The most likely diagnosis is:",
+          opts: ["Pulmonary embolism", "Pneumonia", "Costochondritis", "Anxiety", "Pericarditis"],
+          correct: 0,
+          exp: "PE risk factors (OCP), pleuritic pain, dyspnea, tachypnea, and mild hypoxia make PE likely." },
+        { q: "A 55-year-old man with crushing substernal chest pain radiating to the left arm, diaphoresis, and nausea. ECG shows ST elevation in leads V1-V4. The diagnosis is:",
+          opts: ["Anterior STEMI", "Inferior STEMI", "Pericarditis", "Unstable angina", "Pulmonary embolism"],
+          correct: 0,
+          exp: "ST elevation in V1-V4 indicates anterior STEMI (LAD occlusion)." },
+        { q: "A 70-year-old woman with sudden onset of shortness of breath, pleuritic chest pain, and hypotension after hip replacement surgery. The most likely diagnosis is:",
+          opts: ["Massive pulmonary embolism", "Myocardial infarction", "Pneumothorax", "Pneumonia", "Heart failure"],
+          correct: 0,
+          exp: "Post‑operative (hip surgery) is high risk for DVT/PE; hypotension suggests massive PE." },
+        { q: "A 40-year-old man with acute onset of sharp chest pain that is worse when lying down and relieved by leaning forward. On exam, there is a friction rub. The most likely diagnosis is:",
+          opts: ["Pericarditis", "Pleurisy", "Costochondritis", "Myocardial infarction", "Pulmonary embolism"],
+          correct: 0,
+          exp: "Pericarditis pain is positional (worse supine, better leaning forward) and associated with friction rub." },
+        { q: "A 65-year-old man with severe, tearing chest pain radiating to the back, and a widened mediastinum on chest X‑ray. The most likely diagnosis is:",
+          opts: ["Aortic dissection", "Thoracic aortic aneurysm", "Myocardial infarction", "Hiatal hernia", "Mediastinal mass"],
+          correct: 0,
+          exp: "Widened mediastinum on CXR suggests aortic dissection." },
+        { q: "A 30-year-old woman with episodic chest pain that lasts seconds, associated with palpitations and a feeling of anxiety. Exam and ECG are normal. The most likely diagnosis is:",
+          opts: ["Anxiety/panic attack", "Gastroesophageal reflux", "Costochondritis", "Mitral valve prolapse", "Pericarditis"],
+          correct: 0,
+          exp: "Brief, fleeting chest pain with anxiety and palpitations in a young woman is often anxiety‑related." },
+        { q: "A 50-year-old man with burning retrosternal chest pain after meals, relieved by antacids. The most likely diagnosis is:",
+          opts: ["Gastroesophageal reflux disease (GERD)", "Angina", "Peptic ulcer disease", "Cholecystitis", "Esophageal spasm"],
+          correct: 0,
+          exp: "GERD pain is burning, postprandial, and relieved by antacids." },
+        { q: "A 60-year-old man with episodic chest pain on exertion, relieved by rest. ECG stress test shows ST depression. The diagnosis is:",
+          opts: ["Stable angina", "Unstable angina", "NSTEMI", "STEMI", "Variant angina"],
+          correct: 0,
+          exp: "Stable angina is predictable, exertion‑induced, and relieved by rest." },
+        { q: "A 45-year-old woman with chest pain at rest, occurring in the early morning hours, associated with transient ST elevation. The diagnosis is:",
+          opts: ["Variant (Prinzmetal) angina", "Unstable angina", "NSTEMI", "Pericarditis", "Acute MI"],
+          correct: 0,
+          exp: "Variant angina is caused by coronary vasospasm, often at rest, with transient ST elevation." },
+        { q: "A 25-year-old man with sudden onset of shortness of breath and sharp chest pain. On exam, he has absent breath sounds on the right and tracheal deviation to the left. The most likely diagnosis is:",
+          opts: ["Tension pneumothorax", "Simple pneumothorax", "Hemothorax", "Pulmonary embolism", "Asthma exacerbation"],
+          correct: 0,
+          exp: "Tension pneumothorax presents with hypotension, absent breath sounds, and tracheal deviation away from the affected side." },
+        { q: "A 70-year-old woman with gradual onset of shortness of breath, orthopnea, and peripheral edema. On exam, crackles in both lung bases and JVD. The most likely diagnosis is:",
+          opts: ["Heart failure (pulmonary edema)", "COPD exacerbation", "Pneumonia", "Pulmonary fibrosis", "Asthma"],
+          correct: 0,
+          exp: "Heart failure presents with dyspnea, orthopnea, edema, crackles, and elevated JVP." },
+        { q: "A 60-year-old man with COPD presents with increased shortness of breath, wheezing, and cough. ABG: pH 7.32, PaCO2 65, PaO2 55. This is:",
+          opts: ["Acute‑on‑chronic respiratory acidosis (hypercapnic respiratory failure)", "Hypoxemic respiratory failure", "Metabolic acidosis", "Respiratory alkalosis", "Normal ABG"],
+          correct: 0,
+          exp: "COPD exacerbation causes hypercapnic (type II) respiratory failure with acute acidosis." },
+        { q: "A 30-year-old woman with asthma presents with severe dyspnea, wheezing, and pulsus paradoxus of 20 mmHg. This indicates:",
+          opts: ["Severe asthma exacerbation (status asthmaticus)", "Mild asthma", "Pneumothorax", "Anaphylaxis", "Foreign body aspiration"],
+          correct: 0,
+          exp: "Pulsus paradoxus >10 mmHg in asthma indicates severe airflow obstruction." },
+        { q: "A 45-year-old man with sudden onset of severe epigastric pain radiating to the back, nausea, and vomiting. He has a history of alcohol abuse. The most likely diagnosis is:",
+          opts: ["Acute pancreatitis", "Cholecystitis", "Gastritis", "Peptic ulcer disease", "Myocardial infarction"],
+          correct: 0,
+          exp: "Acute pancreatitis presents with epigastric pain radiating to the back, often with history of alcohol or gallstones." },
+        { q: "A 55-year-old woman with right upper quadrant pain, fever, and jaundice. Murphy sign is positive. The most likely diagnosis is:",
+          opts: ["Acute cholecystitis", "Cholangitis", "Hepatitis", "Peptic ulcer disease", "Pancreatitis"],
+          correct: 0,
+          exp: "Acute cholecystitis presents with RUQ pain, fever, and positive Murphy sign." },
+        { q: "A 60-year-old man with right upper quadrant pain, fever, jaundice, and hypotension (Charcot triad plus shock). This is:",
+          opts: ["Acute cholangitis (Reynolds pentad)", "Acute cholecystitis", "Gallstone pancreatitis", "Hepatic abscess", "Hepatitis"],
+          correct: 0,
+          exp: "Cholangitis: Charcot triad (pain, fever, jaundice) + Reynolds pentad (plus shock, confusion)." },
+        { q: "A 30-year-old man with acute onset of right lower quadrant pain, nausea, and fever. On exam, tenderness at McBurney point. The most likely diagnosis is:",
+          opts: ["Acute appendicitis", "Diverticulitis", "Mesenteric adenitis", "Crohn disease", "Ureteral stone"],
+          correct: 0,
+          exp: "Appendicitis: RLQ pain, McBurney tenderness, fever, nausea." },
+        { q: "A 50-year-old woman with left lower quadrant pain, fever, and change in bowel habits. She has a history of diverticulosis. The most likely diagnosis is:",
+          opts: ["Acute diverticulitis", "Appendicitis", "Ovarian cyst rupture", "Ectopic pregnancy", "Colitis"],
+          correct: 0,
+          exp: "Diverticulitis presents with LLQ pain, fever, and often constipation/diarrhea." },
+        { q: "A 65-year-old man with sudden, severe diffuse abdominal pain, vomiting, and rectal bleeding. He has atrial fibrillation. The most likely diagnosis is:",
+          opts: ["Acute mesenteric ischemia", "Bowel obstruction", "Perforated viscus", "Diverticulitis", "Pancreatitis"],
+          correct: 0,
+          exp: "Acute mesenteric ischemia (often embolic) in a patient with AF presents with severe pain out of proportion, vomiting, and bleeding." },
+        { q: "A 70-year-old man with progressive abdominal distension, constipation, and vomiting. Abdominal X‑ray shows dilated loops of small bowel with air‑fluid levels. The diagnosis is:",
+          opts: ["Small bowel obstruction", "Large bowel obstruction", "Ileus", "Volvulus", "Pseudo‑obstruction"],
+          correct: 0,
+          exp: "Small bowel obstruction: dilated loops, air‑fluid levels, vomiting." },
+        { q: "A 25-year-old woman with severe, sudden onset of headache (worst of her life). CT brain is normal. Lumbar puncture shows xanthochromia. The diagnosis is:",
+          opts: ["Subarachnoid hemorrhage", "Migraine", "Meningitis", "Intracerebral hemorrhage", "Temporal arteritis"],
+          correct: 0,
+          exp: "Subarachnoid hemorrhage: thunderclap headache, normal CT may occur early; xanthochromia on LP confirms." },
+        { q: "A 70-year-old woman with headache, jaw claudication, and tender temporal artery. ESR is 80 mm/h. The most likely diagnosis is:",
+          opts: ["Giant cell (temporal) arteritis", "Migraine", "Tension headache", "Cluster headache", "Trigeminal neuralgia"],
+          correct: 0,
+          exp: "Temporal arteritis: age >50, headache, jaw claudication, elevated ESR, tender artery." },
+        { q: "A 30-year-old woman with recurrent unilateral throbbing headache, nausea, photophobia, and aura. The diagnosis is:",
+          opts: ["Migraine with aura", "Cluster headache", "Tension headache", "Subarachnoid hemorrhage", "Sinus headache"],
+          correct: 0,
+          exp: "Migraine: throbbing, unilateral, associated with nausea, photophobia, and sometimes aura." },
+        { q: "A 40-year-old man with episodes of severe, unilateral periorbital pain, occurring in clusters, with ipsilateral tearing and nasal congestion. The diagnosis is:",
+          opts: ["Cluster headache", "Migraine", "Tension headache", "Trigeminal neuralgia", "Sinusitis"],
+          correct: 0,
+          exp: "Cluster headache: severe periorbital pain, autonomic features, occurs in clusters." },
+        { q: "A 20-year-old man with fever, headache, neck stiffness, and photophobia. Kernig and Brudzinski signs are positive. The most likely diagnosis is:",
+          opts: ["Meningitis", "Encephalitis", "Subarachnoid hemorrhage", "Migraine", "Sinusitis"],
+          correct: 0,
+          exp: "Meningitis presents with fever, headache, neck stiffness (nuchal rigidity), and positive meningeal signs." },
+        { q: "A 60-year-old man with fever, confusion, and new‑onset seizures. He has a history of recent travel to an endemic area. The most likely diagnosis is:",
+          opts: ["Encephalitis", "Meningitis", "Brain abscess", "Stroke", "Metabolic encephalopathy"],
+          correct: 0,
+          exp: "Encephalitis presents with fever, altered mental status, seizures, and focal neurologic deficits." },
+        { q: "A 55-year-old woman with acute onset of right‑sided weakness and aphasia. Symptoms started 2 hours ago. The most likely diagnosis is:",
+          opts: ["Acute ischemic stroke", "Intracerebral hemorrhage", "Subarachnoid hemorrhage", "TIA", "Migraine"],
+          correct: 0,
+          exp: "Sudden focal neurologic deficit suggests acute ischemic stroke." },
+        { q: "A 65-year-old man with transient episode of left arm weakness and slurred speech that resolved completely after 30 minutes. The diagnosis is:",
+          opts: ["Transient ischemic attack (TIA)", "Acute stroke", "Seizure", "Migraine aura", "Hypoglycemia"],
+          correct: 0,
+          exp: "TIA: transient neurologic deficit lasting <1 hour with no infarction." },
+        { q: "A 70-year-old man with sudden severe headache, vomiting, and right‑sided weakness. CT shows a hyperdense lesion in the left basal ganglia. The diagnosis is:",
+          opts: ["Intracerebral hemorrhage (hypertensive)", "Ischemic stroke", "Subarachnoid hemorrhage", "Subdural hematoma", "Epidural hematoma"],
+          correct: 0,
+          exp: "Hypertensive intracerebral hemorrhage often occurs in basal ganglia, thalamus, pons, or cerebellum." },
+        { q: "A 30-year-old woman with sudden onset of severe headache, loss of consciousness, and seizure. CT shows blood in the basal cisterns. The diagnosis is:",
+          opts: ["Subarachnoid hemorrhage (aneurysmal)", "Intracerebral hemorrhage", "Epidural hematoma", "Subdural hematoma", "Arteriovenous malformation rupture"],
+          correct: 0,
+          exp: "Subarachnoid hemorrhage: blood in subarachnoid space, often from berry aneurysm rupture." },
+        { q: "A 20-year-old man with generalized tonic‑clonic seizure lasting 5 minutes, followed by postictal confusion. This is:",
+          opts: ["Generalized tonic‑clonic seizure", "Absence seizure", "Focal seizure", "Status epilepticus", "Psychogenic non‑epileptic seizure"],
+          correct: 0,
+          exp: "Generalized tonic‑clonic seizure involves loss of consciousness, tonic (rigidity) then clonic (jerking) phases." },
+        { q: "A patient with continuous seizure activity for more than 5 minutes. This is:",
+          opts: ["Status epilepticus", "Cluster seizure", "Postictal state", "Pseudoseizure", "Refractory epilepsy"],
+          correct: 0,
+          exp: "Status epilepticus is a medical emergency defined as >5 minutes of continuous seizure or recurrent seizures without recovery." },
+        { q: "A 65-year-old man with acute confusion, fluctuating level of consciousness, and hallucinations. He has a UTI. The most likely diagnosis is:",
+          opts: ["Delirium", "Dementia", "Depression", "Schizophrenia", "Alzheimer disease"],
+          correct: 0,
+          exp: "Delirium: acute, fluctuating, often due to underlying medical condition (infection, metabolic)." },
+        { q: "A 75-year-old woman with gradual, progressive memory loss over years, no fluctuation. She has difficulty with daily activities. The most likely diagnosis is:",
+          opts: ["Dementia (Alzheimer type)", "Delirium", "Mild cognitive impairment", "Depression", "Lewy body dementia"],
+          correct: 0,
+          exp: "Alzheimer disease: insidious onset, progressive memory loss, no fluctuation." },
+        { q: "A 30-year-old woman with sudden onset of difficulty breathing, circumoral paresthesia, and carpopedal spasm. She is anxious and tachypneic. ABG shows pH 7.55, PaCO2 25. The diagnosis is:",
+          opts: ["Respiratory alkalosis (anxiety/panic)", "Metabolic alkalosis", "Respiratory acidosis", "Metabolic acidosis", "Normal ABG"],
+          correct: 0,
+          exp: "Panic attack → hyperventilation → respiratory alkalosis with paresthesia and tetany." },
+        { q: "A 45-year-old man with diabetes presents with nausea, vomiting, abdominal pain, and deep, rapid breathing (Kussmaul). Blood glucose is 450 mg/dL, and ABG shows pH 7.2, HCO3 12. The diagnosis is:",
+          opts: ["Diabetic ketoacidosis (DKA)", "Hyperosmolar hyperglycemic state (HHS)", "Lactic acidosis", "Sepsis", "Salicylate poisoning"],
+          correct: 0,
+          exp: "DKA: hyperglycemia, anion gap metabolic acidosis, ketosis; Kussmaul respiration is compensatory hyperventilation." },
+        { q: "A 60-year-old man with type 2 diabetes presents with altered mental status, severe hyperglycemia (800 mg/dL), and no ketones. ABG: pH 7.35. The diagnosis is:",
+          opts: ["Hyperosmolar hyperglycemic state (HHS)", "Diabetic ketoacidosis (DKA)", "Hypoglycemia", "Lactic acidosis", "Uremia"],
+          correct: 0,
+          exp: "HHS: extreme hyperglycemia, hyperosmolarity, minimal ketosis, often in older adults with type 2 diabetes." },
+        { q: "A 50-year-old woman with Graves disease presents with fever, tachycardia, agitation, and nausea. BP 150/90, HR 140. The most likely diagnosis is:",
+          opts: ["Thyroid storm", "Thyrotoxicosis", "Sepsis", "Pheochromocytoma", "Panic attack"],
+          correct: 0,
+          exp: "Thyroid storm: exaggerated hyperthyroid symptoms (fever, tachycardia, agitation) in a patient with known Graves." },
+        { q: "A 70-year-old woman with history of hypothyroidism presents with lethargy, hypothermia, bradycardia, and myxedema. The most likely diagnosis is:",
+          opts: ["Myxedema coma", "Sepsis", "Hypoglycemia", "Stroke", "Adrenal crisis"],
+          correct: 0,
+          exp: "Myxedema coma: severe hypothyroidism with hypothermia, bradycardia, altered mental status." },
+        { q: "A 40-year-old man with Addison disease presents with hypotension, hyponatremia, hyperkalemia, and hyperpigmentation. Acute exacerbation likely due to:",
+          opts: ["Adrenal crisis", "Cushing syndrome", "Pheochromocytoma", "Hyperaldosteronism", "Carcinoid syndrome"],
+          correct: 0,
+          exp: "Adrenal crisis: severe hypotension, electrolyte disturbances in a patient with adrenal insufficiency." },
+        { q: "A 30-year-old woman with episodic palpitations, headache, sweating, and hypertension. 24‑hour urine shows elevated metanephrines. The diagnosis is:",
+          opts: ["Pheochromocytoma", "Carcinoid syndrome", "Thyrotoxicosis", "Panic disorder", "Paraganglioma"],
+          correct: 0,
+          exp: "Pheochromocytoma: episodic headache, palpitations, sweating, hypertension; elevated metanephrines." },
+        { q: "A 50-year-old man with severe hypertension, hypokalemia, and metabolic alkalosis. Plasma aldosterone high, renin low. The diagnosis is:",
+          opts: ["Primary hyperaldosteronism (Conn syndrome)", "Renovascular hypertension", "Cushing syndrome", "Liddle syndrome", "Pheochromocytoma"],
+          correct: 0,
+          exp: "Primary aldosteronism: hypertension, hypokalemia, high aldosterone, low renin." },
+        { q: "A 65-year-old woman with acute onset of severe pain in her left knee. Joint is red, hot, and swollen. She has a history of gout. Joint aspiration shows needle‑shaped, negatively birefringent crystals. The diagnosis is:",
+          opts: ["Acute gouty arthritis", "Pseudogout", "Septic arthritis", "Rheumatoid arthritis", "Osteoarthritis"],
+          correct: 0,
+          exp: "Gout: acute monoarthritis, monosodium urate crystals (needle‑shaped, negatively birefringent)." },
+        { q: "A 70-year-old man with acute painful knee swelling. Joint aspiration shows positively birefringent, rhomboid crystals. The diagnosis is:",
+          opts: ["Pseudogout (calcium pyrophosphate deposition disease)", "Gout", "Septic arthritis", "Osteoarthritis", "Traumatic arthritis"],
+          correct: 0,
+          exp: "Pseudogout: calcium pyrophosphate crystals (rhomboid, positively birefringent)." },
+        { q: "A 50-year-old man with acute painful, swollen knee and fever. Joint aspiration shows WBC count 80,000/µL with >90% neutrophils. Gram stain is positive. The diagnosis is:",
+          opts: ["Septic arthritis", "Gout", "Pseudogout", "Rheumatoid arthritis", "Reactive arthritis"],
+          correct: 0,
+          exp: "Septic arthritis: high WBC count (>50,000, mostly neutrophils), positive Gram stain, fever." },
+        { q: "A 30-year-old woman with symmetric polyarthritis of small joints of hands and feet, morning stiffness >1 hour, and positive rheumatoid factor. The diagnosis is:",
+          opts: ["Rheumatoid arthritis", "Osteoarthritis", "Psoriatic arthritis", "Lupus", "Gout"],
+          correct: 0,
+          exp: "RA: symmetric polyarthritis, morning stiffness, positive RF/anti‑CCP." },
+        { q: "A 25-year-old woman with photosensitive malar rash, oral ulcers, arthritis, and positive ANA. The most likely diagnosis is:",
+          opts: ["Systemic lupus erythematosus (SLE)", "Rheumatoid arthritis", "Dermatomyositis", "Scleroderma", "Sjögren syndrome"],
+          correct: 0,
+          exp: "SLE: malar rash, photosensitivity, oral ulcers, arthritis, positive ANA." },
+        { q: "A 65-year-old man with history of smoking presents with back pain and stiffness that is worse in the morning and improves with activity. X‑ray shows sacroiliitis. The diagnosis is:",
+          opts: ["Ankylosing spondylitis", "Osteoarthritis", "Lumbar disc disease", "Fibromyalgia", "Polymyalgia rheumatica"],
+          correct: 0,
+          exp: "Ankylosing spondylitis: inflammatory back pain, morning stiffness, sacroiliitis, associated with HLA‑B27." },
+        { q: "A 50-year-old woman presents with proximal muscle weakness, difficulty rising from a chair, and heliotrope rash on eyelids. CK is elevated. The diagnosis is:",
+          opts: ["Dermatomyositis", "Polymyositis", "Rhabdomyolysis", "Muscular dystrophy", "Myasthenia gravis"],
+          correct: 0,
+          exp: "Dermatomyositis: proximal muscle weakness, heliotrope rash, Gottron papules, elevated muscle enzymes." },
+        { q: "A 30-year-old woman with episodic weakness and fatigue that worsens with repeated activity, improving with rest. She has ptosis and diplopia. The diagnosis is:",
+          opts: ["Myasthenia gravis", "Lambert‑Eaton syndrome", "Multiple sclerosis", "Guillain‑Barré syndrome", "Periodic paralysis"],
+          correct: 0,
+          exp: "Myasthenia gravis: fluctuating weakness, ptosis, diplopia, worsens with activity (fatigable), improves with rest." },
+        { q: "A 60-year-old man with progressive weakness, autonomic dysfunction, and fasciculations. He has both upper and lower motor neuron signs. The diagnosis is:",
+          opts: ["Amyotrophic lateral sclerosis (ALS)", "Multiple sclerosis", "Myasthenia gravis", "Peripheral neuropathy", "Spinal muscular atrophy"],
+          correct: 0,
+          exp: "ALS: combined upper (spasticity) and lower (fasciculations, atrophy) motor neuron signs." },
+        { q: "A 25-year-old woman with sudden onset of painful vision loss in one eye, with pain on eye movement. She has a history of similar episodes. The most likely diagnosis is:",
+          opts: ["Optic neuritis (often multiple sclerosis)", "Migraine", "Giant cell arteritis", "Central retinal artery occlusion", "Acute glaucoma"],
+          correct: 0,
+          exp: "Optic neuritis: painful vision loss, pain on eye movement; often associated with MS." },
+        { q: "A 70-year-old man with sudden, painless vision loss in one eye. Fundoscopy shows a cherry‑red spot. The diagnosis is:",
+          opts: ["Central retinal artery occlusion", "Central retinal vein occlusion", "Optic neuritis", "Retinal detachment", "Amaurosis fugax"],
+          correct: 0,
+          exp: "Central retinal artery occlusion: sudden, painless vision loss, cherry‑red spot (preserved choroidal circulation)." },
+        { q: "A 65-year-old woman with sudden, painless vision loss in one eye, with retinal hemorrhages and dilated, tortuous veins. The diagnosis is:",
+          opts: ["Central retinal vein occlusion", "Central retinal artery occlusion", "Diabetic retinopathy", "Hypertensive retinopathy", "Retinal detachment"],
+          correct: 0,
+          exp: "CRVO: sudden vision loss, diffuse retinal hemorrhages, 'blood and thunder' appearance." },
+        { q: "A 50-year-old man with acute, painful red eye, halos around lights, and a fixed, mid‑dilated pupil. The most likely diagnosis is:",
+          opts: ["Acute angle‑closure glaucoma", "Uveitis", "Conjunctivitis", "Corneal ulcer", "Scleritis"],
+          correct: 0,
+          exp: "Acute angle‑closure glaucoma: severe pain, redness, halos, fixed mid‑dilated pupil, nausea/vomiting." },
+        { q: "A 30-year-old woman with red eye, photophobia, and small pupil. Slit lamp shows cells in anterior chamber. The diagnosis is:",
+          opts: ["Anterior uveitis (iritis)", "Conjunctivitis", "Acute glaucoma", "Corneal abrasion", "Episcleritis"],
+          correct: 0,
+          exp: "Anterior uveitis: red eye, photophobia, small pupil, cells in anterior chamber." },
+        { q: "A 60-year-old man with painless, progressive vision loss, and cataract on exam. The most likely diagnosis is:",
+          opts: ["Cataract", "Glaucoma", "Macular degeneration", "Diabetic retinopathy", "Retinal detachment"],
+          correct: 0,
+          exp: "Cataract: painless, progressive blurring, lens opacity." },
+        { q: "A 70-year-old woman with gradual loss of central vision, difficulty reading, and drusen on fundoscopy. The diagnosis is:",
+          opts: ["Age‑related macular degeneration (dry type)", "Diabetic retinopathy", "Glaucoma", "Cataract", "Hypertensive retinopathy"],
+          correct: 0,
+          exp: "Dry AMD: gradual central vision loss, drusen, geographic atrophy." },
+        { q: "A 40-year-old man with chronic, painless, watery discharge from the eye, and a swelling in the medial canthus. The most likely diagnosis is:",
+          opts: ["Nasolacrimal duct obstruction", "Dacryocystitis", "Conjunctivitis", "Chalazion", "Hordeolum"],
+          correct: 0,
+          exp: "Nasolacrimal duct obstruction: epiphora (watering), may lead to dacryocystitis if infected." },
+        { q: "A 25-year-old woman with a painful, red, swollen eyelid, localized to a single follicle. The diagnosis is:",
+          opts: ["Hordeolum (stye)", "Chalazion", "Blepharitis", "Dacryocystitis", "Cellulitis"],
+          correct: 0,
+          exp: "Hordeolum: acute staphylococcal infection of eyelash follicle or gland." },
+        { q: "A 30-year-old man with a painless, firm nodule on the eyelid. The diagnosis is:",
+          opts: ["Chalazion", "Hordeolum", "Blepharitis", "Dacryocystitis", "Xanthelasma"],
+          correct: 0,
+          exp: "Chalazion: chronic granulomatous inflammation of meibomian gland, painless." },
+        { q: "A 50-year-old man with progressive hearing loss and tinnitus. He has a history of loud noise exposure. Weber test lateralizes to the better ear. This suggests:",
+          opts: ["Sensorineural hearing loss", "Conductive hearing loss", "Mixed hearing loss", "Central deafness", "Normal hearing"],
+          correct: 0,
+          exp: "Sensorineural loss: Weber lateralizes to better ear (good ear), Rinne is normal (air > bone in both ears)." },
+        { q: "A 60-year-old man with unilateral hearing loss and a history of chronic ear infections. Weber test lateralizes to the affected ear. This suggests:",
+          opts: ["Conductive hearing loss", "Sensorineural hearing loss", "Mixed hearing loss", "Central deafness", "Normal hearing"],
+          correct: 0,
+          exp: "Conductive loss: Weber lateralizes to affected ear, Rinne bone > air (abnormal)." },
+        { q: "A 70-year-old man with progressive hearing loss, tinnitus, and a normal otoscopic exam. The most likely diagnosis is:",
+          opts: ["Presbycusis (age‑related sensorineural loss)", "Otosclerosis", "Meniere disease", "Acoustic neuroma", "Cerumen impaction"],
+          correct: 0,
+          exp: "Presbycusis: bilateral, high‑frequency sensorineural hearing loss due to aging." },
+        { q: "A 40-year-old woman with episodic vertigo, fluctuating hearing loss, tinnitus, and aural fullness. The diagnosis is:",
+          opts: ["Meniere disease", "Benign paroxysmal positional vertigo (BPPV)", "Vestibular neuritis", "Labyrinthitis", "Acoustic neuroma"],
+          correct: 0,
+          exp: "Meniere disease: episodic vertigo, hearing loss, tinnitus, aural fullness (endolymphatic hydrops)." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "A 50-year-old woman with episodic vertigo triggered by head movement, lasting seconds. Dix‑Hallpike maneuver reproduces symptoms. The diagnosis is:",
+          opts: ["Benign paroxysmal positional vertigo (BPPV)", "Meniere disease", "Vestibular neuritis", "Labyrinthitis", "Vertebrobasilar insufficiency"],
+          correct: 0,
+          exp: "BPPV: brief episodes of vertigo with head movement, positive Dix‑Hallpike test." },
+        { q: "A 30-year-old man with acute, severe vertigo lasting days, nausea, vomiting, and nystagmus. No hearing loss. He had a viral illness 2 weeks ago. The diagnosis is:",
+          opts: ["Vestibular neuritis", "Labyrinthitis", "Meniere disease", "BPPV", "Stroke"],
+          correct: 0,
+          exp: "Vestibular neuritis: acute, prolonged vertigo, no hearing loss; often post‑viral." },
+        { q: "A 40-year-old man with fever, chills, and a painful, swollen, erythematous pinna. The most likely diagnosis is:",
+          opts: ["Perichondritis", "Otitis externa", "Cellulitis", "Mastoiditis", "Chondrodermatitis"],
+          correct: 0,
+          exp: "Perichondritis: infection of the pinna (often Pseudomonas), pain, swelling, erythema." },
+        { q: "A 60-year-old diabetic man with severe ear pain, purulent discharge, and granulation tissue in the ear canal. He has facial nerve palsy. The diagnosis is:",
+          opts: ["Malignant (necrotizing) otitis externa", "Acute otitis media", "Mastoiditis", "Cholesteatoma", "Otitis externa"],
+          correct: 0,
+          exp: "Malignant otitis externa: invasive Pseudomonas infection in diabetics/immunocompromised, can cause cranial nerve palsies." },
+        { q: "A 30-year-old man with hearing loss and tinnitus. Audiometry shows a conductive loss. On exam, the tympanic membrane is intact but there is a whitish mass behind it. The diagnosis is:",
+          opts: ["Otosclerosis", "Cholesteatoma", "Otitis media with effusion", "Tympanosclerosis", "Glomus tumor"],
+          correct: 0,
+          exp: "Otosclerosis: abnormal bone remodeling of otic capsule, causes conductive hearing loss, often with family history." },
+        { q: "A 40-year-old man with unilateral hearing loss, tinnitus, and imbalance. MRI shows a mass at the cerebellopontine angle. The diagnosis is:",
+          opts: ["Acoustic neuroma (vestibular schwannoma)", "Meningioma", "Cholesteatoma", "Glomus jugulare", "Metastasis"],
+          correct: 0,
+          exp: "Acoustic neuroma: benign Schwann cell tumor of CN VIII, presents with sensorineural hearing loss, tinnitus, imbalance." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

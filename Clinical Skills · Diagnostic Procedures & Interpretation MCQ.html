@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Skills · Diagnostic Procedures & Interpretation MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-microscope"></i>
+        <h1>Clinical Skills · Diagnostic Procedures & Interpretation MCQ</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ CLINICAL SKILLS (DIAGNOSTIC PROCEDURES & INTERPRETATION) MCQ QUESTIONS
+    const questions = [
+        { q: "Sensitivity of a diagnostic test is defined as:",
+          opts: ["True positives / (True positives + False negatives)", "True negatives / (True negatives + False positives)", "True positives / (True positives + False positives)", "True negatives / (True negatives + False negatives)", "True positives / All patients"],
+          correct: 0,
+          exp: "Sensitivity = TP/(TP+FN); it measures the proportion of diseased individuals who test positive." },
+        { q: "Specificity of a diagnostic test is defined as:",
+          opts: ["True negatives / (True negatives + False positives)", "True positives / (True positives + False negatives)", "True positives / (True positives + False positives)", "True negatives / (True negatives + False negatives)", "False positives / (False positives + True negatives)"],
+          correct: 0,
+          exp: "Specificity = TN/(TN+FP); it measures the proportion of non‑diseased individuals who test negative." },
+        { q: "A test with high sensitivity is useful for:",
+          opts: ["Ruling out disease (SnOUT)", "Ruling in disease (SpIN)", "Confirming diagnosis", "Screening for rare diseases", "Monitoring treatment response"],
+          correct: 0,
+          exp: "High sensitivity → few false negatives → negative test rules out disease (SnOUT)." },
+        { q: "A test with high specificity is useful for:",
+          opts: ["Ruling in disease (SpIN)", "Ruling out disease", "Screening", "Detecting all cases", "Excluding healthy individuals"],
+          correct: 0,
+          exp: "High specificity → few false positives → positive test rules in disease (SpIN)." },
+        { q: "Positive predictive value (PPV) depends on:",
+          opts: ["Prevalence of the disease", "Sensitivity only", "Specificity only", "Test reproducibility", "Observer variability"],
+          correct: 0,
+          exp: "PPV = TP/(TP+FP) and increases with disease prevalence." },
+        { q: "A likelihood ratio of >10 indicates:",
+          opts: ["Large increase in post‑test probability", "Small increase in post‑test probability", "No change", "Decrease in probability", "Indeterminate"],
+          correct: 0,
+          exp: "LR+ >10 (or LR‑ <0.1) generates large changes from pre‑ to post‑test probability." },
+        { q: "The formula for anion gap is:",
+          opts: ["Na – (Cl + HCO₃)", "Na + K – (Cl + HCO₃)", "(Na + K) – (Cl + HCO₃)", "Na – (Cl – HCO₃)", "Na + HCO₃ – Cl"],
+          correct: 0,
+          exp: "Anion gap = Na – (Cl + HCO₃); normal 8‑12 mEq/L." },
+        { q: "A high anion gap metabolic acidosis is present in all EXCEPT:",
+          opts: ["Diarrhea (normal anion gap)", "Diabetic ketoacidosis", "Lactic acidosis", "Salicylate overdose", "Methanol toxicity"],
+          correct: 0,
+          exp: "Diarrhea causes hyperchloremic (normal anion gap) acidosis due to loss of bicarbonate." },
+        { q: "The mnemonic MUDPILES is used for:",
+          opts: ["High anion gap metabolic acidosis", "Normal anion gap metabolic acidosis", "Metabolic alkalosis", "Respiratory acidosis", "Respiratory alkalosis"],
+          correct: 0,
+          exp: "MUDPILES: Methanol, Uremia, DKA, Paraldehyde, Iron/INH, Lactic acidosis, Ethylene glycol, Salicylates." },
+        { q: "In a patient with metabolic acidosis, Winter's formula predicts appropriate respiratory compensation: PaCO₂ = 1.5 × [HCO₃] + 8 ± 2. If measured PaCO₂ is higher, there is also a:",
+          opts: ["Primary respiratory acidosis", "Primary respiratory alkalosis", "Mixed metabolic acidosis and alkalosis", "Normal compensation", "Incomplete data"],
+          correct: 0,
+          exp: "If PaCO₂ is higher than calculated, a primary respiratory acidosis is present (mixed disorder)." },
+        { q: "The normal serum sodium level is:",
+          opts: ["135‑145 mEq/L", "120‑130 mEq/L", "150‑160 mEq/L", "100‑110 mEq/L", "80‑90 mEq/L"],
+          correct: 0,
+          exp: "Normal sodium: 135‑145 mEq/L." },
+        { q: "The normal serum potassium level is:",
+          opts: ["3.5‑5.0 mEq/L", "2.5‑3.0 mEq/L", "5.5‑6.5 mEq/L", "1.5‑2.5 mEq/L", "6.0‑7.0 mEq/L"],
+          correct: 0,
+          exp: "Normal potassium: 3.5‑5.0 mEq/L." },
+        { q: "Which of the following ECG findings is characteristic of hyperkalemia?",
+          opts: ["Peaked T waves", "U waves", "Prolonged QT interval", "ST depression", "Q waves"],
+          correct: 0,
+          exp: "Hyperkalemia: peaked T waves, then wide QRS, sine wave." },
+        { q: "U waves on ECG are associated with:",
+          opts: ["Hypokalemia", "Hyperkalemia", "Hypocalcemia", "Hypercalcemia", "Hypomagnesemia"],
+          correct: 0,
+          exp: "Hypokalemia causes U waves, flattened T waves." },
+        { q: "Normal MCV range is:",
+          opts: ["80‑100 fL", "60‑80 fL", "100‑120 fL", "70‑90 fL", "90‑110 fL"],
+          correct: 0,
+          exp: "MCV 80‑100 fL: microcytic <80, macrocytic >100." },
+        { q: "Microcytic anemia (low MCV) is typical of all EXCEPT:",
+          opts: ["Anemia of chronic disease (normocytic)", "Iron deficiency", "Thalassemia", "Lead poisoning", "Sideroblastic anemia"],
+          correct: 0,
+          exp: "Anemia of chronic disease is usually normocytic (may be microcytic in some cases, but typically normocytic)." },
+        { q: "Macrocytic anemia (high MCV) is seen in:",
+          opts: ["Vitamin B12 deficiency, folate deficiency", "Iron deficiency", "Thalassemia", "Anemia of chronic disease", "Sickle cell anemia"],
+          correct: 0,
+          exp: "Macrocytic anemia: B12/folate deficiency, liver disease, hypothyroidism, myelodysplasia." },
+        { q: "Reticulocyte count is elevated in:",
+          opts: ["Hemolytic anemia", "Iron deficiency anemia", "Aplastic anemia", "Anemia of chronic disease", "Thalassemia"],
+          correct: 0,
+          exp: "Reticulocytosis indicates bone marrow response to hemolysis or blood loss." },
+        { q: "Low reticulocyte count in an anemic patient suggests:",
+          opts: ["Bone marrow failure or hypoproliferation", "Hemolysis", "Acute blood loss", "Hemoglobinopathy", "Membrane defect"],
+          correct: 0,
+          exp: "Low reticulocytes indicate inadequate marrow response (e.g., aplastic anemia, iron deficiency, B12/folate deficiency)." },
+        { q: "Which cell line is most sensitive to chemotherapy‑induced myelosuppression?",
+          opts: ["Neutrophils (shortest half‑life)", "Platelets", "Red blood cells", "Lymphocytes", "Monocytes"],
+          correct: 0,
+          exp: "Neutrophils have short half‑life (6‑8h), so neutropenia occurs first after chemotherapy." },
+        { q: "Thrombocytopenia with large platelets suggests:",
+          opts: ["Peripheral destruction (ITP)", "Bone marrow failure", "Splenic sequestration", "DIC", "Leukemia"],
+          correct: 0,
+          exp: "Large platelets (megathrombocytes) indicate increased turnover, as in ITP." },
+        { q: "Prolonged PT (INR) suggests deficiency of which factors?",
+          opts: ["Factor VII (extrinsic pathway)", "Factor VIII", "Factor IX", "Factor XI", "Factor XII"],
+          correct: 0,
+          exp: "PT measures extrinsic pathway (factor VII); PTT measures intrinsic (VIII, IX, XI, XII)." },
+        { q: "Prolonged PTT with normal PT suggests deficiency of:",
+          opts: ["Factor VIII, IX, XI, or XII", "Factor VII", "Factor X", "Factor V", "Factor II"],
+          correct: 0,
+          exp: "PT normal, PTT prolonged = intrinsic pathway defect (hemophilia A/B, factor XI deficiency, etc.)." },
+        { q: "Mixing study (immediate correction) in prolonged PTT suggests:",
+          opts: ["Factor deficiency", "Inhibitor (e.g., lupus anticoagulant)", "Heparin contamination", "DIC", "Liver disease"],
+          correct: 0,
+          exp: "If prolonged PTT corrects with mixing, factor deficiency; if not, inhibitor." },
+        { q: "Elevated D‑dimer is most useful for:",
+          opts: ["Ruling out venous thromboembolism (high sensitivity)", "Diagnosing DVT/PE", "Monitoring anticoagulation", "Diagnosing DIC", "Assessing liver function"],
+          correct: 0,
+          exp: "D‑dimer has high sensitivity, low specificity; normal level makes DVT/PE unlikely." },
+        { q: "In CSF analysis, which finding is characteristic of bacterial meningitis?",
+          opts: ["Low glucose, high protein, neutrophils", "Normal glucose, high protein, lymphocytes", "Low glucose, very high protein, RBCs", "Normal glucose, normal protein, lymphocytes", "Xanthochromia"],
+          correct: 0,
+          exp: "Bacterial meningitis: ↑ neutrophils, ↓ glucose, ↑ protein." },
+        { q: "In CSF analysis, which finding is characteristic of viral meningitis?",
+          opts: ["Normal or mildly ↑ protein, normal glucose, lymphocytes", "Low glucose, high protein, neutrophils", "Xanthochromia", "Very high protein, RBCs", "Eosinophils"],
+          correct: 0,
+          exp: "Viral meningitis: lymphocytes, normal glucose, normal or mildly elevated protein." },
+        { q: "CSF xanthochromia is most commonly seen in:",
+          opts: ["Subarachnoid hemorrhage (bilirubin from RBC breakdown)", "Bacterial meningitis", "Viral meningitis", "Multiple sclerosis", "Tuberculous meningitis"],
+          correct: 0,
+          exp: "Xanthochromia (yellowish fluid) indicates subarachnoid hemorrhage, usually present 12h after onset." },
+        { q: "Light's criteria are used to differentiate:",
+          opts: ["Exudative vs transudative pleural effusion", "Ascitic fluid SAAG", "CSF protein", "Urine osmolality", "Synovial fluid WBC count"],
+          correct: 0,
+          exp: "Light's criteria classify pleural effusion as exudate if any criterion met." },
+        { q: "A pleural effusion with protein >3.0 g/dL and LDH >200 U/L is most likely:",
+          opts: ["Exudative", "Transudative", "Chylous", "Hemorrhagic", "Empyema"],
+          correct: 0,
+          exp: "Exudative effusions have high protein and LDH (e.g., infection, malignancy)." },
+        { q: "Serum‑ascites albumin gradient (SAAG) >1.1 g/dL indicates:",
+          opts: ["Portal hypertension (transudative ascites)", "Peritoneal carcinomatosis (exudative)", "Tuberculous peritonitis", "Pancreatic ascites", "Chylous ascites"],
+          correct: 0,
+          exp: "High SAAG (>1.1) suggests portal hypertension (cirrhosis, heart failure); low SAAG suggests exudative causes." },
+        { q: "Synovial fluid with WBC count >50,000/µL and >90% neutrophils suggests:",
+          opts: ["Septic arthritis", "Gout", "Pseudogout", "Rheumatoid arthritis", "Osteoarthritis"],
+          correct: 0,
+          exp: "Septic arthritis: high WBC count with predominantly neutrophils; crystals may also be present." },
+        { q: "Synovial fluid with WBC count 2,000‑50,000/µL suggests:",
+          opts: ["Inflammatory arthritis (gout, pseudogout, RA)", "Non‑inflammatory arthritis", "Septic arthritis", "Hemarthrosis", "Normal fluid"],
+          correct: 0,
+          exp: "Inflammatory arthritis: WBC 2,000‑50,000; septic >50,000; non‑inflammatory <2,000." },
+        { q: "Needle‑shaped, negatively birefringent crystals in synovial fluid are characteristic of:",
+          opts: ["Gout (monosodium urate)", "Pseudogout (calcium pyrophosphate)", "Hydroxyapatite", "Lipid crystals", "Steroid crystals"],
+          correct: 0,
+          exp: "Gout: negatively birefringent, needle‑shaped crystals; pseudogout: positively birefringent, rhomboid." },
+        { q: "Rhomboid, positively birefringent crystals are seen in:",
+          opts: ["Pseudogout (calcium pyrophosphate)", "Gout", "Rheumatoid arthritis", "Osteoarthritis", "Septic arthritis"],
+          correct: 0,
+          exp: "Calcium pyrophosphate crystals in pseudogout are rhomboid and positively birefringent." },
+        { q: "On ECG, the normal PR interval duration is:",
+          opts: ["120‑200 ms", "<120 ms", ">200 ms", "80‑120 ms", "200‑250 ms"],
+          correct: 0,
+          exp: "PR interval 120‑200 ms (3‑5 small squares)." },
+        { q: "Normal QRS duration is:",
+          opts: ["<120 ms", "<80 ms", "120‑200 ms", "200‑250 ms", ">200 ms"],
+          correct: 0,
+          exp: "QRS <120 ms (3 small squares); wider indicates bundle branch block or ventricular rhythm." },
+        { q: "QTc interval is prolonged if > _____ in men and > _____ in women.",
+          opts: ["440 ms, 460 ms", "400 ms, 420 ms", "500 ms, 520 ms", "380 ms, 400 ms", "460 ms, 480 ms"],
+          correct: 0,
+          exp: "Prolonged QTc: >440 ms in men, >460 ms in women (Bazett formula)." },
+        { q: "The first ECG change in acute myocardial infarction is often:",
+          opts: ["Hyperacute T waves (tall, peaked)", "ST elevation", "Q waves", "ST depression", "T wave inversion"],
+          correct: 0,
+          exp: "Hyperacute T waves may precede ST elevation in STEMI." },
+        { q: "Pathologic Q waves are defined as:",
+          opts: ["≥1 small square deep (0.2 mV) and ≥1 small square wide (40 ms)", "Any Q wave in V1‑V3", "Q wave <0.04 sec", "Q wave <0.1 mV", "QS complex"],
+          correct: 0,
+          exp: "Pathologic Q waves: depth >1 mm (0.2 mV) and width >40 ms (1 small square)." },
+        { q: "In acute pericarditis, ECG typically shows:",
+          opts: ["Diffuse ST elevation, PR depression", "Focal ST elevation", "Reciprocal ST depression", "T wave inversions", "Q waves"],
+          correct: 0,
+          exp: "Pericarditis: widespread ST elevation, PR depression, no reciprocal changes." },
+        { q: "Which ECG finding is characteristic of hypercalcemia?",
+          opts: ["Short QT interval", "Long QT interval", "Peaked T waves", "U waves", "ST elevation"],
+          correct: 0,
+          exp: "Hypercalcemia shortens QT; hypocalcemia prolongs QT." },
+        { q: "Which ECG finding is characteristic of hypocalcemia?",
+          opts: ["Prolonged QT interval", "Short QT interval", "Peaked T waves", "U waves", "ST elevation"],
+          correct: 0,
+          exp: "Hypocalcemia prolongs QT due to prolonged ST segment." },
+        { q: "On chest X‑ray, the 'silhouette sign' is used to:",
+          opts: ["Localize lung opacities (loss of silhouette indicates adjacent consolidation)", "Identify pneumothorax", "Detect pleural effusion", "Assess heart size", "Identify rib fractures"],
+          correct: 0,
+          exp: "Silhouette sign: loss of heart border or diaphragm contour indicates adjacent consolidation (e.g., right middle lobe pneumonia obscures right heart border)." },
+        { q: "Kerley B lines on CXR are indicative of:",
+          opts: ["Interstitial edema (heart failure)", "Pneumonia", "Atelectasis", "Fibrosis", "Pleural effusion"],
+          correct: 0,
+          exp: "Kerley B lines (short horizontal lines at lung bases) indicate interstitial edema." },
+        { q: "Air bronchograms on CXR are a sign of:",
+          opts: ["Consolidation (e.g., pneumonia)", "Atelectasis", "Pneumothorax", "Pleural effusion", "COPD"],
+          correct: 0,
+          exp: "Air bronchograms: air‑filled bronchi visible against opacified lung, seen in consolidation." },
+        { q: "The most sensitive imaging modality for acute stroke (within hours) is:",
+          opts: ["Diffusion‑weighted MRI", "Non‑contrast CT", "CT angiography", "CT perfusion", "MRA"],
+          correct: 0,
+          exp: "DWI MRI detects ischemia within minutes; CT may be normal in early hours." },
+        { q: "The imaging modality of choice for suspected pulmonary embolism is:",
+          opts: ["CT pulmonary angiography (CTPA)", "V/Q scan", "Chest X‑ray", "MRI", "Ultrasound"],
+          correct: 0,
+          exp: "CTPA is the preferred initial imaging for PE." },
+        { q: "The imaging modality of choice for suspected acute appendicitis in adults is:",
+          opts: ["CT abdomen with IV contrast", "Ultrasound", "MRI", "Plain X‑ray", "Barium enema"],
+          correct: 0,
+          exp: "CT is highly sensitive and specific for appendicitis; ultrasound is often used in children/pregnancy." },
+        { q: "The imaging modality of choice for suspected acute cholecystitis is:",
+          opts: ["Ultrasound", "CT", "MRI", "HIDA scan", "Plain X‑ray"],
+          correct: 0,
+          exp: "Ultrasound is the best initial test for cholelithiasis and cholecystitis (stones, wall thickening, Murphy sign)." },
+        { q: "The imaging modality of choice for suspected renal stones is:",
+          opts: ["Non‑contrast CT (CT KUB)", "Ultrasound", "IVP", "MRI", "Plain X‑ray (KUB)"],
+          correct: 0,
+          exp: "Non‑contrast CT is the gold standard for detecting urolithiasis." },
+        { q: "The imaging modality of choice for suspected deep vein thrombosis (DVT) is:",
+          opts: ["Venous duplex ultrasound (compression ultrasound)", "CT venography", "MR venography", "Contrast venography", "D‑dimer alone"],
+          correct: 0,
+          exp: "Ultrasound with compression is the initial test for proximal DVT." },
+        { q: "On echocardiography, which finding is characteristic of cardiac tamponade?",
+          opts: ["Diastolic collapse of right atrium/ventricle", "Pericardial effusion with swinging heart", "Increased E wave velocity", "Septal bounce", "Increased tricuspid regurgitation"],
+          correct: 0,
+          exp: "Cardiac tamponade: right atrial and ventricular collapse in diastole, plethoric IVC." },
+        { q: "In pulmonary function testing, an FEV₁/FVC ratio <0.7 indicates:",
+          opts: ["Obstructive lung disease", "Restrictive lung disease", "Mixed disorder", "Normal", "Poor effort"],
+          correct: 0,
+          exp: "Obstructive: ↓ FEV₁/FVC; Restrictive: normal or ↑ ratio, ↓ FVC." },
+        { q: "In restrictive lung disease, FVC is:",
+          opts: ["Decreased", "Increased", "Normal", "Normal or increased", "Variable"],
+          correct: 0,
+          exp: "Restrictive: decreased TLC, decreased FVC, normal FEV₁/FVC." },
+        { q: "DLCO (diffusing capacity) is decreased in:",
+          opts: ["Emphysema, pulmonary fibrosis, anemia", "Asthma", "Chronic bronchitis", "Obesity", "Pulmonary hemorrhage"],
+          correct: 0,
+          exp: "DLCO is low in conditions that damage alveolar‑capillary interface (emphysema, fibrosis) and anemia." },
+        { q: "DLCO is increased in:",
+          opts: ["Pulmonary hemorrhage, asthma, polycythemia", "Emphysema", "Pulmonary fibrosis", "Anemia", "Heart failure"],
+          correct: 0,
+          exp: "Increased DLCO in pulmonary hemorrhage (Hb in alveoli), asthma, polycythemia." },
+        { q: "The A‑a gradient (PAO₂ – PaO₂) is increased in:",
+          opts: ["V/Q mismatch, shunt, diffusion impairment", "Hypoventilation", "Low FiO₂ (high altitude)", "Normal", "COPD exacerbation"],
+          correct: 0,
+          exp: "A‑a gradient increases with V/Q mismatch, shunt, diffusion impairment; normal in hypoventilation and low FiO₂." },
+        { q: "In pure hypoventilation, PaCO₂ is _____ and A‑a gradient is _____.",
+          opts: ["Increased, normal", "Increased, increased", "Normal, normal", "Decreased, normal", "Decreased, increased"],
+          correct: 0,
+          exp: "Hypoventilation causes ↑ PaCO₂ and normal A‑a gradient (e.g., opioid overdose, neuromuscular disease)." },
+        { q: "The normal PaO₂ on room air at sea level is approximately:",
+          opts: ["80‑100 mmHg", "60‑70 mmHg", "50‑60 mmHg", "100‑120 mmHg", "70‑80 mmHg"],
+          correct: 0,
+          exp: "PaO₂ 80‑100 mmHg (SpO₂ 95‑100%)." },
+        { q: "Type I respiratory failure is defined as:",
+          opts: ["PaO₂ <60 mmHg, PaCO₂ normal/low", "PaO₂ <60 mmHg, PaCO₂ >50 mmHg", "PaCO₂ >50 mmHg, PaO₂ normal", "PaO₂ <80 mmHg", "PaO₂ <60 mmHg, PaCO₂ <50 mmHg"],
+          correct: 0,
+          exp: "Type I (hypoxemic): PaO₂ <60, PaCO₂ normal/low; Type II (hypercapnic): PaCO₂ >50." },
+        { q: "On ultrasound, the finding of a 'sliding lung' sign (lung sliding) rules out:",
+          opts: ["Pneumothorax", "Pleural effusion", "Hemothorax", "Pneumonia", "Atelectasis"],
+          correct: 0,
+          exp: "Lung sliding (visceral against parietal pleura) is absent in pneumothorax." },
+        { q: "The FAST (Focused Assessment with Sonography in Trauma) exam assesses for:",
+          opts: ["Free fluid in abdomen (hemoperitoneum), pericardial effusion", "Pneumothorax", "Fractures", "Aortic dissection", "DVT"],
+          correct: 0,
+          exp: "FAST looks for fluid in Morison pouch, splenorenal recess, pelvis, and pericardium." },
+        { q: "In echocardiography, the 'bowing' of interatrial septum toward the right during inspiration suggests:",
+          opts: ["Cardiac tamponade", "Constrictive pericarditis", "Pulmonary hypertension", "Right ventricular infarction", "Atrial septal defect"],
+          correct: 0,
+          exp: "Tamponade: exaggerated respiratory variation, septal bowing." },
+        { q: "On ECG, left ventricular hypertrophy (LVH) is suggested by:",
+          opts: ["S in V1 + R in V5/V6 >35 mm (Sokolow‑Lyon)", "R in V1 + S in V5 >35 mm", "Deep Q waves", "ST depression in V5‑V6", "Tall R in V1"],
+          correct: 0,
+          exp: "Sokolow‑Lyon criteria: S in V1 + R in V5 or V6 >35 mm indicates LVH." },
+        { q: "Right ventricular hypertrophy (RVH) on ECG is suggested by:",
+          opts: ["R > S in V1, right axis deviation", "Deep S in V1", "Tall R in V5‑V6", "Q waves in inferior leads", "Left axis deviation"],
+          correct: 0,
+          exp: "RVH: R wave > S wave in V1, right axis deviation (>90°)." },
+        { q: "In ECG, left bundle branch block (LBBB) is characterized by:",
+          opts: ["Wide QRS, M‑shaped in V6, QS in V1", "Wide QRS, RSR' in V1, deep S in V6", "Delta wave", "PR prolongation", "ST elevation"],
+          correct: 0,
+          exp: "LBBB: QRS >120 ms, broad R wave in I, aVL, V5‑V6; QS or rS in V1." },
+        { q: "Right bundle branch block (RBBB) is characterized by:",
+          opts: ["RSR' (M‑shaped) in V1, wide S in V6", "Wide R in V6", "Delta wave", "Left axis deviation", "Q waves"],
+          correct: 0,
+          exp: "RBBB: RSR' in V1 (rabbit ears), wide S in V6." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "The most common cause of a transudative pleural effusion is:",
+          opts: ["Heart failure", "Pneumonia", "Malignancy", "Pulmonary embolism", "Pancreatitis"],
+          correct: 0,
+          exp: "Heart failure is the most common cause of transudative effusion (increased hydrostatic pressure)." },
+        { q: "The most common cause of an exudative pleural effusion is:",
+          opts: ["Pneumonia (parapneumonic effusion)", "Heart failure", "Cirrhosis", "Nephrotic syndrome", "Atelectasis"],
+          correct: 0,
+          exp: "Parapneumonic effusions are the most common exudates." },
+        { q: "In a patient with ascites, SAAG >1.1 g/dL and total protein >2.5 g/dL suggests:",
+          opts: ["Cardiac ascites (heart failure)", "Cirrhosis", "Nephrotic syndrome", "Pancreatic ascites", "TB peritonitis"],
+          correct: 0,
+          exp: "Cardiac ascites: high SAAG and high protein (>2.5 g/dL); cirrhosis: high SAAG, low protein." },
+        { q: "In a patient with ascites, SAAG <1.1 g/dL suggests:",
+          opts: ["Peritoneal disease (carcinomatosis, TB)", "Portal hypertension", "Heart failure", "Budd‑Chiari syndrome", "Cirrhosis"],
+          correct: 0,
+          exp: "Low SAAG (<1.1) indicates non‑portal hypertension causes (exudative)." },
+        { q: "The presence of which cells in CSF suggests tuberculous meningitis?",
+          opts: ["Lymphocytes, low glucose, very high protein", "Neutrophils, low glucose", "Lymphocytes, normal glucose", "Eosinophils", "Malignant cells"],
+          correct: 0,
+          exp: "TB meningitis: lymphocytic pleocytosis, low glucose, very high protein (often >100 mg/dL)." },
+        { q: "CSF oligoclonal bands are characteristic of:",
+          opts: ["Multiple sclerosis", "Bacterial meningitis", "Viral meningitis", "Guillain‑Barré syndrome", "Neurosyphilis"],
+          correct: 0,
+          exp: "Oligoclonal bands (IgG) in CSF suggest intrathecal synthesis, seen in MS." },
+        { q: "Which imaging finding is characteristic of a subdural hematoma on CT?",
+          opts: ["Crescent‑shaped, crosses suture lines", "Lens‑shaped, does not cross sutures", "Hyperdense in posterior fossa", "Isodense with brain", "Mixed density"],
+          correct: 0,
+          exp: "Subdural: crescent‑shaped, crosses sutures; epidural: lens‑shaped, limited by sutures." },
+        { q: "On non‑contrast CT, an acute epidural hematoma appears as:",
+          opts: ["Lens‑shaped, hyperdense", "Crescent‑shaped, hyperdense", "Crescent‑shaped, hypodense", "Lens‑shaped, hypodense", "Isodense"],
+          correct: 0,
+          exp: "Epidural: lens‑shaped, hyperdense (acute blood), often associated with skull fracture." },
+        { q: "In MRI, T1‑weighted imaging shows fat as:",
+          opts: ["Bright (high signal)", "Dark (low signal)", "Isointense", "Variable", "Invisible"],
+          correct: 0,
+          exp: "Fat is bright on T1, dark on T2 (with fat suppression)." },
+        { q: "In MRI, water/CSF appears bright on:",
+          opts: ["T2‑weighted imaging", "T1‑weighted imaging", "Proton density", "FLAIR", "STIR"],
+          correct: 0,
+          exp: "Water/CSF is dark on T1, bright on T2." },
+        { q: "PET scan using FDG is most useful for:",
+          opts: ["Detecting metabolically active tumors, infection, inflammation", "Bone metastases", "Brain perfusion", "Myocardial viability", "Pulmonary embolism"],
+          correct: 0,
+          exp: "FDG‑PET highlights hypermetabolic cells (cancer, infection)." },
+        { q: "The most common cause of an elevated troponin not due to acute coronary syndrome is:",
+          opts: ["Myocarditis, tachycardia, pulmonary embolism, renal failure", "Gastroenteritis", "Pneumonia", "Anxiety", "Dehydration"],
+          correct: 0,
+          exp: "Many conditions cause troponin elevation (type 2 MI, myocarditis, PE, sepsis, renal failure)." },
+        { q: "BNP (B‑type natriuretic peptide) is most useful for:",
+          opts: ["Diagnosing heart failure (elevated in HF)", "Diagnosing ACS", "Monitoring anticoagulation", "Detecting DVT", "Assessing liver function"],
+          correct: 0,
+          exp: "BNP >100 pg/mL suggests heart failure." },
+        { q: "In a patient with suspected acute coronary syndrome, which test is most specific for myocardial necrosis?",
+          opts: ["Troponin I/T", "CK‑MB", "Myoglobin", "LDH", "AST"],
+          correct: 0,
+          exp: "Troponin is the most specific and sensitive biomarker for myocardial injury." },
+        { q: "The 'delta' troponin (change over time) helps distinguish:",
+          opts: ["Acute MI from chronic troponin elevation", "STEMI from NSTEMI", "Type 1 from type 2 MI", "Myocarditis from MI", "PE from MI"],
+          correct: 0,
+          exp: "A rising or falling pattern indicates acute MI; stable elevation suggests chronic damage (e.g., renal failure)." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

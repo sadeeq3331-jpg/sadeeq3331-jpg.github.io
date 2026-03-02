@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biochemistry & Mol Bio · Physiology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-flask"></i>
+        <h1>Biochemistry & Mol Bio · Physiology MCQ</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ BIOCHEMISTRY PHYSIOLOGY (MOLECULAR & METABOLIC) QUESTIONS
+    const questions = [
+        { q: "Which amino acid is the precursor for the neurotransmitters dopamine, norepinephrine, and epinephrine?",
+          opts: ["Tyrosine", "Tryptophan", "Phenylalanine", "Histidine", "Glutamate"],
+          correct: 0,
+          exp: "Tyrosine → L‑DOPA → dopamine → norepinephrine → epinephrine." },
+        { q: "Which amino acid contains a sulfhydryl group and forms disulfide bonds?",
+          opts: ["Cysteine", "Methionine", "Serine", "Threonine", "Lysine"],
+          correct: 0,
+          exp: "Cysteine has –SH group; disulfide bonds (cysteine‑cysteine) stabilize protein structure." },
+        { q: "Which of the following amino acids is both glucogenic and ketogenic?",
+          opts: ["Phenylalanine", "Leucine", "Lysine", "Valine", "Alanine"],
+          correct: 0,
+          exp: "Phenylalanine, tyrosine, isoleucine, threonine, tryptophan are both glucogenic and ketogenic." },
+        { q: "The one‑carbon carrier in metabolism is:",
+          opts: ["Tetrahydrofolate (THF)", "Biotin", "Coenzyme A", "Thiamine pyrophosphate", "Pyridoxal phosphate"],
+          correct: 0,
+          exp: "THF carries one‑carbon units (methyl, formyl, etc.) for nucleotide synthesis and methylation." },
+        { q: "Biotin is a cofactor for which class of enzymes?",
+          opts: ["Carboxylases", "Decarboxylases", "Dehydrogenases", "Transaminases", "Kinases"],
+          correct: 0,
+          exp: "Biotin is covalently bound to carboxylases (e.g., acetyl‑CoA carboxylase, pyruvate carboxylase)." },
+        { q: "Vitamin K is essential for the post‑translational modification of:",
+          opts: ["Clotting factors (II, VII, IX, X)", "Collagen", "Elastin", "Histones", "Hemoglobin"],
+          correct: 0,
+          exp: "Vitamin K carboxylates glutamate residues (Gla) in clotting factors." },
+        { q: "The rate‑limiting enzyme of glycolysis is:",
+          opts: ["Phosphofructokinase‑1 (PFK‑1)", "Hexokinase", "Pyruvate kinase", "Glucokinase", "Aldolase"],
+          correct: 0,
+          exp: "PFK‑1 is the major regulated step (activated by AMP/fructose‑2,6‑BP; inhibited by ATP/citrate)." },
+        { q: "In anaerobic glycolysis, pyruvate is converted to lactate by:",
+          opts: ["Lactate dehydrogenase (LDH)", "Pyruvate dehydrogenase", "Pyruvate carboxylase", "Alcohol dehydrogenase", "Aldolase"],
+          correct: 0,
+          exp: "LDH converts pyruvate to lactate, regenerating NAD⁺ for glycolysis." },
+        { q: "The Cori cycle involves interconversion between:",
+          opts: ["Lactate (muscle) and glucose (liver)", "Glucose and glycogen", "Pyruvate and alanine", "Glucose and fatty acids", "Glycerol and glucose"],
+          correct: 0,
+          exp: "Cori cycle: muscle lactate → liver gluconeogenesis → glucose → muscle." },
+        { q: "Which enzyme is deficient in von Gierke disease (type I glycogen storage disease)?",
+          opts: ["Glucose‑6‑phosphatase", "Debranching enzyme", "Branching enzyme", "Muscle phosphorylase", "Liver phosphorylase"],
+          correct: 0,
+          exp: "Glucose‑6‑phosphatase deficiency → severe fasting hypoglycemia, hepatomegaly, lactic acidosis." },
+        { q: "Galactosemia (classic) is due to deficiency of:",
+          opts: ["Galactose‑1‑phosphate uridylyltransferase (GALT)", "Galactokinase", "UDP‑galactose‑4‑epimerase", "Aldolase B", "Fructokinase"],
+          correct: 0,
+          exp: "GALT deficiency leads to galactose‑1‑phosphate accumulation; presents with jaundice, cataracts, E. coli sepsis." },
+        { q: "Hereditary fructose intolerance is caused by deficiency of:",
+          opts: ["Aldolase B", "Fructokinase", "Phosphofructokinase", "Pyruvate kinase", "Glucokinase"],
+          correct: 0,
+          exp: "Aldolase B deficiency → fructose‑1‑phosphate accumulation → hypoglycemia, vomiting, liver failure." },
+        { q: "The pentose phosphate pathway produces:",
+          opts: ["NADPH and ribose‑5‑phosphate", "NADH and ATP", "FADH₂ and GTP", "UDP‑glucose", "Fructose‑6‑phosphate"],
+          correct: 0,
+          exp: "PPP generates NADPH (reductive biosynthesis, antioxidant) and ribose‑5‑phosphate (nucleotides)." },
+        { q: "Glucose‑6‑phosphate dehydrogenase (G6PD) deficiency causes hemolytic anemia because:",
+          opts: ["NADPH deficiency leads to oxidative damage", "ATP depletion", "Methemoglobinemia", "Membrane instability", "Autoimmune hemolysis"],
+          correct: 0,
+          exp: "Low NADPH → reduced glutathione (GSH) cannot neutralize oxidants → RBC lysis." },
+        { q: "Which of the following is a substrate for gluconeogenesis?",
+          opts: ["Lactate", "Acetyl‑CoA", "Fatty acids", "Leucine", "Ketone bodies"],
+          correct: 0,
+          exp: "Gluconeogenic precursors: lactate, glycerol, glucogenic amino acids (not acetyl‑CoA)." },
+        { q: "Pyruvate carboxylase is activated by:",
+          opts: ["Acetyl‑CoA", "ATP", "NADH", "ADP", "Citrate"],
+          correct: 0,
+          exp: "Acetyl‑CoA allosterically activates pyruvate carboxylase, committing pyruvate to gluconeogenesis." },
+        { q: "The enzyme deficient in maple syrup urine disease (MSUD) is:",
+          opts: ["Branched‑chain α‑ketoacid dehydrogenase", "Phenylalanine hydroxylase", "Homogentisate oxidase", "Tyrosine aminotransferase", "Methylmalonyl‑CoA mutase"],
+          correct: 0,
+          exp: "MSUD: deficiency of BCKD → ↑ leucine, isoleucine, valine; urine smells like maple syrup." },
+        { q: "Phenylketonuria (PKU) results from deficiency of:",
+          opts: ["Phenylalanine hydroxylase", "Tyrosine hydroxylase", "DOPA decarboxylase", "Homogentisate oxidase", "Biopterin reductase"],
+          correct: 0,
+          exp: "PAH deficiency → ↑ phenylalanine; treatment: low‑phenylalanine diet, avoid aspartame." },
+        { q: "Homocystinuria is most commonly due to deficiency of:",
+          opts: ["Cystathionine β‑synthase", "Methionine synthase", "MTHFR", "Cystathionine γ‑lyase", "Betaine‑homocysteine methyltransferase"],
+          correct: 0,
+          exp: "Cystathionine β‑synthase deficiency → ↑ homocysteine, ↓ cysteine; lens dislocation downward, thromboembolism." },
+        { q: "Alkaptonuria (ochronosis) is caused by deficiency of:",
+          opts: ["Homogentisate oxidase", "Tyrosinase", "Phenylalanine hydroxylase", "Tyrosine aminotransferase", "Fumarylacetoacetate hydrolase"],
+          correct: 0,
+          exp: "Homogentisate oxidase deficiency → homogentisic acid accumulation → dark urine, ochronosis, arthritis." },
+        { q: "Tyrosinemia type I is due to deficiency of:",
+          opts: ["Fumarylacetoacetate hydrolase", "Tyrosine aminotransferase", "4‑hydroxyphenylpyruvate dioxygenase", "Homogentisate oxidase", "Phenylalanine hydroxylase"],
+          correct: 0,
+          exp: "Tyrosinemia I → liver failure, renal tubular dysfunction; treated with nitisinone (NTBC)." },
+        { q: "The urea cycle enzyme ornithine transcarbamylase (OTC) deficiency is X‑linked and causes:",
+          opts: ["Hyperammonemia, orotic aciduria", "Hyperuricemia", "Hyperglycemia", "Lactic acidosis", "Hypoglycemia"],
+          correct: 0,
+          exp: "OTC deficiency → carbamoyl phosphate spills into pyrimidine pathway → orotic acid." },
+        { q: "Which of the following is an allosteric activator of carbamoyl phosphate synthetase I (CPS I)?",
+          opts: ["N‑acetylglutamate (NAG)", "Urea", "Arginine", "Ornithine", "Citrulline"],
+          correct: 0,
+          exp: "NAG is essential for CPS I activity; deficiency causes hyperammonemia." },
+        { q: "Maple syrup urine disease affects metabolism of which amino acids?",
+          opts: ["Leucine, isoleucine, valine", "Phenylalanine, tyrosine", "Methionine, cysteine", "Lysine, arginine", "Tryptophan, histidine"],
+          correct: 0,
+          exp: "MSUD involves branched‑chain amino acids." },
+        { q: "Which vitamin is a cofactor for transaminases (aminotransferases)?",
+          opts: ["Pyridoxal phosphate (B6)", "Thiamine (B1)", "Riboflavin (B2)", "Niacin (B3)", "Cobalamin (B12)"],
+          correct: 0,
+          exp: "PLP is cofactor for transaminases, decarboxylases, and cystathionine β‑synthase." },
+        { q: "The enzyme HMG‑CoA reductase is inhibited by:",
+          opts: ["Statins", "Fibrates", "Niacin", "Ezetimibe", "Bile acid sequestrants"],
+          correct: 0,
+          exp: "Statins competitively inhibit HMG‑CoA reductase, rate‑limiting in cholesterol synthesis." },
+        { q: "Which lipoprotein is the primary carrier of endogenous triglycerides?",
+          opts: ["VLDL", "Chylomicrons", "LDL", "HDL", "IDL"],
+          correct: 0,
+          exp: "VLDL transports triglycerides from liver to peripheral tissues." },
+        { q: "Familial hypercholesterolemia is caused by mutations in the gene for:",
+          opts: ["LDL receptor", "ApoB‑100", "PCSK9", "LDL receptor or ApoB", "ABCG5/ABCG8"],
+          correct: 3,
+          exp: "LDL receptor mutations (classic) or ApoB‑100 mutations cause increased LDL." },
+        { q: "LCAT deficiency leads to:",
+          opts: ["Abnormal HDL (fish‑eye disease)", "Hypertriglyceridemia", "Xanthomas", "Premature atherosclerosis", "Pancreatitis"],
+          correct: 0,
+          exp: "LCAT esterifies cholesterol in HDL; deficiency causes HDL dysfunction." },
+        { q: "Lipoprotein lipase (LPL) deficiency results in:",
+          opts: ["Type I hyperlipoproteinemia (↑ chylomicrons)", "Type IIa hyperlipoproteinemia", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "LPL deficiency → chylomicronemia syndrome (eruptive xanthomas, pancreatitis)." },
+        { q: "Ketone bodies are synthesized in the liver from:",
+          opts: ["Acetyl‑CoA", "Fatty acids", "Pyruvate", "Lactate", "Glycerol"],
+          correct: 0,
+          exp: "Excess acetyl‑CoA (from fatty acid oxidation) → acetoacetate, β‑hydroxybutyrate, acetone." },
+        { q: "Which enzyme is deficient in medium‑chain acyl‑CoA dehydrogenase (MCAD) deficiency?",
+          opts: ["MCAD", "VLCAD", "LCAD", "CPT1", "CACT"],
+          correct: 0,
+          exp: "MCAD deficiency → hypoketotic hypoglycemia, vomiting, sudden death; common in infants." },
+        { q: "Carnitine is required for:",
+          opts: ["Transport of long‑chain fatty acids into mitochondria", "Transport of short‑chain fatty acids", "Ketone body synthesis", "Cholesterol synthesis", "Urea cycle"],
+          correct: 0,
+          exp: "Carnitine shuttle: CPT1, CACT, CPT2 transport long‑chain acyl‑CoA into mitochondria." },
+        { q: "The rate‑limiting enzyme of fatty acid synthesis is:",
+          opts: ["Acetyl‑CoA carboxylase (ACC)", "Fatty acid synthase", "Citrate lyase", "Malonyl‑CoA decarboxylase", "Thioesterase"],
+          correct: 0,
+          exp: "ACC (biotin‑dependent) produces malonyl‑CoA; inhibited by glucagon, activated by insulin and citrate." },
+        { q: "NADPH required for fatty acid synthesis is mainly supplied by:",
+          opts: ["Pentose phosphate pathway", "Citrate‑pyruvate shuttle (malic enzyme)", "Isocitrate dehydrogenase", "Both A and B", "Electron transport chain"],
+          correct: 3,
+          exp: "PPP provides ~60%, malic enzyme and cytosolic IDH also contribute." },
+        { q: "In the electron transport chain, complex I accepts electrons from:",
+          opts: ["NADH", "FADH₂", "Succinate", "Cytochrome c", "Coenzyme Q"],
+          correct: 0,
+          exp: "Complex I (NADH dehydrogenase) transfers electrons from NADH to CoQ." },
+        { q: "Cyanide poisoning inhibits which complex of the ETC?",
+          opts: ["Complex IV (cytochrome c oxidase)", "Complex I", "Complex II", "Complex III", "ATP synthase"],
+          correct: 0,
+          exp: "Cyanide binds heme a3 in cytochrome c oxidase, blocking electron transfer to O₂." },
+        { q: "Oligomycin inhibits ATP synthase by:",
+          opts: ["Blocking proton flow through F0", "Blocking substrate binding", "Uncoupling oxidation", "Inhibiting complex I", "Binding to ANT"],
+          correct: 0,
+          exp: "Oligomycin blocks proton channel of ATP synthase, preventing ATP synthesis." },
+        { q: "2,4‑Dinitrophenol (DNP) acts as an uncoupler by:",
+          opts: ["Carrying protons across inner mitochondrial membrane", "Inhibiting complex III", "Blocking ATP synthase", "Depleting NADH", "Increasing superoxide"],
+          correct: 0,
+          exp: "DNP is a protonophore, dissipating the proton gradient and uncoupling oxidation from phosphorylation." },
+        { q: "The citric acid cycle (Krebs cycle) occurs in the:",
+          opts: ["Mitochondrial matrix", "Cytosol", "Inner mitochondrial membrane", "Nucleus", "Endoplasmic reticulum"],
+          correct: 0,
+          exp: "TCA cycle enzymes are in mitochondrial matrix." },
+        { q: "Which enzyme of the TCA cycle is also part of the electron transport chain?",
+          opts: ["Succinate dehydrogenase (Complex II)", "Isocitrate dehydrogenase", "α‑ketoglutarate dehydrogenase", "Malate dehydrogenase", "Citrate synthase"],
+          correct: 0,
+          exp: "Succinate dehydrogenase (complex II) converts succinate to fumarate and transfers electrons to CoQ." },
+        { q: "α‑ketoglutarate dehydrogenase is similar in structure to:",
+          opts: ["Pyruvate dehydrogenase", "Citrate synthase", "Isocitrate dehydrogenase", "Malate dehydrogenase", "Succinyl‑CoA synthetase"],
+          correct: 0,
+          exp: "Both α‑ketoglutarate dehydrogenase and pyruvate dehydrogenase are multienzyme complexes requiring TPP, lipoate, FAD, NAD⁺." },
+        { q: "Pyruvate dehydrogenase complex deficiency causes:",
+          opts: ["Lactic acidosis, neurological deterioration", "Maple syrup urine disease", "Phenylketonuria", "Methylmalonic acidemia", "Propionic acidemia"],
+          correct: 0,
+          exp: "PDH deficiency prevents conversion of pyruvate to acetyl‑CoA, causing lactic acidosis and CNS problems." },
+        { q: "Biotin is a cofactor for which enzyme?",
+          opts: ["Pyruvate carboxylase", "Pyruvate dehydrogenase", "α‑ketoglutarate dehydrogenase", "Succinate dehydrogenase", "Malate dehydrogenase"],
+          correct: 0,
+          exp: "Biotin is cofactor for carboxylases: pyruvate carboxylase, acetyl‑CoA carboxylase, propionyl‑CoA carboxylase, methylcrotonyl‑CoA carboxylase." },
+        { q: "Thiamine (vitamin B1) is a cofactor for:",
+          opts: ["Pyruvate dehydrogenase, α‑ketoglutarate dehydrogenase, transketolase", "Glutamate dehydrogenase", "Fatty acid synthase", "HMG‑CoA reductase", "Aminotransferases"],
+          correct: 0,
+          exp: "Thiamine pyrophosphate (TPP) is cofactor for oxidative decarboxylases and transketolase." },
+        { q: "Riboflavin (vitamin B2) is a component of:",
+          opts: ["FAD and FMN", "NAD⁺ and NADP⁺", "Coenzyme A", "TPP", "Pyridoxal phosphate"],
+          correct: 0,
+          exp: "Riboflavin → FMN, FAD (electron carriers)." },
+        { q: "Niacin (vitamin B3) is a component of:",
+          opts: ["NAD⁺ and NADP⁺", "FAD", "Coenzyme A", "TPP", "PLP"],
+          correct: 0,
+          exp: "Niacin (nicotinic acid) → NAD⁺/NADP⁺." },
+        { q: "Pantothenic acid is a component of:",
+          opts: ["Coenzyme A", "FAD", "NAD⁺", "TPP", "Biotin"],
+          correct: 0,
+          exp: "Pantothenate is part of CoA and acyl carrier protein." },
+        { q: "Which vitamin is essential for DNA synthesis as a cofactor for thymidylate synthase?",
+          opts: ["Folate", "B12", "B6", "B2", "B3"],
+          correct: 0,
+          exp: "Folate (as methylene‑THF) donates methyl for dUMP → dTMP." },
+        { q: "Vitamin B12 (cobalamin) deficiency leads to:",
+          opts: ["Megaloblastic anemia, subacute combined degeneration", "Microcytic anemia", "Hemolytic anemia", "Sideroblastic anemia", "Aplastic anemia"],
+          correct: 0,
+          exp: "B12 deficiency causes impaired folate metabolism (megaloblastic) and neurological symptoms." },
+        { q: "Which enzyme requires vitamin B12 as a cofactor?",
+          opts: ["Methionine synthase", "Thymidylate synthase", "Dihydrofolate reductase", "Serine hydroxymethyltransferase", "Aminolevulinic acid synthase"],
+          correct: 0,
+          exp: "Methionine synthase (methyl‑B12) converts homocysteine to methionine." },
+        { q: "Orotic aciduria (type I) is due to deficiency of:",
+          opts: ["UMP synthase", "Orotate phosphoribosyltransferase", "OMP decarboxylase", "Carbamoyl phosphate synthetase II", "Dihydroorotate dehydrogenase"],
+          correct: 1,
+          exp: "UMP synthase includes both OPRT and OMPDC; deficiency causes orotic acid in urine, megaloblastic anemia." },
+        { q: "Lesch‑Nyhan syndrome is caused by deficiency of:",
+          opts: ["HGPRT", "APRT", "Xanthine oxidase", "Adenosine deaminase", "Purine nucleoside phosphorylase"],
+          correct: 0,
+          exp: "HGPRT deficiency → ↑ uric acid, self‑mutilation, choreoathetosis, intellectual disability." },
+        { q: "Severe combined immunodeficiency (SCID) can result from deficiency of:",
+          opts: ["Adenosine deaminase (ADA)", "Purine nucleoside phosphorylase", "Xanthine oxidase", "HGPRT", "APRT"],
+          correct: 0,
+          exp: "ADA deficiency → accumulation of adenosine and deoxyadenosine, toxic to lymphocytes." },
+        { q: "The enzyme reverse transcriptase is found in:",
+          opts: ["Retroviruses (e.g., HIV)", "All viruses", "Bacteria", "Human cells", "Fungi"],
+          correct: 0,
+          exp: "Reverse transcriptase makes DNA from RNA; used by retroviruses." },
+        { q: "In DNA replication, the enzyme that synthesizes RNA primers is:",
+          opts: ["Primase", "Helicase", "DNA polymerase α", "Topoisomerase", "Ligase"],
+          correct: 0,
+          exp: "Primase synthesizes short RNA primers to initiate DNA synthesis." },
+        { q: "Telomerase contains an RNA template that is complementary to:",
+          opts: ["Telomere repeats (TTAGGG)", "Centromere", "Origin of replication", "Promoter sequence", "Exon‑intron boundary"],
+          correct: 0,
+          exp: "Telomerase adds TTAGGG repeats using its own RNA template." },
+        { q: "The enzyme that joins Okazaki fragments is:",
+          opts: ["DNA ligase", "DNA polymerase I", "DNA polymerase III", "Primase", "Helicase"],
+          correct: 0,
+          exp: "DNA ligase seals nicks between Okazaki fragments." },
+        { q: "Alternative splicing allows:",
+          opts: ["Multiple proteins from one gene", "Exon skipping", "Intron retention", "RNA editing", "Polyadenylation"],
+          correct: 0,
+          exp: "Alternative splicing produces different mRNA variants from same gene." },
+        { q: "The Shine‑Dalgarno sequence is found in:",
+          opts: ["Prokaryotic mRNA (ribosome binding site)", "Eukaryotic mRNA", "tRNA", "rRNA", "DNA promoters"],
+          correct: 0,
+          exp: "Shine‑Dalgarno (AGGAGG) pairs with 16S rRNA in prokaryotes." },
+        { q: "The Kozak consensus sequence is important for:",
+          opts: ["Initiation of translation in eukaryotes", "Splicing", "Transcription termination", "Polyadenylation", "RNA stability"],
+          correct: 0,
+          exp: "Kozak sequence (GCC(A/G)CCAUGG) surrounds start codon in eukaryotes." },
+        { q: "Northern blotting is used to detect:",
+          opts: ["RNA", "DNA", "Protein", "Lipids", "Carbohydrates"],
+          correct: 0,
+          exp: "Northern: RNA; Southern: DNA; Western: protein." },
+        { q: "Western blotting uses antibodies to detect:",
+          opts: ["Proteins", "DNA", "RNA", "Lipids", "Glycogen"],
+          correct: 0,
+          exp: "Western blot: protein detection with specific antibodies." },
+        { q: "Polymerase chain reaction (PCR) requires all EXCEPT:",
+          opts: ["RNA polymerase", "Taq polymerase", "Primers", "dNTPs", "DNA template"],
+          correct: 0,
+          exp: "PCR uses DNA polymerase (Taq), not RNA polymerase." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "The enzyme responsible for removing RNA primers and replacing with DNA in prokaryotes is:",
+          opts: ["DNA polymerase I", "DNA polymerase III", "DNA polymerase α", "RNase H", "Primase"],
+          correct: 0,
+          exp: "DNA polymerase I has 5'→3' exonuclease activity to remove primers and fill gaps." },
+        { q: "Topoisomerase II (DNA gyrase) in bacteria is inhibited by:",
+          opts: ["Quinolones (e.g., ciprofloxacin)", "Actinomycin D", "Rifampin", "Tetracycline", "Erythromycin"],
+          correct: 0,
+          exp: "Quinolones inhibit DNA gyrase (topoisomerase II) in bacteria." },
+        { q: "Rifampin inhibits bacterial RNA synthesis by binding to:",
+          opts: ["RNA polymerase β subunit", "DNA gyrase", "Ribosome", "DNA template", "RNA polymerase α subunit"],
+          correct: 0,
+          exp: "Rifampin inhibits prokaryotic RNA polymerase." },
+        { q: "Cycloheximide inhibits protein synthesis in:",
+          opts: ["Eukaryotes (60S ribosomal subunit)", "Prokaryotes (50S)", "Both", "Mitochondria", "Chloroplasts"],
+          correct: 0,
+          exp: "Cycloheximide blocks peptidyl transferase in eukaryotes." },
+        { q: "Puromycin causes premature chain release because it:",
+          opts: ["Resembles aminoacyl‑tRNA, enters A site", "Blocks peptidyl transferase", "Inhibits translocation", "Binds EF‑G", "Binds 30S subunit"],
+          correct: 0,
+          exp: "Puromycin structure mimics tyrosine‑tRNA, causing premature termination." },
+        { q: "A restriction enzyme that recognizes a 6‑bp palindrome on average cuts every:",
+          opts: ["4096 bp", "256 bp", "1024 bp", "65536 bp", "64 bp"],
+          correct: 0,
+          exp: "Probability of a specific 6‑bp sequence is (1/4)⁶ = 1/4096." },
+        { q: "A plasmid vector must contain which element for selection in bacteria?",
+          opts: ["Antibiotic resistance gene", "Origin of replication", "Multiple cloning site", "Promoter", "Ribosome binding site"],
+          correct: 0,
+          exp: "Selectable marker (e.g., ampicillin resistance) allows only transformed bacteria to grow." },
+        { q: "cDNA is synthesized from mRNA using the enzyme:",
+          opts: ["Reverse transcriptase", "RNA polymerase", "DNA polymerase", "Primase", "Ligase"],
+          correct: 0,
+          exp: "Reverse transcriptase makes complementary DNA (cDNA) from mRNA." },
+        { q: "The CRISPR‑Cas system provides bacteria with:",
+          opts: ["Adaptive immunity against phages", "Resistance to antibiotics", "Metabolic regulation", "DNA repair", "Competence"],
+          correct: 0,
+          exp: "CRISPR stores DNA fragments of invaders; Cas proteins cleave foreign DNA." },
+        { q: "In the lac operon, allolactose acts as an inducer by:",
+          opts: ["Binding to Lac repressor, preventing DNA binding", "Activating RNA polymerase", "Blocking CAP binding", "Increasing cAMP", "Degrading lactose"],
+          correct: 0,
+          exp: "Allolactose (or IPTG) binds repressor, inactivating it." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

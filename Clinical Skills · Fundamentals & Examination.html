@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Skills · Fundamentals & Examination</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-stethoscope"></i>
+        <h1>Clinical Skills · Fundamentals & Examination</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>GENERAL APPROACH</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#history"><i class="fas fa-notes-medical"></i> 1. Medical History Taking</a></li>
+                <li class="chapter-item"><a href="#vitals"><i class="fas fa-heartbeat"></i> 2. Vital Signs</a></li>
+                <li class="chapter-item"><a href="#general-survey"><i class="fas fa-user-md"></i> 3. General Survey & Appearance</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>HEAD & NECK</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#head"><i class="fas fa-user"></i> 4. Head & Face</a></li>
+                <li class="chapter-item"><a href="#eyes"><i class="fas fa-eye"></i> 5. Eye Examination</a></li>
+                <li class="chapter-item"><a href="#ears"><i class="fas fa-ear-listen"></i> 6. Ear Examination</a></li>
+                <li class="chapter-item"><a href="#nose-sinus"><i class="fas fa-nose"></i> 7. Nose & Sinuses</a></li>
+                <li class="chapter-item"><a href="#mouth-throat"><i class="fas fa-lips"></i> 8. Mouth & Throat</a></li>
+                <li class="chapter-item"><a href="#neck"><i class="fas fa-neck"></i> 9. Neck & Thyroid</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>THORAX & LUNGS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#respiratory-exam"><i class="fas fa-lungs"></i> 10. Respiratory Examination</a></li>
+                <li class="chapter-item"><a href="#cardiac-exam"><i class="fas fa-heart"></i> 11. Cardiac Examination</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ABDOMEN</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#abdominal-exam"><i class="fas fa-stomach"></i> 12. Abdominal Examination</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>MUSCULOSKELETAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#musculoskeletal"><i class="fas fa-bone"></i> 13. Musculoskeletal Examination</a></li>
+                <li class="chapter-item"><a href="#neurological"><i class="fas fa-brain"></i> 14. Neurological Examination</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>VASCULAR & SKIN</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#vascular"><i class="fas fa-heart"></i> 15. Peripheral Vascular Examination</a></li>
+                <li class="chapter-item"><a href="#skin"><i class="fas fa-hand"></i> 16. Skin Examination</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== GENERAL APPROACH ==================== -->
+        <section id="history" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-notes-medical"></i> 1. Medical History Taking</div>
+            <div class="section-card">
+                <div class="body-text">
+                    A thorough medical history is the foundation of clinical diagnosis. Components:
+                </div>
+                <ul>
+                    <li><strong>Identifying data:</strong> Age, gender, occupation, race/ethnicity.</li>
+                    <li><strong>Chief complaint:</strong> Patient's own words describing the reason for visit.</li>
+                    <li><strong>History of present illness (HPI):</strong> Chronologic narrative, using OLD CARTS (Onset, Location, Duration, Character, Aggravating/Associated factors, Relieving factors, Timing, Severity).</li>
+                    <li><strong>Past medical history:</strong> Medical conditions, surgeries, hospitalizations, psychiatric history.</li>
+                    <li><strong>Medications and allergies:</strong> Prescription, OTC, supplements; drug allergies.</li>
+                    <li><strong>Family history:</strong> Genetic diseases, heart disease, diabetes, cancer.</li>
+                    <li><strong>Social history:</strong> Smoking, alcohol, drugs, living situation, occupation.</li>
+                    <li><strong>Review of systems (ROS):</strong> Systematic checklist of symptoms by organ system.</li>
+                </ul>
+                <div class="memory-aid">
+                    <i class="fas fa-lightbulb"></i> Mnemonic for HPI: OLD CARTS (Onset, Location, Duration, Character, Aggravating/Associated, Relieving, Timing, Severity).
+                </div>
+            </div>
+        </section>
+
+        <section id="vitals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 2. Vital Signs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Temperature:</strong> Normal 36.5‑37.5°C (oral). Hyperthermia >38°C, hypothermia <35°C.</li>
+                    <li><strong>Heart rate:</strong> 60‑100 bpm. Tachycardia >100, bradycardia <60.</li>
+                    <li><strong>Respiratory rate:</strong> 12‑20 breaths/min. Tachypnea >20.</li>
+                    <li><strong>Blood pressure:</strong> Normal <120/80 mmHg. Hypertension ≥130/80, hypotension <90/60.</li>
+                    <li><strong>Oxygen saturation:</strong> ≥95% on room air.</li>
+                    <li><strong>Pain:</strong> 5th vital sign; 0‑10 scale.</li>
+                </ul>
+                <div class="definition-box">
+                    <strong>Orthostatic vitals:</strong> Measure BP and HR supine, then after 1‑3 minutes standing. Positive if systolic drop >20 mmHg, diastolic drop >10, or HR increase >20.
+                </div>
+            </div>
+        </section>
+
+        <section id="general-survey" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-user-md"></i> 3. General Survey & Appearance</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Appearance:</strong> Age, gender, body habitus, hygiene, grooming.</li>
+                    <li><strong>Level of consciousness:</strong> Alert, lethargic, obtunded, stuporous, comatose.</li>
+                    <li><strong>Distress:</strong> Respiratory distress, pain, anxiety.</li>
+                    <li><strong>Nutritional status:</strong> Obese, cachectic, muscular.</li>
+                    <li><strong>Posture and gait:</strong> Abnormal postures, limping, ataxia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== HEAD & NECK ==================== -->
+        <section id="head" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-user"></i> 4. Head & Face</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection:</strong> Symmetry, deformities, scalp lesions, facial expression.</li>
+                    <li><strong>Palpation:</strong> Temporomandibular joint (TMJ) tenderness, crepitus; sinuses tenderness.</li>
+                    <li><strong>Facial nerve (CN VII):</strong> Raise eyebrows, close eyes tightly, smile, puff cheeks.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="eyes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 5. Eye Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Visual acuity:</strong> Snellen chart; test each eye separately.</li>
+                    <li><strong>Visual fields:</strong> Confrontation; test all quadrants.</li>
+                    <li><strong>Extraocular movements (CN III, IV, VI):</strong> H‑pattern; nystagmus.</li>
+                    <li><strong>Pupils:</strong> Size, symmetry, direct and consensual light reflex, accommodation.</li>
+                    <li><strong>Ophthalmoscopy:</strong> Red reflex, optic disc (cup, margins), vessels, retina.</li>
+                    <li><strong>External:</strong> Eyelids, conjunctiva, sclera, cornea.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <strong>Marcus Gunn pupil (relative afferent pupillary defect):</strong> Swinging flashlight test – pupil dilates when light moves to affected eye.
+                </div>
+            </div>
+        </section>
+
+        <section id="ears" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-ear-listen"></i> 6. Ear Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection:</strong> Pinna, external auditory canal, tympanic membrane (cone of light, landmarks).</li>
+                    <li><strong>Otoscopy:</strong> Perforation, erythema, effusion, cerumen.</li>
+                    <li><strong>Hearing (CN VIII):</strong> Whisper test, Rinne (air > bone), Weber (lateralization).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="nose-sinus" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-nose"></i> 7. Nose & Sinuses</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection:</strong> External nose, nasal mucosa, septum, turbinates.</li>
+                    <li><strong>Palpation:</strong> Frontal and maxillary sinuses for tenderness.</li>
+                    <li><strong>Olfaction (CN I):</strong> Test with coffee, peppermint.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="mouth-throat" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lips"></i> 8. Mouth & Throat</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Lips:</strong> Color, moisture, lesions.</li>
+                    <li><strong>Oral mucosa:</strong> Ulcers, white patches, pigmentation.</li>
+                    <li><strong>Teeth and gums:</strong> Caries, periodontal disease, bleeding.</li>
+                    <li><strong>Palate:</strong> Intact, symmetry (CN IX, X).</li>
+                    <li><strong>Tongue (CN XII):</strong> Protrusion (midline), atrophy, fasciculations.</li>
+                    <li><strong>Oropharynx:</strong> Tonsils, posterior pharynx; assess gag reflex (CN IX, X).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="neck" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-neck"></i> 9. Neck & Thyroid</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection:</strong> Symmetry, scars, masses, jugular venous distention.</li>
+                    <li><strong>Palpation:</strong> Trachea (midline), cervical lymph nodes, thyroid (isthmus, lobes).</li>
+                    <li><strong>Auscultation:</strong> Carotid bruits, thyroid bruit.</li>
+                    <li><strong>Range of motion:</strong> Flexion, extension, rotation, lateral bending.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== THORAX & LUNGS ==================== -->
+        <section id="respiratory-exam" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 10. Respiratory Examination</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Sequence: inspection, palpation, percussion, auscultation.
+                </div>
+                <ul>
+                    <li><strong>Inspection:</strong> Chest shape (barrel, pectus), symmetry of expansion, retractions, use of accessory muscles.</li>
+                    <li><strong>Palpation:</strong> Tactile fremitus (increased in consolidation, decreased in effusion/pneumothorax), tracheal deviation.</li>
+                    <li><strong>Percussion:</strong> Resonant (normal), dull (consolidation, effusion), hyperresonant (COPD, pneumothorax).</li>
+                    <li><strong>Auscultation:</strong> Breath sounds (vesicular, bronchial, bronchovesicular), adventitious sounds (crackles, wheezes, rhonchi, pleural rub).</li>
+                    <li><strong>Vocal resonance:</strong> Bronchophony, egophony (E to A), whispered pectoriloquy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cardiac-exam" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 11. Cardiac Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection and palpation:</strong> Point of maximal impulse (PMI) location, thrills, heaves.</li>
+                    <li><strong>Auscultation:</strong> 
+                        <ul>
+                            <li><strong>Heart sounds:</strong> S1 (mitral/tricuspid closure), S2 (aortic/pulmonic closure).</li>
+                            <li><strong>S3:</strong> Ventricular gallop (heart failure).</li>
+                            <li><strong>S4:</strong> Atrial gallop (hypertrophy).</li>
+                            <li><strong>Murmurs:</strong> Timing (systolic/diastolic), location, radiation, intensity (1‑6), pitch, quality.</li>
+                            <li><strong>Pericardial rub:</strong> Scratching sound, positional.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Jugular venous pressure (JVP):</strong> Estimate at 45°, normally ≤3 cm above sternal angle.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ABDOMEN ==================== -->
+        <section id="abdominal-exam" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 12. Abdominal Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection:</strong> Contour (flat, scaphoid, distended), scars, hernias, visible peristalsis, pulsations.</li>
+                    <li><strong>Auscultation:</strong> Bowel sounds (absent, hyperactive), bruits (renal, aortic, iliac).</li>
+                    <li><strong>Percussion:</strong> Tympany (gas), dullness (fluid, mass). Liver span (6‑12 cm), spleen (Traube's space dullness).</li>
+                    <li><strong>Palpation:</strong> Light (tenderness, guarding), deep (masses, organomegaly). Liver, spleen, kidneys.</li>
+                    <li><strong>Special maneuvers:</strong> Murphy sign (cholecystitis), McBurney point tenderness (appendicitis), rebound tenderness, obturator/psoas signs.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== MUSCULOSKELETAL ==================== -->
+        <section id="musculoskeletal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 13. Musculoskeletal Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection:</strong> Joint swelling, deformity, erythema, muscle atrophy.</li>
+                    <li><strong>Palpation:</strong> Tenderness, warmth, crepitus.</li>
+                    <li><strong>Range of motion:</strong> Active and passive; note limitations.</li>
+                    <li><strong>Muscle strength:</strong> 0‑5 scale.</li>
+                    <li><strong>Specific tests:</strong> Lachman (ACL), McMurray (meniscus), Phalen (carpal tunnel), Tinel sign.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="neurological" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 14. Neurological Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Mental status:</strong> Alertness, orientation, memory, language, attention (MMSE/MoCA).</li>
+                    <li><strong>Cranial nerves I‑XII.</strong></li>
+                    <li><strong>Motor system:</strong> Muscle bulk, tone (rigidity, spasticity), power, coordination (finger‑nose, heel‑shin).</li>
+                    <li><strong>Sensory:</strong> Light touch, pain, temperature, vibration, proprioception; cortical sensation.</li>
+                    <li><strong>Reflexes:</strong> Deep tendon reflexes (biceps, triceps, patellar, Achilles), Babinski, clonus.</li>
+                    <li><strong>Gait:</strong> Normal, tandem, heel/toe walking.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== VASCULAR & SKIN ==================== -->
+        <section id="vascular" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 15. Peripheral Vascular Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Palpation of pulses:</strong> Carotid, brachial, radial, femoral, popliteal, dorsalis pedis, posterior tibial. Grade 0‑4+.</li>
+                    <li><strong>Auscultation for bruits:</strong> Carotid, aorta, femoral.</li>
+                    <li><strong>Capillary refill:</strong> <2 seconds.</li>
+                    <li><strong>Edema:</strong> Pitting vs non‑pitting; grade 1‑4.</li>
+                    <li><strong>Signs of venous insufficiency:</strong> Varicosities, stasis dermatitis, ulcers (medial malleolus).</li>
+                    <li><strong>Arterial insufficiency:</strong> Pallor on elevation, rubor on dependency, ulcers (toes, heel).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="skin" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand"></i> 16. Skin Examination</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Inspection:</strong> Color, lesions (macule, papule, nodule, vesicle, bulla, pustule, plaque, scale, erosion, ulcer), distribution.</li>
+                    <li><strong>Palpation:</strong> Texture, temperature, moisture, turgor.</li>
+                    <li><strong>Specific lesions:</strong> Purpura (non‑blanching), petechiae, ecchymosis, telangiectasias.</li>
+                    <li><strong>Hair and nails:</strong> Alopecia, nail pitting, clubbing, koilonychia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Clinical Skills · Fundamentals & Examination · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

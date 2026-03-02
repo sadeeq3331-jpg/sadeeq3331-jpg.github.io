@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Skills · Diagnostic Procedures & Interpretation</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-microscope"></i>
+        <h1>Clinical Skills · Diagnostic Procedures & Interpretation</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>GENERAL PRINCIPLES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#test-characteristics"><i class="fas fa-chart-bar"></i> 1. Test Characteristics</a></li>
+                <li class="chapter-item"><a href="#lab-specimens"><i class="fas fa-flask"></i> 2. Laboratory Specimens & Handling</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>BLOOD TESTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#cbc"><i class="fas fa-tint"></i> 3. Complete Blood Count (CBC)</a></li>
+                <li class="chapter-item"><a href="#cmp"><i class="fas fa-flask"></i> 4. Comprehensive Metabolic Panel</a></li>
+                <li class="chapter-item"><a href="#coagulation"><i class="fas fa-clock"></i> 5. Coagulation Studies</a></li>
+                <li class="chapter-item"><a href="#cardiac-markers"><i class="fas fa-heart"></i> 6. Cardiac Biomarkers</a></li>
+                <li class="chapter-item"><a href="#inflammatory"><i class="fas fa-fire"></i> 7. Inflammatory Markers</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>URINALYSIS & BODY FLUIDS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#urinalysis"><i class="fas fa-tint"></i> 8. Urinalysis</a></li>
+                <li class="chapter-item"><a href="#csf"><i class="fas fa-brain"></i> 9. Cerebrospinal Fluid (CSF)</a></li>
+                <li class="chapter-item"><a href="#other-fluids"><i class="fas fa-syringe"></i> 10. Pleural, Ascitic, Synovial Fluid</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>IMAGING</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#xray"><i class="fas fa-x-ray"></i> 11. Plain Radiography (X‑Ray)</a></li>
+                <li class="chapter-item"><a href="#ct"><i class="fas fa-cube"></i> 12. Computed Tomography (CT)</a></li>
+                <li class="chapter-item"><a href="#ultrasound"><i class="fas fa-wave-square"></i> 13. Ultrasound</a></li>
+                <li class="chapter-item"><a href="#mri"><i class="fas fa-magnet"></i> 14. Magnetic Resonance Imaging (MRI)</a></li>
+                <li class="chapter-item"><a href="#nuclear"><i class="fas fa-radiation"></i> 15. Nuclear Medicine</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ELECTROCARDIOGRAPHY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#ecg-basics"><i class="fas fa-heartbeat"></i> 16. ECG Basics & Interpretation</a></li>
+                <li class="chapter-item"><a href="#arrhythmias-ecg"><i class="fas fa-chart-line"></i> 17. ECG in Arrhythmias</a></li>
+                <li class="chapter-item"><a href="#ischemia-ecg"><i class="fas fa-heart-broken"></i> 18. ECG in Ischemia & Infarction</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>OTHER PROCEDURES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#pft"><i class="fas fa-lungs"></i> 19. Pulmonary Function Tests</a></li>
+                <li class="chapter-item"><a href="#ecg-monitoring"><i class="fas fa-clock"></i> 20. Holter & Event Monitoring</a></li>
+                <li class="chapter-item"><a href="#biopsy"><i class="fas fa-cut"></i> 21. Biopsy & Cytology</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== GENERAL PRINCIPLES ==================== -->
+        <section id="test-characteristics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-bar"></i> 1. Test Characteristics</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Understanding diagnostic test performance is essential for interpretation.
+                </div>
+                <ul>
+                    <li><strong>Sensitivity:</strong> Probability that a test is positive when disease is present (TP / [TP + FN]). High sensitivity → good for ruling out (SnOUT).</li>
+                    <li><strong>Specificity:</strong> Probability that a test is negative when disease is absent (TN / [TN + FP]). High specificity → good for ruling in (SpIN).</li>
+                    <li><strong>Positive predictive value (PPV):</strong> Probability disease when test positive; depends on prevalence.</li>
+                    <li><strong>Negative predictive value (NPV):</strong> Probability no disease when test negative.</li>
+                    <li><strong>Likelihood ratio (LR):</strong> LR+ = sensitivity/(1‑specificity); LR‑ = (1‑sensitivity)/specificity. Post‑test odds = pretest odds × LR.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="lab-specimens" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 2. Laboratory Specimens & Handling</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Serum:</strong> Clotted blood (red top).</li>
+                    <li><strong>Plasma:</strong> Anticoagulated (lavender EDTA, green heparin, blue citrate).</li>
+                    <li><strong>Urine:</strong> Clean catch, midstream; 24‑hour collection.</li>
+                    <li><strong>CSF:</strong> Collected via lumbar puncture; tubes for cell count, chemistry, microbiology.</li>
+                    <li><strong>Blood culture:</strong> Aseptic technique, 2‑3 sets.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== BLOOD TESTS ==================== -->
+        <section id="cbc" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 3. Complete Blood Count (CBC)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>RBC indices:</strong> MCV (micro‑/normo‑/macrocytic), MCH, MCHC, RDW.</li>
+                    <li><strong>WBC count and differential:</strong> Neutrophils (↑ in bacterial infection), lymphocytes (↑ viral, ↓ HIV), eosinophils (allergy, parasites), monocytes, basophils.</li>
+                    <li><strong>Platelets:</strong> Thrombocytopenia (<150) or thrombocytosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cmp" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 4. Comprehensive Metabolic Panel (CMP)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Electrolytes:</strong> Na, K, Cl, HCO₃. Calculate anion gap = Na – (Cl + HCO₃) (normal 8‑12).</li>
+                    <li><strong>Renal function:</strong> BUN, creatinine (eGFR).</li>
+                    <li><strong>Glucose.</strong></li>
+                    <li><strong>Calcium, albumin, total protein.</strong></li>
+                    <li><strong>Liver enzymes:</strong> AST, ALT, ALP, bilirubin (total, direct).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="coagulation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-clock"></i> 5. Coagulation Studies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>PT/INR:</strong> Extrinsic pathway (factor VII, vitamin K).</li>
+                    <li><strong>PTT:</strong> Intrinsic pathway (factors VIII, IX, XI, XII).</li>
+                    <li><strong>Fibrinogen, D‑dimer.</strong></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cardiac-markers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 6. Cardiac Biomarkers</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Troponin I/T:</strong> Most specific for myocardial injury; rise 4‑6h, peak 12‑24h.</li>
+                    <li><strong>CK‑MB:</strong> Less specific, earlier rise (4‑6h).</li>
+                    <li><strong>BNP/NT‑proBNP:</strong> Heart failure; >100 pg/mL suggests HF.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="inflammatory" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fire"></i> 7. Inflammatory Markers</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>ESR:</strong> Non‑specific; elevated in inflammation, infection, malignancy.</li>
+                    <li><strong>CRP:</strong> Acute‑phase reactant; highly sensitive; bacterial infection, inflammation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== URINALYSIS & BODY FLUIDS ==================== -->
+        <section id="urinalysis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 8. Urinalysis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Dipstick:</strong> pH, specific gravity, protein, glucose, ketones, blood, leukocyte esterase, nitrites.</li>
+                    <li><strong>Microscopy:</strong> RBCs (hematuria), WBCs (pyuria), casts (RBC casts → glomerulonephritis; WBC casts → pyelonephritis), crystals.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="csf" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 9. Cerebrospinal Fluid (CSF)</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Condition</th><th>Appearance</th><th>WBC (cells/µL)</th><th>Glucose (CSF/serum)</th><th>Protein (mg/dL)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Normal</td><td>Clear</td><td>0‑5</td><td>≥0.6</td><td>20‑45</td></tr>
+                        <tr><td>Bacterial meningitis</td><td>Cloudy/purulent</td><td>↑↑ (PMNs)</td><td>↓↓</td><td>↑↑</td></tr>
+                        <tr><td>Viral meningitis</td><td>Clear</td><td>↑ (lymphocytes)</td><td>Normal</td><td>Normal/mild ↑</td></tr>
+                        <tr><td>TB meningitis</td><td>Clear/opalescent</td><td>↑ (lymphocytes)</td><td>↓</td><td>↑↑</td></tr>
+                        <tr><td>Subarachnoid hemorrhage</td><td>Bloody/xanthochromic</td><td>RBCs</td><td>Normal</td><td>Normal/mild ↑</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="other-fluids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 10. Pleural, Ascitic, Synovial Fluid</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pleural fluid:</strong> Light's criteria (exudative vs transudative).</li>
+                    <li><strong>Ascitic fluid:</strong> SAAG (serum‑ascites albumin gradient) >1.1 g/dL indicates portal hypertension.</li>
+                    <li><strong>Synovial fluid:</strong> WBC count for septic (>50,000), inflammatory (2,000‑50,000), non‑inflammatory (<2,000).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== IMAGING ==================== -->
+        <section id="xray" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-x-ray"></i> 11. Plain Radiography (X‑Ray)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Chest X‑ray (CXR):</strong> Evaluate lung fields, heart size, mediastinum, pleural spaces.</li>
+                    <li><strong>Abdominal X‑ray:</strong> Bowel obstruction, free air, kidney stones.</li>
+                    <li><strong>Bone X‑ray:</strong> Fractures, arthritis, osteomyelitis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ct" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cube"></i> 12. Computed Tomography (CT)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Cross‑sectional imaging; with or without contrast.</li>
+                    <li>Excellent for trauma, brain hemorrhage, appendicitis, pulmonary embolism (CTPA), renal stones (non‑contrast).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ultrasound" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wave-square"></i> 13. Ultrasound</div>
+            <div class="section-card">
+                <ul>
+                    <li>Real‑time, no radiation, excellent for soft tissue, vascular (Doppler), cardiac (echo), abdominal (gallstones, hydronephrosis), OB/GYN.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="mri" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-magnet"></i> 14. Magnetic Resonance Imaging (MRI)</div>
+            <div class="section-card">
+                <ul>
+                    <li>Superior soft tissue contrast; brain, spine, joints, soft tissue tumors.</li>
+                    <li>Contraindications: pacemakers, certain implants.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="nuclear" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-radiation"></i> 15. Nuclear Medicine</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>PET scan:</strong> Metabolic activity (cancer, infection).</li>
+                    <li><strong>Bone scan:</strong> Metastases, osteomyelitis.</li>
+                    <li><strong>V/Q scan:</strong> Pulmonary embolism.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ELECTROCARDIOGRAPHY ==================== -->
+        <section id="ecg-basics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 16. ECG Basics & Interpretation</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>P wave:</strong> Atrial depolarization.</li>
+                    <li><strong>PR interval:</strong> 120‑200 ms; AV node conduction.</li>
+                    <li><strong>QRS complex:</strong> Ventricular depolarization; normal <120 ms.</li>
+                    <li><strong>QT interval:</strong> Corrected for heart rate (QTc); prolonged → torsades risk.</li>
+                    <li><strong>ST segment, T wave:</strong> Ventricular repolarization.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="arrhythmias-ecg" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 17. ECG in Arrhythmias</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Sinus rhythm:</strong> P before each QRS, rate 60‑100.</li>
+                    <li><strong>Atrial fibrillation:</strong> Irregularly irregular, no P waves.</li>
+                    <li><strong>Atrial flutter:</strong> Sawtooth baseline.</li>
+                    <li><strong>VT:</strong> Wide QRS, rate >100, AV dissociation.</li>
+                    <li><strong>AV blocks:</strong> 1st (PR >200), 2nd Mobitz I (Wenckebach, progressive PR until dropped QRS), Mobitz II (constant PR, dropped beats), 3rd (complete block).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ischemia-ecg" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart-broken"></i> 18. ECG in Ischemia & Infarction</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Ischemia:</strong> ST depression, T wave inversion.</li>
+                    <li><strong>Injury:</strong> ST elevation (transmural).</li>
+                    <li><strong>Infarction (Q wave):</strong> Pathologic Q waves >1 box wide, >1/3 QRS height.</li>
+                    <li><strong>Localization:</strong> 
+                        <ul>
+                            <li>Anterior: V1‑V4</li>
+                            <li>Lateral: I, aVL, V5‑V6</li>
+                            <li>Inferior: II, III, aVF</li>
+                            <li>Posterior: ST depression V1‑V3, tall R, R/S >1</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== OTHER PROCEDURES ==================== -->
+        <section id="pft" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 19. Pulmonary Function Tests</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Spirometry:</strong> FVC, FEV₁, FEV₁/FVC ratio. Obstructive (↓ ratio), restrictive (↓ FVC, normal/↑ ratio).</li>
+                    <li><strong>Lung volumes:</strong> TLC, RV, RV/TLC.</li>
+                    <li><strong>DLCO:</strong> Diffusing capacity; ↓ in emphysema, fibrosis, anemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ecg-monitoring" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-clock"></i> 20. Holter & Event Monitoring</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Holter:</strong> 24‑48h continuous ECG; detect arrhythmias, ST changes.</li>
+                    <li><strong>Event monitor:</strong> Patient‑activated, worn for weeks; records when symptomatic.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="biopsy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cut"></i> 21. Biopsy & Cytology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Fine needle aspiration (FNA):</strong> Cells aspirated; for masses (thyroid, lymph nodes).</li>
+                    <li><strong>Core needle biopsy:</strong> Tissue core; preserves architecture.</li>
+                    <li><strong>Excisional biopsy:</strong> Entire lesion removed.</li>
+                    <li><strong>Cytology:</strong> Pap smear, urine cytology, pleural fluid.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Clinical Skills · Diagnostic Procedures & Interpretation · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

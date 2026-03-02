@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Skills · Differential Diagnosis & Syndromes</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-notes-medical"></i>
+        <h1>Clinical Skills · Differential Diagnosis & Syndromes</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PRINCIPLES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#intro-dd"><i class="fas fa-brain"></i> 1. Introduction to Differential Diagnosis</a></li>
+                <li class="chapter-item"><a href="#bayesian"><i class="fas fa-chart-line"></i> 2. Bayesian Reasoning & Diagnostic Testing</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>COMMON SYMPTOMS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#chest-pain"><i class="fas fa-heart-broken"></i> 3. Chest Pain</a></li>
+                <li class="chapter-item"><a href="#dyspnea"><i class="fas fa-lungs"></i> 4. Dyspnea</a></li>
+                <li class="chapter-item"><a href="#abdominal-pain"><i class="fas fa-stomach"></i> 5. Abdominal Pain</a></li>
+                <li class="chapter-item"><a href="#headache"><i class="fas fa-head-side-brain"></i> 6. Headache</a></li>
+                <li class="chapter-item"><a href="#fever"><i class="fas fa-thermometer-half"></i> 7. Fever</a></li>
+                <li class="chapter-item"><a href="#fatigue"><i class="fas fa-bed"></i> 8. Fatigue</a></li>
+                <li class="chapter-item"><a href="#weight-loss"><i class="fas fa-weight-scale"></i> 9. Unintentional Weight Loss</a></li>
+                <li class="chapter-item"><a href="#syncope"><i class="fas fa-faint"></i> 10. Syncope</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SYSTEMIC SYNDROMES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#shock-syndromes"><i class="fas fa-tint"></i> 11. Shock Syndromes</a></li>
+                <li class="chapter-item"><a href="#sepsis-sirs"><i class="fas fa-bacteria"></i> 12. Sepsis & SIRS</a></li>
+                <li class="chapter-item"><a href="#multi-organ"><i class="fas fa-disease"></i> 13. Multi‑organ Dysfunction Syndrome</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CARDIOVASCULAR</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acute-coronary"><i class="fas fa-heart"></i> 14. Acute Coronary Syndromes</a></li>
+                <li class="chapter-item"><a href="#heart-failure"><i class="fas fa-heart"></i> 15. Heart Failure Syndromes</a></li>
+                <li class="chapter-item"><a href="#arrhythmias-dd"><i class="fas fa-chart-line"></i> 16. Arrhythmias</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>RESPIRATORY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#pneumonia-dd"><i class="fas fa-lungs"></i> 17. Pneumonia</a></li>
+                <li class="chapter-item"><a href="#pe-dd"><i class="fas fa-blood"></i> 18. Pulmonary Embolism</a></li>
+                <li class="chapter-item"><a href="#asthma-copd"><i class="fas fa-wind"></i> 19. Asthma vs COPD</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>GASTROINTESTINAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#gi-bleed"><i class="fas fa-tint"></i> 20. Upper & Lower GI Bleed</a></li>
+                <li class="chapter-item"><a href="#jaundice"><i class="fas fa-liver"></i> 21. Jaundice</a></li>
+                <li class="chapter-item"><a href="#diarrhea"><i class="fas fa-poop"></i> 22. Acute & Chronic Diarrhea</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>NEUROLOGIC</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#stroke-tia-dd"><i class="fas fa-brain"></i> 23. Stroke & TIA</a></li>
+                <li class="chapter-item"><a href="#seizure-dd"><i class="fas fa-bolt"></i> 24. Seizure & Epilepsy</a></li>
+                <li class="chapter-item"><a href="#delirium-dementia"><i class="fas fa-question-circle"></i> 25. Delirium vs Dementia</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>METABOLIC & ENDOCRINE</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#dka-hhs-dd"><i class="fas fa-tint"></i> 26. DKA vs HHS</a></li>
+                <li class="chapter-item"><a href="#thyroid-storm"><i class="fas fa-hormone"></i> 27. Thyroid Storm vs Myxedema</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>MUSCULOSKELETAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#arthritis-dd"><i class="fas fa-bone"></i> 28. Acute Monoarthritis vs Polyarthritis</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== PRINCIPLES ==================== -->
+        <section id="intro-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 1. Introduction to Differential Diagnosis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Differential diagnosis (DDx) is the process of distinguishing a particular disease or condition from others that present with similar clinical features.
+                </div>
+                <ul>
+                    <li><strong>Generate a list:</strong> Based on epidemiology, risk factors, history, physical exam.</li>
+                    <li><strong>Prioritize:</strong> Consider life‑threatening (can't miss) diagnoses first, then common, then rare.</li>
+                    <li><strong>Use pattern recognition:</strong> Syndromes, clusters of symptoms.</li>
+                    <li><strong>Diagnostic tests:</strong> Use to confirm or rule out, considering sensitivity/specificity, likelihood ratios.</li>
+                </ul>
+                <div class="memory-aid">
+                    <i class="fas fa-lightbulb"></i> Mnemonic for acute chest pain: "PAIN" (Pericarditis, Angina/MI, Aortic dissection, Pneumonia/Pulmonary embolism). Always include "can't miss" diagnoses.
+                </div>
+            </div>
+        </section>
+
+        <section id="bayesian" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 2. Bayesian Reasoning & Diagnostic Testing</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pretest probability:</strong> Estimate of disease likelihood before testing.</li>
+                    <li><strong>Sensitivity:</strong> Proportion of diseased who test positive (true positive rate).</li>
+                    <li><strong>Specificity:</strong> Proportion of non‑diseased who test negative (true negative rate).</li>
+                    <li><strong>Positive predictive value (PPV):</strong> Probability disease given positive test; depends on prevalence.</li>
+                    <li><strong>Negative predictive value (NPV):</strong> Probability no disease given negative test.</li>
+                    <li><strong>Likelihood ratio (LR):</strong> LR+ = sensitivity/(1‑specificity); LR‑ = (1‑sensitivity)/specificity. Post‑test odds = pretest odds × LR.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <strong>Example:</strong> D‑dimer for PE: high sensitivity, low specificity; good for ruling out when pretest probability low.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== COMMON SYMPTOMS ==================== -->
+        <section id="chest-pain" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart-broken"></i> 3. Chest Pain</div>
+            <div class="section-card">
+                <div class="subsection-heading">Life‑threatening causes (must not miss)</div>
+                <ul>
+                    <li><strong>Acute coronary syndrome (ACS):</strong> Crushing, substernal, radiation to left arm/jaw, diaphoresis; relieved by nitroglycerin.</li>
+                    <li><strong>Aortic dissection:</strong> Sudden tearing pain radiating to back; pulse or BP differential.</li>
+                    <li><strong>Pulmonary embolism:</strong> Pleuritic chest pain, dyspnea, tachypnea, hypoxia; risk factors (DVT, cancer).</li>
+                    <li><strong>Tension pneumothorax:</strong> Sudden dyspnea, hypotension, tracheal deviation, absent breath sounds.</li>
+                    <li><strong>Pericarditis:</strong> Sharp, positional (worse lying down), relieved by leaning forward; friction rub.</li>
+                </ul>
+                <div class="subsection-heading">Other causes</div>
+                <ul>
+                    <li>Musculoskeletal: costochondritis (tender to palpation).</li>
+                    <li>GI: GERD, esophageal spasm, peptic ulcer.</li>
+                    <li>Respiratory: pneumonia, pleuritis.</li>
+                    <li>Psychiatric: anxiety, panic.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="dyspnea" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 4. Dyspnea</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Cardiac:</strong> Heart failure (paroxysmal nocturnal dyspnea, orthopnea), ACS, arrhythmia.</li>
+                    <li><strong>Pulmonary:</strong> Asthma/COPD exacerbation, pneumonia, PE, interstitial lung disease.</li>
+                    <li><strong>Others:</strong> Anemia, metabolic acidosis (Kussmaul), deconditioning, anxiety.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="abdominal-pain" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-stomach"></i> 5. Abdominal Pain</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Right upper quadrant:</strong> Cholecystitis, hepatitis, cholangitis, duodenal ulcer.</li>
+                    <li><strong>Epigastric:</strong> Gastritis, GERD, pancreatitis, MI.</li>
+                    <li><strong>Left upper quadrant:</strong> Gastritis, pancreatitis, splenic infarction/rupture.</li>
+                    <li><strong>Periumbilical:</strong> Early appendicitis, small bowel obstruction, pancreatitis.</li>
+                    <li><strong>Right lower quadrant:</strong> Appendicitis, Crohn disease, ovarian pathology, ureteral stone.</li>
+                    <li><strong>Left lower quadrant:</strong> Diverticulitis, ulcerative colitis, ovarian pathology.</li>
+                    <li><strong>Diffuse:</strong> Peritonitis (surgical abdomen), mesenteric ischemia, IBS.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="headache" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-head-side-brain"></i> 6. Headache</div>
+            <div class="section-card">
+                <div class="subsection-heading">Dangerous causes</div>
+                <ul>
+                    <li><strong>Subarachnoid hemorrhage:</strong> Thunderclap, sudden, worst of life.</li>
+                    <li><strong>Meningitis:</strong> Fever, neck stiffness, photophobia.</li>
+                    <li><strong>Temporal arteritis:</strong> >50, jaw claudication, tender temporal artery, ↑ ESR.</li>
+                    <li><strong>Intracranial mass/tumor:</strong> Progressive, worse in morning, focal deficits.</li>
+                    <li><strong>Acute glaucoma:</strong> Eye pain, blurred vision, halos, hard globe.</li>
+                </ul>
+                <div class="subsection-heading">Primary headaches</div>
+                <ul>
+                    <li>Migraine: throbbing, unilateral, nausea, photophobia.</li>
+                    <li>Tension‑type: bilateral, pressing, mild to moderate.</li>
+                    <li>Cluster: severe periorbital, autonomic features (tearing, rhinorrhea), multiple attacks.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="fever" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-thermometer-half"></i> 7. Fever</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Infectious:</strong> Localizing symptoms (cough, dysuria, etc.).</li>
+                    <li><strong>Non‑infectious:</strong> Autoimmune (lupus, Still), malignancy (lymphoma), drug fever, gout, PE, pancreatitis.</li>
+                    <li><strong>Fever of unknown origin (FUO):</strong> >38.3°C >3 weeks, no diagnosis after 1 week.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="fatigue" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bed"></i> 8. Fatigue</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Sleep disorders:</strong> Sleep apnea, insomnia.</li>
+                    <li><strong>Psychiatric:</strong> Depression, anxiety.</li>
+                    <li><strong>Medical:</strong> Anemia, hypothyroidism, diabetes, CHF, CKD, chronic infection (EBV, HIV).</li>
+                    <li><strong>Medications:</strong> Beta‑blockers, sedatives.</li>
+                    <li><strong>Chronic fatigue syndrome:</strong> Diagnosis of exclusion.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="weight-loss" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight-scale"></i> 9. Unintentional Weight Loss</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Malignancy:</strong> GI, lung, lymphoma.</li>
+                    <li><strong>Endocrine:</strong> Diabetes, hyperthyroidism.</li>
+                    <li><strong>GI:</strong> Malabsorption (celiac, IBD), peptic ulcer.</li>
+                    <li><strong>Chronic infections:</strong> TB, HIV, fungal.</li>
+                    <li><strong>Psychiatric:</strong> Depression, eating disorders.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="syncope" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-faint"></i> 10. Syncope</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Reflex (neurally mediated):</strong> Vasovagal, situational, carotid sinus.</li>
+                    <li><strong>Orthostatic hypotension:</strong> Volume depletion, autonomic dysfunction, drugs.</li>
+                    <li><strong>Cardiac:</strong> Arrhythmias (VT, heart block), structural (aortic stenosis, HCM).</li>
+                    <li><strong>Neurologic:</strong> Seizure, TIA.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SYSTEMIC SYNDROMES ==================== -->
+        <section id="shock-syndromes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 11. Shock Syndromes</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Examples</th><th>Hemodynamics</th></tr></thead>
+                    <tbody>
+                        <tr><td>Hypovolemic</td><td>Hemorrhage, dehydration</td><td>↓ preload, ↑ SVR, ↓ CO</td></tr>
+                        <tr><td>Cardiogenic</td><td>MI, cardiomyopathy</td><td>↑ preload, ↑ SVR, ↓ CO</td></tr>
+                        <tr><td>Distributive (septic, anaphylactic, neurogenic)</td><td>Sepsis, anaphylaxis, spinal injury</td><td>↓/normal preload, ↓ SVR, ↑/normal CO</td></tr>
+                        <tr><td>Obstructive</td><td>PE, tamponade, tension pneumothorax</td><td>↑ preload, ↑ SVR, ↓ CO</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="sepsis-sirs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 12. Sepsis & SIRS</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>SIRS:</strong> Two or more: temp >38°C or <36°C, HR >90, RR >20 or PaCO₂ <32, WBC >12k or <4k or >10% bands.</li>
+                    <li><strong>Sepsis:</strong> SIRS + infection.</li>
+                    <li><strong>Severe sepsis:</strong> Sepsis + organ dysfunction.</li>
+                    <li><strong>Septic shock:</strong> Sepsis + hypotension despite adequate fluid resuscitation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="multi-organ" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-disease"></i> 13. Multi‑organ Dysfunction Syndrome (MODS)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Progressive organ dysfunction in acutely ill patients, often due to uncontrolled inflammation (sepsis, trauma, pancreatitis). Criteria by organ system:
+                </div>
+                <ul>
+                    <li>Respiratory: PaO₂/FiO₂ <200 (ARDS).</li>
+                    <li>Renal: ↑ creatinine, ↓ urine output.</li>
+                    <li>Hepatic: ↑ bilirubin, ↑ transaminases.</li>
+                    <li>Cardiovascular: hypotension requiring vasopressors.</li>
+                    <li>Hematologic: DIC, thrombocytopenia.</li>
+                    <li>CNS: altered mental status.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CARDIOVASCULAR ==================== -->
+        <section id="acute-coronary" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 14. Acute Coronary Syndromes</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Unstable angina:</strong> Rest angina, new onset, increasing; no troponin rise.</li>
+                    <li><strong>NSTEMI:</strong> Positive troponin without ST elevation.</li>
+                    <li><strong>STEMI:</strong> ST elevation in contiguous leads; transmural ischemia.</li>
+                    <li><strong>Differential:</strong> Myocarditis, Takotsubo, aortic dissection, PE.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="heart-failure" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 15. Heart Failure Syndromes</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>HFrEF (EF <40%):</strong> Ischemic, dilated cardiomyopathy.</li>
+                    <li><strong>HFpEF (EF ≥50%):</strong> Hypertension, aging, obesity.</li>
+                    <li><strong>Acute vs chronic exacerbation.</strong></li>
+                    <li><strong>Right heart failure:</strong> Cor pulmonale, pulmonary hypertension; JVD, peripheral edema.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="arrhythmias-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 16. Arrhythmias</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Bradyarrhythmias:</strong> Sick sinus, AV block (1st, 2nd, 3rd).</li>
+                    <li><strong>Supraventricular tachyarrhythmias:</strong> Atrial fibrillation, atrial flutter, AVNRT, AVRT, focal atrial tachycardia.</li>
+                    <li><strong>Ventricular tachyarrhythmias:</strong> Monomorphic VT, polymorphic VT (torsade), VF.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== RESPIRATORY ==================== -->
+        <section id="pneumonia-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 17. Pneumonia</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Community‑acquired (CAP):</strong> Typical (Strep pneumo, H flu) vs atypical (Mycoplasma, Legionella, Chlamydia).</li>
+                    <li><strong>Hospital‑acquired (HAP):</strong> >48h after admission; more resistant organisms.</li>
+                    <li><strong>Ventilator‑associated (VAP).</strong></li>
+                    <li><strong>Aspiration pneumonia:</strong> Anaerobes, chemical pneumonitis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pe-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 18. Pulmonary Embolism</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Massive PE:</strong> Hypotension/shock, RV dysfunction.</li>
+                    <li><strong>Submassive PE:</strong> RV dysfunction but normotensive.</li>
+                    <li><strong>Low‑risk PE:</strong> No RV dysfunction.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="asthma-copd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wind"></i> 19. Asthma vs COPD</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Feature</th><th>Asthma</th><th>COPD</th></tr></thead>
+                    <tbody>
+                        <tr><td>Age onset</td><td>Often childhood/adolescent</td><td>Usually >40</td></tr>
+                        <tr><td>Smoking</td><td>Not required</td><td>Almost all smokers</td></tr>
+                        <tr><td>Symptoms</td><td>Episodic, reversible</td><td>Progressive, chronic</td></tr>
+                        <tr><td>Allergy history</td><td>Common</td><td>Uncommon</td></tr>
+                        <tr><td>Lung function</td><td>Reversible obstruction</td><td>Not fully reversible</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== GASTROINTESTINAL ==================== -->
+        <section id="gi-bleed" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 20. Upper & Lower GI Bleed</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Upper (above ligament of Treitz):</strong> Hematemesis, coffee‑ground emesis, melena. Causes: PUD, varices, esophagitis, Mallory‑Weiss tear.</li>
+                    <li><strong>Lower:</strong> Hematochezia, maroon stool. Causes: diverticulosis, angiodysplasia, colitis, polyps, cancer.</li>
+                    <li><strong>Occult bleed:</strong> FOBT positive; anemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="jaundice" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-liver"></i> 21. Jaundice</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pre‑hepatic (unconjugated):</strong> Hemolysis, Gilbert syndrome.</li>
+                    <li><strong>Hepatic (mixed):</strong> Hepatitis, cirrhosis, drug‑induced.</li>
+                    <li><strong>Post‑hepatic (obstructive):</strong> Choledocholithiasis, stricture, pancreatic cancer.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="diarrhea" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-poop"></i> 22. Acute & Chronic Diarrhea</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Acute (<2 weeks):</strong> Infectious (viral, bacterial, protozoal).</li>
+                    <li><strong>Chronic (>4 weeks):</strong> IBS, IBD, malabsorption (celiac, pancreatic insufficiency), endocrine (hyperthyroid).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NEUROLOGIC ==================== -->
+        <section id="stroke-tia-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 23. Stroke & TIA</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Ischemic stroke:</strong> Sudden focal deficit; TOAST classification: large artery, cardioembolic, small vessel, other.</li>
+                    <li><strong>TIA:</strong> Transient (<1h) symptoms, no infarction on imaging.</li>
+                    <li><strong>Hemorrhagic stroke:</strong> ICH, SAH.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="seizure-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 24. Seizure & Epilepsy</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Generalized:</strong> Tonic‑clonic, absence, myoclonic, atonic.</li>
+                    <li><strong>Focal:</strong> Without dyscognitive features, with dyscognitive features (complex partial).</li>
+                    <li><strong>Provoked seizures:</strong> Electrolyte disturbance, drug withdrawal, infection, trauma.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="delirium-dementia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-question-circle"></i> 25. Delirium vs Dementia</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Feature</th><th>Delirium</th><th>Dementia</th></tr></thead>
+                    <tbody>
+                        <tr><td>Onset</td><td>Acute</td><td>Insidious</td></tr>
+                        <tr><td>Course</td><td>Fluctuating</td><td>Progressive</td></tr>
+                        <tr><td>Attention</td><td>Impaired</td><td>Normal until late</td></tr>
+                        <tr><td>Consciousness</td><td>Altered</td><td>Clear until late</td></tr>
+                        <tr><td>Reversible</td><td>Often yes</td><td>No</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== METABOLIC & ENDOCRINE ==================== -->
+        <section id="dka-hhs-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 26. DKA vs HHS</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>DKA:</strong> Hyperglycemia (>250), metabolic acidosis (pH<7.3, HCO₃<15), ketonemia, anion gap metabolic acidosis. More common in type 1.</li>
+                    <li><strong>HHS:</strong> Extreme hyperglycemia (>600), hyperosmolarity (>320), minimal ketosis, milder acidosis. Type 2.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="thyroid-storm" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hormone"></i> 27. Thyroid Storm vs Myxedema</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Thyroid storm:</strong> Hyperpyrexia, tachycardia, altered mental status, nausea, diarrhea. Precipitated by infection, trauma.</li>
+                    <li><strong>Myxedema coma:</strong> Hypothermia, bradycardia, hypoventilation, altered mental status, hyponatremia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== MUSCULOSKELETAL ==================== -->
+        <section id="arthritis-dd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 28. Acute Monoarthritis vs Polyarthritis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Acute monoarthritis:</strong> Septic arthritis (emergency), gout, pseudogout, trauma.</li>
+                    <li><strong>Polyarthritis:</strong> RA, SLE, psoriatic, viral (parvovirus, hepatitis), reactive.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Clinical Skills · Differential Diagnosis & Syndromes · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

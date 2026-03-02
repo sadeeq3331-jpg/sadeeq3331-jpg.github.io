@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Skills · Fundamentals & Examination MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-stethoscope"></i>
+        <h1>Clinical Skills · Fundamentals & Examination MCQ</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ CLINICAL SKILLS (FUNDAMENTALS & EXAMINATION) MCQ QUESTIONS
+    const questions = [
+        { q: "The mnemonic OLD CARTS is used to assess which component of a patient's history?",
+          opts: ["History of present illness (HPI)", "Past medical history", "Family history", "Social history", "Review of systems"],
+          correct: 0,
+          exp: "OLD CARTS stands for Onset, Location, Duration, Character, Aggravating/Associated factors, Relieving factors, Timing, Severity." },
+        { q: "Which of the following is considered the 'fifth vital sign'?",
+          opts: ["Pain", "Oxygen saturation", "Blood pressure", "Respiratory rate", "Temperature"],
+          correct: 0,
+          exp: "Pain is routinely assessed as the fifth vital sign, using a 0‑10 scale." },
+        { q: "Orthostatic hypotension is defined as a systolic BP drop of at least ___ mmHg upon standing.",
+          opts: ["20 mmHg", "10 mmHg", "30 mmHg", "15 mmHg", "25 mmHg"],
+          correct: 0,
+          exp: "Orthostatic hypotension: systolic drop ≥20 mmHg, diastolic drop ≥10 mmHg, or HR increase ≥20 bpm." },
+        { q: "Normal body temperature (oral) range is approximately:",
+          opts: ["36.5‑37.5°C", "35.0‑36.0°C", "37.5‑38.5°C", "38.0‑39.0°C", "34.0‑35.0°C"],
+          correct: 0,
+          exp: "Normal oral temperature is 36.5‑37.5°C (97.7‑99.5°F)." },
+        { q: "Tachycardia is defined as a resting heart rate greater than:",
+          opts: ["100 bpm", "90 bpm", "80 bpm", "110 bpm", "120 bpm"],
+          correct: 0,
+          exp: "Tachycardia = HR >100 bpm; bradycardia = HR <60 bpm." },
+        { q: "Jugular venous pressure (JVP) is best assessed with the patient at what angle?",
+          opts: ["45 degrees", "90 degrees", "30 degrees", "60 degrees", "Supine"],
+          correct: 0,
+          exp: "JVP is measured with the patient reclined at 45°, looking for the highest point of pulsation." },
+        { q: "The point of maximal impulse (PMI) is normally located at the:",
+          opts: ["5th intercostal space, midclavicular line", "4th intercostal space, sternal border", "5th intercostal space, anterior axillary line", "6th intercostal space, midclavicular line", "4th intercostal space, midclavicular line"],
+          correct: 0,
+          exp: "PMI is usually at the 5th ICS, left midclavicular line; may be displaced in cardiomegaly." },
+        { q: "S1 heart sound is best heard at the:",
+          opts: ["Apex (mitral area)", "Base (aortic area)", "Left sternal border", "Right sternal border", "Erb's point"],
+          correct: 0,
+          exp: "S1 (mitral and tricuspid closure) is loudest at the apex." },
+        { q: "S2 heart sound is best heard at the:",
+          opts: ["Base (aortic and pulmonic areas)", "Apex", "Left sternal border", "Xiphoid", "Erb's point"],
+          correct: 0,
+          exp: "S2 is loudest at the base (aortic and pulmonic areas)." },
+        { q: "A third heart sound (S3) is often a sign of:",
+          opts: ["Heart failure (volume overload)", "Hypertrophy", "Aortic stenosis", "Mitral stenosis", "Pericarditis"],
+          correct: 0,
+          exp: "S3 (ventricular gallop) occurs in heart failure, dilated cardiomyopathy, and volume overload." },
+        { q: "A fourth heart sound (S4) is associated with:",
+          opts: ["Ventricular hypertrophy (reduced compliance)", "Heart failure", "Aortic regurgitation", "Mitral regurgitation", "Pericardial effusion"],
+          correct: 0,
+          exp: "S4 (atrial gallop) occurs in conditions with stiff ventricles (hypertrophy, ischemia)." },
+        { q: "In which position is the murmur of mitral stenosis best heard?",
+          opts: ["Left lateral decubitus", "Sitting forward", "Supine", "Standing", "Right lateral decubitus"],
+          correct: 0,
+          exp: "Mitral stenosis murmur (diastolic) is best heard with the patient in the left lateral decubitus position." },
+        { q: "The murmur of aortic regurgitation is best heard with the patient:",
+          opts: ["Sitting forward, breath held in expiration", "Supine", "Left lateral decubitus", "Standing", "After exercise"],
+          correct: 0,
+          exp: "Aortic regurgitation (early diastolic) is best heard at the left sternal border with patient sitting forward." },
+        { q: "Pulsus paradoxus is defined as a drop in systolic BP during inspiration greater than:",
+          opts: ["10 mmHg", "5 mmHg", "15 mmHg", "20 mmHg", "25 mmHg"],
+          correct: 0,
+          exp: "Pulsus paradoxus >10 mmHg is abnormal; seen in tamponade, asthma, COPD." },
+        { q: "Kussmaul sign (rise in JVP during inspiration) is characteristic of:",
+          opts: ["Constrictive pericarditis", "Cardiac tamponade", "Superior vena cava syndrome", "Right heart failure", "Pulmonary embolism"],
+          correct: 0,
+          exp: "Kussmaul sign is a paradoxical rise in JVP during inspiration, seen in constrictive pericarditis." },
+        { q: "The normal trachea is positioned:",
+          opts: ["Midline", "Slightly deviated to the right", "Slightly deviated to the left", "Posteriorly displaced", "Anteriorly displaced"],
+          correct: 0,
+          exp: "Trachea is normally midline; deviation occurs with tension pneumothorax (away) or atelectasis (toward)." },
+        { q: "Tactile fremitus is increased in which condition?",
+          opts: ["Pneumonia (consolidation)", "Pleural effusion", "Pneumothorax", "COPD", "Atelectasis"],
+          correct: 0,
+          exp: "Fremitus is increased when lung is consolidated (pneumonia); decreased in fluid/air." },
+        { q: "Percussion note over a pneumothorax is typically:",
+          opts: ["Hyperresonant", "Dull", "Tympanic", "Flat", "Resonant"],
+          correct: 0,
+          exp: "Pneumothorax gives hyperresonant percussion; effusion gives dullness." },
+        { q: "Egophony (E to A change) is a sign of:",
+          opts: ["Lung consolidation", "Pleural effusion", "Pneumothorax", "Atelectasis", "COPD"],
+          correct: 0,
+          exp: "Egophony (hearing 'A' when patient says 'E') occurs over consolidated lung." },
+        { q: "Whispered pectoriloxy is a sign of:",
+          opts: ["Consolidation", "Effusion", "Pneumothorax", "Fibrosis", "Normal lung"],
+          correct: 0,
+          exp: "Whispered words are heard clearly over consolidated lung." },
+        { q: "Crackles (rales) are typically heard in:",
+          opts: ["Pneumonia, pulmonary edema, fibrosis", "Asthma", "COPD", "Pneumothorax", "Pleural effusion"],
+          correct: 0,
+          exp: "Crackles are caused by fluid in alveoli (pneumonia, edema) or interstitial fibrosis." },
+        { q: "Wheezes are caused by:",
+          opts: ["Narrowed airways (asthma, COPD)", "Fluid in alveoli", "Pleural inflammation", "Consolidation", "Atelectasis"],
+          correct: 0,
+          exp: "Wheezes are high‑pitched sounds due to airflow through narrowed bronchi." },
+        { q: "A pleural friction rub is heard in:",
+          opts: ["Pleurisy, pulmonary infarction", "Pneumonia", "Asthma", "COPD", "Pneumothorax"],
+          correct: 0,
+          exp: "A rub is a creaking sound of inflamed pleural surfaces rubbing." },
+        { q: "Abdominal auscultation should be performed before palpation because:",
+          opts: ["Palpation may alter bowel sounds", "It is easier", "It is more accurate", "It avoids patient discomfort", "It is the traditional order"],
+          correct: 0,
+          exp: "Palpation can stimulate peristalsis, so auscultation should be done first to assess baseline bowel sounds." },
+        { q: "The liver span by percussion is normally:",
+          opts: ["6‑12 cm in the midclavicular line", "4‑6 cm", "12‑15 cm", "8‑10 cm", "10‑14 cm"],
+          correct: 0,
+          exp: "Normal liver span is 6‑12 cm; larger indicates hepatomegaly." },
+        { q: "Traube's space (tympanic) dullness suggests:",
+          opts: ["Splenomegaly", "Hepatomegaly", "Ascites", "Full stomach", "Colonic gas"],
+          correct: 0,
+          exp: "Traube's space is a semilunar area over the stomach; dullness indicates splenomegaly or left pleural effusion." },
+        { q: "Murphy's sign is used to assess for:",
+          opts: ["Acute cholecystitis", "Appendicitis", "Pancreatitis", "Splenomegaly", "Hepatitis"],
+          correct: 0,
+          exp: "Murphy's sign: inspiratory arrest during palpation of RUQ due to pain; positive in cholecystitis." },
+        { q: "McBurney's point tenderness suggests:",
+          opts: ["Appendicitis", "Cholecystitis", "Diverticulitis", "Pancreatitis", "Cystitis"],
+          correct: 0,
+          exp: "McBurney's point is 1/3 of the way from ASIS to umbilicus; tenderness suggests appendicitis." },
+        { q: "Rebound tenderness indicates:",
+          opts: ["Peritoneal irritation", "Organomegaly", "Constipation", "Gas", "Muscle strain"],
+          correct: 0,
+          exp: "Rebound pain on release suggests peritonitis (surgical abdomen)." },
+        { q: "Psoas sign is positive in:",
+          opts: ["Appendicitis (retrocecal)", "Cholecystitis", "Diverticulitis", "Pancreatitis", "Pyelonephritis"],
+          correct: 0,
+          exp: "Psoas sign (pain on extension of right thigh) suggests retrocecal appendicitis." },
+        { q: "Obturator sign is positive in:",
+          opts: ["Pelvic appendicitis", "Cholecystitis", "Pancreatitis", "Diverticulitis", "Cystitis"],
+          correct: 0,
+          exp: "Obturator sign (pain on internal rotation of flexed thigh) suggests pelvic appendicitis." },
+        { q: "The normal pupils should be:",
+          opts: ["Equal, round, reactive to light and accommodation", "Anisocoric", "Irregular", "Non‑reactive", "Dilated"],
+          correct: 0,
+          exp: "PERRLA: pupils equal, round, reactive to light and accommodation." },
+        { q: "Marcus Gunn pupil (relative afferent pupillary defect) is seen in:",
+          opts: ["Optic nerve disease (e.g., optic neuritis)", "Oculomotor nerve palsy", "Horner syndrome", "Argyll Robertson pupil", "Adie pupil"],
+          correct: 0,
+          exp: "Marcus Gunn pupil: both pupils constrict less when light swings to affected eye due to optic nerve damage." },
+        { q: "Argyll Robertson pupils (accommodate but do not react to light) are classically associated with:",
+          opts: ["Neurosyphilis", "Diabetes", "Multiple sclerosis", "Horner syndrome", "Adie pupil"],
+          correct: 0,
+          exp: "Argyll Robertson pupils: small, irregular, light‑near dissociation; seen in neurosyphilis." },
+        { q: "Horner syndrome includes all EXCEPT:",
+          opts: ["Mydriasis (dilated pupil)", "Ptosis", "Miosis (constricted pupil)", "Anhidrosis", "Enophthalmos"],
+          correct: 0,
+          exp: "Horner syndrome: ptosis, miosis, anhidrosis, enophthalmos due to sympathetic disruption." },
+        { q: "CN III palsy typically presents with:",
+          opts: ["Ptosis, dilated pupil, eye down and out", "Ptosis, constricted pupil", "Eye deviated inward", "Diplopia on lateral gaze", "No pupil involvement"],
+          correct: 0,
+          exp: "Oculomotor nerve palsy causes ptosis, mydriasis, and lateral deviation (down and out)." },
+        { q: "CN VI palsy causes:",
+          opts: ["Inability to abduct the eye (medial deviation)", "Inability to adduct", "Ptosis", "Diplopia on downward gaze", "Mydriasis"],
+          correct: 0,
+          exp: "Abducens nerve (CN VI) palsy → inability to abduct the eye, resulting in medial deviation." },
+        { q: "CN IV palsy causes:",
+          opts: ["Vertical diplopia (eye elevated on adduction)", "Horizontal diplopia", "Ptosis", "Mydriasis", "Inability to abduct"],
+          correct: 0,
+          exp: "Trochlear nerve (CN IV) palsy → eye is elevated and extorted; patient tilts head away." },
+        { q: "Facial nerve (CN VII) palsy causes:",
+          opts: ["Weakness of upper and lower face (Bell's palsy)", "Weakness of lower face only", "Ptosis", "Diplopia", "Hearing loss"],
+          correct: 0,
+          exp: "Upper motor neuron lesion spares forehead; lower motor neuron (Bell's) affects entire half." },
+        { q: "Gag reflex is mediated by cranial nerves:",
+          opts: ["CN IX (afferent) and CN X (efferent)", "CN V and CN VII", "CN III and CN V", "CN XI and CN XII", "CN VII and CN IX"],
+          correct: 0,
+          exp: "Glossopharyngeal (sensory) and vagus (motor) mediate the gag reflex." },
+        { q: "Spinal accessory nerve (CN XI) is tested by:",
+          opts: ["Shrugging shoulders against resistance, turning head", "Sticking out tongue", "Gag reflex", "Smiling", "Whispering"],
+          correct: 0,
+          exp: "CN XI innervates trapezius (shoulder shrug) and sternocleidomastoid (head turn)." },
+        { q: "Hypoglossal nerve (CN XII) damage causes:",
+          opts: ["Tongue deviation toward the side of the lesion", "Tongue deviation away from lesion", "Fasciculations without deviation", "Dysarthria only", "Loss of taste"],
+          correct: 0,
+          exp: "CN XII lesion: tongue deviates toward the weak side on protrusion." },
+        { q: "Deep tendon reflexes are graded on a scale of:",
+          opts: ["0 to 4+", "0 to 5+", "1 to 4", "0 to 3+", "1 to 5"],
+          correct: 0,
+          exp: "Reflexes: 0 = absent, 1+ = diminished, 2+ = normal, 3+ = increased, 4+ = clonus." },
+        { q: "The Babinski sign (extensor plantar response) indicates:",
+          opts: ["Upper motor neuron lesion", "Lower motor neuron lesion", "Cerebellar disease", "Basal ganglia disease", "Peripheral neuropathy"],
+          correct: 0,
+          exp: "Babinski sign (upgoing toe) is pathologic after infancy, indicating UMN lesion." },
+        { q: "Clonus is a sign of:",
+          opts: ["Upper motor neuron lesion", "Lower motor neuron lesion", "Myopathy", "Neuropathy", "Cerebellar disease"],
+          correct: 0,
+          exp: "Clonus (rhythmic oscillations after sudden stretch) indicates UMN lesion." },
+        { q: "Finger‑to‑nose testing assesses:",
+          opts: ["Cerebellar function (coordination)", "Motor strength", "Sensation", "Reflexes", "Cranial nerves"],
+          correct: 0,
+          exp: "Finger‑to‑nose and heel‑shin tests check cerebellar coordination (dysmetria, intention tremor)." },
+        { q: "Romberg test evaluates:",
+          opts: ["Proprioception (sensory ataxia)", "Cerebellar ataxia", "Vestibular function", "Motor strength", "Coordination"],
+          correct: 0,
+          exp: "Romberg: patient stands with feet together, eyes closed. Swaying indicates sensory ataxia." },
+        { q: "Tinel sign at the wrist suggests:",
+          opts: ["Carpal tunnel syndrome (median nerve)", "Ulnar neuropathy", "Radial nerve palsy", "Cervical radiculopathy", "De Quervain tenosynovitis"],
+          correct: 0,
+          exp: "Tinel sign: tapping over median nerve at wrist elicits paresthesia in median distribution." },
+        { q: "Phalen maneuver is positive in:",
+          opts: ["Carpal tunnel syndrome", "De Quervain tenosynovitis", "Trigger finger", "Dupuytren contracture", "Ganglion cyst"],
+          correct: 0,
+          exp: "Phalen (flexion of wrists) reproduces carpal tunnel symptoms." },
+        { q: "The Lachman test is used to assess:",
+          opts: ["Anterior cruciate ligament (ACL) integrity", "Medial collateral ligament", "Meniscal tear", "Posterior cruciate ligament", "Patellar instability"],
+          correct: 0,
+          exp: "Lachman test is more sensitive than anterior drawer for ACL injury." },
+        { q: "McMurray test is used to detect:",
+          opts: ["Meniscal tear", "ACL tear", "MCL tear", "PCL tear", "Patellar dislocation"],
+          correct: 0,
+          exp: "McMurray test: rotating the tibia on the femur with varus/valgus stress; click or pain suggests meniscal tear." },
+        { q: "Straight leg raise (Lasegue) test is positive in:",
+          opts: ["Lumbar radiculopathy (disc herniation)", "Hip pathology", "Sacroiliac joint dysfunction", "Hamstring strain", "Piriformis syndrome"],
+          correct: 0,
+          exp: "SLR reproduces sciatic pain by stretching nerve roots L4‑S1." },
+        { q: "Faber (Patrick) test assesses:",
+          opts: ["Hip or sacroiliac joint pathology", "Knee meniscus", "Ankle instability", "Lumbar spine", "Shoulder impingement"],
+          correct: 0,
+          exp: "FABER (flexion, abduction, external rotation) causes pain in hip or SI joint." },
+        { q: "The Allen test is used to assess:",
+          opts: ["Ulnar and radial artery patency (collateral circulation)", "Carpal tunnel", "Thoracic outlet syndrome", "Subclavian steal", "Raynaud phenomenon"],
+          correct: 0,
+          exp: "Allen test: assess dual blood supply to hand before radial artery cannulation." },
+        { q: "Capillary refill time is normally less than:",
+          opts: ["2 seconds", "3 seconds", "4 seconds", "5 seconds", "1 second"],
+          correct: 0,
+          exp: "Capillary refill <2 seconds is normal; prolonged suggests poor perfusion." },
+        { q: "Pitting edema is graded on a scale of:",
+          opts: ["1+ to 4+", "0 to 3+", "1 to 5", "Trace to severe", "Mild, moderate, severe"],
+          correct: 0,
+          exp: "Pitting edema grade: 1+ (slight), 2+ (deeper), 3+ (deeper, few seconds), 4+ (very deep, >10 seconds)." },
+        { q: "The Snellen chart tests:",
+          opts: ["Visual acuity", "Visual fields", "Color vision", "Extraocular movements", "Pupillary reflexes"],
+          correct: 0,
+          exp: "Snellen chart measures distance visual acuity (e.g., 20/20)." },
+        { q: "The Ishihara plates test for:",
+          opts: ["Color blindness", "Visual acuity", "Visual fields", "Contrast sensitivity", "Macular function"],
+          correct: 0,
+          exp: "Ishihara plates detect red‑green color deficiency." },
+        { q: "Confrontation test is used to assess:",
+          opts: ["Visual fields", "Visual acuity", "Extraocular movements", "Pupillary reflexes", "Color vision"],
+          correct: 0,
+          exp: "Confrontation testing compares patient's peripheral vision with examiner's." },
+        { q: "Ophthalmoscopy allows visualization of the:",
+          opts: ["Retina, optic disc, vessels", "Lens", "Cornea", "Anterior chamber", "Vitreous"],
+          correct: 0,
+          exp: "Ophthalmoscopy examines the retina, optic nerve head, and retinal vessels." },
+        { q: "The Rinne test compares:",
+          opts: ["Air conduction vs bone conduction", "Right vs left ear", "Weber lateralization", "High vs low frequencies", "Speech discrimination"],
+          correct: 0,
+          exp: "Rinne test: air conduction should be greater than bone conduction (positive Rinne)." },
+        { q: "Weber test lateralizes to the affected ear in:",
+          opts: ["Conductive hearing loss", "Sensorineural hearing loss", "Both", "Neither", "Central deafness"],
+          correct: 0,
+          exp: "In conductive loss, sound lateralizes to affected ear; in sensorineural, to normal ear." },
+        { q: "A positive Rinne (AC > BC) but Weber lateralizes to the opposite ear suggests:",
+          opts: ["Sensorineural loss in opposite ear", "Conductive loss in same ear", "Normal hearing", "Central lesion", "Cochlear damage"],
+          correct: 0,
+          exp: "If Rinne is normal, but Weber lateralizes, there may be sensorineural loss in the opposite ear." },
+        { q: "The whisper test is used to screen for:",
+          opts: ["Hearing loss", "Visual acuity", "Speech discrimination", "Central auditory processing", "Tinnitus"],
+          correct: 0,
+          exp: "Whisper test: examiner whispers 2 feet behind patient; inability to repeat indicates hearing loss." },
+        { q: "Inspect the tympanic membrane; the cone of light is located at the:",
+          opts: ["5 o'clock (right ear) and 7 o'clock (left ear)", "12 o'clock", "3 o'clock", "9 o'clock", "Posterior superior quadrant"],
+          correct: 0,
+          exp: "The light reflex is at 5 o'clock in right ear, 7 o'clock in left ear." },
+        { q: "Mallampati classification assesses:",
+          opts: ["Oropharyngeal view (predicts difficult intubation)", "Tonsil size", "Pharyngeal erythema", "Uvula size", "Dental occlusion"],
+          correct: 0,
+          exp: "Mallampati score (I‑IV) grades visibility of faucial pillars, soft palate, and uvula." },
+        { q: "The Broca area is located in the:",
+          opts: ["Left frontal lobe (speech production)", "Left temporal lobe", "Parietal lobe", "Occipital lobe", "Cerebellum"],
+          correct: 0,
+          exp: "Broca area (posterior inferior frontal gyrus) is responsible for speech production." },
+        { q: "Wernicke area is responsible for:",
+          opts: ["Speech comprehension", "Speech production", "Reading", "Writing", "Articulation"],
+          correct: 0,
+          exp: "Wernicke area (superior temporal gyrus) is involved in language comprehension." },
+        { q: "Glasgow Coma Scale (GCS) assesses:",
+          opts: ["Eye opening, verbal response, motor response", "Pupillary response, motor, sensory", "Orientation, memory, attention", "Level of consciousness only", "Motor strength only"],
+          correct: 0,
+          exp: "GCS scores range 3‑15; 15 = fully alert." },
+        { q: "The mini‑mental state examination (MMSE) evaluates:",
+          opts: ["Cognition (orientation, memory, attention, language)", "Mood", "Psychosis", "Intelligence", "Personality"],
+          correct: 0,
+          exp: "MMSE screens for dementia by testing cognitive domains." },
+        { q: "Cushing's triad (hypertension, bradycardia, irregular respiration) indicates:",
+          opts: ["Increased intracranial pressure", "Hypovolemic shock", "Septic shock", "Cardiac tamponade", "Aortic dissection"],
+          correct: 0,
+          exp: "Cushing's triad is a late sign of brain herniation from elevated ICP." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "The 'gold standard' for diagnosing carpal tunnel syndrome is:",
+          opts: ["Nerve conduction studies", "Tinel sign", "Phalen maneuver", "MRI", "Ultrasound"],
+          correct: 0,
+          exp: "Nerve conduction studies confirm median nerve slowing across the wrist." },
+        { q: "The Lachman test is performed with the knee at what angle?",
+          opts: ["20‑30° flexion", "Full extension", "90° flexion", "45° flexion", "0° extension"],
+          correct: 0,
+          exp: "Lachman test is done with knee in slight flexion (20‑30°) to assess ACL." },
+        { q: "Anterior drawer test of the knee assesses which ligament?",
+          opts: ["Anterior cruciate ligament (ACL)", "Posterior cruciate ligament (PCL)", "Medial collateral ligament (MCL)", "Lateral collateral ligament (LCL)", "Meniscus"],
+          correct: 0,
+          exp: "Anterior drawer test: tibia pulls forward abnormally with ACL injury." },
+        { q: "Posterior drawer test assesses which ligament?",
+          opts: ["Posterior cruciate ligament (PCL)", "ACL", "MCL", "LCL", "Meniscus"],
+          correct: 0,
+          exp: "PCL injury allows posterior translation of tibia." },
+        { q: "Valgus stress test at 30° flexion assesses:",
+          opts: ["Medial collateral ligament (MCL)", "Lateral collateral ligament (LCL)", "ACL", "PCL", "Meniscus"],
+          correct: 0,
+          exp: "Valgus stress (applied to lateral knee) tests MCL; varus tests LCL." },
+        { q: "The Jobe test (empty can test) is used to assess:",
+          opts: ["Supraspinatus tendon", "Infraspinatus", "Subscapularis", "Biceps tendon", "Labrum"],
+          correct: 0,
+          exp: "Jobe test: resisted elevation in scapular plane; weakness indicates supraspinatus pathology." },
+        { q: "The Hawkins test is used to assess:",
+          opts: ["Impingement syndrome (supraspinatus)", "Rotator cuff tear", "Labral tear", "AC joint arthritis", "Frozen shoulder"],
+          correct: 0,
+          exp: "Hawkins test: forced internal rotation of abducted arm reproduces impingement pain." },
+        { q: "The Neer test is also for:",
+          opts: ["Shoulder impingement", "Rotator cuff tear", "Labral tear", "AC joint injury", "Adhesive capsulitis"],
+          correct: 0,
+          exp: "Neer test: forced forward flexion of arm causes pain in impingement." },
+        { q: "Speed test is used to assess:",
+          opts: ["Biceps tendinopathy (long head)", "Supraspinatus", "Infraspinatus", "Subscapularis", "Rotator cuff"],
+          correct: 0,
+          exp: "Speed test: resisted forward flexion with elbow extended; pain in bicipital groove suggests biceps tendinitis." },
+        { q: "The Yergason test is also for:",
+          opts: ["Biceps tendinopathy", "Supraspinatus impingement", "Rotator cuff tear", "Labral tear", "AC joint arthritis"],
+          correct: 0,
+          exp: "Yergason test: resisted supination with elbow flexed; pain indicates biceps tendinopathy." },
+        { q: "The Phalen test (wrist flexion) is positive in:",
+          opts: ["Carpal tunnel syndrome", "Ulnar neuropathy", "Radial tunnel syndrome", "De Quervain tenosynovitis", "Trigger finger"],
+          correct: 0,
+          exp: "Phalen test: holding wrists in full flexion for 60 seconds reproduces median nerve symptoms." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>
