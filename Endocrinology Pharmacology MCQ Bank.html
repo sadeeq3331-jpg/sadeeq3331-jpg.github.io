@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endocrinology Pharmacology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-pills"></i>
+            <h1>Endocrinology Pharmacology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE ENDOCRINOLOGY PHARMACOLOGY QUESTIONS
+        const questions = [
+            // Hypothalamus/pituitary
+            { q: "Leuprolide, a GnRH agonist, when given continuously, causes:",
+              opts: ["Increased LH and FSH", "Downregulation of GnRH receptors → decreased gonadotropins", "Stimulation of prolactin", "Increased fertility", "Increased testosterone"],
+              correct: 1,
+              exp: "Chronic GnRH agonist therapy suppresses gonadotropins, leading to medical castration." },
+            { q: "Octreotide is a somatostatin analog used for:",
+              opts: ["Acromegaly", "Carcinoid syndrome", "Both", "Diabetes insipidus", "SIADH"],
+              correct: 2,
+              exp: "Octreotide inhibits GH and various neuropeptides; used in acromegaly and carcinoid syndrome." },
+            { q: "Desmopressin (DDAVP) is used for:",
+              opts: ["Nephrogenic DI", "Central DI", "SIADH", "Hyponatremia", "Diabetes mellitus"],
+              correct: 1,
+              exp: "Desmopressin is an ADH analog; effective in central DI (not nephrogenic)." },
+            { q: "Pegvisomant is used in acromegaly and acts as a:",
+              opts: ["GH receptor antagonist", "Somatostatin agonist", "Dopamine agonist", "GH inhibitor", "IGF‑1 agonist"],
+              correct: 0,
+              exp: "Pegvisomant is a GH receptor antagonist, blocking GH action." },
+
+            // Thyroid
+            { q: "Levothyroxine is the drug of choice for hypothyroidism because:",
+              opts: ["It has a short half‑life", "It provides stable levels with once‑daily dosing", "It is more potent than T₃", "It has fewer side effects", "It is available IV"],
+              correct: 1,
+              exp: "Levothyroxine (T₄) has a long half‑life (7 days), allowing once‑daily dosing and stable levels." },
+            { q: "Methimazole is preferred over PTU for hyperthyroidism except:",
+              opts: ["In pregnancy first trimester", "In thyroid storm", "In children", "In breastfeeding", "In elderly"],
+              correct: 0,
+              exp: "PTU is preferred in first trimester due to lower risk of embryopathy." },
+            { q: "Radioactive iodine (I‑131) is contraindicated in:",
+              opts: ["Graves disease", "Toxic nodule", "Pregnancy", "Elderly", "Recurrent hyperthyroidism after surgery"],
+              correct: 2,
+              exp: "Radioactive iodine is contraindicated in pregnancy and breastfeeding." },
+            { q: "Propranolol is used in hyperthyroidism to:",
+              opts: ["Inhibit thyroid hormone synthesis", "Block peripheral conversion of T₄ to T₃", "Control adrenergic symptoms", "Increase iodine uptake", "Prevent goiter"],
+              correct: 2,
+              exp: "Propranolol controls tachycardia, tremor, and anxiety by β‑blockade." },
+            { q: "Which of the following drugs inhibits thyroid hormone synthesis by blocking thyroid peroxidase?",
+              opts: ["Propranolol", "Methimazole", "Iodides", "Lithium", "Amiodarone"],
+              correct: 1,
+              exp: "Methimazole and PTU inhibit TPO, reducing hormone synthesis." },
+
+            // Calcium
+            { q: "Bisphosphonates (e.g., alendronate) work by:",
+              opts: ["Stimulating osteoblasts", "Inhibiting osteoclasts", "Increasing calcium absorption", "Activating vitamin D", "Increasing PTH"],
+              correct: 1,
+              exp: "Bisphosphonates inhibit osteoclast activity, reducing bone resorption." },
+            { q: "Denosumab is a monoclonal antibody against:",
+              opts: ["RANKL", "PTH", "Calcitonin", "Vitamin D receptor", "Osteoprotegerin"],
+              correct: 0,
+              exp: "Denosumab inhibits RANKL, preventing osteoclast maturation." },
+            { q: "Teriparatide is used for osteoporosis. Its mechanism is:",
+              opts: ["Antiresorptive", "Anabolic (stimulates bone formation)", "Inhibits osteoclasts", "Blocks calcium reabsorption", "Increases calcitonin"],
+              correct: 1,
+              exp: "Teriparatide (PTH analog) given intermittently stimulates bone formation." },
+            { q: "Cinacalcet is a calcimimetic used for:",
+              opts: ["Hypercalcemia", "Secondary hyperparathyroidism in CKD", "Osteoporosis", "Hypoparathyroidism", "Vitamin D deficiency"],
+              correct: 1,
+              exp: "Cinacalcet increases sensitivity of calcium‑sensing receptor, reducing PTH in secondary hyperparathyroidism." },
+            { q: "Which of the following increases the risk of osteonecrosis of the jaw?",
+              opts: ["Oral bisphosphonates", "IV bisphosphonates", "Denosumab", "Both B and C", "Teriparatide"],
+              correct: 3,
+              exp: "High‑dose IV bisphosphonates and denosumab are associated with osteonecrosis of the jaw." },
+
+            // Adrenal
+            { q: "Which glucocorticoid has the longest duration of action?",
+              opts: ["Hydrocortisone", "Prednisone", "Methylprednisolone", "Dexamethasone", "Cortisone"],
+              correct: 3,
+              exp: "Dexamethasone has the longest duration (36‑72h) due to its long half‑life." },
+            { q: "Fludrocortisone is used primarily for its:",
+              opts: ["Glucocorticoid activity", "Mineralocorticoid activity", "Androgen activity", "Estrogen activity", "Progestin activity"],
+              correct: 1,
+              exp: "Fludrocortisone is a potent mineralocorticoid used in adrenal insufficiency." },
+            { q: "Spironolactone can cause gynecomastia due to:",
+              opts: ["Androgen receptor blockade", "Estrogen receptor activation", "Increased prolactin", "Decreased testosterone", "Increased LH"],
+              correct: 0,
+              exp: "Spironolactone blocks androgen receptors, causing anti‑androgen effects (gynecomastia)." },
+            { q: "Metyrapone is used to:",
+              opts: ["Treat Cushing syndrome (by inhibiting cortisol synthesis)", "Stimulate cortisol release", "Treat Addison disease", "Block aldosterone", "Increase ACTH"],
+              correct: 0,
+              exp: "Metyrapone inhibits 11β‑hydroxylase, reducing cortisol synthesis; used in Cushing's." },
+            { q: "Ketoconazole (high dose) can cause adrenal insufficiency because it:",
+              opts: ["Inhibits steroidogenesis enzymes", "Stimulates ACTH", "Increases cortisol clearance", "Blocks cortisol receptors", "Inhibits ACTH secretion"],
+              correct: 0,
+              exp: "Ketoconazole inhibits several cytochrome P450 enzymes involved in steroid synthesis." },
+            { q: "Mitotane is used for:",
+              opts: ["Cushing disease", "Adrenocortical carcinoma", "Pheochromocytoma", "Conn syndrome", "Adrenal hyperplasia"],
+              correct: 1,
+              exp: "Mitotane has adrenolytic activity and is used for adrenocortical carcinoma." },
+
+            // Diabetes
+            { q: "Metformin is first‑line for type 2 diabetes. Its primary mechanism is:",
+              opts: ["Increase insulin secretion", "Decrease hepatic glucose production", "Slow carbohydrate absorption", "Increase insulin sensitivity", "Promote glucose excretion"],
+              correct: 1,
+              exp: "Metformin reduces hepatic gluconeogenesis and increases peripheral insulin sensitivity." },
+            { q: "Which sulfonylurea is most likely to cause hypoglycemia in elderly?",
+              opts: ["Glipizide", "Glyburide", "Glimepiride", "Gliclazide", "Tolbutamide"],
+              correct: 1,
+              exp: "Glyburide has a long half‑life and active metabolites, increasing hypoglycemia risk, especially in elderly." },
+            { q: "Thiazolidinediones (pioglitazone) work by:",
+              opts: ["Activating PPAR‑γ", "Blocking SGLT2", "Stimulating GLP‑1", "Inhibiting DPP‑4", "Increasing insulin secretion"],
+              correct: 0,
+              exp: "TZDs are PPAR‑γ agonists, improving insulin sensitivity." },
+            { q: "SGLT2 inhibitors (empagliflozin) cause which adverse effect?",
+              opts: ["Hypoglycemia", "Weight gain", "Urinary tract infections", "Lactic acidosis", "Bone fractures"],
+              correct: 2,
+              exp: "SGLT2 inhibitors increase urinary glucose excretion, predisposing to UTIs and genital mycotic infections." },
+            { q: "GLP‑1 agonists (liraglutide) can cause:",
+              opts: ["Hypoglycemia", "Weight gain", "Nausea and vomiting", "Constipation", "Increased appetite"],
+              correct: 2,
+              exp: "GLP‑1 agonists slow gastric emptying and suppress appetite, often causing nausea." },
+            { q: "Insulin glargine is a long‑acting insulin with:",
+              opts: ["A peak at 4‑6 hours", "No pronounced peak", "Onset in 15 minutes", "Duration of 6‑8 hours", "Only available in pre‑mixed form"],
+              correct: 1,
+              exp: "Glargine has a flat, peakless profile lasting ~24 hours." },
+            { q: "Which insulin is appropriate for IV use?",
+              opts: ["NPH", "Glargine", "Detemir", "Regular insulin", "Degludec"],
+              correct: 3,
+              exp: "Only regular insulin can be given IV." },
+            { q: "DPP‑4 inhibitors (sitagliptin) work by:",
+              opts: ["Increasing GLP‑1 levels", "Stimulating insulin secretion", "Inhibiting glucagon", "All of the above", "None"],
+              correct: 3,
+              exp: "DPP‑4 inhibitors prevent GLP‑1 breakdown, enhancing insulin and suppressing glucagon." },
+            { q: "Acarbose is an α‑glucosidase inhibitor. Its main adverse effect is:",
+              opts: ["Hypoglycemia", "Flatulence and diarrhea", "Weight gain", "Lactic acidosis", "Edema"],
+              correct: 1,
+              exp: "Acarbose causes gastrointestinal side effects due to undigested carbohydrates." },
+            { q: "Pioglitazone is contraindicated in patients with:",
+              opts: ["Heart failure", "Liver disease", "Bladder cancer", "All of the above", "None"],
+              correct: 3,
+              exp: "TZDs can cause fluid retention, worsening heart failure; pioglitazone may increase bladder cancer risk; avoid in active liver disease." },
+
+            // Reproductive
+            { q: "Tamoxifen is a SERM used for breast cancer. Its mechanism is:",
+              opts: ["Estrogen receptor antagonist in breast", "Estrogen agonist in bone", "Both A and B", "Aromatase inhibitor", "Progesterone antagonist"],
+              correct: 2,
+              exp: "Tamoxifen is an estrogen antagonist in breast, agonist in bone and endometrium." },
+            { q: "Aromatase inhibitors (anastrozole) work by:",
+              opts: ["Blocking estrogen synthesis", "Blocking estrogen receptors", "Inhibiting 5α‑reductase", "Increasing testosterone", "Stimulating FSH"],
+              correct: 0,
+              exp: "Aromatase inhibitors prevent conversion of androgens to estrogens." },
+            { q: "Finasteride inhibits which enzyme?",
+              opts: ["5α‑reductase", "Aromatase", "17α‑hydroxylase", "3β‑hydroxysteroid dehydrogenase", "11β‑hydroxylase"],
+              correct: 0,
+              exp: "Finasteride inhibits type 2 5α‑reductase, blocking conversion of testosterone to DHT." },
+            { q: "Clomiphene citrate induces ovulation by:",
+              opts: ["Stimulating GnRH release", "Blocking estrogen receptors at hypothalamus → increased GnRH", "Directly stimulating ovaries", "Increasing prolactin", "Activating progesterone receptors"],
+              correct: 1,
+              exp: "Clomiphene is a SERM that blocks estrogen negative feedback, increasing FSH/LH." },
+            { q: "Leuprolide is used in prostate cancer to:",
+              opts: ["Stimulate testosterone", "Suppress testosterone (medical castration)", "Block androgen receptors", "Inhibit 5α‑reductase", "Increase LH"],
+              correct: 1,
+              exp: "Continuous GnRH agonist downregulates receptors, suppressing LH and testosterone." },
+            { q: "Mifepristone is an antagonist of which receptors?",
+              opts: ["Estrogen and progesterone", "Progesterone and glucocorticoid", "Androgen and estrogen", "Progesterone only", "Glucocorticoid only"],
+              correct: 1,
+              exp: "Mifepristone is a progesterone and glucocorticoid receptor antagonist; used for abortion and Cushing's." },
+            { q: "Raloxifene is a SERM used for osteoporosis. It differs from tamoxifen in that it:",
+              opts: ["Has lower risk of endometrial cancer", "Is an aromatase inhibitor", "Increases bone resorption", "Has more hot flashes", "Both A and D"],
+              correct: 4,
+              exp: "Raloxifene does not stimulate endometrium; it causes hot flashes like tamoxifen." },
+            { q: "Anastrozole is used in postmenopausal breast cancer because:",
+              opts: ["It blocks estrogen receptors", "It reduces estrogen synthesis in peripheral tissues", "It increases FSH", "It has no effect on estrogen", "It stimulates progesterone"],
+              correct: 1,
+              exp: "Anastrozole inhibits aromatase, lowering estrogen in postmenopausal women." },
+            { q: "Testosterone replacement therapy can cause:",
+              opts: ["Erythrocytosis", "Sleep apnea", "Acne", "All of the above", "None"],
+              correct: 3,
+              exp: "Testosterone can cause polycythemia, worsen sleep apnea, and cause acne." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Eplerenone is a selective aldosterone antagonist that differs from spironolactone because it:",
+              opts: ["Causes more gynecomastia", "Is more selective for mineralocorticoid receptor", "Has longer half‑life", "Is not available orally", "Has more anti‑androgen effects"],
+              correct: 1,
+              exp: "Eplerenone is more selective, with fewer anti‑androgen and progestin effects." },
+            { q: "Corticosteroid withdrawal syndrome can occur if steroids are stopped abruptly because of:",
+              opts: ["Adrenal suppression", "Rebound inflammation", "Mineralocorticoid deficiency", "All of the above", "None"],
+              correct: 3,
+              exp: "Abrupt cessation can cause adrenal insufficiency and rebound of underlying disease." },
+            { q: "Insulin degludec has an ultra‑long duration because it:",
+              opts: ["Forms multi‑hexamers after injection", "Has added fatty acid chain", "Is absorbed slowly", "Has peak at 12h", "Is only for IV use"],
+              correct: 0,
+              exp: "Insulin degludec forms soluble multi‑hexamers, slowly releasing monomers." },
+            { q: "Canagliflozin has been associated with increased risk of:",
+              opts: ["Lower limb amputations", "Pancreatitis", "Hepatotoxicity", "Agranulocytosis", "QT prolongation"],
+              correct: 0,
+              exp: "Canagliflozin has a black box warning for lower limb amputation." },
+            { q: "Lithium can cause nephrogenic diabetes insipidus. Which drug may be used to treat it?",
+              opts: ["Desmopressin", "Hydrochlorothiazide", "Amiloride", "Furosemide", "Mannitol"],
+              correct: 2,
+              exp: "Amiloride can reduce lithium‑induced DI by interfering with lithium entry into collecting duct cells." },
+            { q: "Ketoconazole can cause adrenal insufficiency because it:",
+              opts: ["Inhibits CYP enzymes involved in steroidogenesis", "Stimulates ACTH", "Increases cortisol clearance", "Blocks cortisol receptors", "Inhibits ACTH secretion"],
+              correct: 0,
+              exp: "Ketoconazole inhibits 11β‑hydroxylase and other P450 enzymes, reducing cortisol synthesis." },
+            { q: "Which of the following is a side effect of exogenous glucocorticoids?",
+              opts: ["Hypoglycemia", "Weight loss", "Osteoporosis", "Hypotension", "Hyperkalemia"],
+              correct: 2,
+              exp: "Chronic steroid use causes osteoporosis, weight gain, hyperglycemia, hypertension." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

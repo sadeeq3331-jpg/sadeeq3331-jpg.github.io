@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Medicine · Physiology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-ambulance"></i>
+        <h1>Emergency Medicine · Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>RESUSCITATION PHYSIOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#cardiac-arrest"><i class="fas fa-heartbeat"></i> 1. Cardiac Arrest Physiology</a></li>
+                <li class="chapter-item"><a href="#cpr"><i class="fas fa-hand-holding-heart"></i> 2. CPR Physiology</a></li>
+                <li class="chapter-item"><a href="#post-cardiac-arrest"><i class="fas fa-heart"></i> 3. Post‑Cardiac Arrest Syndrome</a></li>
+                <li class="chapter-item"><a href="#shock"><i class="fas fa-tint"></i> 4. Shock Physiology</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CARDIOVASCULAR EMERGENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acs"><i class="fas fa-heart-broken"></i> 5. Acute Coronary Syndromes</a></li>
+                <li class="chapter-item"><a href="#arrhythmias"><i class="fas fa-chart-line"></i> 6. Cardiac Arrhythmias</a></li>
+                <li class="chapter-item"><a href="#hypertensive"><i class="fas fa-tachometer-alt"></i> 7. Hypertensive Emergencies</a></li>
+                <li class="chapter-item"><a href="#aortic"><i class="fas fa-syringe"></i> 8. Aortic Dissection & Aneurysm</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>RESPIRATORY EMERGENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#airway"><i class="fas fa-lungs"></i> 9. Airway Management</a></li>
+                <li class="chapter-item"><a href="#respiratory-failure"><i class="fas fa-lungs"></i> 10. Respiratory Failure</a></li>
+                <li class="chapter-item"><a href="#pe"><i class="fas fa-blood"></i> 11. Pulmonary Embolism</a></li>
+                <li class="chapter-item"><a href="#asthma"><i class="fas fa-wind"></i> 12. Asthma & COPD</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>NEUROLOGIC EMERGENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#stroke"><i class="fas fa-brain"></i> 13. Stroke & TIA</a></li>
+                <li class="chapter-item"><a href="#ich"><i class="fas fa-head-side-brain"></i> 14. Intracranial Hemorrhage</a></li>
+                <li class="chapter-item"><a href="#seizures"><i class="fas fa-bolt"></i> 15. Seizures & Status Epilepticus</a></li>
+                <li class="chapter-item"><a href="#altered"><i class="fas fa-question-circle"></i> 16. Altered Mental Status</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>METABOLIC & TOXICOLOGIC</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acid-base"><i class="fas fa-flask"></i> 17. Acid‑Base Disorders</a></li>
+                <li class="chapter-item"><a href="#electrolytes"><i class="fas fa-tint"></i> 18. Electrolyte Emergencies</a></li>
+                <li class="chapter-item"><a href="#overdose"><i class="fas fa-skull-crossbones"></i> 19. Overdose & Poisoning</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>TRAUMA</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#trauma"><i class="fas fa-car-crash"></i> 20. Trauma Physiology</a></li>
+                <li class="chapter-item"><a href="#burn"><i class="fas fa-fire"></i> 21. Burn Physiology</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== RESUSCITATION PHYSIOLOGY ==================== -->
+        <section id="cardiac-arrest" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 1. Cardiac Arrest Physiology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Cardiac arrest is the cessation of effective cardiac mechanical function, leading to absence of circulation and global ischemia.
+                </div>
+                <ul>
+                    <li><strong>Mechanisms:</strong> Ventricular fibrillation (VF), pulseless ventricular tachycardia (VT), asystole, pulseless electrical activity (PEA).</li>
+                    <li><strong>Time course:</strong> Irreversible brain damage begins after 4‑6 minutes of normothermic arrest.</li>
+                    <li><strong>Ischemia‑reperfusion injury:</strong> Restoration of flow triggers oxidative stress, inflammation, and apoptosis.</li>
+                </ul>
+                <div class="definition-box">
+                    <h4><i class="fas fa-clock"></i> Phases of Cardiac Arrest</h4>
+                    <ul>
+                        <li><strong>Electrical phase (0‑4 min):</strong> Defibrillation most effective.</li>
+                        <li><strong>Circulatory phase (4‑10 min):</strong> CPR essential to perfuse heart and brain.</li>
+                        <li><strong>Metabolic phase (>10 min):</strong> Global ischemia, metabolic acidosis; post‑resuscitation care critical.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="cpr" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand-holding-heart"></i> 2. CPR Physiology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Cardiac pump theory:</strong> Direct compression of heart between sternum and spine.</li>
+                    <li><strong>Thoracic pump theory:</strong> Increased intrathoracic pressure propels blood; valves prevent backflow.</li>
+                    <li>Optimal compression depth: ≥2 inches (5 cm) at 100‑120/min.</li>
+                    <li>Coronary perfusion pressure (CPP) = aortic diastolic – right atrial pressure. CPP >15 mmHg predicts ROSC.</li>
+                    <li>Ventilations during CPR: minimize interruptions; 30:2 ratio (adult) or continuous compressions with asynchronous ventilation after advanced airway.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="post-cardiac-arrest" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 3. Post‑Cardiac Arrest Syndrome</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Brain injury:</strong> Cerebral edema, impaired autoregulation, seizures.</li>
+                    <li><strong>Myocardial dysfunction:</strong> Stunning, low cardiac output.</li>
+                    <li><strong>Systemic ischemia/reperfusion:</strong> SIRS‑like response, multi‑organ dysfunction.</li>
+                    <li><strong>Targeted temperature management (TTM):</strong> 33‑36°C for 24h to reduce neurologic injury.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="shock" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 4. Shock Physiology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Shock is defined as inadequate tissue perfusion to meet metabolic demands.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Mechanism</th><th>Examples</th><th>Physiology</th></tr></thead>
+                    <tbody>
+                        <tr><td>Hypovolemic</td><td>↓ preload</td><td>Hemorrhage, dehydration</td><td>↓ CVP, ↓ CO, ↑ SVR</td></tr>
+                        <tr><td>Cardiogenic</td><td>↓ pump function</td><td>MI, cardiomyopathy</td><td>↑ CVP, ↓ CO, ↑ SVR</td></tr>
+                        <tr><td>Distributive</td><td>↓ SVR</td><td>Sepsis, anaphylaxis, neurogenic</td><td>↓/normal CVP, ↑/normal CO, ↓ SVR</td></tr>
+                        <tr><td>Obstructive</td><td>↑ afterload/obstruction</td><td>PE, tamponade, tension pneumothorax</td><td>↑ CVP, ↓ CO, ↑ SVR</td></tr>
+                    </tbody>
+                </table>
+                <div class="definition-box">
+                    <strong>Stages of shock:</strong>
+                    <ul>
+                        <li><strong>Early (compensated):</strong> Tachycardia, vasoconstriction, normal BP.</li>
+                        <li><strong>Intermediate (decompensated):</strong> Hypotension, oliguria, altered mental status.</li>
+                        <li><strong>Late (irreversible):</strong> Multi‑organ failure, refractory hypotension.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CARDIOVASCULAR EMERGENCIES ==================== -->
+        <section id="acs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart-broken"></i> 5. Acute Coronary Syndromes</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathophysiology:</strong> Plaque rupture → thrombus formation → myocardial ischemia.</li>
+                    <li><strong>Types:</strong> Unstable angina, NSTEMI, STEMI.</li>
+                    <li><strong>Determinants of ischemia:</strong> Supply (coronary flow, oxygen content) vs demand (HR, contractility, wall stress).</li>
+                    <li><strong>Biomarkers:</strong> Troponin I/T (most specific), CK‑MB, myoglobin.</li>
+                    <li><strong>ECG changes:</strong> ST elevation (transmural ischemia), ST depression (subendocardial), T wave inversion.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="arrhythmias" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 6. Cardiac Arrhythmias</div>
+            <div class="section-card">
+                <div class="subsection-heading">Bradyarrhythmias</div>
+                <ul>
+                    <li><strong>Sinus bradycardia:</strong> Rate <60; may be physiologic or pathologic (hypoxia, MI, drugs).</li>
+                    <li><strong>AV blocks:</strong> First‑degree (PR >200 ms), second‑degree Mobitz I (Wenckebach), Mobitz II (constant PR with dropped beats), third‑degree (complete heart block).</li>
+                </ul>
+                <div class="subsection-heading">Tachyarrhythmias</div>
+                <ul>
+                    <li><strong>Narrow complex (SVT):</strong> AV nodal reentry, AV reentry (WPW), atrial fibrillation, atrial flutter.</li>
+                    <li><strong>Wide complex:</strong> VT, VF, SVT with aberrancy.</li>
+                    <li><strong>Ventricular fibrillation:</strong> Chaotic electrical activity; requires immediate defibrillation.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Unstable patient:</strong> Synchronized cardioversion for unstable tachyarrhythmias; defibrillation for VF/pulseless VT.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hypertensive" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tachometer-alt"></i> 7. Hypertensive Emergencies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Hypertensive emergency:</strong> Severe BP elevation (>180/120) with acute target organ damage (brain, heart, kidneys).</li>
+                    <li><strong>Pathophysiology:</strong> Failed autoregulation → end‑organ ischemia, endothelial injury, fibrinoid necrosis.</li>
+                    <li><strong>Manifestations:</strong> Hypertensive encephalopathy, intracranial hemorrhage, acute MI, pulmonary edema, renal failure.</li>
+                    <li><strong>Treatment:</strong> IV antihypertensives (labetalol, nicardipine, nitroprusside) with controlled reduction (not >25% in first hour).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="aortic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 8. Aortic Dissection & Aneurysm</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Aortic dissection:</strong> Intimal tear allows blood to propagate within media, creating false lumen.</li>
+                    <li><strong>Stanford classification:</strong> Type A (ascending) – surgical emergency; Type B (descending) – medical management.</li>
+                    <li><strong>Pathophysiology:</strong> Hypertension, connective tissue disorders (Marfan, Ehlers‑Danlos).</li>
+                    <li><strong>Complications:</strong> Rupture, tamponade, aortic regurgitation, myocardial infarction (coronary ostia), stroke.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== RESPIRATORY EMERGENCIES ==================== -->
+        <section id="airway" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 9. Airway Management</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Anatomy:</strong> Oral cavity, pharynx, larynx (vocal cords), trachea.</li>
+                    <li><strong>Assessment:</strong> Look for signs of obstruction (stridor, drooling, paradoxical breathing).</li>
+                    <li><strong>Basic maneuvers:</strong> Head tilt‑chin lift, jaw thrust, oral/nasal airways.</li>
+                    <li><strong>Advanced airway:</strong> Endotracheal intubation (ETT), supraglottic devices (LMA), surgical airway (cricothyrotomy).</li>
+                    <li><strong>Rapid sequence intubation (RSI):</strong> Sedative + paralytic to facilitate intubation; pre‑oxygenation critical.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="respiratory-failure" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 10. Respiratory Failure</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Type I (hypoxemic):</strong> PaO₂ <60 mmHg, normal/low PaCO₂. Causes: V/Q mismatch, shunt, diffusion impairment.</li>
+                    <li><strong>Type II (hypercapnic):</strong> PaCO₂ >50 mmHg. Causes: hypoventilation, increased dead space.</li>
+                    <li><strong>ARDS:</strong> Acute inflammatory lung injury → increased permeability, non‑cardiogenic pulmonary edema, refractory hypoxemia.</li>
+                    <li><strong>Oxygen therapy:</strong> Goal SpO₂ 88‑92% (COPD) or 94‑98% (others).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pe" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 11. Pulmonary Embolism</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathophysiology:</strong> Thrombus (usually from DVT) occludes pulmonary artery → increased dead space, right ventricular afterload.</li>
+                    <li><strong>Massive PE:</strong> Hypotension, shock, RV failure.</li>
+                    <li><strong>Physiologic effects:</strong> ↑ pulmonary vascular resistance, ↓ cardiac output, V/Q mismatch, hypoxemia.</li>
+                    <li><strong>Diagnosis:</strong> CTPA, V/Q scan, D‑dimer (high sensitivity, low specificity).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="asthma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wind"></i> 12. Asthma & COPD</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Asthma:</strong> Reversible airway obstruction, inflammation, hyperresponsiveness.</li>
+                    <li><strong>COPD:</strong> Chronic airflow limitation (emphysema, chronic bronchitis).</li>
+                    <li><strong>Acute exacerbation triggers:</strong> Infection, allergens, irritants.</li>
+                    <li><strong>Physiologic changes:</strong> Air trapping, hyperinflation, increased work of breathing, pulsus paradoxus.</li>
+                    <li><strong>Status asthmaticus:</strong> Severe, refractory bronchospasm; can progress to respiratory failure.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NEUROLOGIC EMERGENCIES ==================== -->
+        <section id="stroke" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 13. Stroke & TIA</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Ischemic stroke:</strong> Thrombotic, embolic, or hypoperfusion. Penumbra (ischemic but salvageable tissue).</li>
+                    <li><strong>Hemorrhagic stroke:</strong> Intracerebral hemorrhage, subarachnoid hemorrhage.</li>
+                    <li><strong>Time is brain:</strong> 1.9 million neurons lost per minute.</li>
+                    <li><strong>NIHSS:</strong> Quantifies stroke severity.</li>
+                    <li><strong>tPA window:</strong> Within 3‑4.5 hours for eligible patients.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ich" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-head-side-brain"></i> 14. Intracranial Hemorrhage</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Epidural hematoma:</strong> Arterial (middle meningeal) – lucid interval, lens‑shaped.</li>
+                    <li><strong>Subdural hematoma:</strong> Venous (bridging veins) – crescent‑shaped, often in elderly.</li>
+                    <li><strong>Subarachnoid hemorrhage:</strong> Aneurysm rupture → sudden thunderclap headache.</li>
+                    <li><strong>Intracerebral hemorrhage:</strong> Hypertension, amyloid angiopathy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="seizures" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 15. Seizures & Status Epilepticus</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Generalized tonic‑clonic:</strong> Loss of consciousness, tonic phase (rigidity) followed by clonic phase (rhythmic jerking).</li>
+                    <li><strong>Status epilepticus:</strong> Continuous seizure >5 min or recurrent without recovery. Medical emergency.</li>
+                    <li><strong>Complications:</strong> Hypoxia, lactic acidosis, rhabdomyolysis, hyperthermia, neuronal injury.</li>
+                    <li><strong>Treatment:</strong> Benzodiazepines (first‑line), then second‑line agents (fosphenytoin, levetiracetam, valproate).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="altered" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-question-circle"></i> 16. Altered Mental Status</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Causes:</strong> AEIOU TIPS (Alcohol, Epilepsy, Insulin, Overdose, Uremia, Trauma, Infection, Psychiatric, Syncope).</li>
+                    <li><strong>Delirium:</strong> Acute, fluctuating, inattention, disorganized thinking.</li>
+                    <li><strong>Dementia:</strong> Chronic, progressive cognitive decline.</li>
+                    <li><strong>Coma:</strong> Unarousable unresponsiveness.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== METABOLIC & TOXICOLOGIC ==================== -->
+        <section id="acid-base" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 17. Acid‑Base Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Respiratory acidosis:</strong> Hypoventilation → ↑ PaCO₂, ↓ pH.</li>
+                    <li><strong>Respiratory alkalosis:</strong> Hyperventilation → ↓ PaCO₂, ↑ pH.</li>
+                    <li><strong>Metabolic acidosis:</strong> ↓ HCO₃, ↓ pH. Anion gap = Na – (Cl + HCO₃). Normal gap (8‑12) vs high gap (MUD PILES).</li>
+                    <li><strong>Metabolic alkalosis:</strong> ↑ HCO₃, ↑ pH. Causes: vomiting, diuretics.</li>
+                    <li><strong>Winter's formula:</strong> PaCO₂ = 1.5 × [HCO₃] + 8 ± 2 (predicts appropriate respiratory compensation in metabolic acidosis).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="electrolytes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 18. Electrolyte Emergencies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Hyperkalemia:</strong> ECG: peaked T, wide QRS, sine wave. Treatment: calcium, insulin+glucose, albuterol, kayexalate.</li>
+                    <li><strong>Hypokalemia:</strong> ECG: U waves, flat T. Treatment: oral/IV potassium.</li>
+                    <li><strong>Hyponatremia:</strong> Risk of cerebral edema; correct slowly (risk of osmotic demyelination).</li>
+                    <li><strong>Hypernatremia:</strong> Free water deficit; correct slowly to avoid cerebral edema.</li>
+                    <li><strong>Hypercalcemia:</strong> IV fluids, bisphosphonates, calcitonin.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="overdose" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-skull-crossbones"></i> 19. Overdose & Poisoning</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Toxidromes:</strong> Opioid (sedation, miosis, bradypnea); cholinergic (SLUDGE); anticholinergic (tachycardia, mydriasis, dry skin, ileus); sympathomimetic (agitation, tachycardia, hypertension).</li>
+                    <li><strong>General management:</strong> ABCs, decontamination (activated charcoal), antidotes, enhanced elimination.</li>
+                    <li><strong>Common overdoses:</strong> Acetaminophen (NAC), opioids (naloxone), TCA (bicarbonate), organophosphates (atropine + pralidoxime).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== TRAUMA ==================== -->
+        <section id="trauma" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-car-crash"></i> 20. Trauma Physiology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Primary survey (ABCDE):</strong> Airway, Breathing, Circulation, Disability, Exposure.</li>
+                    <li><strong>Hemorrhagic shock:</strong> Class I‑IV based on blood loss.</li>
+                    <li><strong>Damage control resuscitation:</strong> Permissive hypotension, massive transfusion (1:1:1 plasma:platelets:RBC), tranexamic acid.</li>
+                    <li><strong>Head trauma:</strong> Cushing's triad (hypertension, bradycardia, irregular respiration) – late sign of increased ICP.</li>
+                    <li><strong>Spine trauma:</strong> Neurogenic shock (loss of sympathetic tone → hypotension, bradycardia).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="burn" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fire"></i> 21. Burn Physiology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Rule of nines:</strong> Estimate TBSA burned.</li>
+                    <li><strong>Parkland formula:</strong> 4 mL × kg × %TBSA for first 24h; half in first 8h, half in next 16h.</li>
+                    <li><strong>Pathophysiology:</strong> Increased capillary permeability, massive fluid shifts, hypovolemia, hypermetabolism.</li>
+                    <li><strong>Inhalation injury:</strong> Carbon monoxide, cyanide, upper airway edema.</li>
+                    <li><strong>Electrical burns:</strong> Deep tissue injury, myoglobinuria, arrhythmias.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Emergency Medicine Physiology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

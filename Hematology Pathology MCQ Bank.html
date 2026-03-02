@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hematology Pathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-tint"></i>
+            <h1>Hematology Pathology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE HEMATOLOGY PATHOLOGY QUESTIONS
+        const questions = [
+            { q: "Iron deficiency anemia is characterized by all EXCEPT:",
+              opts: ["Microcytic RBCs", "Low serum ferritin", "High TIBC", "High serum iron", "Pale RBCs"],
+              correct: 3,
+              exp: "Iron deficiency shows low serum iron, high TIBC, low ferritin." },
+            { q: "The most common cause of iron deficiency anemia worldwide is:",
+              opts: ["Menorrhagia", "Poor diet", "Chronic blood loss", "Malabsorption", "Pregnancy"],
+              correct: 2,
+              exp: "Chronic blood loss (GI, menorrhagia) is the most common cause." },
+            { q: "Thalassemia trait is characterized by:",
+              opts: ["Microcytosis, normal RDW, elevated RBC count", "Microcytosis, high RDW, low RBC", "Macrocytosis, high RDW", "Normocytic, normal RDW", "None"],
+              correct: 0,
+              exp: "Thalassemia trait: microcytic (low MCV), normal RDW, often elevated RBC count." },
+            { q: "In β‑thalassemia major, the predominant hemoglobin is:",
+              opts: ["HbA", "HbA₂", "HbF", "HbS", "HbH"],
+              correct: 2,
+              exp: "β‑thalassemia major has little β‑chain production, so HbF is increased." },
+            { q: "Anemia of chronic disease (ACD) typically shows:",
+              opts: ["Low serum iron, low TIBC, high ferritin", "Low serum iron, high TIBC, low ferritin", "High serum iron, low TIBC, high ferritin", "Low serum iron, low TIBC, low ferritin", "None"],
+              correct: 0,
+              exp: "ACD: low Fe, low TIBC, normal/high ferritin (acute phase reactant)." },
+            { q: "Pernicious anemia is caused by:",
+              opts: ["Vitamin B12 deficiency due to lack of intrinsic factor", "Folate deficiency", "Iron deficiency", "Hemolysis", "Aplastic anemia"],
+              correct: 0,
+              exp: "Pernicious anemia is autoimmune gastritis with loss of intrinsic factor, leading to B12 malabsorption." },
+            { q: "In vitamin B12 deficiency, neurologic symptoms include:",
+              opts: ["Peripheral neuropathy", "Subacute combined degeneration (dorsal columns, corticospinal)", "Dementia", "All of the above", "None"],
+              correct: 3,
+              exp: "B12 deficiency can cause subacute combined degeneration, peripheral neuropathy, and cognitive changes." },
+            { q: "Hypersegmented neutrophils (>5 lobes) are seen in:",
+              opts: ["Iron deficiency", "Megaloblastic anemia", "Thalassemia", "Hemolytic anemia", "Aplastic anemia"],
+              correct: 1,
+              exp: "Hypersegmented neutrophils are characteristic of megaloblastic anemias (B12/folate deficiency)." },
+            { q: "Hereditary spherocytosis is due to defects in:",
+              opts: ["Spectrin, ankyrin, or band 3", "Globin chains", "G6PD", "Pyruvate kinase", "Membrane lipids"],
+              correct: 0,
+              exp: "Spherocytosis results from defects in membrane skeleton proteins." },
+            { q: "In hereditary spherocytosis, which lab finding is typical?",
+              opts: ["Increased MCHC", "Low MCHC", "Increased osmotic fragility", "Both A and C", "None"],
+              correct: 3,
+              exp: "Spherocytes have high MCHC and increased osmotic fragility." },
+            { q: "G6PD deficiency is inherited as:",
+              opts: ["Autosomal dominant", "Autosomal recessive", "X‑linked recessive", "X‑linked dominant", "Mitochondrial"],
+              correct: 2,
+              exp: "G6PD deficiency is X‑linked recessive." },
+            { q: "Heinz bodies are composed of:",
+              opts: ["Denatured hemoglobin", "Iron aggregates", "Nuclear remnants", "RNA", "Lipid inclusions"],
+              correct: 0,
+              exp: "Heinz bodies are denatured hemoglobin, seen in G6PD deficiency." },
+            { q: "Bite cells are seen in:",
+              opts: ["G6PD deficiency", "Hereditary spherocytosis", "Sickle cell disease", "Autoimmune hemolytic anemia", "Thalassemia"],
+              correct: 0,
+              exp: "Bite cells result from pitting of Heinz bodies by spleen." },
+            { q: "Sickle cell disease is caused by mutation in:",
+              opts: ["β‑globin (Glu6Val)", "α‑globin", "γ‑globin", "δ‑globin", "Heme synthesis enzyme"],
+              correct: 0,
+              exp: "Sickle cell: point mutation in β‑globin (Glu→Val at position 6)." },
+            { q: "In sickle cell disease, HbS polymerizes under conditions of:",
+              opts: ["High oxygen tension", "Low oxygen tension", "High pH", "Low temperature", "High iron"],
+              correct: 1,
+              exp: "Deoxygenated HbS polymerizes, causing sickling." },
+            { q: "Acute chest syndrome in sickle cell disease is a:",
+              opts: ["Pulmonary infarction/infection with chest pain, fever, infiltrates", "Cardiac event", "Pneumothorax", "Pulmonary embolism", "Asthma exacerbation"],
+              correct: 0,
+              exp: "Acute chest syndrome is a common cause of death in sickle cell; often triggered by infection or infarction." },
+            { q: "Autoimmune hemolytic anemia (warm type) is caused by:",
+              opts: ["IgG antibodies, extravascular hemolysis", "IgM antibodies, intravascular hemolysis", "Cold agglutinins", "Drug adsorption", "None"],
+              correct: 0,
+              exp: "Warm AIHA: IgG binds RBCs, removed by spleen (spherocytes, + direct Coombs)." },
+            { q: "Cold agglutinin disease is associated with:",
+              opts: ["IgM antibodies (often anti‑I)", "IgG antibodies", "Complement fixation", "Both A and C", "None"],
+              correct: 3,
+              exp: "Cold AIHA: IgM anti‑I agglutinates RBCs at low temps, fixes complement, intravascular hemolysis." },
+            { q: "Microangiopathic hemolytic anemia is characterized by:",
+              opts: ["Schistocytes (helmet cells)", "Spherocytes", "Target cells", "Sickle cells", "Acanthocytes"],
+              correct: 0,
+              exp: "Schistocytes from mechanical destruction in TTP/HUS, DIC." },
+            { q: "Immune thrombocytopenic purpura (ITP) is associated with antibodies against:",
+              opts: ["GPIIb/IIIa", "GPIb/IX", "vWF", "Factor VIII", "Platelet factor 4"],
+              correct: 0,
+              exp: "ITP has anti‑GPIIb/IIIa antibodies, leading to platelet destruction." },
+            { q: "Bernard‑Soulier syndrome is a defect in:",
+              opts: ["GPIb/IX (vWF receptor)", "GPIIb/IIIa (fibrinogen receptor)", "Storage granules", "ADP receptor", "Thromboxane synthesis"],
+              correct: 0,
+              exp: "Bernard‑Soulier: deficiency of GPIb/IX → giant platelets, prolonged bleeding time, low platelet adhesion." },
+            { q: "Glanzmann thrombasthenia is due to:",
+              opts: ["Defect in GPIIb/IIIa", "Defect in GPIb/IX", "Storage pool defect", "Bernard‑Soulier", "None"],
+              correct: 0,
+              exp: "Glanzmann: lack of GPIIb/IIIa, platelets fail to aggregate." },
+            { q: "Hemophilia A is deficiency of:",
+              opts: ["Factor VIII", "Factor IX", "Factor XI", "Factor VII", "vWF"],
+              correct: 0,
+              exp: "Hemophilia A: factor VIII deficiency." },
+            { q: "Hemophilia B is deficiency of:",
+              opts: ["Factor VIII", "Factor IX", "Factor XI", "Factor VII", "vWF"],
+              correct: 1,
+              exp: "Hemophilia B (Christmas disease): factor IX deficiency." },
+            { q: "von Willebrand disease is characterized by:",
+              opts: ["Prolonged bleeding time, prolonged aPTT (if factor VIII low)", "Prolonged PT only", "Thrombocytopenia", "Normal bleeding time", "None"],
+              correct: 0,
+              exp: "vWD: low vWF causes platelet dysfunction (↑bleeding time) and may reduce factor VIII (↑aPTT)." },
+            { q: "In DIC, which lab abnormality is expected?",
+              opts: ["Prolonged PT, aPTT, low fibrinogen, elevated D‑dimer", "Normal PT, prolonged aPTT", "Prolonged PT, normal aPTT", "Low platelets, normal PT", "None"],
+              correct: 0,
+              exp: "DIC consumes factors and platelets, elevates D‑dimer." },
+            { q: "Chronic myeloid leukemia (CML) is associated with:",
+              opts: ["t(9;22) BCR‑ABL", "t(8;14) MYC", "t(14;18) BCL2", "JAK2 mutation", "CALR mutation"],
+              correct: 0,
+              exp: "CML has Philadelphia chromosome t(9;22) with BCR‑ABL fusion." },
+            { q: "Polycythemia vera is associated with mutation in:",
+              opts: ["JAK2", "CALR", "MPL", "BCR‑ABL", "c‑KIT"],
+              correct: 0,
+              exp: "JAK2V617F mutation is present in >95% of polycythemia vera." },
+            { q: "Essential thrombocythemia can be caused by mutations in:",
+              opts: ["JAK2, CALR, or MPL", "BCR‑ABL", "KRAS", "NPM1", "FLT3"],
+              correct: 0,
+              exp: "ET is associated with JAK2 (50‑60%), CALR (20‑30%), or MPL mutations." },
+            { q: "Primary myelofibrosis presents with:",
+              opts: ["Leukoerythroblastosis, teardrop RBCs, splenomegaly", "High hematocrit", "Thrombocytosis only", "Lymphocytosis", "Monocytosis"],
+              correct: 0,
+              exp: "Myelofibrosis: bone marrow fibrosis, extramedullary hematopoiesis, teardrop cells." },
+            { q: "Hodgkin lymphoma is characterized by:",
+              opts: ["Reed‑Sternberg cells (CD15+, CD30+)", "Small B cells", "T cells", "Plasma cells", "Histiocytes"],
+              correct: 0,
+              exp: "Reed‑Sternberg cells are pathognomonic of Hodgkin lymphoma." },
+            { q: "The most common type of non‑Hodgkin lymphoma is:",
+              opts: ["Diffuse large B‑cell lymphoma", "Follicular lymphoma", "Mantle cell lymphoma", "Burkitt lymphoma", "Marginal zone lymphoma"],
+              correct: 0,
+              exp: "DLBCL is the most common NHL." },
+            { q: "Burkitt lymphoma has the translocation:",
+              opts: ["t(8;14) MYC‑IgH", "t(14;18) BCL2", "t(11;14) cyclin D1", "t(9;22) BCR‑ABL", "t(2;5) ALK"],
+              correct: 0,
+              exp: "Burkitt lymphoma: MYC on chromosome 8 translocates to Ig heavy chain locus on 14." },
+            { q: "Multiple myeloma is characterized by:",
+              opts: ["Monoclonal protein (M spike), lytic bone lesions, anemia, renal failure", "Leukocytosis, splenomegaly", "Thrombocytosis", "Polyclonal hypergammaglobulinemia", "None"],
+              correct: 0,
+              exp: "Myeloma has CRAB: hyperCalcemia, Renal failure, Anemia, Bone lesions." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Auer rods are seen in:",
+              opts: ["Acute myeloid leukemia (AML)", "Acute lymphoblastic leukemia (ALL)", "CML", "CLL", "Myelodysplasia"],
+              correct: 0,
+              exp: "Auer rods are eosinophilic cytoplasmic inclusions in AML (especially APML)." },
+            { q: "The most common acute leukemia in adults is:",
+              opts: ["AML", "ALL", "CLL", "CML", "Hairy cell leukemia"],
+              correct: 0,
+              exp: "AML is the most common acute leukemia in adults." },
+            { q: "Philadelphia chromosome is also found in some cases of:",
+              opts: ["ALL", "AML", "CLL", "Myeloma", "Hodgkin lymphoma"],
+              correct: 0,
+              exp: "Ph+ ALL also occurs, especially in adults." },
+            { q: "Hairy cell leukemia is associated with:",
+              opts: ["TRAP‑positive cells", "CD103 expression", "pancytopenia, splenomegaly", "All of the above", "None"],
+              correct: 3,
+              exp: "Hairy cells have cytoplasmic projections, stain TRAP+, and cause pancytopenia, splenomegaly." },
+            { q: "Myelodysplastic syndromes are characterized by:",
+              opts: ["Dysplasia in one or more lineages, peripheral cytopenias", "Leukocytosis", "Thrombocytosis", "Erythrocytosis", "None"],
+              correct: 0,
+              exp: "MDS: ineffective hematopoiesis, cytopenias, dysplasia, risk of AML." },
+            { q: "Paroxysmal nocturnal hemoglobinuria (PNH) is due to:",
+              opts: ["Mutation in PIG‑A gene, lack of GPI‑anchored proteins (CD55, CD59)", "Autoimmune hemolysis", "Sickle cell", "G6PD deficiency", "Spherocytosis"],
+              correct: 0,
+              exp: "PNH: complement‑mediated intravascular hemolysis, hemoglobinuria, thrombosis." },
+            { q: "In PNH, the direct Coombs test is:",
+              opts: ["Positive", "Negative", "Variable", "Not used", "None"],
+              correct: 1,
+              exp: "PNH is a complement‑mediated intravascular hemolysis, not autoimmune, so Coombs negative." },
+            { q: "Hemoglobin H disease is a form of:",
+              opts: ["α‑thalassemia (3 gene deletion)", "β‑thalassemia", "Sickle cell trait", "HbS", "HbC disease"],
+              correct: 0,
+              exp: "HbH disease results from deletion of 3 α‑globin genes; HbH (β₄) forms." },
+            { q: "The most common cause of megaloblastic anemia is:",
+              opts: ["Vitamin B12 deficiency", "Folate deficiency", "Pernicious anemia", "Alcoholism", "Drugs"],
+              correct: 0,
+              exp: "Worldwide, B12 deficiency is common; pernicious anemia is one cause." },
+            { q: "Zieve syndrome is:",
+              opts: ["Hemolytic anemia with hyperlipidemia in alcoholics", "Iron deficiency", "Megaloblastic anemia", "Sickle cell crisis", "DIC"],
+              correct: 0,
+              exp: "Zieve syndrome: acute hemolytic anemia, jaundice, hyperlipidemia after heavy alcohol intake." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

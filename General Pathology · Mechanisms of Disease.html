@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Pathology · Mechanisms of Disease</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-dna"></i>
+        <h1>General Pathology · Mechanisms of Disease</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>GENETIC DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#single-gene"><i class="fas fa-dna"></i> 1. Single‑Gene Disorders</a></li>
+                <li class="chapter-item"><a href="#chromosomal"><i class="fas fa-chromosome"></i> 2. Chromosomal Disorders</a></li>
+                <li class="chapter-item"><a href="#multifactorial"><i class="fas fa-project-diagram"></i> 3. Multifactorial Inheritance</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>IMMUNE DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#hypersensitivity"><i class="fas fa-bolt"></i> 4. Hypersensitivity Reactions</a></li>
+                <li class="chapter-item"><a href="#autoimmunity"><i class="fas fa-fist-raised"></i> 5. Autoimmune Diseases</a></li>
+                <li class="chapter-item"><a href="#immunodeficiency"><i class="fas fa-shield-alt"></i> 6. Immunodeficiency Syndromes</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>INFECTIOUS DISEASES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#pathogenesis"><i class="fas fa-bug"></i> 7. Pathogenesis of Infection</a></li>
+                <li class="chapter-item"><a href="#viral"><i class="fas fa-virus"></i> 8. Viral Infections</a></li>
+                <li class="chapter-item"><a href="#bacterial"><i class="fas fa-bacteria"></i> 9. Bacterial Infections</a></li>
+                <li class="chapter-item"><a href="#fungal"><i class="fas fa-spider"></i> 10. Fungal Infections</a></li>
+                <li class="chapter-item"><a href="#parasitic"><i class="fas fa-worm"></i> 11. Parasitic Infections</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENVIRONMENTAL & NUTRITIONAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#toxins"><i class="fas fa-skull-crossbones"></i> 12. Chemical & Physical Injury</a></li>
+                <li class="chapter-item"><a href="#nutritional"><i class="fas fa-apple-alt"></i> 13. Nutritional Disorders</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SYSTEMIC PATHOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#atherosclerosis"><i class="fas fa-heart"></i> 14. Atherosclerosis</a></li>
+                <li class="chapter-item"><a href="#cirrhosis"><i class="fas fa-liver"></i> 15. Cirrhosis</a></li>
+                <li class="chapter-item"><a href="#diabetes"><i class="fas fa-tint"></i> 16. Diabetes Mellitus</a></li>
+                <li class="chapter-item"><a href="#amyloidosis"><i class="fas fa-droplet"></i> 17. Amyloidosis</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== SINGLE‑GENE DISORDERS ==================== -->
+        <section id="single-gene" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 1. Single‑Gene Disorders</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Caused by mutations in a single gene; follow Mendelian inheritance patterns.
+                </div>
+                <div class="subsection-heading">Autosomal Dominant</div>
+                <ul>
+                    <li>Huntington disease, Neurofibromatosis type 1, Marfan syndrome, Familial hypercholesterolemia.</li>
+                </ul>
+                <div class="subsection-heading">Autosomal Recessive</div>
+                <ul>
+                    <li>Cystic fibrosis, Sickle cell disease, Tay‑Sachs, Phenylketonuria.</li>
+                </ul>
+                <div class="subsection-heading">X‑Linked</div>
+                <ul>
+                    <li>Duchenne muscular dystrophy, Hemophilia A, G6PD deficiency.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHROMOSOMAL DISORDERS ==================== -->
+        <section id="chromosomal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chromosome"></i> 2. Chromosomal Disorders</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Syndrome</th><th>Karyotype</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Down syndrome</td><td>Trisomy 21</td><td>Intellectual disability, flat facies, AVSD, Alzheimer risk</td></tr>
+                        <tr><td>Edwards syndrome</td><td>Trisomy 18</td><td>Rocker‑bottom feet, low‑set ears, micrognathia</td></tr>
+                        <tr><td>Patau syndrome</td><td>Trisomy 13</td><td>Cleft lip/palate, polydactyly, holoprosencephaly</td></tr>
+                        <tr><td>Turner syndrome</td><td>45,X</td><td>Short stature, webbed neck, coarctation, streak ovaries</td></tr>
+                        <tr><td>Klinefelter syndrome</td><td>47,XXY</td><td>Tall, hypogonadism, gynecomastia, infertility</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== MULTIFACTORIAL INHERITANCE ==================== -->
+        <section id="multifactorial" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-project-diagram"></i> 3. Multifactorial Inheritance</div>
+            <div class="section-card">
+                <ul>
+                    <li>Interaction of multiple genes + environment.</li>
+                    <li>Examples: Neural tube defects, cleft lip/palate, diabetes, hypertension, coronary artery disease.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== HYPERSENSITIVITY REACTIONS ==================== -->
+        <section id="hypersensitivity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 4. Hypersensitivity Reactions</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Mechanism</th><th>Example</th></tr></thead>
+                    <tbody>
+                        <tr><td>I (immediate)</td><td>IgE, mast cells</td><td>Anaphylaxis, hay fever</td></tr>
+                        <tr><td>II (cytotoxic)</td><td>IgG/IgM, complement</td><td>Autoimmune hemolytic anemia, Goodpasture</td></tr>
+                        <tr><td>III (immune complex)</td><td>Antigen‑antibody complexes</td><td>SLE, serum sickness, post‑strep GN</td></tr>
+                        <tr><td>IV (delayed)</td><td>T‑cell mediated</td><td>Contact dermatitis, PPD, granulomas</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== AUTOIMMUNE DISEASES ==================== -->
+        <section id="autoimmunity" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fist-raised"></i> 5. Autoimmune Diseases</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Organ‑specific:</strong> Hashimoto thyroiditis, Graves, type 1 diabetes, Addison, myasthenia gravis.</li>
+                    <li><strong>Systemic:</strong> SLE, RA, Sjögren, systemic sclerosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== IMMUNODEFICIENCY SYNDROMES ==================== -->
+        <section id="immunodeficiency" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 6. Immunodeficiency Syndromes</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Primary:</strong> SCID, DiGeorge, Bruton, CVID, IgA deficiency, CGD, LAD.</li>
+                    <li><strong>Secondary:</strong> HIV/AIDS, malnutrition, immunosuppressive drugs.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PATHOGENESIS OF INFECTION ==================== -->
+        <section id="pathogenesis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bug"></i> 7. Pathogenesis of Infection</div>
+            <div class="section-card">
+                <ul>
+                    <li>Entry (skin, mucosal, parenteral).</li>
+                    <li>Adherence (pili, adhesins).</li>
+                    <li>Evasion of host defenses (capsule, antigenic variation).</li>
+                    <li>Damage by toxins (exotoxins, endotoxin) or host response.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== VIRAL INFECTIONS ==================== -->
+        <section id="viral" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-virus"></i> 8. Viral Infections</div>
+            <div class="section-card">
+                <ul>
+                    <li>DNA viruses: HPV, HBV, HSV, CMV, EBV, Adenovirus.</li>
+                    <li>RNA viruses: Influenza, HIV, HCV, Polio, Rabies, Measles.</li>
+                    <li>Cytopathic effects: Inclusion bodies, syncytia, lysis.</li>
+                    <li>Latency (HSV, VZV) and oncogenesis (HPV, HBV, EBV).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== BACTERIAL INFECTIONS ==================== -->
+        <section id="bacterial" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 9. Bacterial Infections</div>
+            <div class="section-card">
+                <ul>
+                    <li>Gram‑positive cocci: Staph, Strep, Enterococcus.</li>
+                    <li>Gram‑negative rods: E. coli, Salmonella, Pseudomonas.</li>
+                    <li>Acid‑fast: Mycobacterium TB, leprae.</li>
+                    <li>Spirochetes: Treponema, Borrelia, Leptospira.</li>
+                    <li>Intracellular: Chlamydia, Rickettsia, Listeria.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== FUNGAL INFECTIONS ==================== -->
+        <section id="fungal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-spider"></i> 10. Fungal Infections</div>
+            <div class="section-card">
+                <ul>
+                    <li>Superficial: Dermatophytes, Candida.</li>
+                    <li>Systemic: Histoplasma, Blastomyces, Coccidioides, Cryptococcus.</li>
+                    <li>Opportunistic: Aspergillus, Candida, Mucor (in immunocompromised).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== PARASITIC INFECTIONS ==================== -->
+        <section id="parasitic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-worm"></i> 11. Parasitic Infections</div>
+            <div class="section-card">
+                <ul>
+                    <li>Protozoa: Malaria, Toxoplasma, Giardia, Entamoeba.</li>
+                    <li>Helminths: Ascaris, Hookworm, Taenia, Schistosoma.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHEMICAL & PHYSICAL INJURY ==================== -->
+        <section id="toxins" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-skull-crossbones"></i> 12. Chemical & Physical Injury</div>
+            <div class="section-card">
+                <ul>
+                    <li>Heavy metals: Lead (anemia, neuropathy), Mercury (neurologic), Arsenic (skin cancer).</li>
+                    <li>Industrial chemicals: CCl₄ (liver necrosis), Benzene (leukemia).</li>
+                    <li>Physical agents: Radiation (DNA damage), trauma, thermal injury.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NUTRITIONAL DISORDERS ==================== -->
+        <section id="nutritional" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-apple-alt"></i> 13. Nutritional Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li>Protein‑energy malnutrition: Marasmus, Kwashiorkor.</li>
+                    <li>Vitamin deficiencies: A (night blindness), B1 (beriberi), B3 (pellagra), C (scurvy), D (rickets), K (bleeding).</li>
+                    <li>Overnutrition: Obesity, metabolic syndrome.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ATHEROSCLEROSIS ==================== -->
+        <section id="atherosclerosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 14. Atherosclerosis</div>
+            <div class="section-card">
+                <ul>
+                    <li>Response‑to‑injury hypothesis: Endothelial injury → lipid accumulation (LDL) → inflammation → smooth muscle proliferation → fibrous cap.</li>
+                    <li>Risk factors: Dyslipidemia, hypertension, smoking, diabetes, age.</li>
+                    <li>Complications: MI, stroke, peripheral artery disease.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CIRRHOSIS ==================== -->
+        <section id="cirrhosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-liver"></i> 15. Cirrhosis</div>
+            <div class="section-card">
+                <ul>
+                    <li>Diffuse fibrosis with regenerative nodules.</li>
+                    <li>Etiologies: Alcohol, viral hepatitis (B, C), NASH, autoimmune, biliary.</li>
+                    <li>Complications: Portal hypertension, ascites, varices, encephalopathy, HCC.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== DIABETES MELLITUS ==================== -->
+        <section id="diabetes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 16. Diabetes Mellitus</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Type 1:</strong> Autoimmune destruction of β‑cells (absolute insulin deficiency).</li>
+                    <li><strong>Type 2:</strong> Insulin resistance + relative deficiency.</li>
+                    <li><strong>Complications:</strong> Microvascular (retinopathy, nephropathy, neuropathy), macrovascular (CAD, stroke).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== AMYLOIDOSIS ==================== -->
+        <section id="amyloidosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 17. Amyloidosis</div>
+            <div class="section-card">
+                <ul>
+                    <li>Extracellular deposition of fibrillar proteins (β‑pleated sheet).</li>
+                    <li><strong>AL:</strong> Immunoglobulin light chains (multiple myeloma).</li>
+                    <li><strong>AA:</strong> Serum amyloid A (chronic inflammation).</li>
+                    <li><strong>ATTR:</strong> Transthyretin (senile, familial).</li>
+                    <li>Stain: Congo red → apple‑green birefringence.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive General Pathology · Mechanisms of Disease · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatology · Physiology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-hand"></i>
+        <h1>Dermatology · Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>SKIN STRUCTURE</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#epidermis"><i class="fas fa-layer-group"></i> 1. Epidermis</a></li>
+                <li class="chapter-item"><a href="#dermis"><i class="fas fa-layer-group"></i> 2. Dermis</a></li>
+                <li class="chapter-item"><a href="#hypodermis"><i class="fas fa-layer-group"></i> 3. Hypodermis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SKIN APPENDAGES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#hair"><i class="fas fa-cut"></i> 4. Hair Follicles</a></li>
+                <li class="chapter-item"><a href="#nails"><i class="fas fa-hand"></i> 5. Nails</a></li>
+                <li class="chapter-item"><a href="#glands"><i class="fas fa-tint"></i> 6. Sebaceous & Sweat Glands</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SKIN FUNCTIONS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#barrier"><i class="fas fa-shield-alt"></i> 7. Barrier Function</a></li>
+                <li class="chapter-item"><a href="#immunology"><i class="fas fa-shield-virus"></i> 8. Skin Immunology</a></li>
+                <li class="chapter-item"><a href="#thermoregulation"><i class="fas fa-temperature-high"></i> 9. Thermoregulation</a></li>
+                <li class="chapter-item"><a href="#sensation"><i class="fas fa-hand"></i> 10. Sensation</a></li>
+                <li class="chapter-item"><a href="#vitamin-d"><i class="fas fa-sun"></i> 11. Vitamin D Synthesis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PIGMENTATION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#melanocytes"><i class="fas fa-palette"></i> 12. Melanocytes & Melanin</a></li>
+                <li class="chapter-item"><a href="#pigmentation-disorders"><i class="fas fa-disease"></i> 13. Pigmentation Disorders</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>WOUND HEALING</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#healing"><i class="fas fa-bandaid"></i> 14. Wound Healing</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== EPIDERMIS ==================== -->
+        <section id="epidermis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-layer-group"></i> 1. Epidermis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    The epidermis is the outermost layer of the skin, derived from ectoderm. It is a stratified squamous keratinized epithelium composed mainly of keratinocytes.
+                </div>
+                <div class="subsection-heading">Layers (from deep to superficial)</div>
+                <ul>
+                    <li><strong>Stratum basale (germinativum):</strong> Single layer of columnar cells attached to basement membrane; site of mitotically active keratinocytes; contains melanocytes and Merkel cells.</li>
+                    <li><strong>Stratum spinosum:</strong> Several layers of polyhedral cells connected by desmosomes; contains Langerhans cells.</li>
+                    <li><strong>Stratum granulosum:</strong> Flattened cells with keratohyalin granules (contain profilaggrin) and lamellar bodies (lipids).</li>
+                    <li><strong>Stratum lucidum:</strong> Clear layer present only in thick skin (palms, soles); composed of eleidin.</li>
+                    <li><strong>Stratum corneum:</strong> 15‑30 layers of anucleate, flattened corneocytes filled with keratin; surrounded by lipid matrix; main barrier.</li>
+                </ul>
+                <div class="definition-box">
+                    <strong>Keratinization:</strong> As keratinocytes move upward, they undergo terminal differentiation, losing nuclei and organelles, and accumulating keratin filaments cross‑linked by filaggrin. The cornified envelope (involucrin, loricrin) forms beneath the plasma membrane.
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Psoriasis:</strong> Hyperproliferation and abnormal differentiation leads to thickened epidermis, parakeratosis (retained nuclei in stratum corneum).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="dermis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-layer-group"></i> 2. Dermis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    The dermis is derived from mesoderm and provides structural support, nutrition, and sensation.
+                </div>
+                <div class="subsection-heading">Layers</div>
+                <ul>
+                    <li><strong>Papillary dermis:</strong> Thin, loose connective tissue with collagen type III, elastic fibers; contains capillary loops and Meissner corpuscles.</li>
+                    <li><strong>Reticular dermis:</strong> Dense irregular connective tissue with thick collagen type I bundles and coarse elastic fibers; contains blood vessels, nerves, appendages.</li>
+                </ul>
+                <div class="body-text">
+                    <strong>Extracellular matrix components:</strong> Collagen (type I, III), elastin, fibrillin, proteoglycans (decorin, versican), glycoproteins (fibronectin, laminin).
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Ehlers‑Danlos syndrome:</strong> Defects in collagen synthesis → hyperextensible skin, joint hypermobility.</p>
+                    <p><strong>Marfan syndrome:</strong> Fibrillin defect → skin hyperextensibility, striae.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hypodermis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-layer-group"></i> 3. Hypodermis (Subcutaneous Tissue)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Composed mainly of adipocytes arranged in lobules separated by fibrous septa. Functions: insulation, energy storage, cushioning, and anchoring skin to underlying structures. Contains larger blood vessels and nerves.
+                </div>
+            </div>
+        </section>
+
+        <section id="hair" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cut"></i> 4. Hair Follicles</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Hair follicles are complex structures derived from epidermis, extending into dermis/hypodermis.
+                </div>
+                <ul>
+                    <li><strong>Hair shaft:</strong> Medulla, cortex, cuticle.</li>
+                    <li><strong>Inner root sheath:</strong> Surrounds shaft, keratinizes.</li>
+                    <li><strong>Outer root sheath:</strong> Continuation of epidermis.</li>
+                    <li><strong>Bulb:</strong> Matrix cells (proliferative), melanocytes, dermal papilla (mesenchymal).</li>
+                </ul>
+                <div class="body-text">
+                    <strong>Hair cycle:</strong> Anagen (growth), catagen (regression), telogen (resting), exogen (shedding).
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Alopecia areata:</strong> Autoimmune attack on hair follicles → patchy hair loss.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="nails" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand"></i> 5. Nails</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Nail plate:</strong> Hard keratin produced by nail matrix.</li>
+                    <li><strong>Nail bed:</strong> Epidermis beneath nail plate.</li>
+                    <li><strong>Lunula:</strong> Visible portion of matrix.</li>
+                    <li><strong>Hyponychium:</strong> Seals nail bed at fingertip.</li>
+                    <li><strong>Eponychium (cuticle):</strong> Proximal fold.</li>
+                </ul>
+                <p>Nails grow ~0.1 mm/day (faster in summer, younger age).</p>
+            </div>
+        </section>
+
+        <section id="glands" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 6. Sebaceous & Sweat Glands</div>
+            <div class="section-card">
+                <div class="subsection-heading">Sebaceous glands</div>
+                <ul>
+                    <li>Holocrine secretion (sebum) into hair follicle.</li>
+                    <li>Sebum: triglycerides, wax esters, squalene, cholesterol.</li>
+                    <li>Androgen‑sensitive; largest on face, chest, back.</li>
+                </ul>
+                <div class="subsection-heading">Eccrine sweat glands</div>
+                <ul>
+                    <li>Distributed over body; simple coiled tubular.</li>
+                    <li>Secrete hypotonic fluid (water, electrolytes) for thermoregulation.</li>
+                    <li>Cholinergic sympathetic innervation.</li>
+                </ul>
+                <div class="subsection-heading">Apocrine sweat glands</div>
+                <ul>
+                    <li>Axillae, anogenital; open into hair follicle.</li>
+                    <li>Secrete viscous, odorless fluid; bacteria produce odor.</li>
+                    <li>Become active at puberty (androgen‑sensitive).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="barrier" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 7. Barrier Function</div>
+            <div class="section-card">
+                <div class="body-text">
+                    The stratum corneum forms the primary barrier (brick and mortar model). Corneocytes (bricks) are embedded in lipid matrix (mortar) of ceramides, cholesterol, free fatty acids. Tight junctions in stratum granulosum contribute.
+                </div>
+                <div class="body-text">
+                    <strong>Transepidermal water loss (TEWL):</strong> Measure of barrier integrity; increased in eczema, burns.
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Atopic dermatitis:</strong> Filaggrin mutations impair barrier, leading to TEWL, allergen penetration, inflammation.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="immunology" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-virus"></i> 8. Skin Immunology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Keratinocytes:</strong> Produce antimicrobial peptides (defensins, cathelicidins), cytokines (IL‑1, IL‑6, TNF‑α).</li>
+                    <li><strong>Langerhans cells:</strong> Dendritic cells in epidermis; capture antigen, migrate to lymph nodes, present to T cells.</li>
+                    <li><strong>Dermal dendritic cells, macrophages, mast cells, T cells (especially memory T cells).</strong></li>
+                </ul>
+                <p>Skin‑associated lymphoid tissue (SALT) mediates cutaneous immune responses.</p>
+            </div>
+        </section>
+
+        <section id="thermoregulation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-temperature-high"></i> 9. Thermoregulation</div>
+            <div class="section-card">
+                <ul>
+                    <li>Eccrine sweat evaporation cools body.</li>
+                    <li>Arteriovenous anastomoses in acral skin regulate heat loss via sympathetic tone.</li>
+                    <li>Piloerection (arrector pili muscles) minimal in humans.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="sensation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand"></i> 10. Sensation</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Free nerve endings:</strong> Pain, temperature, itch (C‑fibers).</li>
+                    <li><strong>Meissner corpuscles:</strong> Light touch (glabrous skin).</li>
+                    <li><strong>Pacinian corpuscles:</strong> Vibration, pressure (deep dermis).</li>
+                    <li><strong>Merkel cells:</strong> Light touch, texture (slow adapting).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="vitamin-d" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-sun"></i> 11. Vitamin D Synthesis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    UVB (290‑315 nm) converts 7‑dehydrocholesterol in keratinocytes to cholecalciferol (vitamin D3). Then hydroxylated in liver (25‑OH) and kidney (1,25‑OH) to active form. Essential for calcium homeostasis.
+                </div>
+            </div>
+        </section>
+
+        <section id="melanocytes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-palette"></i> 12. Melanocytes & Melanin</div>
+            <div class="section-card">
+                <ul>
+                    <li>Melanocytes derived from neural crest; reside in stratum basale and hair bulbs.</li>
+                    <li>Melanosomes synthesize melanin (eumelanin brown‑black, pheomelanin yellow‑red).</li>
+                    <li>Transferred to keratinocytes via dendrites (each melanocyte supplies ~36 keratinocytes).</li>
+                    <li>Melanin protects against UV damage.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pigmentation-disorders" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-disease"></i> 13. Pigmentation Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Vitiligo:</strong> Autoimmune destruction of melanocytes → depigmented patches.</li>
+                    <li><strong>Albinism:</strong> Genetic defect in tyrosinase or melanin synthesis → hypopigmentation, vision problems.</li>
+                    <li><strong>Freckles (ephelides):</strong> Increased melanin production, not melanocyte number.</li>
+                    <li><strong>Melasma:</strong> Hyperpigmentation (hormonal, UV).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="healing" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bandaid"></i> 14. Wound Healing</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Phases: hemostasis, inflammation, proliferation (granulation tissue, re‑epithelialization, angiogenesis), remodeling (scar formation).
+                </div>
+                <ul>
+                    <li><strong>Healing by primary intention:</strong> Clean edges, minimal scarring.</li>
+                    <li><strong>Healing by secondary intention:</strong> Open wound, granulation tissue fills defect.</li>
+                    <li><strong>Healing by tertiary intention:</strong> Delayed closure.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Keloid:</strong> Excessive scar beyond wound boundaries; common in darker skin.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Dermatology Physiology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

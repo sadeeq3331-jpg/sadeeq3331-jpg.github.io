@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastrointestinal Pharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Textbook Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f9ff; font-family: 'Open Sans', sans-serif; }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i { font-size: 2rem; color: #ffd966; }
+        .top-bar h1 { font-family: 'Merriweather', serif; font-weight: 700; font-size: 1.8rem; }
+        .top-bar .author {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position: fixed;
+            top: 5rem;
+            left: -350px;
+            width: 320px;
+            height: calc(100vh - 5rem);
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 1.5rem 0.5rem 1.5rem 1.5rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            z-index: 90;
+        }
+        .toc-sidebar.open { left: 0; }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #ffd966;
+            text-transform: uppercase;
+        }
+        .toc-section { margin-bottom: 1.5rem; }
+        .toc-section h3 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1b4c72;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+        .chapter-list { list-style: none; }
+        .chapter-item { margin-bottom: 0.3rem; }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.8rem 0.6rem 1rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 30px 0 0 30px;
+            transition: 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .chapter-item a i { width: 24px; font-size: 1rem; color: #2c7cb0; }
+        .chapter-item a:hover {
+            background: #e9f0f7;
+            border-left-color: #1f6e9c;
+        }
+        .reader-panel {
+            margin-left: 0;
+            padding: 2rem 2.5rem;
+            transition: margin-left 0.3s ease;
+            background: white;
+            min-height: calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left: 320px; }
+        .chapter-content { max-width: 1000px; margin: 0 auto; }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #ffd966;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chapter-title i { font-size: 2.5rem; color: #2c7cb0; }
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 20px -10px rgba(10,41,66,0.1);
+            border: 1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #ffd966;
+            padding-left: 20px;
+        }
+        .subsection-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #154f78;
+            margin: 1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .body-text strong { color: #0a2942; }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #f39c12;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #27ae60;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points ul { list-style: none; }
+        .key-points li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i { color: #8e44ad; }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .premium-table th { background: #0a2942; color: white; padding: 1rem; text-align: left; }
+        .premium-table td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom: none; }
+        .diagram-placeholder {
+            background: #f9fcff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #b9d5f0;
+            text-align: center;
+            color: #2c7cb0;
+        }
+        .diagram-placeholder i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 1000px) {
+            .toc-sidebar { width: 280px; }
+            .reader-panel.shifted { margin-left: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-stethoscope"></i>
+        <h1>Gastrointestinal Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>ANTI‑ULCER DRUGS</h3>
+            <ul class="chapter-list">
+                <li><a href="#antacids"><i class="fas fa-flask"></i> 1. Antacids</a></li>
+                <li><a href="#h2-blockers"><i class="fas fa-bolt"></i> 2. H₂ Receptor Antagonists</a></li>
+                <li><a href="#ppis"><i class="fas fa-bolt"></i> 3. Proton Pump Inhibitors (PPIs)</a></li>
+                <li><a href="#cytoprotectants"><i class="fas fa-shield-alt"></i> 4. Cytoprotective Agents</a></li>
+                <li><a href="#anti-hpylori"><i class="fas fa-bacteria"></i> 5. H. pylori Eradication</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIEMETICS & PROKINETICS</h3>
+            <ul class="chapter-list">
+                <li><a href="#antiemetics"><i class="fas fa-pills"></i> 6. Antiemetics</a></li>
+                <li><a href="#prokinetics"><i class="fas fa-arrow-right"></i> 7. Prokinetic Agents</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>LAXATIVES & ANTIDIARRHEALS</h3>
+            <ul class="chapter-list">
+                <li><a href="#laxatives"><i class="fas fa-droplet"></i> 8. Laxatives</a></li>
+                <li><a href="#antidiarrheals"><i class="fas fa-water"></i> 9. Antidiarrheals</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>IBD & OTHER</h3>
+            <ul class="chapter-list">
+                <li><a href="#ibd"><i class="fas fa-disease"></i> 10. Drugs for IBD</a></li>
+                <li><a href="#ibs"><i class="fas fa-bolt"></i> 11. IBS & Antispasmodics</a></li>
+                <li><a href="#gallstones"><i class="fas fa-gem"></i> 12. Gallstone Dissolution</a></li>
+                <li><a href="#pancreatic-enzymes"><i class="fas fa-bolt"></i> 13. Pancreatic Enzyme Replacement</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CHAPTER 1: ANTACIDS ==================== -->
+        <section id="antacids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 1. Antacids</div>
+            <div class="section-card">
+                <div class="section-heading">What Are Antacids?</div>
+                <div class="body-text">
+                    <p>Antacids are weak bases that neutralize gastric acid, providing rapid symptomatic relief in dyspepsia and gastroesophageal reflux. They do not heal erosive esophagitis and are not first‑line for chronic therapy.</p>
+                </div>
+                <div class="subsection-heading">Common Antacids</div>
+                <table class="premium-table">
+                    <thead><tr><th>Agent</th><th>Properties</th><th>Side Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Aluminum hydroxide</td><td>Slow acting, constipating</td><td>Constipation, hypophosphatemia (binds phosphate)</td></tr>
+                        <tr><td>Magnesium hydroxide</td><td>Rapid acting, laxative effect</td><td>Diarrhea, hypermagnesemia (renal impairment)</td></tr>
+                        <tr><td>Calcium carbonate</td><td>Potent, long‑lasting</td><td>Constipation, acid rebound, hypercalcemia, milk‑alkali syndrome</td></tr>
+                        <tr><td>Sodium bicarbonate</td><td>Very rapid, systemic</td><td>Metabolic alkalosis, sodium load, contraindicated in hypertension/heart failure</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Combination products:</strong> Many antacids combine aluminum and magnesium (e.g., Maalox, Mylanta) to balance bowel effects.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 2: H₂ BLOCKERS ==================== -->
+        <section id="h2-blockers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 2. H₂ Receptor Antagonists</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>H₂ blockers competitively inhibit histamine at H₂ receptors on parietal cells, reducing basal and stimulated acid secretion.</p>
+                </div>
+                <div class="subsection-heading">Examples</div>
+                <ul>
+                    <li><strong>Cimetidine:</strong> First generation, inhibits CYP450, antiandrogenic effects (gynecomastia).</li>
+                    <li><strong>Ranitidine:</strong> More potent, fewer drug interactions.</li>
+                    <li><strong>Famotidine:</strong> Potent, long duration, minimal side effects.</li>
+                    <li><strong>Nizatidine:</strong> Similar to ranitidine.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Uses:</strong> GERD, peptic ulcer, Zollinger‑Ellison (adjunct), stress ulcer prophylaxis. Tolerance may develop with prolonged use.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 3: PROTON PUMP INHIBITORS ==================== -->
+        <section id="ppis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 3. Proton Pump Inhibitors (PPIs)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>PPIs irreversibly inhibit H⁺/K⁺ ATPase on parietal cells, the final step of acid secretion. They are prodrugs activated in acidic environment of secretory canaliculus.</p>
+                </div>
+                <div class="subsection-heading">Examples</div>
+                <ul>
+                    <li><strong>Omeprazole</strong>, esomeprazole, lansoprazole, pantoprazole, rabeprazole.</li>
+                </ul>
+                <div class="subsection-heading">Pharmacokinetics</div>
+                <div class="body-text">
+                    <p>Best taken 30‑60 minutes before meals (max effect when proton pumps are active). Long duration (up to 24h), but full acid suppression takes 3‑4 days.</p>
+                </div>
+                <div class="subsection-heading">Side Effects</div>
+                <ul>
+                    <li>Generally well tolerated. Long‑term use associated with: increased risk of <em>C. difficile</em> infection, pneumonia, osteoporosis/fractures, hypomagnesemia, vitamin B12 deficiency.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Uses:</strong> GERD, erosive esophagitis, peptic ulcer (including NSAID‑associated), Zollinger‑Ellison, H. pylori eradication (with antibiotics).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 4: CYTOPROTECTIVE AGENTS ==================== -->
+        <section id="cytoprotectants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 4. Cytoprotective Agents</div>
+            <div class="section-card">
+                <div class="subsection-heading">Sucralfate</div>
+                <div class="body-text">
+                    <p>Forms a viscous gel in acid environment, binding to ulcer base and protecting against pepsin, bile, and acid. Not absorbed. Given on empty stomach (1h before meals). Constipation is main side effect.</p>
+                </div>
+                <div class="subsection-heading">Misoprostol</div>
+                <div class="body-text">
+                    <p>Synthetic prostaglandin E₁ analogue. Stimulates mucus and bicarbonate secretion, increases mucosal blood flow. Used to prevent NSAID‑induced ulcers. Contraindicated in pregnancy (abortifacient). Side effects: diarrhea, abdominal cramps.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 5: H. PYLORI ERADICATION ==================== -->
+        <section id="anti-hpylori" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 5. Helicobacter pylori Eradication</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Standard triple therapy (PPI + clarithromycin + amoxicillin or metronidazole) for 14 days. Quadruple therapy (PPI + bismuth + metronidazole + tetracycline) used for resistant cases or penicillin allergy.</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Levofloxacin‑based regimens</strong> are second‑line options. Eradication improves ulcer healing and reduces gastric cancer risk.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 6: ANTIEMETICS ==================== -->
+        <section id="antiemetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 6. Antiemetics</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Uses</th><th>Side Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>5‑HT₃ antagonists</td><td>Ondansetron, granisetron</td><td>Block 5‑HT₃ receptors in CTZ and vagal afferents</td><td>Chemotherapy‑induced, post‑op nausea</td><td>Headache, constipation, QT prolongation</td></tr>
+                        <tr><td>Dopamine antagonists</td><td>Metoclopramide, prochlorperazine</td><td>Block D₂ receptors in CTZ</td><td>Migraine, gastroparesis, postoperative</td><td>Extrapyramidal symptoms, tardive dyskinesia</td></tr>
+                        <tr><td>Antihistamines</td><td>Promethazine, diphenhydramine</td><td>H₁ blockade, anticholinergic</td><td>Motion sickness, labyrinthine disorders</td><td>Sedation, dry mouth</td></tr>
+                        <tr><td>Anticholinergics</td><td>Scopolamine</td><td>Muscarinic blockade</td><td>Motion sickness</td><td>Dry mouth, blurred vision</td></tr>
+                        <tr><td>Neurokinin‑1 antagonists</td><td>Aprepitant</td><td>Block substance P in CTZ</td><td>Chemotherapy‑induced delayed emesis</td><td>Fatigue, hiccups</td></tr>
+                        <tr><td>Cannabinoids</td><td>Dronabinol, nabilone</td><td>CB₁ agonism</td><td>Refractory CINV</td><td>Euphoria, dysphoria, sedation</td></tr>
+                        <tr><td>Benzodiazepines</td><td>Lorazepam</td><td>GABA potentiation</td><td>Anticipatory nausea</td><td>Sedation, dependence</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 7: PROKINETICS ==================== -->
+        <section id="prokinetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrow-right"></i> 7. Prokinetic Agents</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Metoclopramide:</strong> Dopamine antagonist + 5‑HT₄ agonist; increases LES tone, gastric emptying. Used in gastroparesis, GERD. Side effects: EPS, tardive dyskinesia (black box warning).</li>
+                    <li><strong>Domperidone:</strong> Peripheral D₂ antagonist; does not cross BBB, so no CNS side effects. Prokinetic and antiemetic.</li>
+                    <li><strong>Macrolides (erythromycin):</strong> Motilin receptor agonist, stimulates gastric emptying (acute use only; tachyphylaxis develops).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 8: LAXATIVES ==================== -->
+        <section id="laxatives" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 8. Laxatives</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Onset</th><th>Comments</th></tr></thead>
+                    <tbody>
+                        <tr><td>Bulk‑forming</td><td>Psyllium, methylcellulose</td><td>Increase stool bulk, stimulate peristalsis</td><td>12‑24h</td><td>Natural fiber, must take with water</td></tr>
+                        <tr><td>Osmotic</td><td>PEG, lactulose, sorbitol</td><td>Retain water in lumen</td><td>24‑48h</td><td>Lactulose also used for hepatic encephalopathy</td></tr>
+                        <tr><td>Stimulant</td><td>Bisacodyl, senna</td><td>Directly stimulate enteric neurons, increase motility</td><td>6‑12h</td><td>Long‑term use may cause melanosis coli, dependence</td></tr>
+                        <tr><td>Surfactant</td><td>Docusate</td><td>Stool softener – lowers surface tension</td><td>24‑72h</td><td>Prevention, not treatment of constipation</td></tr>
+                        <tr><td>Lubricant</td><td>Mineral oil</td><td>Coat stool, retard water absorption</td><td>6‑8h</td><td>Risk of lipoid pneumonia if aspirated</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 9: ANTIDIARRHEALS ==================== -->
+        <section id="antidiarrheals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 9. Antidiarrheals</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Loperamide:</strong> Peripheral µ‑opioid agonist; inhibits peristalsis, increases anal sphincter tone. Does not cross BBB → no CNS effects.</li>
+                    <li><strong>Diphenoxylate/atropine:</strong> Diphenoxylate is an opioid; atropine added to discourage abuse. May cause CNS effects.</li>
+                    <li><strong>Bismuth subsalicylate:</strong> Antimicrobial, antisecretory; used for traveler's diarrhea. May cause dark stools, tinnitus.</li>
+                    <li><strong>Octreotide:</strong> Somatostatin analogue; reduces secretion in carcinoid, VIPoma, AIDS‑related diarrhea.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 10: DRUGS FOR IBD ==================== -->
+        <section id="ibd" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-disease"></i> 10. Drugs for Inflammatory Bowel Disease</div>
+            <div class="section-card">
+                <div class="subsection-heading">5‑Aminosalicylates (5‑ASA)</div>
+                <ul>
+                    <li><strong>Sulfasalazine:</strong> Azo bond cleaved by colonic bacteria to release 5‑ASA (active) and sulfapyridine (carrier). Used in UC and Crohn’s colitis.</li>
+                    <li><strong>Mesalamine (5‑ASA):</strong> Various formulations (Asacol, Pentasa, Lialda) that deliver drug to different intestinal segments.</li>
+                    <li><strong>Balsalazide, olsalazine:</strong> Prodrugs of 5‑ASA.</li>
+                </ul>
+                <div class="subsection-heading">Corticosteroids</div>
+                <ul>
+                    <li><strong>Prednisone, budesonide (entocort):</strong> Budesonide has high first‑pass metabolism, fewer systemic effects; used for mild‑moderate Crohn’s.</li>
+                </ul>
+                <div class="subsection-heading">Immunomodulators</div>
+                <ul>
+                    <li><strong>Azathioprine, 6‑mercaptopurine:</strong> Inhibit purine synthesis; used for steroid‑sparing, maintenance. Slow onset (weeks).</li>
+                    <li><strong>Methotrexate:</strong> Used in Crohn’s.</li>
+                </ul>
+                <div class="subsection-heading">Biologics</div>
+                <ul>
+                    <li><strong>Anti‑TNF:</strong> Infliximab, adalimumab, certolizumab. Neutralize TNF‑α, induce and maintain remission.</li>
+                    <li><strong>Anti‑integrin:</strong> Vedolizumab (gut‑selective).</li>
+                    <li><strong>Anti‑IL12/23:</strong> Ustekinumab.</li>
+                    <li><strong>JAK inhibitors:</strong> Tofacitinib (for UC).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 11: IBS & ANTISPASMODICS ==================== -->
+        <section id="ibs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 11. IBS & Antispasmodics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Anticholinergics/antispasmodics:</strong> Dicyclomine, hyoscyamine – relieve abdominal cramping by reducing smooth muscle spasm.</li>
+                    <li><strong>Peppermint oil:</strong> Natural antispasmodic.</li>
+                    <li><strong>Linaclotide, lubiprostone:</strong> Guanylate cyclase‑C agonist (linaclotide) and chloride channel activator (lubiprostone) – increase fluid secretion, used for IBS‑C.</li>
+                    <li><strong>Alosetron (5‑HT₃ antagonist):</strong> For severe IBS‑D in women (restricted).</li>
+                    <li><strong>Eluxadoline:</strong> Mixed µ‑opioid agonist, δ‑antagonist – for IBS‑D.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 12: GALLSTONE DISSOLUTION ==================== -->
+        <section id="gallstones" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-gem"></i> 12. Gallstone Dissolution</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Ursodeoxycholic acid (ursodiol):</strong> Reduces cholesterol secretion into bile and promotes formation of cholesterol‑poor micelles. Used for dissolution of small, radiolucent cholesterol gallstones in patients with functioning gallbladder. Takes months to years; high recurrence rate. Also used in primary biliary cholangitis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 13: PANCREATIC ENZYME REPLACEMENT ==================== -->
+        <section id="pancreatic-enzymes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 13. Pancreatic Enzyme Replacement</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Pancrelipase (Creon, Zenpep):</strong> Contains lipase, protease, amylase. Used in pancreatic insufficiency (cystic fibrosis, chronic pancreatitis, post‑pancreatectomy). Taken with meals. High doses may cause fibrosing colonopathy.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive GI Pharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

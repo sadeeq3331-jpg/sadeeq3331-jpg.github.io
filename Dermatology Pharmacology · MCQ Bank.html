@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatology Pharmacology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-capsules"></i>
+        <h1>Dermatology Pharmacology · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ UNIQUE DERMATOLOGY PHARMACOLOGY QUESTIONS
+    const questions = [
+        { q: "Topical corticosteroids are classified based on:",
+          opts: ["Potency (vasoconstriction assay)", "Chemical structure", "Half‑life", "Cost", "Side effects"],
+          correct: 0,
+          exp: "Potency is measured by vasoconstriction (blanching) and clinical efficacy." },
+        { q: "Which class of topical corticosteroid is clobetasol propionate?",
+          opts: ["Class I (super‑high potency)", "Class II (high)", "Class III (medium)", "Class IV (low)", "Class V (lowest)"],
+          correct: 0,
+          exp: "Clobetasol 0.05% is a super‑high potency corticosteroid." },
+        { q: "Hydrocortisone belongs to which potency class?",
+          opts: ["Class I", "Class II", "Class III", "Class IV (low)", "Class VII (lowest)"],
+          correct: 4,
+          exp: "Hydrocortisone 1% is a low‑potency (Class VII) corticosteroid." },
+        { q: "The main mechanism of action of topical corticosteroids is:",
+          opts: ["Binding to cytoplasmic glucocorticoid receptors", "Inhibition of cyclooxygenase", "Antihistamine effect", "Mast cell stabilization", "Blocking calcium channels"],
+          correct: 0,
+          exp: "Corticosteroids bind glucocorticoid receptors, affecting gene transcription." },
+        { q: "Common local side effect of potent topical corticosteroids is:",
+          opts: ["Skin atrophy and telangiectasias", "Hyperpigmentation", "Acne", "Allergic contact dermatitis", "Urticaria"],
+          correct: 0,
+          exp: "Atrophy, striae, telangiectasias, and easy bruising are common." },
+        { q: "Prolonged use of high‑potency topical corticosteroids can cause systemic:",
+          opts: ["Adrenal suppression", "Cushing syndrome", "Hyperglycemia", "All of the above", "None"],
+          correct: 3,
+          exp: "Systemic absorption can suppress HPA axis and cause iatrogenic Cushing's." },
+        { q: "Calcineurin inhibitors used topically include:",
+          opts: ["Tacrolimus and pimecrolimus", "Cyclosporine", "Sirolimus", "Mycophenolate mofetil", "Azathioprine"],
+          correct: 0,
+          exp: "Tacrolimus and pimecrolimus are topical calcineurin inhibitors for eczema." },
+        { q: "Topical calcineurin inhibitors are primarily used for:",
+          opts: ["Atopic dermatitis", "Psoriasis", "Acne", "Fungal infections", "Bacterial infections"],
+          correct: 0,
+          exp: "They are second‑line for atopic dermatitis, especially on face and intertriginous areas." },
+        { q: "Tazarotene is a:",
+          opts: ["Topical retinoid", "Corticosteroid", "Vitamin D analog", "Antibiotic", "Antifungal"],
+          correct: 0,
+          exp: "Tazarotene is a receptor‑selective retinoid used for psoriasis and acne." },
+        { q: "Tretinoin (all‑trans retinoic acid) is used for:",
+          opts: ["Acne and photoaging", "Psoriasis", "Eczema", "Rosacea", "Melasma"],
+          correct: 0,
+          exp: "Tretinoin normalizes keratinization and stimulates collagen production." },
+        { q: "Isotretinoin (13‑cis retinoic acid) is used for:",
+          opts: ["Severe nodulocystic acne", "Mild acne", "Psoriasis", "Rosacea", "Skin cancer"],
+          correct: 0,
+          exp: "Isotretinoin is highly effective for severe, treatment‑resistant acne." },
+        { q: "The most important adverse effect of isotretinoin is:",
+          opts: ["Teratogenicity", "Hepatotoxicity", "Hypertriglyceridemia", "Mood changes", "All of the above"],
+          correct: 4,
+          exp: "Isotretinoin is highly teratogenic; also causes lipid elevations, liver enzyme changes, mood effects." },
+        { q: "iPLEDGE program is required for prescribing:",
+          opts: ["Isotretinoin", "Tretinoin", "Acitretin", "Tazarotene", "Adapalene"],
+          correct: 0,
+          exp: "iPLEDGE is a risk management program to prevent fetal exposure to isotretinoin." },
+        { q: "Acitretin is a retinoid used primarily for:",
+          opts: ["Psoriasis", "Acne", "Ichthyosis", "Skin cancer prevention", "Wrinkles"],
+          correct: 0,
+          exp: "Acitretin is systemic retinoid for severe psoriasis." },
+        { q: "Vitamin D analogs used in psoriasis include:",
+          opts: ["Calcipotriene (calcipotriol)", "Tacalcitol", "Both", "None", "Only A"],
+          correct: 2,
+          exp: "Calcipotriene and tacalcitol are vitamin D3 derivatives that inhibit keratinocyte proliferation." },
+        { q: "Calcipotriene should not be used with:",
+          opts: ["Topical corticosteroids (in same product)", "Salicylic acid (inactivates it)", "UVB", "Methotrexate", "Cyclosporine"],
+          correct: 1,
+          exp: "Salicylic acid lowers pH and inactivates calcipotriene." },
+        { q: "Coal tar is used for:",
+          opts: ["Psoriasis and eczema", "Acne", "Fungal infections", "Bacterial infections", "Scabies"],
+          correct: 0,
+          exp: "Coal tar has antiproliferative and anti‑inflammatory effects in psoriasis." },
+        { q: "Anthralin (dithranol) works by:",
+          opts: ["Inhibiting DNA synthesis and reducing epidermal proliferation", "Anti‑inflammatory", "Keratinolytic", "Antimicrobial", "Immunosuppressive"],
+          correct: 0,
+          exp: "Anthralin reduces mitosis and produces free radicals." },
+        { q: "Methotrexate in dermatology is used for:",
+          opts: ["Severe psoriasis and autoimmune bullous diseases", "Acne", "Urticaria", "Fungal infections", "Viral warts"],
+          correct: 0,
+          exp: "Methotrexate inhibits dihydrofolate reductase, reducing lymphocyte proliferation." },
+        { q: "Folic acid supplementation is given with methotrexate to:",
+          opts: ["Reduce gastrointestinal and hematologic side effects", "Enhance efficacy", "Prevent hepatotoxicity", "Prevent pneumonitis", "All"],
+          correct: 0,
+          exp: "Folic acid helps reduce methotrexate toxicity without reducing efficacy." },
+        { q: "Cyclosporine is used in dermatology for:",
+          opts: ["Severe psoriasis and atopic dermatitis", "Acne", "Rosacea", "Melasma", "Warts"],
+          correct: 0,
+          exp: "Cyclosporine is a calcineurin inhibitor that suppresses T‑cell activation." },
+        { q: "Nephrotoxicity and hypertension are major concerns with:",
+          opts: ["Cyclosporine", "Methotrexate", "Azathioprine", "Mycophenolate", "Biologics"],
+          correct: 0,
+          exp: "Cyclosporine can cause irreversible nephrotoxicity and hypertension." },
+        { q: "Azathioprine is metabolized by:",
+          opts: ["Thiopurine methyltransferase (TPMT)", "CYP450", "UGT", "NAT", "GST"],
+          correct: 0,
+          exp: "TPMT activity affects azathioprine toxicity; low TPMT increases risk." },
+        { q: "Mycophenolate mofetil inhibits:",
+          opts: ["Inosine monophosphate dehydrogenase (IMPDH)", "Dihydrofolate reductase", "Calcineurin", "mTOR", "JAK"],
+          correct: 0,
+          exp: "Mycophenolate blocks purine synthesis in lymphocytes." },
+        { q: "Biologic agents targeting TNF‑alpha used in psoriasis include:",
+          opts: ["Adalimumab, etanercept, infliximab", "Ustekinumab", "Secukinumab", "Ixekizumab", "All"],
+          correct: 0,
+          exp: "TNF inhibitors are effective for psoriasis and psoriatic arthritis." },
+        { q: "Ustekinumab targets:",
+          opts: ["IL‑12 and IL‑23 (p40 subunit)", "IL‑17A", "IL‑23 (p19)", "TNF‑alpha", "CD20"],
+          correct: 0,
+          exp: "Ustekinumab binds p40, inhibiting both IL‑12 and IL‑23." },
+        { q: "Secukinumab and ixekizumab are:",
+          opts: ["IL‑17 inhibitors", "IL‑23 inhibitors", "TNF inhibitors", "Integrin inhibitors", "JAK inhibitors"],
+          correct: 0,
+          exp: "They are monoclonal antibodies against IL‑17A." },
+        { q: "Topical antibiotics for acne include:",
+          opts: ["Clindamycin and erythromycin", "Mupirocin", "Bacitracin", "Neomycin", "Gentamicin"],
+          correct: 0,
+          exp: "Clindamycin and erythromycin reduce Cutibacterium acnes and inflammation." },
+        { q: "Benzoyl peroxide is used in acne because it:",
+          opts: ["Has antimicrobial and keratolytic effects, and does not induce resistance", "Only antimicrobial", "Only keratolytic", "Only anti‑inflammatory", "None"],
+          correct: 0,
+          exp: "Benzoyl peroxide kills C. acnes, reduces comedones, and doesn't cause resistance." },
+        { q: "Oral antibiotics commonly used for acne include:",
+          opts: ["Tetracyclines (doxycycline, minocycline)", "Penicillins", "Cephalosporins", "Macrolides only", "Sulfonamides"],
+          correct: 0,
+          exp: "Tetracyclines are first‑line oral antibiotics for acne due to efficacy and anti‑inflammatory effects." },
+        { q: "Minocycline can cause:",
+          opts: ["Hyperpigmentation (blue‑gray)", "Photosensitivity", "Vestibular toxicity", "All of the above", "None"],
+          correct: 3,
+          exp: "Minocycline can cause pigmentation, dizziness, and less photosensitivity than doxycycline." },
+        { q: "Spironolactone is used off‑label for:",
+          opts: ["Hormonal acne in women", "Male pattern baldness", "Hirsutism", "Rosacea", "All"],
+          correct: 0,
+          exp: "Spironolactone blocks androgen receptors, reducing sebum production in women." },
+        { q: "Oral contraceptives improve acne by:",
+          opts: ["Suppressing ovarian androgen production", "Increasing SHBG", "Reducing free testosterone", "All of the above", "None"],
+          correct: 3,
+          exp: "Combined OCs reduce androgens and are FDA‑approved for acne." },
+        { q: "Antifungal drugs for dermatophytes include:",
+          opts: ["Terbinafine", "Itraconazole", "Fluconazole", "Griseofulvin", "All of the above"],
+          correct: 4,
+          exp: "All are used for dermatophyte infections; terbinafine is fungicidal." },
+        { q: "Terbinafine inhibits:",
+          opts: ["Squalene epoxidase", "14α‑demethylase (CYP51)", "Glucan synthase", "DNA synthesis", "Cell wall synthesis"],
+          correct: 0,
+          exp: "Terbinafine blocks squalene epoxidase, leading to squalene accumulation and fungal death." },
+        { q: "Griseofulvin works by:",
+          opts: ["Binding to tubulin, disrupting microtubule function", "Inhibiting ergosterol synthesis", "Inhibiting DNA synthesis", "Disrupting cell membrane", "Blocking protein synthesis"],
+          correct: 0,
+          exp: "Griseofulvin inhibits fungal mitosis by binding microtubules." },
+        { q: "Azole antifungals (e.g., ketoconazole) inhibit:",
+          opts: ["Lanosterol 14α‑demethylase (CYP51)", "Squalene epoxidase", "β‑glucan synthase", "Chitin synthase", "Thymidylate synthase"],
+          correct: 0,
+          exp: "Azoles block ergosterol synthesis by inhibiting CYP51." },
+        { q: "Nystatin is used for:",
+          opts: ["Candida infections (topical or oral)", "Dermatophytes", "Systemic mycoses", "Aspergillosis", "All"],
+          correct: 0,
+          exp: "Nystatin is too toxic for systemic use; it's used topically for Candida." },
+        { q: "Acyclovir is an antiviral used for:",
+          opts: ["HSV and VZV infections", "HPV", "HIV", "Influenza", "CMV"],
+          correct: 0,
+          exp: "Acyclovir inhibits viral DNA polymerase after phosphorylation by viral thymidine kinase." },
+        { q: "Valacyclovir is a prodrug of:",
+          opts: ["Acyclovir", "Famciclovir", "Ganciclovir", "Penciclovir", "Cidofovir"],
+          correct: 0,
+          exp: "Valacyclovir is the L‑valine ester of acyclovir, with better oral bioavailability." },
+        { q: "Penciclovir (topical) and its oral prodrug famciclovir are used for:",
+          opts: ["HSV infections", "VZV", "Both", "CMV", "EBV"],
+          correct: 2,
+          exp: "Famciclovir/penciclovir are effective against HSV and VZV." },
+        { q: "Imiquimod is an immune response modifier used for:",
+          opts: ["Actinic keratosis, superficial BCC, genital warts", "Melanoma", "Psoriasis", "Eczema", "Acne"],
+          correct: 0,
+          exp: "Imiquimod acts via TLR7, inducing local cytokines (interferon)." },
+        { q: "5‑Fluorouracil (5‑FU) topical is used for:",
+          opts: ["Actinic keratosis and superficial BCC", "Psoriasis", "Acne", "Melasma", "Warts"],
+          correct: 0,
+          exp: "5‑FU inhibits thymidylate synthase, killing rapidly dividing cells." },
+        { q: "Diclofenac gel is used for:",
+          opts: ["Actinic keratosis", "Psoriasis", "Eczema", "Acne", "Rosacea"],
+          correct: 0,
+          exp: "Topical diclofenac (NSAID) is approved for actinic keratosis." },
+        { q: "Podophyllin and podofilox are used for:",
+          opts: ["Genital warts (HPV)", "Molluscum contagiosum", "Herpes", "Acne", "Psoriasis"],
+          correct: 0,
+          exp: "They are antimitotic agents that destroy wart tissue." },
+        { q: "Cantharidin is used to treat:",
+          opts: ["Molluscum contagiosum and warts", "Herpes", "Acne", "Psoriasis", "Eczema"],
+          correct: 0,
+          exp: "Cantharidin causes blistering and is used for molluscum and warts." },
+        { q: "Crotamiton is used for:",
+          opts: ["Scabies and pruritus", "Pediculosis", "Fungal infections", "Bacterial infections", "Eczema"],
+          correct: 0,
+          exp: "Crotamiton has anti‑scabies and antipruritic properties." },
+        { q: "Permethrin is a first‑line treatment for:",
+          opts: ["Scabies and head lice", "Tinea", "Candida", "HSV", "HPV"],
+          correct: 0,
+          exp: "Permethrin is a pyrethroid that paralyzes mites and lice." },
+        { q: "Ivermectin (oral or topical) is used for:",
+          opts: ["Scabies and head lice", "Rosacea (topical)", "Demodex", "All of the above", "None"],
+          correct: 3,
+          exp: "Ivermectin is effective for scabies, lice, and topical for rosacea (Demodex)." },
+        { q: "Lindane is rarely used because of:",
+          opts: ["Neurotoxicity risk", "Hepatotoxicity", "Nephrotoxicity", "Carcinogenicity", "Inefficacy"],
+          correct: 0,
+          exp: "Lindane can cause seizures; it's a second‑line agent for scabies/lice." },
+        { q: "Benzyl benzoate is used for:",
+          opts: ["Scabies", "Pediculosis", "Both", "Fungal", "Bacterial"],
+          correct: 2,
+          exp: "Benzyl benzoate is a scabicide and pediculicide." },
+        { q: "Malathion is an organophosphate used for:",
+          opts: ["Head lice (resistant cases)", "Scabies", "Fungal infections", "Bacterial infections", "Herpes"],
+          correct: 0,
+          exp: "Malathion inhibits acetylcholinesterase in lice." },
+        { q: "Silver sulfadiazine cream is used for:",
+          opts: ["Prevention of infection in burns", "Acne", "Eczema", "Psoriasis", "Warts"],
+          correct: 0,
+          exp: "It has broad‑spectrum antibacterial activity against Gram‑negatives." },
+        { q: "Mupirocin is active against:",
+          opts: ["Staphylococcus aureus (including MRSA)", "Streptococcus", "Gram‑negatives", "Anaerobes", "Fungi"],
+          correct: 0,
+          exp: "Mupirocin inhibits bacterial protein synthesis and is used for impetigo." },
+        { q: "Retapamulin is a topical antibiotic used for:",
+          opts: ["Impetigo (S. aureus, S. pyogenes)", "Acne", "MRSA carriage", "Fungal infections", "Viral infections"],
+          correct: 0,
+          exp: "Retapamulin is a pleuromutilin antibiotic for impetigo." },
+        { q: "Hydroquinone is used for:",
+          opts: ["Melasma and hyperpigmentation", "Acne", "Rosacea", "Psoriasis", "Eczema"],
+          correct: 0,
+          exp: "Hydroquinone inhibits tyrosinase, reducing melanin synthesis." },
+        { q: "Tranexamic acid (oral/topical) is used for:",
+          opts: ["Melasma", "Acne", "Rosacea", "Hyperpigmentation", "All"],
+          correct: 0,
+          exp: "Tranexamic acid inhibits plasmin, reducing melanocyte stimulation." },
+        { q: "Kojic acid and azelaic acid are used for:",
+          opts: ["Hyperpigmentation (melasma)", "Acne", "Rosacea", "Both A and B", "All"],
+          correct: 3,
+          exp: "Azelaic acid is used for acne and melasma; kojic acid for pigmentation." },
+        { q: "Capsaicin cream is used for:",
+          opts: ["Postherpetic neuralgia and pruritus", "Acne", "Psoriasis", "Eczema", "Fungal infections"],
+          correct: 0,
+          exp: "Capsaicin depletes substance P, reducing pain and itch." }
+    ];
+    // Add extra 10 to reach 65+
+    const extra = [
+        { q: "Pimecrolimus is a topical calcineurin inhibitor approved for:",
+          opts: ["Mild‑to‑moderate atopic dermatitis", "Severe psoriasis", "Acne", "Rosacea", "Vitiligo"],
+          correct: 0,
+          exp: "Pimecrolimus is for mild‑moderate eczema, especially in sensitive areas." },
+        { q: "Crisaborole is a topical:",
+          opts: ["PDE4 inhibitor", "Calcineurin inhibitor", "Corticosteroid", "Retinoid", "JAK inhibitor"],
+          correct: 0,
+          exp: "Crisaborole inhibits phosphodiesterase‑4, reducing inflammation in atopic dermatitis." },
+        { q: "Ruxolitinib cream is a:",
+          opts: ["JAK inhibitor", "PDE4 inhibitor", "Calcineurin inhibitor", "Retinoid", "Antibiotic"],
+          correct: 0,
+          exp: "Ruxolitinib (JAK1/2 inhibitor) is approved for atopic dermatitis." },
+        { q: "Dupliumab is a monoclonal antibody targeting:",
+          opts: ["IL‑4 receptor alpha (blocks IL‑4 and IL‑13)", "IL‑17", "IL‑23", "TNF", "IgE"],
+          correct: 0,
+          exp: "Dupliumab is used for moderate‑severe atopic dermatitis, asthma, and nasal polyps." },
+        { q: "Tralokinumab is an anti‑IL‑13 antibody used for:",
+          opts: ["Atopic dermatitis", "Psoriasis", "Acne", "Urticaria", "Melanoma"],
+          correct: 0,
+          exp: "Tralokinumab specifically blocks IL‑13." },
+        { q: "Omalizumab is an anti‑IgE antibody used for:",
+          opts: ["Chronic spontaneous urticaria and asthma", "Atopic dermatitis", "Psoriasis", "Acne", "All"],
+          correct: 0,
+          exp: "Omalizumab is approved for chronic urticaria refractory to antihistamines." },
+        { q: "Resorcinol is used as a:",
+          opts: ["Keratolytic agent in acne and eczema", "Antibiotic", "Antifungal", "Corticosteroid", "Retinoid"],
+          correct: 0,
+          exp: "Resorcinol helps remove scale and is used in combination products." },
+        { q: "Salicylic acid in dermatology is used as:",
+          opts: ["Keratolytic (for warts, psoriasis, acne)", "Anti‑inflammatory", "Antimicrobial", "Antipruritic", "All"],
+          correct: 0,
+          exp: "Salicylic acid dissolves intercellular cement, causing desquamation." },
+        { q: "Urea (10‑40%) is used as:",
+          opts: ["Moisturizer and keratolytic", "Antifungal", "Antibacterial", "Corticosteroid", "Retinoid"],
+          correct: 0,
+          exp: "Urea hydrates and breaks down keratin." },
+        { q: "Lactic acid (ammonium lactate) is used for:",
+          opts: ["Xerosis and ichthyosis (moisturizer and keratolytic)", "Acne", "Rosacea", "Psoriasis", "Warts"],
+          correct: 0,
+          exp: "Lactic acid is an alpha‑hydroxy acid that hydrates and exfoliates." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

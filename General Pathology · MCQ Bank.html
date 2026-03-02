@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Pathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-microscope"></i>
+        <h1>General Pathology · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ GENERAL PATHOLOGY MCQ QUESTIONS
+    const questions = [
+        { q: "Which type of necrosis is characterized by preservation of tissue architecture for several days after cell death?",
+          opts: ["Coagulative necrosis", "Liquefactive necrosis", "Caseous necrosis", "Fat necrosis", "Fibrinoid necrosis"],
+          correct: 0,
+          exp: "Coagulative necrosis, typical of ischemia in solid organs, preserves tissue outlines for days." },
+        { q: "Liquefactive necrosis is classically seen in:",
+          opts: ["Brain infarction", "Myocardial infarction", "Tuberculosis", "Acute pancreatitis", "Vasculitis"],
+          correct: 0,
+          exp: "Liquefactive necrosis occurs in the brain due to enzymatic digestion, forming a cyst." },
+        { q: "Caseous necrosis is characteristic of:",
+          opts: ["Tuberculosis", "Myocardial infarction", "Acute pancreatitis", "Brain abscess", "Bacterial pneumonia"],
+          correct: 0,
+          exp: "Caseous necrosis has a cheesy, soft appearance and is seen in TB and fungal infections." },
+        { q: "Fat necrosis with saponification is typically seen in:",
+          opts: ["Acute pancreatitis", "Tuberculosis", "Ischemic heart disease", "Brain infarction", "Chronic gastritis"],
+          correct: 0,
+          exp: "Pancreatic lipase breaks down fat into fatty acids, which combine with calcium to form soaps." },
+        { q: "The nuclear change characterized by fragmentation of the nucleus into small pieces is called:",
+          opts: ["Karyorrhexis", "Pyknosis", "Karyolysis", "Apoptosis", "Heterochromatin"],
+          correct: 0,
+          exp: "Karyorrhexis is nuclear fragmentation; pyknosis is shrinkage; karyolysis is dissolution." },
+        { q: "Apoptosis differs from necrosis in that apoptosis:",
+          opts: ["Does not elicit inflammation", "Causes cell swelling", "Involves loss of membrane integrity", "Is always pathological", "Results in random DNA degradation"],
+          correct: 0,
+          exp: "Apoptosis is programmed cell death without inflammation; necrosis causes inflammation." },
+        { q: "Which of the following is an example of physiologic apoptosis?",
+          opts: ["Endometrial shedding during menstrual cycle", "Myocardial infarction", "Viral hepatitis", "Acute pancreatitis", "Tuberculosis granuloma"],
+          correct: 0,
+          exp: "Apoptosis is physiologic in embryogenesis, hormone‑induced atrophy, and endometrial shedding." },
+        { q: "The intrinsic pathway of apoptosis involves release of cytochrome c from:",
+          opts: ["Mitochondria", "Lysosomes", "Endoplasmic reticulum", "Nucleus", "Golgi apparatus"],
+          correct: 0,
+          exp: "Mitochondrial release of cytochrome c activates caspases via apoptosome." },
+        { q: "Reversible cell injury is characterized by all EXCEPT:",
+          opts: ["Nuclear fragmentation", "Cellular swelling", "Fatty change", "ATP depletion", "Ribosomal detachment"],
+          correct: 0,
+          exp: "Nuclear fragmentation (karyorrhexis) is a sign of irreversible injury (necrosis)." },
+        { q: "Which cellular adaptation involves replacement of one mature cell type by another?",
+          opts: ["Metaplasia", "Dysplasia", "Hyperplasia", "Hypertrophy", "Atrophy"],
+          correct: 0,
+          exp: "Metaplasia is reversible replacement (e.g., squamous metaplasia in respiratory epithelium of smokers)." },
+        { q: "Hypertrophy refers to:",
+          opts: ["Increase in cell size", "Increase in cell number", "Decrease in cell size", "Change in cell type", "Disordered growth"],
+          correct: 0,
+          exp: "Hypertrophy is an increase in cell size; hyperplasia is increase in cell number." },
+        { q: "Which of the following is a labile cell type?",
+          opts: ["Epithelial cells of skin and GI tract", "Hepatocytes", "Neurons", "Cardiac myocytes", "Skeletal muscle cells"],
+          correct: 0,
+          exp: "Labile cells continuously divide (e.g., epithelia, bone marrow). Stable cells (hepatocytes) divide occasionally; permanent cells (neurons) do not divide." },
+        { q: "A 60‑year‑old man with long‑standing hypertension develops left ventricular thickening. This is an example of:",
+          opts: ["Hypertrophy", "Hyperplasia", "Metaplasia", "Dysplasia", "Atrophy"],
+          correct: 0,
+          exp: "Cardiac myocytes respond to increased workload by hypertrophy (they cannot divide)." },
+        { q: "The most common cause of acute inflammation is:",
+          opts: ["Bacterial infection", "Ischemia", "Trauma", "Autoimmunity", "Foreign body"],
+          correct: 0,
+          exp: "Infections, especially bacterial, are the most frequent cause of acute inflammation." },
+        { q: "The cardinal signs of inflammation include all EXCEPT:",
+          opts: ["Loss of function", "Tumor", "Rubor", "Calor", "Pallor"],
+          correct: 4,
+          exp: "Cardinal signs: rubor (redness), calor (heat), tumor (swelling), dolor (pain), functio laesa (loss of function)." },
+        { q: "Vasodilation in acute inflammation is primarily mediated by:",
+          opts: ["Histamine and nitric oxide", "Leukotrienes", "Prostaglandins", "Complement C5a", "Cytokines"],
+          correct: 0,
+          exp: "Histamine and NO cause vasodilation; histamine also increases permeability." },
+        { q: "Increased vascular permeability in acute inflammation is caused by all EXCEPT:",
+          opts: ["Venous thrombosis", "Endothelial contraction (histamine)", "Endothelial injury (burns)", "Leukocyte‑mediated injury", "Angiogenesis"],
+          correct: 0,
+          exp: "Venous thrombosis does not directly increase permeability; it may cause edema by increased hydrostatic pressure." },
+        { q: "Neutrophils are the predominant leukocyte in which type of inflammation?",
+          opts: ["Acute inflammation", "Chronic inflammation", "Granulomatous inflammation", "Allergic inflammation", "Viral infection"],
+          correct: 0,
+          exp: "Neutrophils dominate early acute inflammation; chronic inflammation has lymphocytes, macrophages, plasma cells." },
+        { q: "The process by which leukocytes exit the bloodstream is called:",
+          opts: ["Diapedesis (emigration)", "Chemotaxis", "Phagocytosis", "Margination", "Opsonization"],
+          correct: 0,
+          exp: "Diapedesis is migration through vessel wall; chemotaxis is movement toward chemical gradient." },
+        { q: "Selectins mediate which step of leukocyte recruitment?",
+          opts: ["Rolling", "Adhesion", "Diapedesis", "Chemotaxis", "Phagocytosis"],
+          correct: 0,
+          exp: "Selectins cause loose rolling; integrins mediate firm adhesion." },
+        { q: "Which of the following is a chemotactic factor for neutrophils?",
+          opts: ["IL‑8 (CXCL8)", "Histamine", "Prostaglandin E2", "IL‑4", "IL‑10"],
+          correct: 0,
+          exp: "IL‑8 (CXCL8) is a potent chemotactic factor for neutrophils." },
+        { q: "Opsonins include all EXCEPT:",
+          opts: ["Histamine", "IgG", "C3b", "Mannose‑binding lectin", "Collectins"],
+          correct: 0,
+          exp: "Histamine is a vasoactive mediator, not an opsonin." },
+        { q: "Chronic inflammation is characterized by infiltration of:",
+          opts: ["Lymphocytes, macrophages, plasma cells", "Neutrophils", "Eosinophils", "Basophils", "Mast cells"],
+          correct: 0,
+          exp: "Chronic inflammation features mononuclear cells (lymphocytes, macrophages, plasma cells)." },
+        { q: "Granulomatous inflammation is a subtype of chronic inflammation seen in all EXCEPT:",
+          opts: ["Staphylococcal abscess", "Tuberculosis", "Sarcoidosis", "Crohn disease", "Fungal infections"],
+          correct: 0,
+          exp: "Staphylococcal abscesses are suppurative (acute inflammation), not granulomatous." },
+        { q: "Which cytokine is critical for granuloma formation?",
+          opts: ["IFN‑γ (from Th1 cells)", "IL‑4", "IL‑5", "IL‑17", "TGF‑β"],
+          correct: 0,
+          exp: "IFN‑γ activates macrophages to form epithelioid and giant cells in granulomas." },
+        { q: "The most abundant mediator of fever is:",
+          opts: ["IL‑1, IL‑6, TNF", "Histamine", "Prostaglandin E2", "Leukotriene B4", "C5a"],
+          correct: 0,
+          exp: "Cytokines (IL‑1, IL‑6, TNF) act on hypothalamus to produce fever via PGE2." },
+        { q: "Which complement component is an opsonin?",
+          opts: ["C3b", "C5a", "C3a", "C4a", "C2b"],
+          correct: 0,
+          exp: "C3b coats pathogens for phagocytosis; C5a, C3a are anaphylatoxins." },
+        { q: "The membrane attack complex (MAC) consists of:",
+          opts: ["C5b‑C9", "C3b‑C5", "C1qrs", "C4b2a", "C3bBb"],
+          correct: 0,
+          exp: "MAC (C5b‑9) forms pores in bacterial membranes." },
+        { q: "Tissue repair by regeneration requires:",
+          opts: ["Labile or stable cells with intact stem cells", "Permanent cells", "Extensive scarring", "Granulation tissue", "Fibroblasts"],
+          correct: 0,
+          exp: "Regeneration occurs in labile/stable cells; permanent cells (neurons, cardiac) undergo scarring." },
+        { q: "Which growth factor is a potent stimulator of angiogenesis?",
+          opts: ["VEGF", "PDGF", "FGF", "TGF‑β", "EGF"],
+          correct: 0,
+          exp: "VEGF is the main angiogenic factor; FGF also promotes angiogenesis." },
+        { q: "Granulation tissue is characterized by:",
+          opts: ["New capillaries, fibroblasts, inflammatory cells", "Mature collagen and acellular scar", "Necrotic debris", "Epithelial regeneration", "Hyaline material"],
+          correct: 0,
+          exp: "Granulation tissue has proliferating capillaries, fibroblasts, and mixed inflammation." },
+        { q: "A keloid is an example of:",
+          opts: ["Excessive scar formation beyond wound boundaries", "Normal scar", "Atrophic scar", "Contracture", "Hypertrophic scar within boundaries"],
+          correct: 0,
+          exp: "Keloid extends beyond original wound; hypertrophic scar stays within." },
+        { q: "Which of the following is a primary intention wound healing?",
+          opts: ["Surgical incision with approximated edges", "Large burn wound", "Pressure ulcer", "Abscess cavity", "Infected wound"],
+          correct: 0,
+          exp: "Primary intention: clean edges, minimal scarring; secondary intention: open wound, granulation." },
+        { q: "Edema due to increased capillary hydrostatic pressure is seen in:",
+          opts: ["Heart failure", "Nephrotic syndrome", "Cirrhosis", "Malnutrition", "Lymphatic obstruction"],
+          correct: 0,
+          exp: "Heart failure increases venous pressure, raising capillary hydrostatic pressure." },
+        { q: "Hypoalbuminemia causes edema by:",
+          opts: ["Decreased plasma oncotic pressure", "Increased hydrostatic pressure", "Lymphatic obstruction", "Increased permeability", "Sodium retention"],
+          correct: 0,
+          exp: "Low albumin reduces oncotic pressure, allowing fluid to leave capillaries." },
+        { q: "Virchow's triad for thrombosis includes all EXCEPT:",
+          opts: ["Vasodilation", "Endothelial injury", "Stasis or turbulent flow", "Hypercoagulability"],
+          correct: 0,
+          exp: "Virchow's triad: endothelial injury, stasis/turbulence, hypercoagulability." },
+        { q: "A thrombus that forms in a vein is most likely composed of:",
+          opts: ["Fibrin and red blood cells (red thrombus)", "Platelets and fibrin (white thrombus)", "Platelet aggregates only", "Hyaline material", "Calcified material"],
+          correct: 0,
+          exp: "Venous thrombi are fibrin‑rich with trapped RBCs; arterial thrombi are platelet‑rich." },
+        { q: "An embolus that originates from a deep vein thrombosis most commonly lodges in the:",
+          opts: ["Lungs", "Brain", "Heart", "Kidney", "Spleen"],
+          correct: 0,
+          exp: "DVT emboli travel to lungs (pulmonary embolism)." },
+        { q: "Fat embolism syndrome typically presents with:",
+          opts: ["Hypoxemia, neurologic dysfunction, petechial rash", "Chest pain, dyspnea, cough", "Hemoptysis, pleural rub", "Fever, malaise", "Abdominal pain, vomiting"],
+          correct: 0,
+          exp: "Triad of fat embolism: respiratory distress, cerebral symptoms, petechial rash." },
+        { q: "Pale infarcts are typically seen in solid organs with:",
+          opts: ["End‑arterial supply (heart, kidney, spleen)", "Dual blood supply (liver, lung)", "Loose tissue", "Venous occlusion", "Infection"],
+          correct: 0,
+          exp: "Pale infarcts occur in solid organs with end‑arteries; hemorrhagic infarcts in lungs, liver." },
+        { q: "Shock from spinal cord injury is classified as:",
+          opts: ["Neurogenic shock (distributive)", "Hypovolemic shock", "Cardiogenic shock", "Obstructive shock", "Septic shock"],
+          correct: 0,
+          exp: "Spinal injury disrupts sympathetic tone, causing vasodilation and distributive shock." },
+        { q: "In septic shock, the initial hemodynamic pattern is typically:",
+          opts: ["High cardiac output, low systemic vascular resistance", "Low cardiac output, high SVR", "Low CO, low SVR", "High CO, high SVR", "Normal CO, normal SVR"],
+          correct: 0,
+          exp: "Septic shock is hyperdynamic early (warm shock): ↑CO, ↓SVR; later becomes hypodynamic." },
+        { q: "The most common cause of death in shock is:",
+          opts: ["Multi‑organ dysfunction syndrome (MODS)", "Cardiac arrest", "Respiratory failure", "Renal failure", "Cerebral edema"],
+          correct: 0,
+          exp: "MODS from prolonged tissue hypoperfusion is the leading cause of death." },
+        { q: "Which of the following is a benign tumor of glandular epithelium?",
+          opts: ["Adenoma", "Carcinoma", "Sarcoma", "Lymphoma", "Melanoma"],
+          correct: 0,
+          exp: "Adenoma is benign epithelial neoplasm; carcinoma is malignant." },
+        { q: "The term 'anaplasia' refers to:",
+          opts: ["Lack of differentiation (hallmark of malignancy)", "Abnormal mitoses", "Pleomorphism", "Hyperchromasia", "Loss of polarity"],
+          correct: 0,
+          exp: "Anaplasia means loss of differentiation; includes cellular atypia, pleomorphism, etc." },
+        { q: "Which of the following is a tumor suppressor gene?",
+          opts: ["p53", "RAS", "MYC", "HER2", "BCR‑ABL"],
+          correct: 0,
+          exp: "p53, RB, APC are tumor suppressors; RAS, MYC, HER2 are oncogenes." },
+        { q: "The most common route of metastasis for carcinomas is:",
+          opts: ["Lymphatic", "Hematogenous", "Seeding (body cavities)", "Direct extension", "Transcoelomic"],
+          correct: 0,
+          exp: "Carcinomas typically spread via lymphatics; sarcomas via blood." },
+        { q: "Which of the following is an example of a hereditary cancer syndrome?",
+          opts: ["Li‑Fraumeni syndrome (p53 mutation)", "Cystic fibrosis", "Huntington disease", "Marfan syndrome", "Turner syndrome"],
+          correct: 0,
+          exp: "Li‑Fraumeni (p53) predisposes to multiple cancers." },
+        { q: "The epithelial‑mesenchymal transition (EMT) is important for:",
+          opts: ["Metastasis (invasion and migration)", "Angiogenesis", "Apoptosis", "Cell proliferation", "DNA repair"],
+          correct: 0,
+          exp: "EMT allows cancer cells to become motile and invasive." },
+        { q: "Which of the following viruses is associated with hepatocellular carcinoma?",
+          opts: ["Hepatitis B and C", "HPV", "EBV", "HSV", "CMV"],
+          correct: 0,
+          exp: "HBV and HCV are major risk factors for hepatocellular carcinoma." },
+        { q: "Carcinoma in situ is defined as:",
+          opts: ["Malignant cells confined to epithelium (no invasion)", "Invasive cancer", "Dysplasia without atypia", "Metastatic cancer", "Benign tumor"],
+          correct: 0,
+          exp: "CIS is pre‑invasive; cells have malignant features but basement membrane intact." },
+        { q: "Which of the following is a feature of malignant tumors?",
+          opts: ["Invasion and metastasis", "Well‑differentiated", "Encapsulated", "Slow growth", "Low mitotic activity"],
+          correct: 0,
+          exp: "Invasion, metastasis, anaplasia, high mitotic rate, necrosis are features of malignancy." },
+        { q: "Down syndrome is caused by:",
+          opts: ["Trisomy 21", "Monosomy X", "Trisomy 18", "Deletion 5p", "Translocation 14;21"],
+          correct: 0,
+          exp: "Down syndrome is most often due to trisomy 21; rarely translocation." },
+        { q: "Klinefelter syndrome has karyotype:",
+          opts: ["47,XXY", "45,X", "47,XXX", "47,XYY", "46,XY"],
+          correct: 0,
+          exp: "Klinefelter: 47,XXY; male with tall stature, hypogonadism, gynecomastia." },
+        { q: "Turner syndrome is associated with:",
+          opts: ["45,X", "47,XXY", "47,XXX", "47,XYY", "46,XX"],
+          correct: 0,
+          exp: "Turner: 45,X; female with short stature, webbed neck, coarctation, streak ovaries." },
+        { q: "Huntington disease is an example of:",
+          opts: ["Autosomal dominant trinucleotide repeat disorder", "Autosomal recessive disorder", "X‑linked recessive", "Mitochondrial disease", "Chromosomal abnormality"],
+          correct: 0,
+          exp: "Huntington is AD with CAG repeat expansion (anticipation)." },
+        { q: "Which type of hypersensitivity is mediated by IgE and mast cells?",
+          opts: ["Type I", "Type II", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Type I: immediate (allergic)." },
+        { q: "Goodpasture syndrome is an example of which hypersensitivity?",
+          opts: ["Type II (anti‑basement membrane antibody)", "Type I", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Type II: antibodies against basement membrane of kidney and lung." },
+        { q: "Systemic lupus erythematosus is a prototype of:",
+          opts: ["Type III hypersensitivity (immune complex)", "Type II", "Type I", "Type IV", "Type V"],
+          correct: 0,
+          exp: "SLE involves immune complex deposition." },
+        { q: "Which of the following is an autoimmune disease?",
+          opts: ["Rheumatoid arthritis", "Osteoarthritis", "Gout", "Pseudogout", "Septic arthritis"],
+          correct: 0,
+          exp: "RA is autoimmune; osteoarthritis is degenerative; gout is metabolic." },
+        { q: "The most common primary immunodeficiency is:",
+          opts: ["Selective IgA deficiency", "SCID", "Bruton agammaglobulinemia", "DiGeorge syndrome", "CVID"],
+          correct: 0,
+          exp: "Selective IgA deficiency is most common, often asymptomatic." },
+        { q: "HIV primarily infects which cells?",
+          opts: ["CD4+ T cells, macrophages, dendritic cells", "CD8+ T cells", "B cells", "NK cells", "Neutrophils"],
+          correct: 0,
+          exp: "HIV binds CD4 and co‑receptors (CCR5, CXCR4) on T cells and macrophages." },
+        { q: "Which of the following is an example of a chronic bacterial infection that forms granulomas?",
+          opts: ["Tuberculosis", "Staphylococcal abscess", "Streptococcal pharyngitis", "E. coli UTI", "Cholera"],
+          correct: 0,
+          exp: "TB causes caseating granulomas." },
+        { q: "The mechanism of action of NSAIDs is:",
+          opts: ["Inhibition of cyclooxygenase (COX)", "Inhibition of phospholipase A2", "Blockade of histamine receptors", "Inhibition of leukotrienes", "Antagonism of TNF‑α"],
+          correct: 0,
+          exp: "NSAIDs inhibit COX, reducing prostaglandin synthesis." },
+        { q: "Methotrexate, used in autoimmune diseases, acts by:",
+          opts: ["Inhibiting dihydrofolate reductase and increasing adenosine", "Blocking TNF‑α", "Inhibiting calcineurin", "Depleting lymphocytes", "Blocking IL‑6"],
+          correct: 0,
+          exp: "Methotrexate inhibits DHFR and also increases adenosine, which has anti‑inflammatory effects." },
+        { q: "Cyclosporine inhibits T‑cell activation by binding to:",
+          opts: ["Cyclophilin and inhibiting calcineurin", "FKBP12 and inhibiting mTOR", "NF‑κB", "IL‑2 receptor", "CD28"],
+          correct: 0,
+          exp: "Cyclosporine binds cyclophilin, inhibiting calcineurin and IL‑2 transcription." },
+        { q: "Which antibiotic inhibits bacterial cell wall synthesis?",
+          opts: ["Penicillin", "Tetracycline", "Erythromycin", "Ciprofloxacin", "Sulfamethoxazole"],
+          correct: 0,
+          exp: "Penicillins and cephalosporins inhibit cell wall synthesis." },
+        { q: "The mechanism of action of statins is:",
+          opts: ["Inhibition of HMG‑CoA reductase", "Inhibition of cholesterol absorption", "Increase LDL receptor expression", "Activation of PPAR‑α", "Inhibition of PCSK9"],
+          correct: 0,
+          exp: "Statins competitively inhibit HMG‑CoA reductase." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Which of the following is a common side effect of glucocorticoids?",
+          opts: ["Osteoporosis", "Hypoglycemia", "Hypotension", "Weight loss", "Diarrhea"],
+          correct: 0,
+          exp: "Glucocorticoids cause osteoporosis, hyperglycemia, weight gain, and immunosuppression." },
+        { q: "Warfarin exerts its anticoagulant effect by:",
+          opts: ["Inhibiting vitamin K‑dependent synthesis of factors II, VII, IX, X", "Activating antithrombin III", "Inhibiting factor Xa", "Inhibiting thrombin", "Blocking platelet aggregation"],
+          correct: 0,
+          exp: "Warfarin inhibits vitamin K epoxide reductase, reducing carboxylation of clotting factors." },
+        { q: "The antidote for heparin is:",
+          opts: ["Protamine sulfate", "Vitamin K", "Fresh frozen plasma", "Tranexamic acid", "Aminocaproic acid"],
+          correct: 0,
+          exp: "Protamine binds and neutralizes heparin." },
+        { q: "Methotrexate toxicity can be reversed by:",
+          opts: ["Leucovorin (folinic acid)", "Folic acid", "Vitamin B12", "N‑acetylcysteine", "Methylene blue"],
+          correct: 0,
+          exp: "Leucovorin bypasses DHFR inhibition, rescuing normal cells." },
+        { q: "Imatinib is a tyrosine kinase inhibitor used for:",
+          opts: ["CML (BCR‑ABL positive)", "Breast cancer", "Lung cancer", "Melanoma", "Colon cancer"],
+          correct: 0,
+          exp: "Imatinib targets BCR‑ABL in CML, also c‑KIT in GIST." },
+        { q: "Which of the following is a prodrug that requires activation by CYP2D6?",
+          opts: ["Codeine", "Morphine", "Fentanyl", "Methadone", "Naloxone"],
+          correct: 0,
+          exp: "Codeine is converted to morphine by CYP2D6." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

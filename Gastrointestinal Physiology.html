@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastrointestinal Physiology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts for Textbook Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f5f9ff; font-family: 'Open Sans', sans-serif; }
+        .top-bar {
+            background: linear-gradient(145deg, #0a2942, #1b4c72);
+            color: white;
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 4px solid #ffd966;
+        }
+        .top-bar i { font-size: 2rem; color: #ffd966; }
+        .top-bar h1 { font-family: 'Merriweather', serif; font-weight: 700; font-size: 1.8rem; }
+        .top-bar .author {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover { background: rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position: fixed;
+            top: 5rem;
+            left: -350px;
+            width: 320px;
+            height: calc(100vh - 5rem);
+            background: white;
+            border-right: 2px solid #e6f0fa;
+            overflow-y: auto;
+            padding: 1.5rem 0.5rem 1.5rem 1.5rem;
+            box-shadow: 4px 0 20px -10px rgba(0,0,0,0.2);
+            transition: left 0.3s ease;
+            z-index: 90;
+        }
+        .toc-sidebar.open { left: 0; }
+        .toc-sidebar h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            padding-left: 0.8rem;
+            border-left: 6px solid #ffd966;
+            text-transform: uppercase;
+        }
+        .toc-section { margin-bottom: 1.5rem; }
+        .toc-section h3 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1b4c72;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+        .chapter-list { list-style: none; }
+        .chapter-item { margin-bottom: 0.3rem; }
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.8rem 0.6rem 1rem;
+            text-decoration: none;
+            color: #1e4b6e;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-radius: 30px 0 0 30px;
+            transition: 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .chapter-item a i { width: 24px; font-size: 1rem; color: #2c7cb0; }
+        .chapter-item a:hover {
+            background: #e9f0f7;
+            border-left-color: #1f6e9c;
+        }
+        .reader-panel {
+            margin-left: 0;
+            padding: 2rem 2.5rem;
+            transition: margin-left 0.3s ease;
+            background: white;
+            min-height: calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left: 320px; }
+        .chapter-content { max-width: 1000px; margin: 0 auto; }
+        .chapter-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #ffd966;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .chapter-title i { font-size: 2.5rem; color: #2c7cb0; }
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 20px -10px rgba(10,41,66,0.1);
+            border: 1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0a2942;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #ffd966;
+            padding-left: 20px;
+        }
+        .subsection-heading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #154f78;
+            margin: 1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.05rem;
+            color: #34495e;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+        .body-text strong { color: #0a2942; }
+        .definition-box {
+            background: #f0f9ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background: #fff9e6;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #f39c12;
+        }
+        .memory-aid {
+            background: #e8f0e8;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 6px solid #27ae60;
+        }
+        .key-points {
+            background: #f8f4ff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #8e44ad;
+        }
+        .key-points ul { list-style: none; }
+        .key-points li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-points li i { color: #8e44ad; }
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .premium-table th { background: #0a2942; color: white; padding: 1rem; text-align: left; }
+        .premium-table td { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom: none; }
+        .diagram-placeholder {
+            background: #f9fcff;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px dashed #b9d5f0;
+            text-align: center;
+            color: #2c7cb0;
+        }
+        .diagram-placeholder i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .footer-note {
+            margin-top: 4rem;
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: right;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 1000px) {
+            .toc-sidebar { width: 280px; }
+            .reader-panel.shifted { margin-left: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-stethoscope"></i>
+        <h1>Gastrointestinal Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>PART I – MOTILITY & SECRETION</h3>
+            <ul class="chapter-list">
+                <li><a href="#overview"><i class="fas fa-eye"></i> 1. Overview & Structure</a></li>
+                <li><a href="#motility"><i class="fas fa-arrow-right"></i> 2. GI Motility</a></li>
+                <li><a href="#saliva"><i class="fas fa-droplet"></i> 3. Salivary Secretion</a></li>
+                <li><a href="#gastric"><i class="fas fa-flask"></i> 4. Gastric Secretion</a></li>
+                <li><a href="#pancreatic"><i class="fas fa-bolt"></i> 5. Pancreatic Secretion</a></li>
+                <li><a href="#bile"><i class="fas fa-droplet"></i> 6. Bile & Gallbladder</a></li>
+                <li><a href="#intestinal"><i class="fas fa-water"></i> 7. Intestinal Secretion</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART II – DIGESTION & ABSORPTION</h3>
+            <ul class="chapter-list">
+                <li><a href="#carbs"><i class="fas fa-bread-slice"></i> 8. Carbohydrate Digestion</a></li>
+                <li><a href="#proteins"><i class="fas fa-dna"></i> 9. Protein Digestion</a></li>
+                <li><a href="#fats"><i class="fas fa-oil-can"></i> 10. Fat Digestion & Absorption</a></li>
+                <li><a href="#water-electrolytes"><i class="fas fa-tint"></i> 11. Water & Electrolytes</a></li>
+                <li><a href="#vitamins"><i class="fas fa-pills"></i> 12. Vitamin Absorption</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PART III – LIVER & HORMONES</h3>
+            <ul class="chapter-list">
+                <li><a href="#liver"><i class="fas fa-liver"></i> 13. Liver Physiology</a></li>
+                <li><a href="#hormones"><i class="fas fa-droplet"></i> 14. Gut Hormones</a></li>
+                <li><a href="#gut-brain"><i class="fas fa-brain"></i> 15. Gut‑Brain Axis</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CHAPTER 1: OVERVIEW ==================== -->
+        <section id="overview" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-eye"></i> 1. Overview & Structure of the GI Tract</div>
+            <div class="section-card">
+                <div class="section-heading">What Is the Gastrointestinal Tract?</div>
+                <div class="body-text">
+                    <p>The gastrointestinal (GI) tract is a continuous tube from mouth to anus that processes food: ingestion, digestion, absorption, and elimination. It includes the oral cavity, pharynx, esophagus, stomach, small intestine (duodenum, jejunum, ileum), large intestine, rectum, and anus. Accessory organs – salivary glands, liver, gallbladder, pancreas – secrete enzymes and bile.</p>
+                </div>
+                <div class="subsection-heading">Layers of the GI Wall</div>
+                <div class="body-text">
+                    <p>From inside out: <strong>mucosa</strong> (epithelium, lamina propria, muscularis mucosae), <strong>submucosa</strong> (connective tissue, blood vessels, submucosal plexus), <strong>muscularis externa</strong> (inner circular, outer longitudinal smooth muscle; myenteric plexus between them), <strong>serosa</strong> (connective tissue covered by visceral peritoneum).</p>
+                </div>
+                <div class="diagram-placeholder"><i class="fas fa-layer-group"></i> Diagram of GI wall layers</div>
+            </div>
+            <div class="section-card">
+                <div class="section-heading">Enteric Nervous System (ENS)</div>
+                <div class="body-text">
+                    <p>The ENS is the “little brain” of the gut, consisting of two plexuses:</p>
+                    <ul>
+                        <li><strong>Myenteric (Auerbach’s) plexus:</strong> between circular and longitudinal muscle; controls motility.</li>
+                        <li><strong>Submucosal (Meissner’s) plexus:</strong> in submucosa; controls secretion and blood flow.</li>
+                    </ul>
+                    <p>The ENS receives input from the autonomic nervous system but can function independently.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 2: MOTILITY ==================== -->
+        <section id="motility" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrow-right"></i> 2. GI Motility</div>
+            <div class="section-card">
+                <div class="section-heading">Types of Movements</div>
+                <div class="body-text">
+                    <ul>
+                        <li><strong>Peristalsis:</strong> Waves of contraction that propel contents aborally. Involves contraction behind and relaxation ahead (law of the gut).</li>
+                        <li><strong>Segmentation:</strong> Mixing contractions that chop and mix chyme; more frequent in small intestine.</li>
+                        <li><strong>Tonic contractions:</strong> Sustained contractions (e.g., sphincters).</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">Chewing and Swallowing</div>
+                <div class="body-text">
+                    <p>Chewing (mastication) mechanically breaks food, mixes with saliva. Swallowing (deglutition) has three phases: oral (voluntary), pharyngeal (involuntary, reflex), esophageal (peristalsis). The lower esophageal sphincter (LES) relaxes to allow bolus entry.</p>
+                </div>
+                <div class="subsection-heading">Gastric Motility</div>
+                <div class="body-text">
+                    <p>Receptive relaxation (vagovagal reflex) allows stomach to accommodate food. Peristaltic waves mix and grind chyme. Liquids empty faster; fats slow gastric emptying via enterogastric reflexes and hormones (CCK, secretin).</p>
+                </div>
+                <div class="subsection-heading">Migrating Motor Complex (MMC)</div>
+                <div class="body-text">
+                    <p>During fasting, cycles of strong peristalsis (every 90 min) sweep residual contents from stomach to colon. Disrupted in bacterial overgrowth.</p>
+                </div>
+                <div class="subsection-heading">Defecation</div>
+                <div class="body-text">
+                    <p>Distension of rectum initiates parasympathetic reflex, relaxes internal anal sphincter, voluntary relaxation of external sphincter allows expulsion.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 3: SALIVARY SECRETION ==================== -->
+        <section id="saliva" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 3. Salivary Secretion</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Saliva is produced by parotid (serous), submandibular (mixed), and sublingual (mucous) glands. Daily volume ~1‑1.5 L. Functions: lubrication, starch digestion (α‑amylase), antibacterial (lysozyme, IgA), buffer (bicarbonate).</p>
+                </div>
+                <div class="subsection-heading">Composition</div>
+                <div class="body-text">
+                    <p>Primary secretion (acini) is isotonic; as it flows through ducts, Na⁺ and Cl⁻ are reabsorbed, K⁺ and HCO₃⁻ secreted → hypotonic saliva. Aldosterone increases Na⁺ reabsorption.</p>
+                </div>
+                <div class="subsection-heading">Regulation</div>
+                <div class="body-text">
+                    <p>Exclusively neural: parasympathetic (ACh, M3) → abundant watery saliva; sympathetic (norepinephrine) → small volume, thick mucus. Sight, smell, thought of food stimulate salivation (cephalic phase).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 4: GASTRIC SECRETION ==================== -->
+        <section id="gastric" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 4. Gastric Secretion</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Gastric glands contain parietal cells (HCl, intrinsic factor), chief cells (pepsinogen), mucous cells (mucus), G cells (gastrin), D cells (somatostatin).</p>
+                </div>
+                <div class="subsection-heading">HCl Secretion</div>
+                <div class="body-text">
+                    <p>Parietal cells secrete H⁺ via H⁺/K⁺ ATPase. Stimulated by ACh (vagus), gastrin (G cells), histamine (paracrine from ECL cells). Inhibited by somatostatin (D cells), prostaglandins. H₂ blockers and PPIs inhibit acid.</p>
+                </div>
+                <div class="subsection-heading">Phases of Gastric Secretion</div>
+                <ul>
+                    <li><strong>Cephalic:</strong> sight/smell/thought → vagus → stimulates parietal cells and G cells.</li>
+                    <li><strong>Gastric:</strong> distension, peptides → gastrin release → acid secretion.</li>
+                    <li><strong>Intestinal:</strong> arrival of chyme in duodenum triggers inhibitory hormones (secretin, CCK, GIP) to slow gastric emptying and secretion.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Zollinger‑Ellison syndrome:</strong> gastrinoma (usually pancreas) → massive acid → ulcers.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 5: PANCREATIC SECRETION ==================== -->
+        <section id="pancreatic" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 5. Pancreatic Secretion</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Exocrine pancreas secretes ~1.5 L/day of alkaline fluid rich in digestive enzymes. Acinar cells secrete enzymes; ductal cells secrete bicarbonate.</p>
+                </div>
+                <div class="subsection-heading">Enzymes</div>
+                <ul>
+                    <li>Proteases (trypsinogen, chymotrypsinogen, procarboxypeptidase) – activated in duodenum by enterokinase.</li>
+                    <li>Lipase, colipase, phospholipase A₂.</li>
+                    <li>Amylase.</li>
+                </ul>
+                <div class="subsection-heading">Bicarbonate Secretion</div>
+                <div class="body-text">
+                    <p>Ductal cells secrete HCO₃⁻ (via CFTR and Cl⁻/HCO₃⁻ exchanger) to neutralize gastric acid.</p>
+                </div>
+                <div class="subsection-heading">Regulation</div>
+                <div class="body-text">
+                    <p>Secretin (from S cells in duodenum in response to acid) stimulates HCO₃⁻. CCK (from I cells in response to fats/amino acids) stimulates enzyme secretion. Vagal stimulation also increases secretion.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 6: BILE & GALLBLADDER ==================== -->
+        <section id="bile" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 6. Bile Secretion & Gallbladder Function</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Bile (0.5‑1 L/day) is produced by hepatocytes, stored and concentrated in gallbladder. Contains bile salts (emulsify fats), phospholipids, cholesterol, bilirubin, electrolytes.</p>
+                </div>
+                <div class="subsection-heading">Bile Salts</div>
+                <div class="body-text">
+                    <p>Synthesized from cholesterol, conjugated with glycine or taurine. They form micelles essential for fat absorption. Enterohepatic circulation recycles bile salts.</p>
+                </div>
+                <div class="subsection-heading">Gallbladder Emptying</div>
+                <div class="body-text">
+                    <p>CCK causes gallbladder contraction and relaxation of sphincter of Oddi, delivering bile into duodenum. Vagal stimulation also promotes contraction.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 7: INTESTINAL SECRETION ==================== -->
+        <section id="intestinal" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 7. Intestinal Secretion</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Crypt cells secrete isotonic fluid rich in HCO₃⁻. Villus cells absorb nutrients and electrolytes. Secretion is stimulated by luminal distension, toxins (e.g., cholera toxin via cAMP), and hormones.</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p>Cholera toxin permanently activates G<sub>s</sub> → ↑cAMP → massive fluid secretion → watery diarrhea.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 8: CARBOHYDRATE DIGESTION ==================== -->
+        <section id="carbs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bread-slice"></i> 8. Carbohydrate Digestion & Absorption</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Starch (amylose, amylopectin) broken down by salivary and pancreatic α‑amylase to maltose, maltotriose, α‑dextrins. Brush border enzymes (maltase, sucrase, lactase, isomaltase) split disaccharides into monosaccharides.</p>
+                    <p>Glucose and galactose are absorbed via SGLT1 (Na⁺‑dependent). Fructose via GLUT5 (facilitated). All exit via GLUT2.</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Lactase deficiency</strong> → lactose intolerance (bloating, diarrhea).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 9: PROTEIN DIGESTION ==================== -->
+        <section id="proteins" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 9. Protein Digestion & Absorption</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Pepsin (stomach) begins digestion. Pancreatic proteases (trypsin, chymotrypsin, elastase, carboxypeptidases) produce oligopeptides and amino acids. Brush border peptidases further break down to amino acids, di‑, tripeptides.</p>
+                    <p>Absorption: amino acids via Na⁺‑dependent transporters; di/tripeptides via PEPT1 (H⁺‑dependent).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 10: FAT DIGESTION ==================== -->
+        <section id="fats" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-oil-can"></i> 10. Fat Digestion & Absorption</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Triglycerides emulsified by bile salts. Pancreatic lipase (with colipase) hydrolyzes to fatty acids and monoglycerides. Bile salts form micelles that ferry lipids to enterocyte surface.</p>
+                    <p>Inside enterocyte, re‑esterified to triglycerides, packaged into chylomicrons (with apolipoproteins), secreted into lymph (lacteals).</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Steatorrhea:</strong> fat in stool due to malabsorption (e.g., pancreatic insufficiency, bile duct obstruction).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 11: WATER & ELECTROLYTES ==================== -->
+        <section id="water-electrolytes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 11. Water & Electrolyte Absorption</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Water follows osmotic gradients – absorbed passively throughout small and large intestine. Na⁺ absorbed via multiple mechanisms (Na⁺/H⁺ exchange, Na⁺‑nutrient cotransport, ENaC in colon). Cl⁻ absorbed via Cl⁻/HCO₃⁻ exchange. K⁺ is secreted in colon.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 12: VITAMIN ABSORPTION ==================== -->
+        <section id="vitamins" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 12. Vitamin Absorption</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Fat‑soluble vitamins (A, D, E, K):</strong> incorporated into micelles, absorbed with fats.</p>
+                    <p><strong>Vitamin B12:</strong> binds intrinsic factor (IF) in stomach, absorbed in terminal ileum via IF‑B12 receptors.</p>
+                    <p><strong>Folate, thiamine, other B vitamins:</strong> absorbed by specific transporters.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 13: LIVER PHYSIOLOGY ==================== -->
+        <section id="liver" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-liver"></i> 13. Liver Physiology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The liver is the largest internal organ. Key functions:</p>
+                    <ul>
+                        <li><strong>Metabolic:</strong> glucose homeostasis (glycogenesis, gluconeogenesis), lipid metabolism (synthesis of cholesterol, lipoproteins), protein synthesis (albumin, clotting factors).</li>
+                        <li><strong>Detoxification:</strong> phase I (cytochrome P450) and phase II (conjugation) reactions.</li>
+                        <li><strong>Bile production:</strong> as above.</li>
+                        <li><strong>Storage:</strong> glycogen, iron, vitamins.</li>
+                    </ul>
+                </div>
+                <div class="subsection-heading">Liver Lobule</div>
+                <div class="body-text">
+                    <p>The classic lobule is centered on a central vein, with portal triads at the periphery. Blood flows from portal venule and hepatic arteriole through sinusoids to central vein. Hepatocytes are arranged in plates; bile canaliculi carry bile to bile ducts.</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p>Hepatic encephalopathy results from failure to detoxify ammonia and other neurotoxins.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 14: GUT HORMONES ==================== -->
+        <section id="hormones" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 14. Gut Hormones</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Hormone</th><th>Source</th><th>Stimuli</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        <tr><td>Gastrin</td><td>G cells (antrum)</td><td>Peptides, vagus, distension</td><td>↑ gastric acid, ↑ growth of gastric mucosa</td></tr>
+                        <tr><td>CCK</td><td>I cells (duodenum)</td><td>Fatty acids, amino acids</td><td>↑ pancreatic enzymes, ↑ gallbladder contraction, ↓ gastric emptying</td></tr>
+                        <tr><td>Secretin</td><td>S cells (duodenum)</td><td>Acid (low pH)</td><td>↑ pancreatic HCO₃⁻, ↓ gastric acid</td></tr>
+                        <tr><td>GIP</td><td>K cells (duodenum)</td><td>Glucose, fat</td><td>↑ insulin release (incretin effect), ↓ gastric acid</td></tr>
+                        <tr><td>Ghrelin</td><td>Stomach</td><td>Fasting, hunger</td><td>↑ appetite, ↑ GH release</td></tr>
+                        <tr><td>Somatostatin</td><td>D cells (stomach, pancreas)</td><td>Acid, many</td><td>↓ all GI secretions, ↓ gut motility</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPTER 15: GUT‑BRAIN AXIS ==================== -->
+        <section id="gut-brain" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 15. Gut‑Brain Axis & Integrated Responses</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The gut and brain communicate bidirectionally via vagus, sympathetic nerves, and hormones (e.g., ghrelin, leptin). This axis regulates appetite, satiety, and gut function.</p>
+                    <p><strong>Vago‑vagal reflexes:</strong> gastric distension → vagal afferents → brainstem → vagal efferents → altered motility/secretion.</p>
+                    <p><strong>Entero‑enteric reflexes:</strong> local reflexes within ENS coordinate peristalsis and secretion.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive GI Physiology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

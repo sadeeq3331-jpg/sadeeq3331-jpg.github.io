@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Medicine · Pharmacology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-ambulance"></i>
+        <h1>Emergency Medicine · Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>RESUSCITATION & ACLS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acls"><i class="fas fa-heartbeat"></i> 1. ACLS Drugs</a></li>
+                <li class="chapter-item"><a href="#shock-drugs"><i class="fas fa-syringe"></i> 2. Vasopressors & Inotropes</a></li>
+                <li class="chapter-item"><a href="#antiarrhythmics-em"><i class="fas fa-chart-line"></i> 3. Antiarrhythmics in Emergencies</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>RESPIRATORY EMERGENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#airway-drugs"><i class="fas fa-lungs"></i> 4. Rapid Sequence Intubation (RSI) Drugs</a></li>
+                <li class="chapter-item"><a href="#asthma-drugs"><i class="fas fa-wind"></i> 5. Asthma & COPD Drugs</a></li>
+                <li class="chapter-item"><a href="#pulmonary-embolism"><i class="fas fa-blood"></i> 6. Anticoagulants & Thrombolytics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CARDIOVASCULAR EMERGENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acs-pharm"><i class="fas fa-heart-broken"></i> 7. Acute Coronary Syndrome Drugs</a></li>
+                <li class="chapter-item"><a href="#hypertensive-emergency"><i class="fas fa-tachometer-alt"></i> 8. Antihypertensives for Emergencies</a></li>
+                <li class="chapter-item"><a href="#aortic-dissection-pharm"><i class="fas fa-syringe"></i> 9. Aortic Dissection Drugs</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>NEUROLOGIC EMERGENCIES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#stroke-tpa"><i class="fas fa-brain"></i> 10. Thrombolytics in Stroke</a></li>
+                <li class="chapter-item"><a href="#antiepileptics"><i class="fas fa-bolt"></i> 11. Antiepileptics in Status Epilepticus</a></li>
+                <li class="chapter-item"><a href="#intracranial-pressure"><i class="fas fa-head-side-brain"></i> 12. Drugs for Increased ICP</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>METABOLIC & TOXICOLOGIC</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#electrolyte-emergencies"><i class="fas fa-flask"></i> 13. Electrolyte Emergencies Management</a></li>
+                <li class="chapter-item"><a href="#antidotes"><i class="fas fa-skull-crossbones"></i> 14. Antidotes in Overdose</a></li>
+                <li class="chapter-item"><a href="#endocrine-emergencies"><i class="fas fa-tint"></i> 15. Endocrine Emergencies (DKA, Thyroid)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANALGESIA & SEDATION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#analgesics"><i class="fas fa-capsules"></i> 16. Analgesics in Emergency</a></li>
+                <li class="chapter-item"><a href="#sedatives"><i class="fas fa-syringe"></i> 17. Procedural Sedation</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>INFECTIONS & ANTIBIOTICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#sepsis"><i class="fas fa-bacteria"></i> 18. Antibiotics in Sepsis</a></li>
+                <li class="chapter-item"><a href="#meningitis-antibiotics"><i class="fas fa-skull"></i> 19. Antibiotics for Meningitis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENVIRONMENTAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#hyperthermia-pharm"><i class="fas fa-temperature-high"></i> 20. Hyperthermia & Malignant Hyperthermia</a></li>
+                <li class="chapter-item"><a href="#hypothermia-pharm"><i class="fas fa-temperature-low"></i> 21. Hypothermia</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== RESUSCITATION & ACLS ==================== -->
+        <section id="acls" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heartbeat"></i> 1. ACLS Drugs</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Advanced Cardiac Life Support (ACLS) drugs are used during cardiac arrest and periarrest situations.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Indication</th><th>Dose</th><th>Mechanism</th></tr></thead>
+                    <tbody>
+                        <tr><td>Epinephrine</td><td>VF/pVT, asystole, PEA</td><td>1 mg IV/IO q3‑5min</td><td>α‑adrenergic → vasoconstriction, ↑ coronary and cerebral perfusion</td></tr>
+                        <tr><td>Amiodarone</td><td>Shock‑refractory VF/pVT</td><td>300 mg IV push, then 150 mg</td><td>K⁺ channel blocker (class III), also Na⁺, Ca²⁺, β‑blocker</td></tr>
+                        <tr><td>Lidocaine</td><td>Alternative to amiodarone</td><td>1‑1.5 mg/kg IV</td><td>Na⁺ channel blocker (class Ib)</td></tr>
+                        <tr><td>Magnesium sulfate</td><td>Torsade de pointes, hypomagnesemia</td><td>1‑2 g IV</td><td>Stabilizes membrane</td></tr>
+                        <tr><td>Atropine</td><td>Symptomatic bradycardia</td><td>0.5 mg IV q3‑5min (max 3 mg)</td><td>Muscarinic antagonist</td></tr>
+                        <tr><td>Calcium gluconate/chloride</td><td>Hyperkalemia, calcium channel blocker overdose</td><td>1‑2 g IV</td><td>Stabilizes myocardium</td></tr>
+                        <tr><td>Sodium bicarbonate</td><td>Hyperkalemia, TCA overdose</td><td>1 mEq/kg IV</td><td>Corrects acidosis, alkalinizes urine</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="shock-drugs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 2. Vasopressors & Inotropes</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Receptor</th><th>Effects</th><th>Indication</th></tr></thead>
+                    <tbody>
+                        <tr><td>Norepinephrine</td><td>α1 >> β1</td><td>Vasoconstriction, ↑ BP</td><td>Septic shock, cardiogenic shock</td></tr>
+                        <tr><td>Epinephrine</td><td>β1, β2, α1</td><td>↑ HR, contractility, vasoconstriction</td><td>Anaphylaxis, cardiac arrest</td></tr>
+                        <tr><td>Dopamine</td><td>Dopaminergic, β1, α1 (dose‑dependent)</td><td>Low dose: renal; medium: inotropic; high: vasoconstriction</td><td>Shock (less used now)</td></tr>
+                        <tr><td>Dobutamine</td><td>β1 > β2</td><td>Inotropy, mild vasodilation</td><td>Cardiogenic shock, heart failure</td></tr>
+                        <tr><td>Vasopressin</td><td>V1 (vascular) </td><td>Vasoconstriction</td><td>Septic shock (alternative)</td></tr>
+                        <tr><td>Phenylephrine</td><td>α1</td><td>Pure vasoconstriction</td><td>Hypotension, often in spinal shock</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="antiarrhythmics-em" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 3. Antiarrhythmics in Emergencies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Adenosine:</strong> 6 mg rapid IV push, then 12 mg if needed. For stable narrow‑complex SVT (AV nodal reentrant). Mechanism: transient AV nodal blockade.</li>
+                    <li><strong>Amiodarone:</strong> 150 mg IV over 10 min for stable wide‑complex tachycardia, then infusion.</li>
+                    <li><strong>Procainamide:</strong> 20‑50 mg/min IV until arrhythmia controlled or hypotension. For atrial fibrillation/flutter, wide‑complex tachycardia.</li>
+                    <li><strong>Lidocaine:</strong> 1‑1.5 mg/kg IV, then infusion. For ventricular arrhythmias (especially post‑MI).</li>
+                    <li><strong>Magnesium:</strong> 1‑2 g IV for torsade de pointes, pre‑eclampsia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== RESPIRATORY EMERGENCIES ==================== -->
+        <section id="airway-drugs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 4. Rapid Sequence Intubation (RSI) Drugs</div>
+            <div class="section-card">
+                <div class="body-text">
+                    RSI combines a sedative (induction agent) and a neuromuscular blocker (paralytic) to facilitate intubation.
+                </div>
+                <div class="subsection-heading">Induction Agents</div>
+                <ul>
+                    <li><strong>Etomidate:</strong> 0.3 mg/kg IV – hemodynamically stable; causes adrenal suppression (single dose OK).</li>
+                    <li><strong>Ketamine:</strong> 1‑2 mg/kg IV – sympathomimetic (↑ BP, HR), good for asthma, shock; dissociative.</li>
+                    <li><strong>Propofol:</strong> 1‑2 mg/kg IV – rapid onset, hypotension risk; good for neuro cases.</li>
+                    <li><strong>Midazolam:</strong> 0.2‑0.3 mg/kg IV – slower onset, hypotension; less commonly first‑line.</li>
+                </ul>
+                <div class="subsection-heading">Neuromuscular Blockers</div>
+                <ul>
+                    <li><strong>Succinylcholine:</strong> 1‑1.5 mg/kg IV – depolarizing, rapid onset (45 sec), duration 5‑10 min. Contraindications: hyperkalemia, muscular dystrophy, malignant hyperthermia.</li>
+                    <li><strong>Rocuronium:</strong> 0.6‑1.2 mg/kg IV – non‑depolarizing, onset 60‑90 sec, duration 30‑60 min. Can be reversed with sugammadex.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="asthma-drugs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wind"></i> 5. Asthma & COPD Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Albuterol (salbutamol):</strong> Nebulized 2.5‑5 mg q20min or continuous. β2‑agonist bronchodilator.</li>
+                    <li><strong>Ipratropium bromide:</strong> Nebulized 0.5 mg q20min; anticholinergic, added to β2‑agonists in severe exacerbation.</li>
+                    <li><strong>Corticosteroids:</strong> Methylprednisolone 125 mg IV or prednisone 40‑60 mg PO. Reduce inflammation.</li>
+                    <li><strong>Magnesium sulfate:</strong> 2 g IV over 20 min; adjunct in severe asthma.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pulmonary-embolism" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 6. Anticoagulants & Thrombolytics for PE</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Unfractionated heparin (UFH):</strong> 80 U/kg bolus, then 18 U/kg/h drip; monitor aPTT.</li>
+                    <li><strong>LMWH (enoxaparin):</strong> 1 mg/kg SC q12h; for stable PE.</li>
+                    <li><strong>Thrombolytics (alteplase/tPA):</strong> 100 mg IV over 2h for massive PE with hypotension.</li>
+                    <li><strong>DOACs (rivaroxaban, apixaban):</strong> Oral options for stable patients.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CARDIOVASCULAR EMERGENCIES ==================== -->
+        <section id="acs-pharm" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart-broken"></i> 7. Acute Coronary Syndrome Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Aspirin:</strong> 162‑325 mg chewed – antiplatelet.</li>
+                    <li><strong>Nitroglycerin:</strong> 0.4 mg SL q5min up to 3 doses, then IV for persistent pain/hypertension.</li>
+                    <li><strong>Morphine:</strong> 2‑4 mg IV for pain unresponsive to nitrates.</li>
+                    <li><strong>β‑blockers (metoprolol):</strong> 5 mg IV q5min up to 15 mg if no contraindications.</li>
+                    <li><strong>Heparin (UFH or LMWH):</strong> For NSTEMI.</li>
+                    <li><strong>P2Y12 inhibitors:</strong> Clopidogrel 300‑600 mg PO, ticagrelor 180 mg PO.</li>
+                    <li><strong>GP IIb/IIIa inhibitors (eptifibatide, tirofiban):</strong> For high‑risk NSTEMI.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hypertensive-emergency" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tachometer-alt"></i> 8. Antihypertensives for Emergencies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Labetalol:</strong> 20 mg IV bolus, then 20‑80 mg q10min up to 300 mg, or drip. α1,β‑blocker.</li>
+                    <li><strong>Nicardipine:</strong> 5 mg/h IV, titrate q5min; dihydropyridine CCB.</li>
+                    <li><strong>Clevidipine:</strong> 1‑2 mg/h IV, ultra‑short acting CCB.</li>
+                    <li><strong>Nitroprusside:</strong> 0.25‑10 µg/kg/min IV – arterial and venous dilator; risk of cyanide toxicity.</li>
+                    <li><strong>Hydralazine:</strong> 10‑20 mg IV q30min; arteriolar vasodilator, reflex tachycardia.</li>
+                    <li><strong>Esmolol:</strong> 500 µg/kg IV load, then 50‑300 µg/kg/min; β1‑selective.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="aortic-dissection-pharm" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 9. Aortic Dissection Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li>Goal: Reduce heart rate (to 60 bpm) and BP (to 100‑120 mmHg systolic).</li>
+                    <li><strong>β‑blocker first:</strong> Esmolol drip or labetolol bolus/drip.</li>
+                    <li>Add <strong>nitroprusside</strong> or <strong>nicardipine</strong> after β‑blockade to avoid reflex tachycardia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NEUROLOGIC EMERGENCIES ==================== -->
+        <section id="stroke-tpa" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 10. Thrombolytics in Stroke</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Alteplase (tPA):</strong> 0.9 mg/kg IV (max 90 mg), 10% bolus, rest over 1h. Within 3‑4.5h of onset.</li>
+                    <li>Exclusion criteria: ICH, recent surgery, severe hypertension, etc.</li>
+                    <li>BP control before and after: labetalol, nicardipine.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="antiepileptics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 11. Antiepileptics in Status Epilepticus</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>First‑line (0‑5 min):</strong> Benzodiazepines – lorazepam 0.1 mg/kg IV or midazolam 0.2 mg/kg IM/IV.</li>
+                    <li><strong>Second‑line (5‑20 min):</strong> Fosphenytoin (20 mg PE/kg IV), levetiracetam (60 mg/kg IV), valproate (40 mg/kg IV).</li>
+                    <li><strong>Third‑line (refractory):</strong> Continuous infusion midazolam, propofol, pentobarbital; with EEG monitoring.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="intracranial-pressure" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-head-side-brain"></i> 12. Drugs for Increased ICP</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Mannitol:</strong> 0.5‑1 g/kg IV bolus; osmotic diuretic.</li>
+                    <li><strong>Hypertonic saline (3%):</strong> 150‑300 mL bolus; alternative to mannitol.</li>
+                    <li><strong>Elevate head, hyperventilation (temporary), sedation, paralytics, barbiturates.</strong></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== METABOLIC & TOXICOLOGIC ==================== -->
+        <section id="electrolyte-emergencies" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 13. Electrolyte Emergencies Management</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Hyperkalemia:</strong> 
+                        <ul>
+                            <li>Stabilize myocardium: calcium gluconate 1‑2 g IV.</li>
+                            <li>Shift K⁺: insulin 10 units + D50 25g, albuterol nebulized, sodium bicarbonate if acidotic.</li>
+                            <li>Remove: kayexalate, dialysis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Hypokalemia:</strong> IV/PO potassium (max 10‑20 mEq/h).</li>
+                    <li><strong>Hyponatremia:</strong> Severe symptoms (seizures): 3% hypertonic saline 100‑150 mL bolus; correct slowly (<8 mEq/L/day).</li>
+                    <li><strong>Hypercalcemia:</strong> IV fluids, bisphosphonates (pamidronate, zoledronic acid), calcitonin.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="antidotes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-skull-crossbones"></i> 14. Antidotes in Overdose</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Toxin</th><th>Antidote</th></tr></thead>
+                    <tbody>
+                        <tr><td>Acetaminophen</td><td>N‑acetylcysteine</td></tr>
+                        <tr><td>Opioids</td><td>Naloxone</td></tr>
+                        <tr><td>Benzodiazepines</td><td>Flumazenil (caution)</td></tr>
+                        <tr><td>Organophosphates</td><td>Atropine + pralidoxime</td></tr>
+                        <tr><td>Iron</td><td>Deferoxamine</td></tr>
+                        <tr><td>Lead</td><td>Succimer, EDTA, dimercaprol</td></tr>
+                        <tr><td>Cyanide</td><td>Hydroxocobalamin, nitrite‑thiosulfate</td></tr>
+                        <tr><td>Methanol, ethylene glycol</td><td>Fomepizole, ethanol</td></tr>
+                        <tr><td>TCAs</td><td>Sodium bicarbonate</td></tr>
+                        <tr><td>Calcium channel blockers</td><td>Calcium, high‑dose insulin</td></tr>
+                        <tr><td>β‑blockers</td><td>Glucagon</td></tr>
+                        <tr><td>Digoxin</td><td>Digoxin‑Fab</td></tr>
+                        <tr><td>Local anesthetics</td><td>Lipid emulsion</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="endocrine-emergencies" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 15. Endocrine Emergencies</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>DKA:</strong> IV fluids, insulin infusion (0.1 U/kg/h), K⁺ replacement, bicarbonate rarely.</li>
+                    <li><strong>HHS:</strong> Aggressive fluid resuscitation, insulin, K⁺.</li>
+                    <li><strong>Thyroid storm:</strong> β‑blockers (propranolol), thionamides (PTU, methimazole), iodine, steroids, cooling.</li>
+                    <li><strong>Myxedema coma:</strong> IV levothyroxine (or liothyronine), steroids, supportive care.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANALGESIA & SEDATION ==================== -->
+        <section id="analgesics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 16. Analgesics in Emergency</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Opioids:</strong> Morphine (2‑5 mg IV), fentanyl (25‑50 µg IV), hydromorphone (0.2‑0.5 mg IV).</li>
+                    <li><strong>Ketamine:</strong> 0.1‑0.3 mg/kg IV for sub‑dissociative analgesia; also for dissociative sedation.</li>
+                    <li><strong>NSAIDs:</strong> Ketorolac 15‑30 mg IV/IM for moderate pain.</li>
+                    <li><strong>Acetaminophen:</strong> 1 g IV/PO.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="sedatives" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 17. Procedural Sedation</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Midazolam:</strong> 0.05‑0.1 mg/kg IV – benzodiazepine, amnestic.</li>
+                    <li><strong>Fentanyl:</strong> 0.5‑1 µg/kg IV – opioid, synergistic with midazolam.</li>
+                    <li><strong>Propofol:</strong> 0.5‑1 mg/kg IV, then 0.5 mg/kg q3min – rapid onset, hypotension risk.</li>
+                    <li><strong>Ketamine:</strong> 1‑2 mg/kg IV – dissociative, maintains airway reflexes.</li>
+                    <li><strong>Etomidate:</strong> 0.1‑0.15 mg/kg IV – brief sedation, minimal hemodynamic effect.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== INFECTIONS & ANTIBIOTICS ==================== -->
+        <section id="sepsis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 18. Antibiotics in Sepsis</div>
+            <div class="section-card">
+                <ul>
+                    <li>Broad‑spectrum empiric therapy within 1 hour.</li>
+                    <li><strong>Community‑acquired:</strong> Ceftriaxone + azithromycin (or respiratory fluoroquinolone).</li>
+                    <li><strong>Health‑care associated:</strong> Anti‑pseudomonal (cefepime, meropenem, piperacillin‑tazobactam) + vancomycin for MRSA.</li>
+                    <li>Adjust based on cultures and de‑escalate.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="meningitis-antibiotics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-skull"></i> 19. Antibiotics for Meningitis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Empiric (adults):</strong> Ceftriaxone 2g IV q12h + vancomycin + dexamethasone (adjunct).</li>
+                    <li><strong>If immunocompromised or >50:</strong> Add ampicillin (for Listeria).</li>
+                    <li><strong>Neonates:</strong> Ampicillin + cefotaxime + acyclovir (if HSV).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ENVIRONMENTAL ==================== -->
+        <section id="hyperthermia-pharm" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-temperature-high"></i> 20. Hyperthermia & Malignant Hyperthermia</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Heat stroke:</strong> Rapid cooling (evaporative, cold IV fluids), benzodiazepines for shivering.</li>
+                    <li><strong>Malignant hyperthermia:</strong> Dantrolene 2.5 mg/kg IV q5min up to 10 mg/kg; cooling, bicarbonate, treat hyperkalemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hypothermia-pharm" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-temperature-low"></i> 21. Hypothermia</div>
+            <div class="section-card">
+                <ul>
+                    <li>Rewarming techniques (passive, active external, active internal).</li>
+                    <li>Warm IV fluids, warmed humidified oxygen.</li>
+                    <li>Avoid vasopressors if possible; CPR if needed.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Emergency Medicine Pharmacology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

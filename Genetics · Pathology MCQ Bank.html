@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetics · Pathology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-dna"></i>
+        <h1>Genetics · Pathology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ GENETICS PATHOLOGY (INHERITANCE & DISORDERS) QUESTIONS
+    const questions = [
+        { q: "Down syndrome is most commonly caused by:",
+          opts: ["Meiotic nondisjunction of chromosome 21", "Robertsonian translocation", "Mosaicism", "Deletion of chromosome 21", "Duplication of chromosome 21"],
+          correct: 0,
+          exp: "95% of Down syndrome is due to trisomy 21 from meiotic nondisjunction (maternal age‑related)." },
+        { q: "The karyotype of a male with Klinefelter syndrome is:",
+          opts: ["47,XXY", "45,X", "47,XXX", "47,XYY", "46,XX"],
+          correct: 0,
+          exp: "Klinefelter: 47,XXY; phenotypic male with tall stature, hypogonadism, gynecomastia." },
+        { q: "Turner syndrome is associated with which karyotype?",
+          opts: ["45,X", "47,XXY", "47,XXX", "47,XYY", "46,XY"],
+          correct: 0,
+          exp: "Turner: 45,X; female with short stature, webbed neck, coarctation, streak ovaries." },
+        { q: "A child with cri‑du‑chat syndrome has a deletion of:",
+          opts: ["Chromosome 5p", "Chromosome 4p", "Chromosome 15q", "Chromosome 22q", "Chromosome 7q"],
+          correct: 0,
+          exp: "Cri‑du‑chat: 5p deletion → cat‑like cry, microcephaly, intellectual disability." },
+        { q: "Wolf‑Hirschhorn syndrome is caused by deletion of:",
+          opts: ["Chromosome 4p", "Chromosome 5p", "Chromosome 15q", "Chromosome 22q", "Chromosome 11p"],
+          correct: 0,
+          exp: "Wolf‑Hirschhorn: 4p deletion → Greek helmet facies, growth retardation, seizures." },
+        { q: "Which syndrome is associated with a deletion of chromosome 22q11.2?",
+          opts: ["DiGeorge syndrome (velocardiofacial)", "Williams syndrome", "Angelman syndrome", "Prader‑Willi syndrome", "Fragile X syndrome"],
+          correct: 0,
+          exp: "22q11.2 deletion → thymic aplasia, cardiac defects, hypocalcemia, cleft palate." },
+        { q: "Williams syndrome is caused by deletion of:",
+          opts: ["Elastin gene (7q11.23)", "FBN1", "NF1", "DMD", "CFTR"],
+          correct: 0,
+          exp: "Williams: 7q11.23 deletion (elastin) → supravalvular aortic stenosis, elfin facies, hypercalcemia." },
+        { q: "Robertsonian translocation involves fusion of two:",
+          opts: ["Acrocentric chromosomes (13,14,15,21,22)", "Metacentric chromosomes", "Submetacentric chromosomes", "Sex chromosomes", "Telomeres"],
+          correct: 0,
+          exp: "Robertsonian translocation: centric fusion of acrocentric chromosomes; carrier has 45 chromosomes." },
+        { q: "A Robertsonian translocation carrier has how many chromosomes?",
+          opts: ["45", "46", "47", "44", "48"],
+          correct: 0,
+          exp: "They have 45 chromosomes because two have fused; phenotypically normal." },
+        { q: "Familial Down syndrome (translocation type) often involves chromosomes:",
+          opts: ["14 and 21", "21 and 21", "13 and 14", "15 and 21", "22 and 21"],
+          correct: 0,
+          exp: "t(14;21) is most common translocation causing Down syndrome." },
+        { q: "Cystic fibrosis is an autosomal recessive disorder caused by mutations in the gene encoding:",
+          opts: ["CFTR (chloride channel)", "Dystrophin", "Fibrillin", "LDL receptor", "Hemoglobin"],
+          correct: 0,
+          exp: "CFTR gene (chromosome 7) mutations cause CF; most common is ΔF508." },
+        { q: "Sickle cell disease is caused by a point mutation resulting in substitution of:",
+          opts: ["Glutamate to valine at codon 6 of β‑globin", "Valine to glutamate", "Glutamate to lysine", "Glutamine to valine", "Proline to serine"],
+          correct: 0,
+          exp: "GAG (Glu) → GTG (Val) at β6; missense mutation." },
+        { q: "Which of the following is an autosomal dominant disorder?",
+          opts: ["Huntington disease", "Cystic fibrosis", "Sickle cell anemia", "Tay‑Sachs disease", "Phenylketonuria"],
+          correct: 0,
+          exp: "Huntington is AD; the others are AR." },
+        { q: "Neurofibromatosis type 1 (NF1) is caused by a mutation in the gene located on chromosome:",
+          opts: ["17q (neurofibromin)", "22q", "4p", "15q", "Xq"],
+          correct: 0,
+          exp: "NF1 gene on chromosome 17 encodes neurofibromin (tumor suppressor)." },
+        { q: "Marfan syndrome is due to mutations in the gene encoding:",
+          opts: ["Fibrillin‑1 (FBN1)", "Fibrillin‑2", "Collagen type I", "Collagen type III", "Elastin"],
+          correct: 0,
+          exp: "FBN1 mutation (chromosome 15) causes defective microfibrils." },
+        { q: "Familial adenomatous polyposis (FAP) is caused by mutation in the gene:",
+          opts: ["APC (adenomatous polyposis coli)", "MLH1", "MSH2", "KRAS", "TP53"],
+          correct: 0,
+          exp: "APC gene mutation leads to hundreds of colon polyps; AD." },
+        { q: "Hereditary non‑polyposis colorectal cancer (HNPCC) is due to defects in:",
+          opts: ["Mismatch repair genes (MLH1, MSH2, MSH6)", "APC", "TP53", "KRAS", "BRAF"],
+          correct: 0,
+          exp: "HNPCC (Lynch syndrome) → microsatellite instability, increased risk colon, endometrial cancer." },
+        { q: "Li‑Fraumeni syndrome is associated with germline mutation in:",
+          opts: ["TP53 (p53 tumor suppressor)", "RB1", "WT1", "BRCA1", "PTEN"],
+          correct: 0,
+          exp: "TP53 mutation predisposes to sarcomas, breast cancer, brain tumors, leukemia." },
+        { q: "Hereditary breast‑ovarian cancer syndrome is most commonly due to mutations in:",
+          opts: ["BRCA1 and BRCA2", "TP53", "PTEN", "STK11", "CDH1"],
+          correct: 0,
+          exp: "BRCA1 (chromosome 17) and BRCA2 (13) are involved in DNA repair." },
+        { q: "Retinoblastoma can be hereditary or sporadic. The hereditary form is characterized by:",
+          opts: ["Bilateral disease, earlier onset, RB1 germline mutation", "Unilateral disease, later onset", "Always fatal", "No family history", "Associated with Wilms tumor"],
+          correct: 0,
+          exp: "Hereditary retinoblastoma follows Knudson two‑hit hypothesis; often bilateral." },
+        { q: "Wilms tumor (nephroblastoma) is associated with which genes?",
+          opts: ["WT1, WT2", "RB1", "TP53", "APC", "VHL"],
+          correct: 0,
+          exp: "WT1 (11p13) and WT2 (11p15) are tumor suppressors; Wilms occurs in WAGR, Beckwith‑Wiedemann." },
+        { q: "Von Hippel‑Lindau (VHL) disease is associated with increased risk of:",
+          opts: ["Renal cell carcinoma, pheochromocytoma, hemangioblastoma", "Breast cancer", "Colon cancer", "Retinoblastoma", "Osteosarcoma"],
+          correct: 0,
+          exp: "VHL gene (3p25) is tumor suppressor; clear cell RCC, CNS hemangioblastomas." },
+        { q: "Which syndrome is characterized by multiple endocrine neoplasia type 2 (MEN2) and medullary thyroid carcinoma?",
+          opts: ["RET proto‑oncogene mutation", "MEN1 gene mutation", "TP53 mutation", "VHL mutation", "NF1 mutation"],
+          correct: 0,
+          exp: "MEN2 (AD) is due to RET mutations; includes medullary thyroid carcinoma, pheochromocytoma." },
+        { q: "MEN1 (multiple endocrine neoplasia type 1) involves mutations in the menin gene and predisposes to tumors of:",
+          opts: ["Parathyroid, pancreas, pituitary", "Thyroid, adrenal, pancreas", "Adrenal, thyroid, parathyroid", "Pituitary, adrenal, thyroid", "Parathyroid, thyroid, adrenal"],
+          correct: 0,
+          exp: "MEN1: parathyroid adenoma, pancreatic neuroendocrine tumors, pituitary adenoma." },
+        { q: "Prader‑Willi syndrome is typically caused by:",
+          opts: ["Paternal deletion of 15q11‑13", "Maternal deletion of 15q11‑13", "Paternal uniparental disomy 15", "Maternal uniparental disomy 15", "Both A and C"],
+          correct: 4,
+          exp: "PWS: paternal deletion (70%) or maternal UPD (25%); Angelman: maternal deletion or paternal UPD." },
+        { q: "Angelman syndrome (happy puppet) is caused by:",
+          opts: ["Maternal deletion of 15q11‑13 (UBE3A)", "Paternal deletion of 15q11‑13", "Paternal UPD 15", "Maternal UPD 15", "Deletion of 7q11.23"],
+          correct: 0,
+          exp: "Angelman: maternal deletion or paternal UPD of 15q11‑13 (UBE3A)." },
+        { q: "Beckwith‑Wiedemann syndrome (11p15) is characterized by:",
+          opts: ["Macrosomia, omphalocele, macroglossia, neonatal hypoglycemia, tumor risk", "Microcephaly, growth retardation", "Cleft lip, cardiac defects", "Short stature, webbed neck", "Tall stature, gynecomastia"],
+          correct: 0,
+          exp: "Beckwith‑Wiedemann: overgrowth, abdominal wall defect, large tongue, Wilms tumor risk." },
+        { q: "Fragile X syndrome is caused by:",
+          opts: ["CGG repeat expansion in FMR1 gene (>200 repeats) → silencing", "CAG repeat expansion in huntingtin", "CTG repeat expansion in DMPK", "GAA repeat expansion in frataxin", "Deletion of chromosome X"],
+          correct: 0,
+          exp: "Fragile X: FMR1 CGG expansion → intellectual disability, long face, macroorchidism." },
+        { q: "Myotonic dystrophy is caused by:",
+          opts: ["CTG repeat expansion in DMPK (chromosome 19)", "CAG repeat", "CGG repeat", "GAA repeat", "CCG repeat"],
+          correct: 0,
+          exp: "Myotonic dystrophy: CTG expansion → anticipation, myotonia, cataracts, cardiac arrhythmias." },
+        { q: "Huntington disease involves:",
+          opts: ["CAG repeat expansion in huntingtin gene (chromosome 4)", "CGG repeat", "CTG repeat", "GAA repeat", "CCG repeat"],
+          correct: 0,
+          exp: "Huntington: CAG repeat (>36) → chorea, dementia, caudate atrophy." },
+        { q: "Friedreich ataxia is caused by:",
+          opts: ["GAA repeat expansion in frataxin gene (chromosome 9)", "CAG repeat", "CGG repeat", "CTG repeat", "CCG repeat"],
+          correct: 0,
+          exp: "Friedreich: GAA repeat → progressive ataxia, cardiomyopathy, diabetes." },
+        { q: "Anticipation is a feature of:",
+          opts: ["Trinucleotide repeat disorders", "Chromosomal translocations", "Single gene disorders", "Mitochondrial disorders", "Imprinting disorders"],
+          correct: 0,
+          exp: "Anticipation (earlier onset/increased severity in generations) occurs in repeat expansion diseases." },
+        { q: "X‑linked recessive disorders typically:",
+          opts: ["Affect males, transmitted by carrier females, no male‑to‑male", "Affect both sexes equally", "Show male‑to‑male transmission", "Are lethal in males", "Affect only females"],
+          correct: 0,
+          exp: "X‑linked recessive: affected males; daughters are carriers; sons not affected." },
+        { q: "Duchenne muscular dystrophy is an X‑linked recessive disorder caused by mutations in the gene for:",
+          opts: ["Dystrophin", "Dystroglycan", "Sarcoglycan", "Laminin", "Dysferlin"],
+          correct: 0,
+          exp: "Dystrophin gene (Xp21) deletions cause Duchenne (out‑of‑frame) or Becker (in‑frame)." },
+        { q: "Hemophilia A is due to deficiency of:",
+          opts: ["Factor VIII (F8 gene)", "Factor IX", "Factor XI", "von Willebrand factor", "Factor VII"],
+          correct: 0,
+          exp: "Hemophilia A: factor VIII deficiency; B: factor IX." },
+        { q: "G6PD deficiency is an X‑linked disorder that causes:",
+          opts: ["Hemolytic anemia triggered by oxidative stress", "Bleeding disorder", "Thrombophilia", "Immunodeficiency", "Neurological deterioration"],
+          correct: 0,
+          exp: "G6PD deficiency → impaired NADPH production → RBC oxidative damage." },
+        { q: "Mitochondrial disorders (e.g., MELAS, LHON) are inherited:",
+          opts: ["Maternally", "Paternally", "Autosomal dominant", "Autosomal recessive", "X‑linked"],
+          correct: 0,
+          exp: "Mitochondrial DNA is maternally inherited." },
+        { q: "Heteroplasmy refers to:",
+          opts: ["Coexistence of mutant and wild‑type mitochondrial DNA in a cell", "Different mutations in same gene", "Different phenotypes from same genotype", "Variable expression", "Incomplete penetrance"],
+          correct: 0,
+          exp: "Heteroplasmy influences severity of mitochondrial diseases." },
+        { q: "In autosomal dominant disorders with complete penetrance, an affected heterozygote and an unaffected partner have what chance of an affected child?",
+          opts: ["50%", "25%", "75%", "100%", "0%"],
+          correct: 0,
+          exp: "Each child has 50% chance of inheriting the mutant allele." },
+        { q: "Two carriers of an autosomal recessive disorder have a _____ chance of having an affected child.",
+          opts: ["25%", "50%", "75%", "100%", "0%"],
+          correct: 0,
+          exp: "AR: 25% affected, 50% carrier, 25% unaffected." },
+        { q: "The incidence of an autosomal recessive disorder is 1/1600. The carrier frequency is approximately:",
+          opts: ["1/20", "1/40", "1/80", "1/100", "1/200"],
+          correct: 0,
+          exp: "q² = 1/1600 → q = 1/40 → p ≈ 1 → carrier frequency 2pq = 1/20." },
+        { q: "Which of the following is a contiguous gene deletion syndrome?",
+          opts: ["Williams syndrome (7q11.23)", "Fragile X", "Huntington", "Cystic fibrosis", "Sickle cell"],
+          correct: 0,
+          exp: "Williams, DiGeorge (22q11.2), Prader‑Willi/Angelman (15q11) are contiguous gene deletion syndromes." },
+        { q: "Mosaicism refers to:",
+          opts: ["Presence of two or more genetically different cell lines in the same individual", "Mutation in all cells", "Loss of heterozygosity", "Gene duplication", "Chromosomal translocation"],
+          correct: 0,
+          exp: "Mosaicism can cause milder phenotype (e.g., mosaic Down syndrome)." },
+        { q: "Uniparental disomy (UPD) means:",
+          opts: ["Both chromosomes of a pair inherited from one parent", "One chromosome from each parent", "Extra chromosome from one parent", "Missing chromosome", "Chromosomal rearrangement"],
+          correct: 0,
+          exp: "UPD can cause imprinting disorders (e.g., Prader‑Willi from maternal UPD15)." },
+        { q: "Loss of heterozygosity (LOH) is an important mechanism in:",
+          opts: ["Tumor suppressor gene inactivation (e.g., retinoblastoma)", "Oncogene activation", "Germline mutations", "Mitochondrial disease", "Fragile site expression"],
+          correct: 0,
+          exp: "LOH reveals recessive mutation in tumor suppressor (Knudson two‑hit)." },
+        { q: "Knudson's two‑hit hypothesis applies to:",
+          opts: ["Tumor suppressor genes", "Oncogenes", "DNA repair genes", "Apoptosis genes", "Cell cycle genes"],
+          correct: 0,
+          exp: "Retinoblastoma and other tumor suppressors require both alleles inactivated." },
+        { q: "In sporadic retinoblastoma, both mutations occur in:",
+          opts: ["Somatic cells", "Germline", "Gametes", "Mitochondria", "Placenta"],
+          correct: 0,
+          exp: "Sporadic: two somatic hits; hereditary: one germline + one somatic." },
+        { q: "The Philadelphia chromosome (t(9;22)) is associated with:",
+          opts: ["Chronic myeloid leukemia (CML)", "Acute lymphoblastic leukemia (ALL)", "Burkitt lymphoma", "Follicular lymphoma", "Mantle cell lymphoma"],
+          correct: 0,
+          exp: "t(9;22) creates BCR‑ABL fusion gene, constitutively active tyrosine kinase." },
+        { q: "Burkitt lymphoma is associated with translocation:",
+          opts: ["t(8;14) involving c‑MYC", "t(14;18) involving BCL2", "t(11;14) involving cyclin D1", "t(9;22) involving BCR‑ABL", "t(2;5) involving ALK"],
+          correct: 0,
+          exp: "t(8;14) places c‑MYC under Ig heavy chain enhancer → overexpression." },
+        { q: "Follicular lymphoma often has translocation:",
+          opts: ["t(14;18)(q32;q21) → BCL2 overexpression", "t(8;14)", "t(11;14)", "t(9;22)", "t(2;5)"],
+          correct: 0,
+          exp: "t(14;18) causes BCL2 activation, blocking apoptosis." },
+        { q: "Mantle cell lymphoma is characterized by translocation:",
+          opts: ["t(11;14)(q13;q32) → cyclin D1 overexpression", "t(8;14)", "t(14;18)", "t(9;22)", "t(2;5)"],
+          correct: 0,
+          exp: "t(11;14) places CCND1 under Ig heavy chain enhancer." },
+        { q: "TP53 mutations are found in many cancers. The p53 protein is involved in:",
+          opts: ["DNA damage response, cell cycle arrest, apoptosis", "Signal transduction", "DNA replication", "RNA processing", "Protein degradation"],
+          correct: 0,
+          exp: "p53 is 'guardian of the genome'." },
+        { q: "BRCA1 and BRCA2 are involved in:",
+          opts: ["Homologous recombination DNA repair", "Mismatch repair", "Base excision repair", "Nucleotide excision repair", "Non‑homologous end joining"],
+          correct: 0,
+          exp: "BRCA1/BRCA2 are tumor suppressors in double‑strand break repair." },
+        { q: "Microsatellite instability is a hallmark of:",
+          opts: ["Hereditary non‑polyposis colorectal cancer (Lynch syndrome)", "Familial adenomatous polyposis", "Li‑Fraumeni syndrome", "Von Hippel‑Lindau", "Neurofibromatosis"],
+          correct: 0,
+          exp: "Mismatch repair defects cause microsatellite instability." },
+        { q: "APC gene mutations are associated with:",
+          opts: ["Familial adenomatous polyposis and colorectal cancer", "Breast cancer", "Lung cancer", "Retinoblastoma", "Wilms tumor"],
+          correct: 0,
+          exp: "APC is a tumor suppressor in the Wnt pathway." },
+        { q: "KRAS mutations are common in:",
+          opts: ["Pancreatic cancer, colorectal cancer, lung cancer", "Breast cancer", "Melanoma", "Sarcoma", "Leukemia"],
+          correct: 0,
+          exp: "KRAS is an oncogene; mutations impair GTPase activity, leading to constitutive signaling." },
+        { q: "HER2/neu amplification is associated with:",
+          opts: ["Breast cancer (poor prognosis, target for trastuzumab)", "Lung cancer", "Colon cancer", "Melanoma", "Ovarian cancer"],
+          correct: 0,
+          exp: "HER2 (ERBB2) is a receptor tyrosine kinase; amplification in 20% of breast cancers." },
+        { q: "EGFR mutations in lung cancer predict:",
+          opts: ["Sensitivity to tyrosine kinase inhibitors (e.g., erlotinib)", "Resistance to therapy", "Poor prognosis", "Response to immunotherapy", "None"],
+          correct: 0,
+          exp: "EGFR mutations (exon 19 deletions, L858R) sensitize to TKIs." },
+        { q: "BRAF V600E mutation is common in:",
+          opts: ["Melanoma, hairy cell leukemia, thyroid cancer", "Lung cancer", "Breast cancer", "Colon cancer", "Prostate cancer"],
+          correct: 0,
+          exp: "BRAF V600E activates MAPK pathway; target of vemurafenib." },
+        { q: "ALK rearrangements (e.g., EML4‑ALK) are found in:",
+          opts: ["Non‑small cell lung cancer", "Breast cancer", "Colon cancer", "Melanoma", "Leukemia"],
+          correct: 0,
+          exp: "ALK fusions are targetable with crizotinib, alectinib." },
+        { q: "RB1 gene mutations are classically associated with:",
+          opts: ["Retinoblastoma, osteosarcoma", "Breast cancer", "Colon cancer", "Lung cancer", "Leukemia"],
+          correct: 0,
+          exp: "RB1 is the first tumor suppressor discovered." },
+        { q: "VHL gene mutations are associated with which renal tumor?",
+          opts: ["Clear cell renal cell carcinoma", "Papillary renal cell carcinoma", "Chromophobe renal carcinoma", "Oncocytoma", "Wilms tumor"],
+          correct: 0,
+          exp: "VHL inactivation leads to HIF accumulation, promoting angiogenesis and clear cell RCC." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Which of the following is a feature of Li‑Fraumeni syndrome?",
+          opts: ["Early‑onset sarcomas, breast cancer, brain tumors", "Colon polyps", "Renal cell carcinoma", "Pancreatic neuroendocrine tumors", "Pheochromocytoma"],
+          correct: 0,
+          exp: "Li‑Fraumeni (TP53 mutation) includes sarcomas, breast cancer, brain tumors, adrenocortical carcinoma." },
+        { q: "Cowden syndrome (PTEN mutation) is associated with:",
+          opts: ["Breast cancer, thyroid cancer, hamartomas", "Colon cancer", "Renal cancer", "Melanoma", "Leukemia"],
+          correct: 0,
+          exp: "PTEN is a tumor suppressor; Cowden syndrome includes hamartomas, breast, thyroid cancer." },
+        { q: "Peutz‑Jeghers syndrome (STK11 mutation) is characterized by:",
+          opts: ["Hamartomatous polyps, mucocutaneous pigmentation, cancer risk", "Adenomatous polyps", "Colorectal cancer", "Breast cancer", "Pancreatic cancer"],
+          correct: 0,
+          exp: "STK11 (LKB1) is tumor suppressor; patients have freckles and GI polyps." },
+        { q: "Neurofibromatosis type 2 (NF2) is associated with:",
+          opts: ["Bilateral vestibular schwannomas (acoustic neuromas)", "Neurofibromas", "Café‑au‑lait spots", "Lisch nodules", "Optic glioma"],
+          correct: 0,
+          exp: "NF2 (chromosome 22) presents with schwannomas, meningiomas, ependymomas." },
+        { q: "Tuberous sclerosis (TSC1/TSC2) is characterized by:",
+          opts: ["Hamartomas in multiple organs (skin, brain, kidney, heart)", "Neurofibromas", "Schwannomas", "Retinal hemangioblastomas", "Pancreatic tumors"],
+          correct: 0,
+          exp: "TSC: cortical tubers, renal angiomyolipomas, cardiac rhabdomyomas, seizures." },
+        { q: "Incontinentia pigmenti is an X‑linked dominant disorder that is usually:",
+          opts: ["Lethal in males", "Lethal in females", "Asymptomatic in males", "More severe in females", "Equal severity"],
+          correct: 0,
+          exp: "X‑linked dominant disorders are often lethal in males (e.g., incontinentia pigmenti, Rett syndrome)." },
+        { q: "Rett syndrome (MECP2 mutation) affects predominantly:",
+          opts: ["Females (lethal in males)", "Males", "Both equally", "Only females after puberty", "Only infants"],
+          correct: 0,
+          exp: "Rett: X‑linked dominant, lethal in males; females develop normally then regress." },
+        { q: "Which of the following is a trinucleotide repeat disorder that shows anticipation and is caused by a CAG repeat?",
+          opts: ["Huntington disease", "Fragile X", "Myotonic dystrophy", "Friedreich ataxia", "Spinocerebellar ataxia type 1"],
+          correct: 0,
+          exp: "Huntington (CAG), spinocerebellar ataxias (CAG) show anticipation; fragile X (CGG), myotonic dystrophy (CTG), Friedreich (GAA)." },
+        { q: "Charcot‑Marie‑Tooth disease type 1A is most commonly caused by:",
+          opts: ["Duplication of PMP22 gene", "Deletion of PMP22", "Point mutation in MPZ", "Mutation in GJB1 (Cx32)", "Mutation in MFN2"],
+          correct: 0,
+          exp: "CMT1A: duplication of PMP22 leads to demyelinating neuropathy." },
+        { q: "Hereditary neuropathy with liability to pressure palsies (HNPP) is caused by:",
+          opts: ["Deletion of PMP22", "Duplication of PMP22", "Point mutation in PMP22", "Mutation in MPZ", "Mutation in GJB1"],
+          correct: 0,
+          exp: "HNPP: deletion of PMP22 causes focal pressure neuropathies." },
+        { q: "Alpha‑1 antitrypsin deficiency is an autosomal recessive disorder that predisposes to:",
+          opts: ["Emphysema (panacinar) and cirrhosis", "Bronchiectasis", "Asthma", "Interstitial lung disease", "Lung cancer"],
+          correct: 0,
+          exp: "α1‑AT deficiency: PiZZ genotype; loss of inhibition of neutrophil elastase." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

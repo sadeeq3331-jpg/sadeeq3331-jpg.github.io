@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatology Physiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-hand"></i>
+        <h1>Dermatology Physiology · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ UNIQUE DERMATOLOGY PHYSIOLOGY QUESTIONS
+    const questions = [
+        { q: "The outermost layer of the epidermis is the:",
+          opts: ["Stratum basale", "Stratum spinosum", "Stratum granulosum", "Stratum lucidum", "Stratum corneum"],
+          correct: 4,
+          exp: "The stratum corneum consists of dead, anucleate keratinocytes filled with keratin." },
+        { q: "Keratinocytes are produced in which layer?",
+          opts: ["Stratum corneum", "Stratum granulosum", "Stratum spinosum", "Stratum basale", "Stratum lucidum"],
+          correct: 3,
+          exp: "The stratum basale (germinativum) contains mitotically active keratinocytes." },
+        { q: "Melanocytes are derived from:",
+          opts: ["Mesoderm", "Endoderm", "Neural crest cells", "Ectoderm (surface)", "Mesenchyme"],
+          correct: 2,
+          exp: "Melanocytes originate from neural crest and migrate to the epidermis." },
+        { q: "The primary function of melanin is:",
+          opts: ["Vitamin D synthesis", "Protection against UV radiation", "Thermoregulation", "Antimicrobial defense", "Sensory perception"],
+          correct: 1,
+          exp: "Melanin absorbs and scatters UV radiation, protecting DNA from damage." },
+        { q: "Langerhans cells are found in the:",
+          opts: ["Dermis", "Epidermis", "Hypodermis", "Hair follicle", "Sebaceous gland"],
+          correct: 1,
+          exp: "Langerhans cells are dendritic antigen‑presenting cells in the epidermis." },
+        { q: "Which cells are responsible for touch sensation in the epidermis?",
+          opts: ["Merkel cells", "Melanocytes", "Langerhans cells", "Keratinocytes", "Fibroblasts"],
+          correct: 0,
+          exp: "Merkel cells associate with sensory nerves to form Merkel discs for light touch." },
+        { q: "The dermis is derived from:",
+          opts: ["Ectoderm", "Mesoderm", "Endoderm", "Neural crest", "Surface ectoderm"],
+          correct: 1,
+          exp: "The dermis originates from mesoderm (and some neural crest in the face)." },
+        { q: "The papillary dermis contains which type of collagen predominantly?",
+          opts: ["Type I", "Type II", "Type III", "Type IV", "Type VII"],
+          correct: 2,
+          exp: "The papillary dermis has loose connective tissue rich in type III collagen (reticulin)." },
+        { q: "Type I collagen is the main collagen in:",
+          opts: ["Basement membrane", "Reticular dermis", "Papillary dermis", "Epidermis", "Hair shaft"],
+          correct: 1,
+          exp: "The reticular dermis is dense irregular connective tissue with abundant type I collagen." },
+        { q: "Eccrine sweat glands are primarily for:",
+          opts: ["Scent production", "Thermoregulation", "Milk secretion", "Lubrication", "Antimicrobial defense"],
+          correct: 1,
+          exp: "Eccrine glands secrete water and electrolytes for cooling via evaporation." },
+        { q: "Apocrine sweat glands become active at:",
+          opts: ["Birth", "Childhood", "Puberty", "Adulthood", "Senescence"],
+          correct: 2,
+          exp: "Apocrine glands (axillae, anogenital) are activated during puberty by androgens." },
+        { q: "Sebaceous glands secrete:",
+          opts: ["Sweat", "Sebum", "Cerumen", "Mucus", "Keratin"],
+          correct: 1,
+          exp: "Sebum (lipids) lubricates and waterproofs skin and hair." },
+        { q: "The arrector pili muscle is composed of:",
+          opts: ["Skeletal muscle", "Smooth muscle", "Cardiac muscle", "Striated muscle", "Myoepithelial cells"],
+          correct: 1,
+          exp: "Arrector pili are smooth muscles that cause piloerection." },
+        { q: "Vitamin D synthesis begins in the skin with:",
+          opts: ["7‑dehydrocholesterol + UVB", "Cholecalciferol + UVA", "Ergosterol + UVB", "Cholesterol + heat", "Melanin + UVB"],
+          correct: 0,
+          exp: "7‑dehydrocholesterol in epidermis converts to cholecalciferol with UVB." },
+        { q: "The stratum lucidum is most prominent in:",
+          opts: ["Scalp", "Face", "Palms and soles", "Back", "Abdomen"],
+          correct: 2,
+          exp: "Stratum lucidum is a clear layer found only in thick skin (palms, soles)." },
+        { q: "Keratin intermediate filaments are made of:",
+          opts: ["Actin", "Tubulin", "Keratins", "Vimentin", "Desmin"],
+          correct: 2,
+          exp: "Keratins are the intermediate filament proteins of epithelial cells." },
+        { q: "The half‑life of epidermal turnover is approximately:",
+          opts: ["7 days", "14 days", "28 days", "45 days", "60 days"],
+          correct: 2,
+          exp: "Epidermal renewal takes about 28 days from basal layer to shedding." },
+        { q: "The primary barrier to water loss is the:",
+          opts: ["Stratum basale", "Stratum spinosum", "Stratum granulosum", "Stratum corneum", "Basement membrane"],
+          correct: 3,
+          exp: "The stratum corneum with lipid‑enriched extracellular matrix prevents transepidermal water loss." },
+        { q: "Lamellar bodies (Odland bodies) are found in:",
+          opts: ["Stratum basale", "Stratum spinosum", "Stratum granulosum", "Stratum corneum", "Dermis"],
+          correct: 2,
+          exp: "Lamellar bodies in stratum granulosum release lipids into intercellular spaces." },
+        { q: "Desmosomes are intercellular junctions that:",
+          opts: ["Attach cells to basement membrane", "Anchor keratin filaments between cells", "Form gap junctions", "Prevent paracellular flow", "Bind melanocytes"],
+          correct: 1,
+          exp: "Desmosomes connect keratin intermediate filaments between adjacent keratinocytes." },
+        { q: "Hemidesmosomes attach:",
+          opts: ["Keratinocytes to each other", "Basal cells to basement membrane", "Melanocytes to keratinocytes", "Langerhans cells to nerves", "Fibroblasts to collagen"],
+          correct: 1,
+          exp: "Hemidesmosomes anchor basal keratinocytes to the basement membrane." },
+        { q: "The basement membrane zone contains which collagen type?",
+          opts: ["Type I", "Type III", "Type IV", "Type V", "Type VI"],
+          correct: 2,
+          exp: "Type IV collagen forms the meshwork of the lamina densa." },
+        { q: "Melanin is transferred to keratinocytes via:",
+          opts: "Phagocytosis of melanosome tips",
+          opts: ["Tight junctions", "Gap junctions", "Desmosomes", "Cytocrine secretion"],
+          correct: 0,
+          exp: "Keratinocytes phagocytose the tips of melanocyte dendrites containing melanosomes." },
+        { q: "Eumelanin is:",
+          opts: ["Red‑yellow", "Brown‑black", "Colorless", "Blue‑green", "Red‑brown"],
+          correct: 1,
+          exp: "Eumelanin is brown‑black; pheomelanin is red‑yellow." },
+        { q: "Pheomelanin predominates in:",
+          opts: ["Dark skin", "Red hair", "Black hair", "Asian skin", "Albinism"],
+          correct: 1,
+          exp: "Red hair contains mostly pheomelanin." },
+        { q: "The enzyme tyrosinase is essential for:",
+          opts: ["Keratin synthesis", "Collagen cross‑linking", "Melanin synthesis", "Lipid production", "Sweat secretion"],
+          correct: 2,
+          exp: "Tyrosinase converts tyrosine to DOPA and then to melanin." },
+        { q: "Albinism results from deficiency of:",
+          opts: ["Melanocytes", "Tyrosinase", "Melanosomes", "Keratin", "Collagen"],
+          correct: 1,
+          exp: "Oculocutaneous albinism is often due to tyrosinase deficiency." },
+        { q: "Freckles (ephelides) are due to:",
+          opts: ["Increased melanocyte number", "Increased melanin production in normal melanocyte number", "Melanocyte proliferation", "Sunburn", "None"],
+          correct: 1,
+          exp: "Freckles result from increased melanin synthesis, not more melanocytes." },
+        { q: "A nevus (mole) consists of:",
+          opts: ["Clusters of melanocytes", "Clusters of keratinocytes", "Clusters of Langerhans cells", "Clusters of Merkel cells", "Clusters of fibroblasts"],
+          correct: 0,
+          exp: "Nevi are benign proliferations of melanocytes." },
+        { q: "The dermis contains all except:",
+          opts: ["Blood vessels", "Nerves", "Hair follicles", "Keratinocytes", "Fibroblasts"],
+          correct: 3,
+          exp: "Keratinocytes are epidermal cells, not found in dermis." },
+        { q: "Pacinian corpuscles detect:",
+          opts: ["Light touch", "Vibration and pressure", "Pain", "Temperature", "Stretch"],
+          correct: 1,
+          exp: "Pacinian corpuscles in deep dermis sense deep pressure and vibration." },
+        { q: "Meissner's corpuscles are responsible for:",
+          opts: ["Light touch", "Vibration", "Pain", "Temperature", "Proprioception"],
+          correct: 0,
+          exp: "Meissner's corpuscles in dermal papillae detect light touch." },
+        { q: "Free nerve endings detect:",
+          opts: ["Touch", "Pressure", "Pain and temperature", "Vibration", "Stretch"],
+          correct: 2,
+          exp: "Free nerve endings in epidermis respond to pain (nociception) and temperature." },
+        { q: "The hypodermis (subcutaneous tissue) mainly contains:",
+          opts: ["Adipocytes", "Fibroblasts", "Collagen", "Elastic fibers", "Sweat glands"],
+          correct: 0,
+          exp: "Hypodermis stores fat in adipocytes, providing insulation and cushion." },
+        { q: "Arteriovenous anastomoses (glomus bodies) in skin help:",
+          opts: ["Thermoregulation", "Immune response", "Sensation", "Hair growth", "Sweat production"],
+          correct: 0,
+          exp: "They shunt blood to regulate heat loss." },
+        { q: "The nail plate is derived from:",
+          opts: ["Nail bed", "Nail matrix", "Nail folds", "Hyponychium", "Eponychium"],
+          correct: 1,
+          exp: "The nail matrix produces the nail plate." },
+        { q: "The lunula appears white because:",
+          opts: ["Thickened stratum corneum", "Incomplete keratinization", "Air pockets", "Lack of melanin", "Vascular plexus"],
+          correct: 1,
+          exp: "The lunula is the visible part of the matrix with incompletely keratinized cells." },
+        { q: "Eccrine sweat is primarily:",
+          opts: ["Hypotonic saline", "Isotonic saline", "Hypertonic saline", "Pure water", "Lipid‑rich"],
+          correct: 0,
+          exp: "Eccrine sweat is hypotonic due to ductal reabsorption of sodium." },
+        { q: "Apocrine sweat is:",
+          opts: ["Watery", "Milky and odorless initially", "Hypertonic", "Sterile", "Alkaline"],
+          correct: 1,
+          exp: "Apocrine secretion is milky and odorless; bacteria break it down to produce odor." },
+        { q: "Cerumen (earwax) is produced by modified:",
+          opts: ["Eccrine glands", "Apocrine glands", "Sebaceous glands", "Ceruminous glands (apocrine)", "Salivary glands"],
+          correct: 3,
+          exp: "Ceruminous glands in ear canal are modified apocrine glands." },
+        { q: "The pH of normal skin surface is approximately:",
+          opts: ["4‑6", "7‑8", "8‑9", "3‑4", "6‑7"],
+          correct: 0,
+          exp: "Skin pH is slightly acidic (4‑6), which inhibits pathogen growth." },
+        { q: "The term 'acid mantle' refers to:",
+          opts: ["Sebum layer", "Sweat film with low pH", "Keratin barrier", "Melanin shield", "Hydrolipid film"],
+          correct: 1,
+          exp: "The acid mantle is the slightly acidic film from sweat and sebum." },
+        { q: "Keratinocytes produce antimicrobial peptides called:",
+          opts: ["Defensins and cathelicidins", "Interleukins", "Histamine", "Complement", "Lysozyme"],
+          correct: 0,
+          exp: "Defensins and cathelicidins (e.g., LL‑37) are antimicrobial peptides." },
+        { q: "The main component of sebum is:",
+          opts: ["Triglycerides", "Squalene", "Wax esters", "Cholesterol", "All of the above"],
+          correct: 4,
+          exp: "Sebum contains triglycerides, squalene, wax esters, and cholesterol." },
+        { q: "The proliferative (anagen) phase of hair growth lasts:",
+          opts: ["Weeks", "Months", "Years", "Days", "Decades"],
+          correct: 2,
+          exp: "Anagen (growth) phase for scalp hair lasts 2‑7 years." },
+        { q: "Catagen is the:",
+          opts: ["Growth phase", "Regression phase", "Resting phase", "Shedding phase", "Transition phase"],
+          correct: 1,
+          exp: "Catagen is a short regression phase." },
+        { q: "Telogen is the:",
+          opts: ["Growth phase", "Regression phase", "Resting phase", "Active phase", "Anagen"],
+          correct: 2,
+          exp: "Telogen is the resting phase; hair eventually sheds (exogen)." },
+        { q: "Androgens cause:",
+          opts: ["Vellus to terminal hair conversion in some areas", "Terminal to vellus conversion", "No effect", "Hair loss everywhere", "Increased melanin"],
+          correct: 0,
+          exp: "Androgens promote transformation of vellus to terminal hair in androgen‑sensitive areas (e.g., beard)." },
+        { q: "The most common type of sweat gland in human skin is:",
+          opts: ["Apocrine", "Eccrine", "Apoeccrine", "Sebaceous", "Ceruminous"],
+          correct: 1,
+          exp: "Eccrine glands are distributed over most of the body." },
+        { q: "The protein that forms the cornified envelope in stratum corneum is:",
+          opts: ["Keratin", "Filaggrin", "Involucrin", "Loricrin", "All contribute"],
+          correct: 4,
+          exp: "Involucrin, loricrin, and filaggrin cross‑link to form the cornified envelope." },
+        { q: "Filaggrin is derived from:",
+          opts: ["Profilaggrin in keratohyalin granules", "Keratin", "Collagen", "Elastin", "Melanin"],
+          correct: 0,
+          exp: "Profilaggrin in keratohyalin granules is cleaved to filaggrin, which aggregates keratin filaments." },
+        { q: "Mutations in filaggrin are associated with:",
+          opts: ["Psoriasis", "Atopic dermatitis", "Acne", "Melanoma", "Albinism"],
+          correct: 1,
+          exp: "Filaggrin mutations cause impaired skin barrier, predisposing to atopic dermatitis." },
+        { q: "The dermoepidermal junction is attached by:",
+          opts: ["Desmosomes", "Hemidesmosomes", "Tight junctions", "Gap junctions", "Adherens junctions"],
+          correct: 1,
+          exp: "Hemidesmosomes anchor basal cells to the basement membrane." },
+        { q: "Which layer of the epidermis contains lamellar granules?",
+          opts: ["Stratum basale", "Stratum spinosum", "Stratum granulosum", "Stratum lucidum", "Stratum corneum"],
+          correct: 2,
+          exp: "Lamellar granules (Odland bodies) are in stratum granulosum." },
+        { q: "The sensation of itch is mediated by:",
+          opts: ["C‑fibers (unmyelinated)", "A‑beta fibers", "A‑delta fibers", "Pacinian corpuscles", "Meissner corpuscles"],
+          correct: 0,
+          exp: "Itch is transmitted by slow, unmyelinated C‑fibers." },
+        { q: "The dominant cell type in the dermis is:",
+          opts: ["Fibroblast", "Macrophage", "Mast cell", "Lymphocyte", "Adipocyte"],
+          correct: 0,
+          exp: "Fibroblasts produce and maintain extracellular matrix." },
+        { q: "Elastic fibers in dermis are composed of:",
+          opts: ["Collagen", "Elastin and fibrillin", "Fibrin", "Keratin", "Laminin"],
+          correct: 1,
+          exp: "Elastic fibers contain elastin core with fibrillin microfibrils." },
+        { q: "The protein deficient in cutis laxa is:",
+          opts: ["Fibrillin", "Elastin", "Collagen", "Lysyl oxidase", "Fibulin"],
+          correct: 1,
+          exp: "Cutis laxa involves defective elastin synthesis or structure." },
+        { q: "Marfan syndrome involves mutations in:",
+          opts: ["Elastin", "Fibrillin‑1", "Collagen type I", "Collagen type III", "Lysyl oxidase"],
+          correct: 1,
+          exp: "Marfan syndrome is caused by fibrillin‑1 mutations, affecting microfibrils." },
+        { q: "Ehlers‑Danlos syndromes typically involve defects in:",
+          opts: ["Elastin", "Fibrillin", "Collagen synthesis or processing", "Keratin", "Laminin"],
+          correct: 2,
+          exp: "Most EDS types are due to collagen defects (e.g., type V, III)." },
+        { q: "The protein component of the basement membrane that links laminin to collagen IV is:",
+          opts: ["Nidogen (entactin)", "Perlecan", "Fibronectin", "Integrin", "Dystroglycan"],
+          correct: 0,
+          exp: "Nidogen bridges laminin and collagen IV networks." }
+    ];
+    // Add extra 10 to reach 65+
+    const extra = [
+        { q: "Which integrin is crucial for hemidesmosome assembly?",
+          opts: ["α6β4", "α2β1", "α5β1", "αvβ3", "αLβ2"],
+          correct: 0,
+          exp: "α6β4 integrin links keratin cytoskeleton to laminin in basement membrane." },
+        { q: "The enzyme that cross‑links collagen and elastin is:",
+          opts: ["Lysyl hydroxylase", "Lysyl oxidase", "Prolyl hydroxylase", "Collagenase", "Elastase"],
+          correct: 1,
+          exp: "Lysyl oxidase forms cross‑links in collagen and elastin." },
+        { q: "Copper is a cofactor for which enzyme essential for skin integrity?",
+          opts: ["Lysyl oxidase", "Tyrosinase", "Superoxide dismutase", "Cytochrome oxidase", "All of the above"],
+          correct: 4,
+          exp: "Lysyl oxidase (collagen cross‑linking), tyrosinase (melanin), and SOD all require copper." },
+        { q: "The majority of dermal glycosaminoglycans is:",
+          opts: ["Hyaluronic acid", "Dermatan sulfate", "Chondroitin sulfate", "Heparan sulfate", "Keratan sulfate"],
+          correct: 1,
+          exp: "Dermatan sulfate is the predominant GAG in dermis." },
+        { q: "The protein in the cornified envelope that is cross‑linked by transglutaminase is:",
+          opts: ["Keratin", "Filaggrin", "Involucrin", "Loricrin", "Both C and D"],
+          correct: 4,
+          exp: "Involucrin and loricrin are major cross‑linked proteins." },
+        { q: "The precursor of active vitamin D3 (calcitriol) produced in skin is:",
+          opts: ["7‑dehydrocholesterol", "Cholecalciferol", "Ergocalciferol", "25‑hydroxycholecalciferol", "1,25‑dihydroxycholecalciferol"],
+          correct: 1,
+          exp: "UVB converts 7‑dehydrocholesterol to cholecalciferol (vitamin D3)." },
+        { q: "Which layer of the epidermis is absent in thin skin?",
+          opts: ["Stratum basale", "Stratum spinosum", "Stratum granulosum", "Stratum lucidum", "Stratum corneum"],
+          correct: 3,
+          exp: "Stratum lucidum is present only in thick skin." },
+        { q: "The growth phase of a nail takes approximately:",
+          opts: ["1‑2 months", "3‑4 months", "6‑9 months", "12‑18 months", "2 years"],
+          correct: 2,
+          exp: "Fingernails take about 6 months to fully regrow; toenails 12‑18 months." },
+        { q: "The structure that produces the nail plate is the:",
+          opts: ["Nail bed", "Nail matrix", "Nail root", "Hyponychium", "Eponychium"],
+          correct: 1,
+          exp: "The nail matrix is the germinative epithelium." },
+        { q: "The white crescent at the base of the nail is called:",
+          opts: ["Lunula", "Cuticle", "Hyponychium", "Nail fold", "Matrix"],
+          correct: 0,
+          exp: "Lunula is the visible part of the matrix." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

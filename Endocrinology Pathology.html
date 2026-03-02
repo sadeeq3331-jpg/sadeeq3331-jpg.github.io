@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endocrinology Pathology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-droplet"></i>
+        <h1>Endocrinology Pathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-brain"></i> 1. Pituitary & Hypothalamus</a></li>
+                <li><a href="#ch2"><i class="fas fa-shield"></i> 2. Thyroid Gland</a></li>
+                <li><a href="#ch3"><i class="fas fa-bone"></i> 3. Parathyroid & Calcium Disorders</a></li>
+                <li><a href="#ch4"><i class="fas fa-bolt"></i> 4. Adrenal Gland</a></li>
+                <li><a href="#ch5"><i class="fas fa-heart"></i> 5. Endocrine Pancreas</a></li>
+                <li><a href="#ch6"><i class="fas fa-venus-mars"></i> 6. Gonadal Pathology</a></li>
+                <li><a href="#ch7"><i class="fas fa-dna"></i> 7. Multiple Endocrine Neoplasia (MEN)</a></li>
+                <li><a href="#ch8"><i class="fas fa-shield-alt"></i> 8. Polyglandular Autoimmune Syndromes</a></li>
+                <li><a href="#ch9"><i class="fas fa-fire"></i> 9. Neuroendocrine Tumors</a></li>
+                <li><a href="#ch10"><i class="fas fa-bone"></i> 10. Metabolic Bone Disorders</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: PITUITARY & HYPOTHALAMUS -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 1. Pituitary & Hypothalamus Pathology</div>
+            <div class="section-card">
+                <div class="subsection-heading">Pituitary Adenomas</div>
+                <div class="body-text">
+                    <p><strong>Definition:</strong> Benign tumors of the anterior pituitary. Classified by size (microadenoma &lt;1 cm, macroadenoma &gt;1 cm) and hormone secretion.</p>
+                    <ul>
+                        <li><strong>Prolactinoma:</strong> Most common; causes galactorrhea, hypogonadism (amenorrhea, infertility, decreased libido).</li>
+                        <li><strong>Somatotroph adenoma (GH excess):</strong> In children → gigantism; in adults → acromegaly (coarse features, prognathism, organomegaly, glucose intolerance).</li>
+                        <li><strong>Corticotroph adenoma (ACTH excess):</strong> Cushing disease (central obesity, moon facies, purple striae, hypertension).</li>
+                        <li><strong>Non‑functioning adenoma:</strong> Present with mass effects (bitemporal hemianopia, headache, hypopituitarism).</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Prolactinomas are treated with dopamine agonists (cabergoline). GH‑secreting tumors may require surgery and/or somatostatin analogs.</p>
+                </div>
+                <div class="subsection-heading">Hypopituitarism</div>
+                <ul>
+                    <li><strong>Causes:</strong> Pituitary tumors (compression), pituitary apoplexy (hemorrhage into adenoma), Sheehan syndrome (postpartum necrosis), empty sella syndrome, infiltrative diseases (sarcoidosis, hemochromatosis), radiation.</li>
+                    <li><strong>Clinical features:</strong> Loss of target gland hormones (secondary hypothyroidism, adrenal insufficiency, hypogonadism).</li>
+                </ul>
+                <div class="subsection-heading">Posterior Pituitary Disorders</div>
+                <ul>
+                    <li><strong>Diabetes insipidus (DI):</strong> Deficiency of ADH (central) or renal resistance (nephrogenic). Presents with polyuria, polydipsia, dilute urine.</li>
+                    <li><strong>SIADH (syndrome of inappropriate ADH):</strong> Excess ADH → water retention, hyponatremia, concentrated urine. Causes: CNS disorders, lung cancer (small cell), drugs.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: THYROID -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield"></i> 2. Thyroid Pathology</div>
+            <div class="section-card">
+                <div class="subsection-heading">Hyperthyroidism</div>
+                <ul>
+                    <li><strong>Graves disease:</strong> Autoimmune, TSH receptor antibodies (TSI) stimulate thyroid. Pathology: diffuse hyperplasia, lymphocytic infiltration. Extrathyroidal manifestations: ophthalmopathy, pretibial myxedema.</li>
+                    <li><strong>Toxic multinodular goiter (Plummer disease):</strong> Hyperfunctioning nodules, usually in elderly.</li>
+                    <li><strong>Toxic adenoma:</strong> Solitary hyperfunctioning nodule.</li>
+                </ul>
+                <div class="subsection-heading">Hypothyroidism</div>
+                <ul>
+                    <li><strong>Hashimoto thyroiditis:</strong> Autoimmune destruction, most common cause in iodine‑sufficient areas. Pathology: lymphocytic infiltration, germinal centers, Hurthle cell change, fibrosis. Associated with other autoimmune diseases.</li>
+                    <li><strong>Primary myxedema:</strong> Atrophic form.</li>
+                    <li><strong>Secondary hypothyroidism:</strong> Pituitary failure (TSH deficiency).</li>
+                    <li><strong>Cretinism:</strong> Congenital hypothyroidism → intellectual disability, short stature.</li>
+                </ul>
+                <div class="subsection-heading">Thyroiditis</div>
+                <ul>
+                    <li><strong>Subacute (De Quervain) thyroiditis:</strong> Post‑viral, painful, granulomatous inflammation with giant cells. Transient hyperthyroid phase.</li>
+                    <li><strong>Silent (painless) thyroiditis:</strong> Lymphocytic, often postpartum; transient hyperthyroid then hypothyroid.</li>
+                    <li><strong>Riedel thyroiditis:</strong> Fibrous invasion of thyroid and surrounding tissues; rare.</li>
+                </ul>
+                <div class="subsection-heading">Goiter</div>
+                <div class="body-text">
+                    <p>Diffuse or nodular enlargement of thyroid. Causes: iodine deficiency, goitrogens, dyshormonogenesis. Simple goiter: compensatory hyperplasia; multinodular goiter may become toxic.</p>
+                </div>
+                <div class="subsection-heading">Thyroid Neoplasms</div>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Papillary carcinoma</td><td>Most common (80%). Orphan Annie nuclei, psammoma bodies. Excellent prognosis. RET/PTC rearrangements.</td></tr>
+                        <tr><td>Follicular carcinoma</td><td>Hematogenous spread; RAS mutations. Capsular/vascular invasion distinguishes from adenoma.</td></tr>
+                        <tr><td>Medullary carcinoma</td><td>From parafollicular C cells; secretes calcitonin. Associated with MEN 2A/2B. RET mutations.</td></tr>
+                        <tr><td>Anaplastic carcinoma</td><td>Rare, aggressive; p53 mutations; poor prognosis.</td></tr>
+                        <tr><td>Thyroid lymphoma</td><td>Usually in Hashimoto thyroiditis.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: PARATHYROID -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 3. Parathyroid & Calcium Disorders</div>
+            <div class="section-card">
+                <div class="subsection-heading">Hyperparathyroidism</div>
+                <ul>
+                    <li><strong>Primary:</strong> Adenoma (80‑85%), hyperplasia (10‑15%), carcinoma (&lt;1%). Presents with hypercalcemia (stones, bones, groans, psychiatric overtones). Pathology: chief cell adenoma, water‑clear cell hyperplasia (rare).</li>
+                    <li><strong>Secondary:</strong> Due to chronic renal failure, vitamin D deficiency → compensatory hyperplasia of all four glands.</li>
+                    <li><strong>Tertiary:</strong> Autonomous hyperfunction after long‑term secondary hyperplasia (e.g., after renal transplant).</li>
+                </ul>
+                <div class="subsection-heading">Hypoparathyroidism</div>
+                <ul>
+                    <li><strong>Most common:</strong> Postsurgical (thyroidectomy). Autoimmune (APECED syndrome).</li>
+                    <li><strong>Pseudohypoparathyroidism:</strong> End‑organ resistance to PTH; associated with Albright hereditary osteodystrophy (short stature, brachydactyly).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: ADRENAL -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 4. Adrenal Pathology</div>
+            <div class="section-card">
+                <div class="subsection-heading">Adrenal Cortex</div>
+                <ul>
+                    <li><strong>Cushing syndrome:</strong> Excess cortisol. Causes: iatrogenic (steroids), pituitary adenoma (Cushing disease), adrenal adenoma/carcinoma, ectopic ACTH (e.g., small cell lung cancer). Pathology: adrenal hyperplasia or tumor. Clinical: central obesity, moon facies, easy bruising, striae, hypertension.</li>
+                    <li><strong>Conn syndrome (primary hyperaldosteronism):</strong> Aldosterone‑producing adenoma (APA) or bilateral adrenal hyperplasia. Hypertension, hypokalemia, metabolic alkalosis.</li>
+                    <li><strong>Adrenocortical carcinoma:</strong> Rare, large, aggressive. May secrete androgens causing virilization, or mixed hormones.</li>
+                    <li><strong>Adrenal insufficiency:</strong>
+                        <ul>
+                            <li><strong>Primary (Addison disease):</strong> Autoimmune destruction, TB, metastasis, HIV. Low cortisol, high ACTH, hyperpigmentation (due to ACTH stimulation of melanocytes).</li>
+                            <li><strong>Secondary:</strong> Pituitary failure → low ACTH, no hyperpigmentation.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Congenital adrenal hyperplasia (CAH):</strong> Most common 21‑hydroxylase deficiency → cortisol deficiency, ACTH driven androgen excess → virilization, salt‑wasting crisis.</li>
+                </ul>
+                <div class="subsection-heading">Adrenal Medulla</div>
+                <ul>
+                    <li><strong>Pheochromocytoma:</strong> Tumor of chromaffin cells; secretes catecholamines. Rule of 10: 10% bilateral, 10% extra‑adrenal, 10% malignant, 10% familial (MEN 2, VHL, NF1). Presents with episodic hypertension, headache, palpitations.</li>
+                    <li><strong>Neuroblastoma:</strong> Pediatric malignancy from neural crest; adrenal most common site. May secrete catecholamines, urine VMA/HVA.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: ENDOCRINE PANCREAS -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 5. Endocrine Pancreas Pathology</div>
+            <div class="section-card">
+                <div class="subsection-heading">Diabetes Mellitus</div>
+                <ul>
+                    <li><strong>Type 1:</strong> Autoimmune destruction of β‑cells (insulitis). Genetic susceptibility (HLA DR3/DR4). Presents in youth with ketoacidosis. Pathology: reduced islet mass, lymphocytic infiltration.</li>
+                    <li><strong>Type 2:</strong> Insulin resistance + β‑cell dysfunction. Associated with obesity. Pathology: amyloid deposition in islets (amylin), β‑cell exhaustion.</li>
+                    <li><strong>Complications:</strong> Microvascular (retinopathy, nephropathy, neuropathy) and macrovascular (atherosclerosis).</li>
+                </ul>
+                <div class="subsection-heading">Pancreatic Neuroendocrine Tumors (PNETs)</div>
+                <table class="premium-table">
+                    <thead><tr><th>Tumor</th><th>Hormone</th><th>Syndrome</th></tr></thead>
+                    <tbody>
+                        <tr><td>Insulinoma</td><td>Insulin</td><td>Hypoglycemia, Whipple triad</td></tr>
+                        <tr><td>Gastrinoma</td><td>Gastrin</td><td>Zollinger‑Ellison syndrome (peptic ulcers, diarrhea); often in duodenum, part of MEN1</td></tr>
+                        <tr><td>Glucagonoma</td><td>Glucagon</td><td>Diabetes, necrolytic migratory erythema</td></tr>
+                        <tr><td>VIPoma</td><td>VIP</td><td>WDHA (watery diarrhea, hypokalemia, achlorhydria)</td></tr>
+                        <tr><td>Somatostatinoma</td><td>Somatostatin</td><td>Diabetes, gallstones, steatorrhea</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: GONADAL PATHOLOGY -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-venus-mars"></i> 6. Gonadal Pathology</div>
+            <div class="section-card">
+                <div class="subsection-heading">Male</div>
+                <ul>
+                    <li><strong>Hypogonadism:</strong> Primary (testicular failure) or secondary (hypogonadotropic). Klinefelter syndrome (XXY) – small firm testes, tall, infertility.</li>
+                    <li><strong>Testicular tumors:</strong> Germ cell tumors (seminoma, embryonal, yolk sac, teratoma, choriocarcinoma) and sex cord stromal (Leydig cell, Sertoli cell). Cryptorchidism risk factor. Tumor markers: AFP (yolk sac, embryonal), hCG (choriocarcinoma, syncytiotrophoblast).</li>
+                </ul>
+                <div class="subsection-heading">Female</div>
+                <ul>
+                    <li><strong>Hypogonadism:</strong> Turner syndrome (XO) – streak ovaries, webbed neck, coarctation.</li>
+                    <li><strong>Polycystic ovary syndrome (PCOS):</strong> Hyperandrogenism, oligo‑anovulation, polycystic ovaries. Associated with insulin resistance.</li>
+                    <li><strong>Ovarian tumors:</strong> Surface epithelial (serous, mucinous, endometrioid), germ cell (dysgerminoma, teratoma), sex cord‑stromal (granulosa cell – produces estrogen, may cause precocious puberty).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: MULTIPLE ENDOCRINE NEOPLASIA (MEN) -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 7. Multiple Endocrine Neoplasia (MEN)</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Gene</th><th>Associations</th></tr></thead>
+                    <tbody>
+                        <tr><td>MEN1</td><td>Menin</td><td>Parathyroid adenoma, pancreatic NET (gastrinoma, insulinoma), pituitary adenoma. Also adrenocortical, carcinoid.</td></tr>
+                        <tr><td>MEN2A</td><td>RET</td><td>Medullary thyroid carcinoma, pheochromocytoma, parathyroid hyperplasia.</td></tr>
+                        <tr><td>MEN2B</td><td>RET</td><td>Medullary thyroid carcinoma, pheochromocytoma, mucosal neuromas, marfanoid habitus. No parathyroid involvement.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: POLYGLANDULAR AUTOIMMUNE SYNDROMES -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 8. Polyglandular Autoimmune Syndromes</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>PGA I (APS1):</strong> Autoimmune polyendocrinopathy‑candidiasis‑ectodermal dystrophy (APECED). AIRE gene. Mucocutaneous candidiasis, hypoparathyroidism, Addison disease.</li>
+                    <li><strong>PGA II (Schmidt syndrome):</strong> HLA‑DR3/DR4. Addison disease + autoimmune thyroid disease (Hashimoto or Graves) + type 1 diabetes.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: NEUROENDOCRINE TUMORS -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fire"></i> 9. Neuroendocrine Tumors (Carcinoid, etc.)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Carcinoid tumors:</strong> Arise from enterochromaffin cells; most common in appendix, ileum, lung. Secrete serotonin and other vasoactive substances. Carcinoid syndrome (flushing, diarrhea, wheezing, right‑sided heart valve lesions) occurs with liver metastases (bypass hepatic degradation).</p>
+                    <p><strong>Histology:</strong> Nest of uniform cells, granular chromatin. Silver stains positive. May be associated with MEN1.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: METABOLIC BONE DISORDERS -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 10. Metabolic Bone Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Osteoporosis:</strong> Decreased bone mass, microarchitectural deterioration. Primary (postmenopausal, senile) or secondary (steroids, hyperparathyroidism).</li>
+                    <li><strong>Osteomalacia / Rickets:</strong> Defective mineralization due to vitamin D deficiency or hypophosphatemia. Rickets in children: bowing, growth retardation. Osteomalacia in adults: bone pain, fractures.</li>
+                    <li><strong>Paget disease of bone:</strong> Disordered bone remodeling – excessive osteoclast activity followed by osteoblast activity. Mosaic bone. Complications: fractures, deformity, high‑output heart failure, osteosarcoma risk.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Endocrinology Pathology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

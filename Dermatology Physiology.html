@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatology Physiology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-hand"></i>
+        <h1>Dermatology Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Introduction to Skin</a></li>
+                <li><a href="#ch2"><i class="fas fa-layer-group"></i> 2. Epidermis</a></li>
+                <li><a href="#ch3"><i class="fas fa-grip"></i> 3. Dermis & Hypodermis</a></li>
+                <li><a href="#ch4"><i class="fas fa-tshirt"></i> 4. Skin Appendages: Hair, Nails, Glands</a></li>
+                <li><a href="#ch5"><i class="fas fa-palette"></i> 5. Pigmentation & Melanocytes</a></li>
+                <li><a href="#ch6"><i class="fas fa-shield-alt"></i> 6. Barrier Function & Immunology</a></li>
+                <li><a href="#ch7"><i class="fas fa-thermometer-half"></i> 7. Thermoregulation & Circulation</a></li>
+                <li><a href="#ch8"><i class="fas fa-flask"></i> 8. Vitamin D Synthesis</a></li>
+                <li><a href="#ch9"><i class="fas fa-heart"></i> 9. Wound Healing</a></li>
+                <li><a href="#ch10"><i class="fas fa-clock"></i> 10. Aging & Photoaging</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: INTRODUCTION -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Introduction to Skin</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The skin is the largest organ of the body, accounting for about 15% of total body weight. It serves as a protective barrier against environmental insults, prevents water loss, regulates temperature, provides sensory information, and has immune and endocrine functions.</p>
+                </div>
+                <div class="subsection-heading">Layers of the Skin</div>
+                <ul>
+                    <li><strong>Epidermis:</strong> Stratified squamous keratinized epithelium, derived from ectoderm. Avascular.</li>
+                    <li><strong>Dermis:</strong> Connective tissue layer derived from mesoderm; contains blood vessels, nerves, hair follicles, glands. Composed of collagen, elastin, ground substance.</li>
+                    <li><strong>Hypodermis (subcutaneous tissue):</strong> Loose connective tissue and adipose tissue; provides insulation and padding.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> The thickness of skin varies: thickest on palms and soles (0.5‑1.5 mm epidermis), thinnest on eyelids.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: EPIDERMIS -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-layer-group"></i> 2. Epidermis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The epidermis is a keratinized stratified squamous epithelium composed primarily of keratinocytes (90‑95%). It contains four major cell types and layers.</p>
+                </div>
+                <div class="subsection-heading">Cell Types</div>
+                <ul>
+                    <li><strong>Keratinocytes:</strong> Produce keratin, form the stratified layers.</li>
+                    <li><strong>Melanocytes:</strong> Derived from neural crest, produce melanin, located in basal layer.</li>
+                    <li><strong>Langerhans cells:</strong> Dendritic antigen‑presenting cells (immune surveillance).</li>
+                    <li><strong>Merkel cells:</strong> Mechanoreceptors associated with tactile sensation (Merkel discs).</li>
+                </ul>
+                <div class="subsection-heading">Layers of the Epidermis (from deep to superficial)</div>
+                <ul>
+                    <li><strong>Stratum basale (germinativum):</strong> Single layer of cuboidal/columnar keratinocytes attached to basement membrane; contains melanocytes and Merkel cells; site of mitotic activity.</li>
+                    <li><strong>Stratum spinosum:</strong> Several layers of polyhedral keratinocytes with desmosomes (spiny appearance); Langerhans cells present.</li>
+                    <li><strong>Stratum granulosum:</strong> 2‑3 layers of flattened cells containing keratohyalin granules (filaggrin) and lamellar bodies (lipid secretion).</li>
+                    <li><strong>Stratum lucidum:</strong> Clear layer present only in thick skin (palms, soles).</li>
+                    <li><strong>Stratum corneum:</strong> Multiple layers of anucleated, flattened, fully keratinized cells (corneocytes) embedded in lipid matrix; provides barrier function.</li>
+                </ul>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> "Come Let's Get Sun Burned" – Corneum, Lucidum, Granulosum, Spinosum, Basale.</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> In psoriasis, hyperproliferation leads to thickened epidermis, retention of nuclei in stratum corneum (parakeratosis).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: DERMIS & HYPODERMIS -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-grip"></i> 3. Dermis & Hypodermis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The dermis provides structural support and nourishment to the epidermis. It is composed of collagen (type I and III), elastin, and ground substance (proteoglycans, hyaluronic acid).</p>
+                </div>
+                <div class="subsection-heading">Layers of the Dermis</div>
+                <ul>
+                    <li><strong>Papillary dermis:</strong> Loose connective tissue, forms dermal papillae, contains capillaries, sensory nerve endings (Meissner corpuscles).</li>
+                    <li><strong>Reticular dermis:</strong> Dense irregular connective tissue, thicker, contains collagen bundles, elastic fibers, hair follicles, glands, blood vessels, nerves.</li>
+                </ul>
+                <div class="subsection-heading">Cells of the Dermis</div>
+                <ul>
+                    <li><strong>Fibroblasts:</strong> Produce extracellular matrix.</li>
+                    <li><strong>Mast cells, macrophages, lymphocytes.</strong></li>
+                </ul>
+                <div class="subsection-heading">Hypodermis (Subcutaneous Fat)</div>
+                <ul>
+                    <li>Adipose tissue arranged in lobules separated by fibrous septa. Contains larger blood vessels and nerves. Functions: insulation, energy storage, cushioning.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Striae (stretch marks) occur when dermis tears due to rapid stretching (pregnancy, growth spurts, Cushing syndrome).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: SKIN APPENDAGES -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tshirt"></i> 4. Skin Appendages: Hair, Nails, Glands</div>
+            <div class="section-card">
+                <div class="subsection-heading">Hair Follicles</div>
+                <ul>
+                    <li>Derived from epidermis, extend into dermis/hypodermis. Hair grows in cycles: anagen (growth), catagen (regression), telogen (resting).</li>
+                    <li>Hair shaft: medulla, cortex, cuticle. Associated with sebaceous gland and arrector pili muscle.</li>
+                </ul>
+                <div class="subsection-heading">Nails</div>
+                <ul>
+                    <li>Hard keratin plates produced by nail matrix. Nail plate, nail bed, hyponychium, eponychium (cuticle).</li>
+                </ul>
+                <div class="subsection-heading">Sebaceous Glands</div>
+                <ul>
+                    <li>Holocrine glands secreting sebum (lipids) into hair follicle. Function: lubrication, waterproofing, antimicrobial. Androgens stimulate sebum production.</li>
+                </ul>
+                <div class="subsection-heading">Sweat Glands</div>
+                <ul>
+                    <li><strong>Eccrine glands:</strong> Widely distributed, open directly onto skin surface. Produce hypotonic sweat for thermoregulation (cholinergic sympathetic).</li>
+                    <li><strong>Apocrine glands:</strong> Found in axilla, anogenital region; open into hair follicles; produce milky, odorless secretion that becomes malodorous after bacterial action. Begin functioning at puberty.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Alopecia (hair loss) can result from anagen or telogen effluvium, autoimmune (alopecia areata), or scarring. Acne vulgaris involves sebaceous gland overactivity and follicular plugging.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: PIGMENTATION & MELANOCYTES -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-palette"></i> 5. Pigmentation & Melanocytes</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Melanocytes are neural crest‑derived cells residing in the stratum basale and hair follicles. They produce melanin and transfer it to keratinocytes via dendrites.</p>
+                </div>
+                <div class="subsection-heading">Melanin Types</div>
+                <ul>
+                    <li><strong>Eumelanin:</strong> Brown‑black pigment.</li>
+                    <li><strong>Pheomelanin:</strong> Yellow‑red pigment (higher in redheads).</li>
+                </ul>
+                <div class="subsection-heading">Melanogenesis</div>
+                <ul>
+                    <li>Tyrosine → DOPA → dopaquinone → melanin (via tyrosinase). Stimulated by UV radiation (α‑MSH binds MC1R).</li>
+                </ul>
+                <div class="subsection-heading">Distribution</div>
+                <ul>
+                    <li>Melanin packaged in melanosomes transferred to keratinocytes, forming a supranuclear cap that protects DNA from UV damage.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Albinism: deficiency of tyrosinase; vitiligo: autoimmune destruction of melanocytes; freckles (ephelides): increased melanin in keratinocytes, not melanocyte number.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: BARRIER FUNCTION & IMMUNOLOGY -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 6. Barrier Function & Immunology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The skin provides a physical, chemical, and immunological barrier.</p>
+                </div>
+                <ul>
+                    <li><strong>Physical barrier:</strong> Stratum corneum (tight junctions, corneodesmosomes, lipid matrix).</li>
+                    <li><strong>Chemical barrier:</strong> Antimicrobial peptides (defensins, cathelicidin), acidic pH, sebum (fatty acids), sweat (lysozyme).</li>
+                    <li><strong>Immunological barrier:</strong> Langerhans cells (antigen presentation), dermal dendritic cells, macrophages, mast cells, and lymphocytes. Cytokine production.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Atopic dermatitis is associated with impaired barrier function (filaggrin mutations).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: THERMOREGULATION & CIRCULATION -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-thermometer-half"></i> 7. Thermoregulation & Circulation</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Skin plays a key role in regulating body temperature through blood flow and sweating.</p>
+                </div>
+                <ul>
+                    <li>Arteriovenous anastomoses (glomus bodies) in acral skin regulate heat loss.</li>
+                    <li>Eccrine sweat gland secretion (sympathetic cholinergic) cools via evaporation.</li>
+                    <li>Vasodilation increases heat loss; vasoconstriction conserves heat.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Anhidrosis (absence of sweating) can cause hyperthermia; hyperhidrosis is excessive sweating.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: VITAMIN D SYNTHESIS -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 8. Vitamin D Synthesis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The skin is the site of vitamin D synthesis. 7‑dehydrocholesterol (provitamin D₃) in keratinocytes is converted to cholecalciferol (vitamin D₃) by UVB radiation (290‑315 nm).</p>
+                </div>
+                <ul>
+                    <li>Vitamin D₃ then undergoes hydroxylation in liver (to 25‑OH‑D) and kidney (to active 1,25‑(OH)₂‑D).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Vitamin D deficiency causes rickets in children and osteomalacia in adults. Sunlight exposure is essential for adequate vitamin D synthesis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: WOUND HEALING -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 9. Wound Healing</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Wound healing is a complex process involving overlapping phases: hemostasis, inflammation, proliferation, and remodeling.</p>
+                </div>
+                <ul>
+                    <li><strong>Hemostasis:</strong> Platelet aggregation, clot formation, release of growth factors (PDGF, TGF‑β).</li>
+                    <li><strong>Inflammation:</strong> Neutrophils and macrophages remove debris and pathogens; macrophages also release cytokines.</li>
+                    <li><strong>Proliferation:</strong> Re‑epithelialization (keratinocyte migration), angiogenesis, granulation tissue formation (fibroblasts, collagen), wound contraction (myofibroblasts).</li>
+                    <li><strong>Remodeling:</strong> Collagen remodeling (type III replaced by type I), scar maturation.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Keloids are excessive scar formation beyond wound margins, more common in darker skin. Hypertrophic scars are raised but confined to wound.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: AGING & PHOTOAGING -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-clock"></i> 10. Aging & Photoaging</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Intrinsic aging (chronological) and extrinsic aging (photoaging) affect skin differently.</p>
+                </div>
+                <ul>
+                    <li><strong>Intrinsic aging:</strong> Thinning of epidermis, flattening of dermo‑epidermal junction, decreased collagen, elastin degradation, decreased sebaceous and sweat gland activity.</li>
+                    <li><strong>Photoaging:</strong> Caused by UV radiation; leads to solar elastosis (accumulation of abnormal elastic fibers), wrinkles, dyspigmentation, telangiectasias, premalignant lesions (actinic keratoses).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Sun protection prevents photoaging and skin cancers. Topical retinoids can partially reverse some photoaging changes.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Dermatology Physiology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

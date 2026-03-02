@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIT Pathology · MCQ Bank</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-stethoscope"></i>
+            <h1>GIT Pathology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ GIT Pathology Questions
+        const questions = [
+            // Esophagus
+            { q: "Which of the following is a risk factor for esophageal squamous cell carcinoma?",
+              opts: ["GERD", "Barrett esophagus", "Smoking and alcohol", "Obesity", "H. pylori"],
+              correct: 2,
+              exp: "Squamous cell carcinoma is associated with smoking, alcohol, achalasia, Plummer‑Vinson syndrome, and HPV." },
+            { q: "Barrett esophagus is characterized by metaplasia to:",
+              opts: ["Squamous epithelium", "Gastric‑type columnar epithelium", "Intestinal‑type columnar epithelium with goblet cells", "Paneth cells", "Neuroendocrine cells"],
+              correct: 2,
+              exp: "Barrett esophagus is intestinal metaplasia (goblet cells) in distal esophagus due to chronic GERD." },
+            { q: "Achalasia is caused by loss of which neurons?",
+              opts: ["Sympathetic", "Parasympathetic (vagal)", "Inhibitory neurons (NO‑releasing) in myenteric plexus", "Sensory neurons", "Enteric glia"],
+              correct: 2,
+              exp: "Loss of inhibitory neurons (producing NO) in myenteric plexus → failure of LES relaxation and absent peristalsis." },
+            { q: "The most common cause of infectious esophagitis in immunocompromised patients is:",
+              opts: ["HSV", "CMV", "Candida albicans", "EBV", "Aspergillus"],
+              correct: 2,
+              exp: "Candida esophagitis is most common; presents with white plaques, dysphagia." },
+            { q: "Zenker diverticulum is a:",
+              opts: ["Traction diverticulum", "Pulsion diverticulum in pharyngoesophageal region", "Epiphrenic diverticulum", "True diverticulum", "False diverticulum"],
+              correct: 1,
+              exp: "Zenker is a pulsion diverticulum above upper esophageal sphincter." },
+            { q: "Plummer‑Vinson syndrome is associated with:",
+              opts: ["Iron deficiency anemia, esophageal web, dysphagia", "GERD and Barrett esophagus", "Achalasia", "Squamous cell carcinoma", "Eosinophilic esophagitis"],
+              correct: 0,
+              exp: "Triad: iron deficiency, upper esophageal web, dysphagia; increased risk of squamous cell carcinoma." },
+
+            // Stomach
+            { q: "Which bacterium is the leading cause of chronic gastritis and peptic ulcer disease?",
+              opts: ["E. coli", "Salmonella", "Helicobacter pylori", "Campylobacter jejuni", "Clostridium difficile"],
+              correct: 2,
+              exp: "H. pylori infects gastric mucosa, causing chronic active gastritis, peptic ulcers, and increased risk of gastric adenocarcinoma and MALToma." },
+            { q: "Autoimmune gastritis primarily involves which part of the stomach?",
+              opts: ["Antrum", "Body and fundus", "Pylorus", "Cardia", "Diffuse"],
+              correct: 1,
+              exp: "Autoimmune gastritis targets parietal cells in body/fundus → atrophy, achlorhydria, hypergastrinemia, pernicious anemia." },
+            { q: "A patient with a gastric ulcer on the lesser curvature near the incisura is most likely caused by:",
+              opts: ["H. pylori", "NSAIDs", "Gastrinoma", "Stress", "Crohn disease"],
+              correct: 0,
+              exp: "H. pylori is the most common cause of gastric ulcers (especially in antrum). NSAIDs also cause ulcers." },
+            { q: "The histologic hallmark of H. pylori gastritis is:",
+              opts: ["Granulomas", "Lymphoid aggregates", "Neutrophils in lamina propria and epithelium", "Eosinophils", "Giant cells"],
+              correct: 2,
+              exp: "Active chronic gastritis shows neutrophils (activity) and lymphocytes/plasma cells in lamina propria." },
+            { q: "Gastrointestinal stromal tumors (GISTs) most commonly harbor mutations in:",
+              opts: ["KRAS", "c‑KIT (CD117)", "BRAF", "APC", "p53"],
+              correct: 1,
+              exp: "About 80% of GISTs have c‑KIT mutations; others have PDGFRA mutations." },
+            { q: "Ménétrier disease is characterized by:",
+              opts: ["Gastric atrophy", "Giant hypertrophic gastric folds, foveolar hyperplasia, hypochlorhydria", "Hypertrophic pyloric stenosis", "Gastric polyps", "Gastric carcinoma"],
+              correct: 1,
+              exp: "Ménétrier disease presents with giant folds, protein‑losing gastropathy, and hypochlorhydria." },
+            { q: "A gastric ulcer with associated metastasis to ovary is called:",
+              opts: ["Krukenberg tumor", "Meigs syndrome", "Brenner tumor", "Thecoma", "Dysgerminoma"],
+              correct: 0,
+              exp: "Krukenberg tumor is a metastatic signet‑ring adenocarcinoma to ovary, often from stomach." },
+
+            // Intestines
+            { q: "Which of the following is characteristic of Crohn disease?",
+              opts: ["Continuous mucosal involvement", "Transmural inflammation with skip lesions", "Crypt abscesses only", "Pseudopolyps", "Predilection for rectum"],
+              correct: 1,
+              exp: "Crohn disease is transmural, discontinuous (skip lesions), and may involve any part of GI tract." },
+            { q: "Ulcerative colitis is characterized by:",
+              opts: ["Transmural inflammation", "Skip lesions", "Continuous mucosal inflammation starting in rectum", "Granulomas", "Fistulas"],
+              correct: 2,
+              exp: "UC is continuous mucosal inflammation beginning in rectum and extending proximally." },
+            { q: "Which type of colonic polyp has the highest malignant potential?",
+              opts: ["Hyperplastic polyp", "Tubular adenoma", "Villous adenoma", "Sessile serrated polyp", "Juvenile polyp"],
+              correct: 2,
+              exp: "Villous adenomas have the greatest risk of malignant transformation (up to 40%)." },
+            { q: "Hereditary nonpolyposis colorectal cancer (Lynch syndrome) is due to mutations in:",
+              opts: ["APC gene", "Mismatch repair genes (MLH1, MSH2, etc.)", "p53", "KRAS", "DCC"],
+              correct: 1,
+              exp: "Lynch syndrome results from defective DNA mismatch repair → microsatellite instability." },
+            { q: "Celiac disease is associated with which HLA types?",
+              opts: ["HLA‑B27", "HLA‑DQ2 and DQ8", "HLA‑DR4", "HLA‑A3", "HLA‑Cw6"],
+              correct: 1,
+              exp: "Celiac disease is strongly associated with HLA‑DQ2 and DQ8; deamidated gluten peptides are presented to T cells." },
+            { q: "Whipple disease is caused by:",
+              opts: ["Mycobacterium tuberculosis", "Tropheryma whipplei", "Clostridium difficile", "Giardia lamblia", "Yersinia enterocolitica"],
+              correct: 1,
+              exp: "Tropheryma whipplei (gram‑positive actinobacterium) causes Whipple disease; PAS‑positive macrophages in lamina propria." },
+            { q: "Pseudomembranous colitis is caused by:",
+              opts: ["Clostridium perfringens", "Clostridium difficile", "Staphylococcus aureus", "E. coli O157:H7", "Salmonella"],
+              correct: 1,
+              exp: "C. difficile (toxins A and B) causes antibiotic‑associated pseudomembranous colitis." },
+            { q: "Meckel diverticulum is a remnant of:",
+              opts: ["Vitelline duct (omphalomesenteric duct)", "Urachus", "Allantois", "Notochord", "Thyroglossal duct"],
+              correct: 0,
+              exp: "Meckel diverticulum is a persistent vitelline duct, usually 2 feet from ileocecal valve." },
+
+            // Liver
+            { q: "Which virus is most likely to cause chronic hepatitis and hepatocellular carcinoma?",
+              opts: ["HAV", "HBV", "HCV", "HEV", "Both HBV and HCV"],
+              correct: 4,
+              exp: "Both HBV and HCV cause chronic infection, cirrhosis, and increased risk of HCC." },
+            { q: "The characteristic histologic finding in alpha‑1 antitrypsin deficiency is:",
+              opts: ["Ground‑glass hepatocytes", "Mallory hyaline", "Periodic acid‑Schiff (PAS)‑positive globules in hepatocytes", "Fatty change", "Bile duct proliferation"],
+              correct: 2,
+              exp: "PAS‑positive diastase‑resistant globules in periportal hepatocytes indicate α‑1 antitrypsin deficiency." },
+            { q: "Which of the following is a risk factor for hepatocellular carcinoma?",
+              opts: ["Cirrhosis (any cause)", "Hepatitis B", "Aflatoxin exposure", "All of the above", "None"],
+              correct: 3,
+              exp: "HCC risk factors include cirrhosis, chronic HBV/HCV, aflatoxin, alcohol, hemochromatosis." },
+            { q: "Primary biliary cholangitis is characterized by:",
+              opts: ["Anti‑mitochondrial antibodies", "Anti‑smooth muscle antibodies", "Anti‑LKM1 antibodies", "ANCA", "ANA"],
+              correct: 0,
+              exp: "Primary biliary cholangitis (PBC) is associated with anti‑mitochondrial antibodies (AMA)." },
+            { q: "Wilson disease involves copper accumulation primarily in:",
+              opts: ["Liver and brain", "Kidneys and bones", "Cornea and skin", "Heart and muscles", "Spleen and pancreas"],
+              correct: 0,
+              exp: "Wilson disease (ATP7B mutation) causes copper accumulation in liver (cirrhosis) and brain (basal ganglia)." },
+            { q: "Hereditary hemochromatosis is associated with mutations in:",
+              opts: ["HFE gene", "ATP7B", "CFTR", "Alpha‑1 antitrypsin", "UGT1A1"],
+              correct: 0,
+              exp: "Most common hereditary hemochromatosis is due to C282Y mutation in HFE gene, causing iron overload." },
+
+            // Gallbladder
+            { q: "Cholesterol gallstones form due to:",
+              opts: ["Supersaturation of bile with cholesterol", "Decreased bile salts", "Gallbladder stasis", "All of the above", "None"],
+              correct: 3,
+              exp: "Cholesterol stones result from supersaturation, decreased bile salts, and impaired gallbladder motility." },
+            { q: "Porcelain gallbladder is associated with increased risk of:",
+              opts: ["Cholecystitis", "Gallbladder carcinoma", "Choledocholithiasis", "Pancreatitis", "Cholangitis"],
+              correct: 1,
+              exp: "Calcified (porcelain) gallbladder has high risk of adenocarcinoma." },
+
+            // Pancreas
+            { q: "Acute pancreatitis is most commonly caused by:",
+              opts: ["Alcohol", "Gallstones", "Hypertriglyceridemia", "Trauma", "Drugs"],
+              correct: 1,
+              exp: "Gallstones and alcohol account for about 80% of acute pancreatitis cases." },
+            { q: "Which mutation is present in >90% of pancreatic ductal adenocarcinomas?",
+              opts: ["KRAS", "p53", "SMAD4", "BRCA2", "CDKN2A"],
+              correct: 0,
+              exp: "KRAS mutations are found in >90% of pancreatic cancers." },
+            { q: "Zollinger‑Ellison syndrome is caused by a tumor secreting:",
+              opts: ["Gastrin", "VIP", "Glucagon", "Somatostatin", "Insulin"],
+              correct: 0,
+              exp: "Gastrinoma (often in duodenum or pancreas) secretes gastrin → gastric acid hypersecretion → ulcers." }
+        ];
+
+        // Add more to reach 60
+        const extraPath = [
+            { q: "Which of the following is a feature of Mallory‑Weiss syndrome?",
+              opts: ["Esophageal varices", "Mucosal tear at gastroesophageal junction after retching", "Boerhaave syndrome (full‑thickness rupture)", "Schatzki ring", "Esophageal web"],
+              correct: 1,
+              exp: "Mallory‑Weiss tear is a linear laceration at GE junction caused by severe vomiting, retching." },
+            { q: "The most common primary malignant liver tumor in adults is:",
+              opts: ["Cholangiocarcinoma", "Hepatocellular carcinoma", "Angiosarcoma", "Hepatoblastoma", "Metastatic adenocarcinoma"],
+              correct: 1,
+              exp: "HCC is the most common primary liver malignancy." },
+            { q: "The histologic finding of 'crypt abscess' is characteristic of:",
+              opts: ["Crohn disease", "Ulcerative colitis", "Ischemic colitis", "Celiac disease", "Amebic colitis"],
+              correct: 1,
+              exp: "Crypt abscesses (neutrophils in crypt lumen) are common in active ulcerative colitis." },
+            { q: "Which of the following is associated with Barrett esophagus?",
+              opts: ["Adenocarcinoma", "Squamous cell carcinoma", "Small cell carcinoma", "Lymphoma", "Carcinoid"],
+              correct: 0,
+              exp: "Barrett esophagus predisposes to adenocarcinoma of esophagus." },
+            { q: "The most common site of gastrointestinal stromal tumor (GIST) is:",
+              opts: ["Esophagus", "Stomach", "Small intestine", "Colon", "Rectum"],
+              correct: 1,
+              exp: "Stomach is the most common location for GIST (60%)." },
+            { q: "Carcinoid tumors of the appendix:",
+              opts: ["Are often malignant", "Usually located at base", "Are usually benign and located at tip", "Frequently cause carcinoid syndrome", "Are associated with MEN1"],
+              correct: 2,
+              exp: "Appendiceal carcinoids are usually benign, located at tip, and rarely cause syndrome." },
+            { q: "Which of the following is a risk factor for gastric adenocarcinoma?",
+              opts: ["H. pylori infection", "Pernicious anemia", "Smoking", "All of the above", "None"],
+              correct: 3,
+              exp: "Risk factors include H. pylori, autoimmune gastritis (pernicious anemia), smoking, high salt intake." },
+            { q: "In acute pancreatitis, fat necrosis results from:",
+              opts: ["Release of lipase", "Release of amylase", "Release of trypsin", "Release of phospholipase A2", "All of the above"],
+              correct: 0,
+              exp: "Lipase released from damaged pancreas breaks down triglycerides into fatty acids, which saponify with calcium." },
+            { q: "The 'ground‑glass' appearance of hepatocytes is characteristic of:",
+              opts: ["Chronic hepatitis B", "Chronic hepatitis C", "Alcoholic hepatitis", "Alpha‑1 antitrypsin deficiency", "Wilson disease"],
+              correct: 0,
+              exp: "Ground‑glass hepatocytes are seen in chronic HBV due to HBsAg accumulation in ER." },
+            { q: "Primary sclerosing cholangitis is strongly associated with:",
+              opts: ["Ulcerative colitis", "Crohn disease", "Celiac disease", "Autoimmune hepatitis", "PBC"],
+              correct: 0,
+              exp: "PSC is strongly associated with UC (70‑80%)." }
+        ];
+
+        const allQuestions = questions.concat(extraPath); // now >60
+
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatology Pathology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-hand"></i>
+        <h1>Dermatology Pathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Introduction to Dermatopathology</a></li>
+                <li><a href="#ch2"><i class="fas fa-fire"></i> 2. Inflammatory Dermatoses</a></li>
+                <li><a href="#ch3"><i class="fas fa-water"></i> 3. Blistering Disorders</a></li>
+                <li><a href="#ch4"><i class="fas fa-bug"></i> 4. Skin Infections</a></li>
+                <li><a href="#ch5"><i class="fas fa-palette"></i> 5. Disorders of Pigmentation</a></li>
+                <li><a href="#ch6"><i class="fas fa-star"></i> 6. Benign Epithelial Tumors</a></li>
+                <li><a href="#ch7"><i class="fas fa-disease"></i> 7. Premalignant & Malignant Epidermal Tumors</a></li>
+                <li><a href="#ch8"><i class="fas fa-dna"></i> 8. Melanocytic Tumors</a></li>
+                <li><a href="#ch9"><i class="fas fa-cubes"></i> 9. Adnexal & Soft Tissue Tumors</a></li>
+                <li><a href="#ch10"><i class="fas fa-tshirt"></i> 10. Hair & Nail Disorders</a></li>
+                <li><a href="#ch11"><i class="fas fa-flask"></i> 11. Drug Eruptions & Miscellaneous</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: INTRODUCTION -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Introduction to Dermatopathology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Dermatopathology is the study of skin diseases at the microscopic level. Accurate diagnosis requires correlation of clinical presentation (morphology) with histopathologic findings. Key concepts include pattern analysis (e.g., epidermal changes, inflammatory infiltrate, vascular changes).</p>
+                </div>
+                <div class="key-points">
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Epidermal changes:</strong> Acanthosis (thickening), atrophy, spongiosis (intercellular edema), parakeratosis (retained nuclei in stratum corneum), hyperkeratosis.</li>
+                        <li><i class="fas fa-check"></i> <strong>Dermal changes:</strong> Inflammation (lichenoid, perivascular, diffuse), fibrosis, granulomas, vasculitis.</li>
+                        <li><i class="fas fa-check"></i> <strong>Special stains:</strong> Periodic acid–Schiff (PAS) for fungi, Fontana‑Masson for melanin, immunohistochemistry for tumor markers.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: INFLAMMATORY DERMATOSES -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fire"></i> 2. Inflammatory Dermatoses</div>
+            <div class="section-card">
+                <div class="subsection-heading">Eczema / Dermatitis</div>
+                <ul>
+                    <li><strong>Atopic dermatitis:</strong> Chronic relapsing dermatitis with spongiosis (intercellular edema), acanthosis, perivascular lymphocytic infiltrate. Associated with filaggrin mutations.</li>
+                    <li><strong>Allergic contact dermatitis:</strong> Type IV hypersensitivity; spongiosis, intraepidermal vesicles, dermal lymphocytic infiltrate. Common allergens: poison ivy, nickel.</li>
+                    <li><strong>Irritant contact dermatitis:</strong> Direct cytotoxic injury, similar histology but fewer lymphocytes.</li>
+                </ul>
+                <div class="subsection-heading">Psoriasis</div>
+                <ul>
+                    <li>Chronic autoimmune disorder with hyperproliferation of keratinocytes. Histology: regular acanthosis (psoriasiform hyperplasia), parakeratosis, loss of granular layer, Munro microabscesses (neutrophils in stratum corneum), dilated dermal capillaries.</li>
+                </ul>
+                <div class="subsection-heading">Lichen Planus</div>
+                <ul>
+                    <li>Idiopathic inflammatory disorder affecting skin, mucous membranes, nails. Histology: hyperkeratosis, wedge‑shaped hypergranulosis, saw‑tooth acanthosis, dense band‑like lymphocytic infiltrate at dermo‑epidermal junction (lichenoid infiltrate), Civatte bodies (apoptotic keratinocytes).</li>
+                </ul>
+                <div class="subsection-heading">Lichen Simplex Chronicus</div>
+                <ul>
+                    <li>Chronic rubbing leads to acanthosis, hyperkeratosis, thickening of stratum corneum; no parakeratosis; vertical streaking of collagen in papillary dermis.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Psoriasis has the Auspitz sign (bleeding points when scale removed); Koebner phenomenon (lesions at sites of trauma).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: BLISTERING DISORDERS -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 3. Blistering Disorders</div>
+            <div class="section-card">
+                <div class="subsection-heading">Pemphigus Vulgaris</div>
+                <ul>
+                    <li>Autoimmune blistering disease with antibodies against desmoglein 3 (and 1). Histology: suprabasal acantholysis (loss of adhesion between keratinocytes) → intraepidermal blister above basal layer. Basal cells remain attached to basement membrane (tombstone appearance). Immunofluorescence: intercellular IgG (fish‑net pattern).</li>
+                </ul>
+                <div class="subsection-heading">Bullous Pemphigoid</div>
+                <ul>
+                    <li>Autoimmune with antibodies against hemidesmosomal proteins (BP180, BP230). Histology: subepidermal blister with eosinophil‑rich infiltrate. Immunofluorescence: linear IgG and C3 along basement membrane.</li>
+                </ul>
+                <div class="subsection-heading">Dermatitis Herpetiformis</div>
+                <ul>
+                    <li>Associated with celiac disease; IgA deposition at dermal papillae. Histology: subepidermal blister with neutrophilic microabscesses in dermal papillae.</li>
+                </ul>
+                <div class="subsection-heading">Porphyria Cutanea Tarda</div>
+                <ul>
+                    <li>Subepidermal blister with minimal inflammation; festooning of dermal papillae.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Pemphigus vulgaris presents with flaccid bullae, positive Nikolsky sign. Bullous pemphigoid presents with tense bullae on elderly skin.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: SKIN INFECTIONS -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bug"></i> 4. Skin Infections</div>
+            <div class="section-card">
+                <div class="subsection-heading">Bacterial Infections</div>
+                <ul>
+                    <li><strong>Impetigo:</strong> <em>Staphylococcus aureus</em> or <em>Streptococcus pyogenes</em>. Subcorneal pustules with neutrophils; bacterial colonies.</li>
+                    <li><strong>Erysipelas:</strong> Superficial streptococcal infection with dermal edema and neutrophilic infiltrate.</li>
+                    <li><strong>Cellulitis:</strong> Deep dermal and subcutaneous infection with neutrophils and edema.</li>
+                </ul>
+                <div class="subsection-heading">Viral Infections</div>
+                <ul>
+                    <li><strong>Herpes simplex / Varicella zoster:</strong> Intraepidermal vesicles with acantholysis, multinucleated keratinocytes, Cowdry type A intranuclear inclusions.</li>
+                    <li><strong>Molluscum contagiosum:</strong> Cup‑shaped lesion with large intracytoplasmic eosinophilic inclusions (Henderson‑Patterson bodies).</li>
+                    <li><strong>HPV (warts):</strong> Acanthosis, papillomatosis, hyperkeratosis, koilocytes (vacuolated cells with pyknotic nuclei).</li>
+                </ul>
+                <div class="subsection-heading">Fungal Infections</div>
+                <ul>
+                    <li><strong>Dermatophytes (tinea):</strong> Fungal hyphae in stratum corneum (PAS stain).</li>
+                    <li><strong>Candidiasis:</strong> Pseudohyphae and budding yeast in stratum corneum; neutrophilic pustules.</li>
+                    <li><strong>Deep fungal infections:</strong> Suppurative and granulomatous inflammation; fungi seen in dermis (e.g., blastomycosis, coccidioidomycosis).</li>
+                </ul>
+                <div class="subsection-heading">Parasitic Infestations</div>
+                <ul>
+                    <li><strong>Scabies:</strong> Mite (<em>Sarcoptes scabiei</em>) in stratum corneum; eosinophilic spongiosis, eggs, scybala.</li>
+                    <li><strong>Leishmaniasis:</strong> Amastigotes within macrophages (Leishman‑Donovan bodies); chronic granulomatous inflammation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: DISORDERS OF PIGMENTATION -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-palette"></i> 5. Disorders of Pigmentation</div>
+            <div class="section-card">
+                <div class="subsection-heading">Vitiligo</div>
+                <ul>
+                    <li>Autoimmune loss of melanocytes. Histology: absence of melanocytes in basal layer; minimal inflammation in active stage.</li>
+                </ul>
+                <div class="subsection-heading">Albinism</div>
+                <ul>
+                    <li>Genetic defect in melanin synthesis (tyrosinase). Melanocytes present but lack pigment.</li>
+                </ul>
+                <div class="subsection-heading">Post‑inflammatory Hyperpigmentation</div>
+                <ul>
+                    <li>Increased melanin in basal layer and melanophages in dermis (incontinence of pigment).</li>
+                </ul>
+                <div class="subsection-heading">Freckles (Ephelides)</div>
+                <ul>
+                    <li>Increased melanin in keratinocytes; normal melanocyte number.</li>
+                </ul>
+                <div class="subsection-heading">Melasma</div>
+                <ul>
+                    <li>Increased melanin in epidermis and dermis; melanocyte number normal.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: BENIGN EPITHELIAL TUMORS -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-star"></i> 6. Benign Epithelial Tumors</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Seborrheic keratosis:</strong> Acanthosis, papillomatosis, hyperkeratosis; keratin pseudocysts (horn cysts). Basaloid cells. No atypia.</li>
+                    <li><strong>Actinic keratosis:</strong> Premalignant, arises on sun‑damaged skin. Partial‑thickness epidermal atypia (cytologic atypia of basal keratinocytes). Can progress to SCC.</li>
+                    <li><strong>Keratoacanthoma:</strong> Rapidly growing crater‑shaped lesion with central keratin plug; well‑differentiated squamous epithelium, often resolves spontaneously. Considered by some as a variant of SCC.</li>
+                    <li><strong>Squamous cell papilloma:</strong> Finger‑like projections with fibrovascular core; benign.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: PREMALIGNANT & MALIGNANT EPIDERMAL TUMORS -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-disease"></i> 7. Premalignant & Malignant Epidermal Tumors</div>
+            <div class="section-card">
+                <div class="subsection-heading">Basal Cell Carcinoma (BCC)</div>
+                <ul>
+                    <li>Most common skin cancer; arises from basal cells; locally invasive, rarely metastasizes. Associated with UV exposure, PTCH1 mutations (Gorlin syndrome).</li>
+                    <li>Histology: Nests of basaloid cells with peripheral palisading; retraction artifact from stroma. Several variants: nodular, superficial, infiltrative, micronodular, pigmented.</li>
+                </ul>
+                <div class="subsection-heading">Squamous Cell Carcinoma (SCC)</div>
+                <ul>
+                    <li>Malignant proliferation of keratinocytes; can metastasize. Arises from actinic keratosis or de novo.</li>
+                    <li>Histology: Sheets of atypical squamous cells, keratin pearl formation, intercellular bridges. Well‑, moderately, or poorly differentiated.</li>
+                </ul>
+                <div class="subsection-heading">Bowen's Disease (SCC in situ)</div>
+                <ul>
+                    <li>Full‑thickness epidermal atypia with intact basement membrane. Pagetoid spread may be seen.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: MELANOCYTIC TUMORS -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 8. Melanocytic Tumors</div>
+            <div class="section-card">
+                <div class="subsection-heading">Nevi (Moles)</div>
+                <ul>
+                    <li><strong>Junctional nevus:</strong> Nests of melanocytes at dermo‑epidermal junction.</li>
+                    <li><strong>Compound nevus:</strong> Nests at junction and in dermis.</li>
+                    <li><strong>Intradermal nevus:</strong> Nests only in dermis; often mature, with neurotization.</li>
+                    <li><strong>Dysplastic nevus:</strong> Atypical features: random cytologic atypia, lentiginous hyperplasia, fibroplasia. May be precursor of melanoma.</li>
+                </ul>
+                <div class="subsection-heading">Malignant Melanoma</div>
+                <ul>
+                    <li>Most aggressive skin cancer; arises from melanocytes. Risk factors: UV exposure, multiple nevi, family history, fair skin.</li>
+                    <li>ABCDE: Asymmetry, Border irregularity, Color variation, Diameter >6 mm, Evolution.</li>
+                    <li>Histology: Asymmetrical proliferation of atypical melanocytes at all levels (pagetoid spread), nesting variation, mitoses, deep invasion, lack of maturation. Clark levels (I‑V) and Breslow thickness predict prognosis.</li>
+                    <li>Variants: Superficial spreading, nodular, lentigo maligna, acral lentiginous, desmoplastic.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Clinical pearl:</strong> Immunohistochemistry: S‑100, SOX10, Melan‑A, HMB‑45 positive in melanoma. BRAF V600E mutation common.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: ADNEXAL & SOFT TISSUE TUMORS -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-cubes"></i> 9. Adnexal & Soft Tissue Tumors</div>
+            <div class="section-card">
+                <div class="subsection-heading">Adnexal Tumors (differentiating toward hair, sebaceous, sweat glands)</div>
+                <ul>
+                    <li><strong>Trichoepithelioma:</strong> Benign hair germ tumor; horn cysts, basaloid nests, calcification.</li>
+                    <li><strong>Pilomatricoma (calcifying epithelioma of Malherbe):</strong> Ghost cells, calcification; mutation in CTNNB1 (β‑catenin).</li>
+                    <li><strong>Sebaceous adenoma:</strong> Lobules of mature sebocytes; may be associated with Muir‑Torre syndrome.</li>
+                    <li><strong>Eccrine poroma:</strong> Broad anastomosing bands of small uniform cells attached to epidermis.</li>
+                    <li><strong>Syringoma:</strong> Small ducts with comma‑like tails in superficial dermis.</li>
+                </ul>
+                <div class="subsection-heading">Soft Tissue Tumors</div>
+                <ul>
+                    <li><strong>Dermatofibroma (fibrous histiocytoma):</strong> Fibroblastic proliferation with peripheral entrapment of collagen; overlying epidermal hyperplasia. S‑100 negative.</li>
+                    <li><strong>Neurofibroma:</strong> Spindle cells with wavy nuclei, mast cells; S‑100 positive. May be solitary or in NF1.</li>
+                    <li><strong>Schwannoma:</strong> Encapsulated, Antoni A (Verocay bodies) and Antoni B areas; S‑100 positive.</li>
+                    <li><strong>Lipoma:</strong> Mature adipocytes.</li>
+                    <li><strong>Angiosarcoma:</strong> Malignant vascular tumor; irregular anastomosing vessels, atypical endothelial cells.</li>
+                    <li><strong>Kaposi sarcoma:</strong> HHV‑8 associated; spindle cells, slit‑like vascular spaces, extravasated erythrocytes.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: HAIR & NAIL DISORDERS -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tshirt"></i> 10. Hair & Nail Disorders</div>
+            <div class="section-card">
+                <div class="subsection-heading">Alopecia</div>
+                <ul>
+                    <li><strong>Androgenetic alopecia:</strong> Miniaturization of follicles, increased telogen follicles.</li>
+                    <li><strong>Alopecia areata:</strong> Peribulbar lymphocytic infiltrate (swarm of bees), follicles in catagen/telogen, decreased inflammation. May see exclamation point hairs.</li>
+                    <li><strong>Telogen effluvium:</strong> Increased number of telogen follicles, no inflammation.</li>
+                    <li><strong>Lichen planopilaris:</strong> Lymphocytic scarring alopecia; interface dermatitis, perifollicular fibrosis.</li>
+                </ul>
+                <div class="subsection-heading">Nail Disorders</div>
+                <ul>
+                    <li><strong>Onychomycosis:</strong> Fungal hyphae in nail plate (PAS stain).</li>
+                    <li><strong>Psoriasis of nails:</strong> Pitting, onycholysis, subungual hyperkeratosis.</li>
+                    <li><strong>Melanonychia:</strong> Melanin deposition; rule out melanoma.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 11: DRUG ERUPTIONS & MISCELLANEOUS -->
+        <section id="ch11" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 11. Drug Eruptions & Miscellaneous</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Erythema multiforme:</strong> Target lesions; interface dermatitis, lymphocytic infiltrate, necrotic keratinocytes. Can be caused by HSV, drugs.</li>
+                    <li><strong>Stevens‑Johnson syndrome / Toxic epidermal necrolysis:</strong> Severe drug reactions with widespread necrosis and detachment. Full‑thickness epidermal necrosis.</li>
+                    <li><strong>Fixed drug eruption:</strong> Well‑demarcated round erythematous patch that recurs at same site; interface dermatitis with eosinophils.</li>
+                    <li><strong>Urticaria:</strong> Dermal edema with sparse perivascular infiltrate.</li>
+                    <li><strong>Mastocytosis:</strong> Aggregates of mast cells in dermis (metachromatic granules).</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Dermatology Pathology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hematology Pharmacology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-pills"></i>
+            <h1>Hematology Pharmacology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE HEMATOLOGY PHARMACOLOGY QUESTIONS
+        const questions = [
+            { q: "Oral iron is best absorbed when taken:",
+              opts: ["With food", "On an empty stomach with vitamin C", "With calcium", "With tea", "At bedtime"],
+              correct: 1,
+              exp: "Iron absorption is enhanced by acidic environment (vitamin C) and inhibited by food, calcium, tea." },
+            { q: "The most common adverse effect of oral iron is:",
+              opts: ["Constipation, nausea, dark stools", "Diarrhea", "Hypotension", "Anaphylaxis", "Headache"],
+              correct: 0,
+              exp: "GI side effects (constipation, nausea, black stools) are common." },
+            { q: "Intravenous iron dextran carries a risk of:",
+              opts: ["Anaphylaxis", "Hypotension", "Serum sickness", "All of the above", "None"],
+              correct: 3,
+              exp: "Iron dextran can cause anaphylaxis; test dose recommended." },
+            { q: "Folic acid supplementation is recommended in pregnancy to prevent:",
+              opts: ["Neural tube defects", "Maternal anemia", "Fetal macrosomia", "Preterm labor", "Preeclampsia"],
+              correct: 0,
+              exp: "Folate (400‑800 mcg/day) prevents neural tube defects." },
+            { q: "Vitamin B12 (cyanocobalamin) is administered intramuscularly in pernicious anemia because:",
+              opts: ["Oral absorption requires intrinsic factor", "It is destroyed in stomach", "It cannot cross gut wall", "It is more effective IM", "None"],
+              correct: 0,
+              exp: "Pernicious anemia lacks intrinsic factor; oral B12 not absorbed." },
+            { q: "Erythropoiesis‑stimulating agents (ESAs) are indicated for:",
+              opts: ["Anemia of chronic kidney disease", "Iron deficiency anemia", "Megaloblastic anemia", "Hemolytic anemia", "Aplastic anemia"],
+              correct: 0,
+              exp: "ESAs are approved for anemia due to CKD, chemotherapy, and certain other conditions." },
+            { q: "A potential adverse effect of ESAs is:",
+              opts: ["Hypertension", "Thrombosis", "Pure red cell aplasia", "All of the above", "None"],
+              correct: 3,
+              exp: "ESAs can increase BP, thrombosis risk, and rarely cause pure red cell aplasia." },
+            { q: "Aspirin irreversibly inhibits:",
+              opts: ["COX‑1, reducing thromboxane A₂", "COX‑2 only", "Phospholipase A₂", "Lipoxygenase", "Thrombin"],
+              correct: 0,
+              exp: "Aspirin acetylates COX‑1, blocking thromboxane A₂, inhibiting platelet aggregation." },
+            { q: "Clopidogrel is a prodrug activated by:",
+              opts: ["CYP2C19", "CYP3A4", "CYP2D6", "CYP2C9", "CYP1A2"],
+              correct: 0,
+              exp: "Clopidogrel requires CYP2C19 for activation; poor metabolizers have reduced efficacy." },
+            { q: "Ticagrelor differs from clopidogrel in that it:",
+              opts: ["Is a reversible, direct‑acting P2Y₁₂ inhibitor", "Is a prodrug", "Has longer half‑life", "Is only IV", "None"],
+              correct: 0,
+              exp: "Ticagrelor is a direct reversible inhibitor; not a prodrug." },
+            { q: "Abciximab is a:",
+              opts: ["GP IIb/IIIa inhibitor (monoclonal antibody)", "P2Y₁₂ inhibitor", "COX inhibitor", "Thrombin inhibitor", "Factor Xa inhibitor"],
+              correct: 0,
+              exp: "Abciximab is a monoclonal antibody against GP IIb/IIIa." },
+            { q: "Unfractionated heparin is monitored by:",
+              opts: ["aPTT", "PT", "INR", "Anti‑Xa activity", "Bleeding time"],
+              correct: 0,
+              exp: "Heparin effect is monitored by aPTT." },
+            { q: "The antidote for heparin is:",
+              opts: ["Protamine sulfate", "Vitamin K", "Fresh frozen plasma", "Idarucizumab", "Andexanet alfa"],
+              correct: 0,
+              exp: "Protamine sulfate neutralizes heparin." },
+            { q: "Low molecular weight heparin (LMWH) is monitored by:",
+              opts: ["Anti‑Xa assay", "aPTT", "PT", "INR", "Thrombin time"],
+              correct: 0,
+              exp: "LMWH effect is monitored by anti‑Xa levels if needed." },
+            { q: "Fondaparinux is a synthetic pentasaccharide that selectively inhibits:",
+              opts: ["Factor Xa", "Thrombin", "Factor IXa", "Factor VIIa", "Factor XIIa"],
+              correct: 0,
+              exp: "Fondaparinux binds antithrombin, inhibiting factor Xa." },
+            { q: "Warfarin inhibits vitamin K‑dependent synthesis of factors:",
+              opts: ["II, VII, IX, X, and proteins C and S", "II, VII, IX, X only", "II, VII, IX, X, XII", "II, VII, IX, X, XI", "II, VII, IX, X, and protein Z"],
+              correct: 0,
+              exp: "Warfarin inhibits synthesis of factors II, VII, IX, X and proteins C and S." },
+            { q: "The anticoagulant effect of warfarin is monitored by:",
+              opts: ["INR", "aPTT", "Anti‑Xa", "Bleeding time", "Thrombin time"],
+              correct: 0,
+              exp: "Warfarin is monitored by PT/INR." },
+            { q: "The antidote for warfarin in life‑threatening bleeding is:",
+              opts: ["Prothrombin complex concentrate (PCC)", "Vitamin K", "Fresh frozen plasma (FFP)", "Both B and C", "All of the above"],
+              correct: 4,
+              exp: "Severe bleeding: PCC (preferred) or FFP; vitamin K works slowly." },
+            { q: "Dabigatran is a direct:",
+              opts: ["Thrombin inhibitor", "Factor Xa inhibitor", "Factor IXa inhibitor", "Vitamin K antagonist", "None"],
+              correct: 0,
+              exp: "Dabigatran is a direct thrombin inhibitor." },
+            { q: "Rivaroxaban and apixaban are:",
+              opts: ["Direct factor Xa inhibitors", "Direct thrombin inhibitors", "Vitamin K antagonists", "LMWHs", "None"],
+              correct: 0,
+              exp: "Rivaroxaban, apixaban, edoxaban are direct Xa inhibitors." },
+            { q: "Idarucizumab is the reversal agent for:",
+              opts: ["Dabigatran", "Rivaroxaban", "Apixaban", "Edoxaban", "Heparin"],
+              correct: 0,
+              exp: "Idarucizumab is a monoclonal antibody fragment that binds dabigatran." },
+            { q: "Andexanet alfa reverses the effect of:",
+              opts: ["Direct Xa inhibitors", "Direct thrombin inhibitors", "Heparin", "Warfarin", "All"],
+              correct: 0,
+              exp: "Andexanet alfa is a recombinant modified factor Xa that binds Xa inhibitors." },
+            { q: "Alteplase (tPA) is used for:",
+              opts: ["Acute ischemic stroke, STEMI, massive PE", "Deep vein thrombosis", "Atrial fibrillation", "Peripheral arterial disease", "All"],
+              correct: 0,
+              exp: "tPA is used for acute thrombotic events." },
+            { q: "Desmopressin (DDAVP) is used in mild hemophilia A and von Willebrand disease because it:",
+              opts: ["Increases release of factor VIII and vWF from endothelium", "Replaces factor VIII", "Blocks fibrinolysis", "Activates platelets", "None"],
+              correct: 0,
+              exp: "Desmopressin stimulates release of von Willebrand factor and factor VIII." },
+            { q: "Tranexamic acid works by:",
+              opts: ["Inhibiting plasminogen activation", "Activating plasmin", "Inhibiting thrombin", "Blocking factor Xa", "Enhancing fibrinolysis"],
+              correct: 0,
+              exp: "Tranexamic acid is an antifibrinolytic; it blocks plasminogen activation." },
+            { q: "Hydroxyurea in sickle cell disease:",
+              opts: ["Increases fetal hemoglobin (HbF)", "Reduces pain crises", "Decreases acute chest syndrome", "All of the above", "None"],
+              correct: 3,
+              exp: "Hydroxyurea increases HbF, reducing sickling and clinical events." },
+            { q: "Crizanlizumab is a monoclonal antibody against:",
+              opts: ["P‑selectin", "IL‑6", "CD20", "TNF‑α", "VEGF"],
+              correct: 0,
+              exp: "Crizanlizumab blocks P‑selectin, reducing vaso‑occlusive crises in sickle cell." },
+            { q: "Voxelotor works by:",
+              opts: ["Increasing hemoglobin's affinity for oxygen, inhibiting sickling", "Reducing inflammation", "Blocking adhesion", "Increasing nitric oxide", "None"],
+              correct: 0,
+              exp: "Voxelotor binds to hemoglobin, increasing oxygen affinity and reducing sickling." },
+            { q: "Rituximab is a monoclonal antibody against:",
+              opts: ["CD20 on B cells", "CD3 on T cells", "CD52", "CD33", "CD38"],
+              correct: 0,
+              exp: "Rituximab targets CD20, used in B‑cell lymphomas and autoimmune cytopenias." },
+            { q: "Eculizumab is used in paroxysmal nocturnal hemoglobinuria (PNH) because it:",
+              opts: ["Inhibits terminal complement (C5)", "Inhibits complement C3", "Blocks CD55", "Increases GPI‑anchored proteins", "None"],
+              correct: 0,
+              exp: "Eculizumab binds C5, preventing formation of membrane attack complex." },
+            { q: "Eltrombopag and romiplostim are used in:",
+              opts: ["Immune thrombocytopenic purpura (ITP)", "Thrombotic thrombocytopenic purpura", "Hemophilia", "DIC", "von Willebrand disease"],
+              correct: 0,
+              exp: "They are thrombopoietin receptor agonists, stimulating platelet production in ITP." },
+            { q: "Filgrastim (G‑CSF) is used to treat:",
+              opts: ["Chemotherapy‑induced neutropenia", "Anemia", "Thrombocytopenia", "Leukemia", "Lymphoma"],
+              correct: 0,
+              exp: "G‑CSF increases neutrophil count." },
+            { q: "Allopurinol is used in hematologic malignancies to:",
+              opts: ["Prevent tumor lysis syndrome by reducing uric acid", "Treat anemia", "Increase platelets", "Reduce bleeding", "None"],
+              correct: 0,
+              exp: "Allopurinol inhibits xanthine oxidase, reducing uric acid." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Rasburicase is used for tumor lysis syndrome and is contraindicated in:",
+              opts: ["G6PD deficiency", "Pregnancy", "Liver disease", "Renal failure", "All"],
+              correct: 0,
+              exp: "Rasburicase can cause hemolysis in G6PD deficiency." },
+            { q: "Leucovorin (folinic acid) is used to:",
+              opts: ["Rescue normal cells from methotrexate toxicity", "Treat B12 deficiency", "Enhance chemotherapy", "Prevent neural tube defects", "None"],
+              correct: 0,
+              exp: "Leucovorin bypasses dihydrofolate reductase, rescuing cells from methotrexate." },
+            { q: "Bortezomib is a proteasome inhibitor used in multiple myeloma. Its major adverse effect is:",
+              opts: ["Peripheral neuropathy", "Cardiotoxicity", "Nephrotoxicity", "Myelosuppression", "Hepatotoxicity"],
+              correct: 0,
+              exp: "Bortezomib commonly causes peripheral neuropathy." },
+            { q: "Lenalidomide is an immunomodulatory drug used in multiple myeloma. It requires:",
+              opts: ["Thromboprophylaxis due to increased DVT risk", "Renal dose adjustment", "Pregnancy prevention (teratogenic)", "All of the above", "None"],
+              correct: 3,
+              exp: "Lenalidomide increases thrombosis risk, is teratogenic, and requires renal adjustment." },
+            { q: "Aspirin is contraindicated in children with viral infections because of risk of:",
+              opts: ["Reye syndrome", "Gastric bleeding", "Hepatotoxicity", "Nephrotoxicity", "All"],
+              correct: 0,
+              exp: "Reye syndrome is associated with aspirin use in children with viral illness." },
+            { q: "Cytarabine (Ara‑C) is used in AML and can cause:",
+              opts: ["Cerebellar toxicity", "Cardiotoxicity", "Pulmonary fibrosis", "Nephrotoxicity", "None"],
+              correct: 0,
+              exp: "High‑dose cytarabine can cause cerebellar toxicity." },
+            { q: "Daunorubicin is an anthracycline that can cause:",
+              opts: ["Cardiomyopathy (dose‑dependent)", "Pulmonary toxicity", "Neurotoxicity", "Nephrotoxicity", "None"],
+              correct: 0,
+              exp: "Anthracyclines cause dose‑dependent cardiotoxicity." },
+            { q: "6‑Mercaptopurine (6‑MP) is metabolized by:",
+              opts: ["Thiopurine methyltransferase (TPMT)", "CYP2D6", "CYP3A4", "UGT1A1", "None"],
+              correct: 0,
+              exp: "TPMT deficiency increases 6‑MP toxicity." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIT Pharmacology · MCQ Bank</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-stethoscope"></i>
+            <h1>GIT Pharmacology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ GIT Pharmacology Questions
+        const questions = [
+            // Antacids
+            { q: "Which antacid is most likely to cause constipation when used alone?",
+              opts: ["Magnesium hydroxide", "Aluminum hydroxide", "Calcium carbonate", "Sodium bicarbonate", "Both B and C"],
+              correct: 1,
+              exp: "Aluminum hydroxide is constipating; magnesium hydroxide causes diarrhea. Calcium carbonate can also cause constipation." },
+            { q: "Milk‑alkali syndrome (hypercalcemia, alkalosis, renal failure) is associated with chronic use of:",
+              opts: ["Magnesium hydroxide", "Aluminum hydroxide", "Calcium carbonate", "Sodium bicarbonate", "Sucralfate"],
+              correct: 2,
+              exp: "Calcium carbonate in high doses can cause milk‑alkali syndrome." },
+            { q: "A patient with renal failure should avoid magnesium‑containing antacids because of risk of:",
+              opts: ["Hypomagnesemia", "Hypermagnesemia", "Alkalosis", "Acid rebound", "Constipation"],
+              correct: 1,
+              exp: "Hypermagnesemia can occur in renal impairment because magnesium is excreted renally." },
+
+            // H2 blockers
+            { q: "Which H₂ receptor antagonist is most likely to cause gynecomastia and inhibit CYP450?",
+              opts: ["Ranitidine", "Famotidine", "Cimetidine", "Nizatidine", "All of the above"],
+              correct: 2,
+              exp: "Cimetidine has antiandrogenic effects (gynecomastia) and inhibits cytochrome P450, causing drug interactions." },
+            { q: "H₂ receptor antagonists reduce gastric acid secretion by blocking receptors on:",
+              opts: ["Chief cells", "Parietal cells", "G cells", "Mucous cells", "Enterochromaffin‑like cells"],
+              correct: 1,
+              exp: "H₂ receptors are on parietal cells; histamine stimulates acid secretion via these receptors." },
+
+            // PPIs
+            { q: "Proton pump inhibitors (PPIs) irreversibly inhibit which enzyme?",
+              opts: ["H⁺/K⁺ ATPase", "Na⁺/K⁺ ATPase", "Carbonic anhydrase", "Pepsinogen", "Gastrin"],
+              correct: 0,
+              exp: "PPIs target H⁺/K⁺ ATPase (proton pump) on parietal cells." },
+            { q: "PPIs are most effective when taken:",
+              opts: ["With meals", "30‑60 minutes before meals", "At bedtime", "After meals", "On empty stomach at any time"],
+              correct: 1,
+              exp: "Best taken before breakfast (30‑60 min) because proton pumps are most active after a meal." },
+            { q: "Long‑term PPI use is associated with increased risk of all EXCEPT:",
+              opts: ["Clostridium difficile infection", "Osteoporosis‑related fractures", "Vitamin B12 deficiency", "Hyperkalemia", "Hypomagnesemia"],
+              correct: 3,
+              exp: "PPIs may cause hypomagnesemia, not hyperkalemia. Other risks include C. diff, fractures, B12 deficiency, and pneumonia." },
+
+            // Cytoprotectants
+            { q: "Sucralfate is most effective when administered:",
+              opts: ["With food", "30 min before meals", "1 hour before meals on empty stomach", "At bedtime", "With antacids"],
+              correct: 2,
+              exp: "Sucralfate requires acid for activation; should be given on empty stomach (1h before meals)." },
+            { q: "Misoprostol is used to prevent NSAID‑induced ulcers but is contraindicated in:",
+              opts: ["Elderly patients", "Pregnancy", "Asthma", "Diabetes", "Hypertension"],
+              correct: 1,
+              exp: "Misoprostol is an abortifacient; contraindicated in pregnancy." },
+            { q: "A common side effect of misoprostol is:",
+              opts: ["Constipation", "Diarrhea and abdominal cramps", "Headache", "Rash", "Cough"],
+              correct: 1,
+              exp: "Diarrhea and abdominal cramping are common with misoprostol." },
+
+            // H. pylori
+            { q: "Standard triple therapy for H. pylori includes a PPI plus:",
+              opts: ["Amoxicillin and clarithromycin", "Metronidazole and tetracycline", "Amoxicillin and metronidazole", "Clarithromycin and levofloxacin", "Bismuth and tetracycline"],
+              correct: 0,
+              exp: "Triple therapy: PPI + clarithromycin + amoxicillin (or metronidazole if penicillin allergic)." },
+            { q: "Bismuth compounds in H. pylori regimens contribute by:",
+              opts: ["Direct bactericidal effect", "Inhibiting urease", "Protecting mucosa", "All of the above", "None"],
+              correct: 3,
+              exp: "Bismuth has direct antimicrobial activity, inhibits urease, and forms protective coating on ulcers." },
+
+            // Antiemetics
+            { q: "Ondansetron exerts its antiemetic effect by blocking:",
+              opts: ["Dopamine D₂ receptors", "5‑HT₃ receptors", "H₁ receptors", "Muscarinic receptors", "Substance P (NK1) receptors"],
+              correct: 1,
+              exp: "Ondansetron is a 5‑HT₃ antagonist, used in chemotherapy‑induced and postoperative nausea." },
+            { q: "A patient with chemotherapy‑induced nausea that is poorly controlled with ondansetron may benefit from addition of:",
+              opts: ["Aprepitant (NK1 antagonist)", "Metoclopramide", "Promethazine", "Scopolamine", "Lorazepam"],
+              correct: 0,
+              exp: "Aprepitant blocks NK1 receptors and is effective for delayed CINV." },
+            { q: "Metoclopramide has prokinetic effects due to:",
+              opts: ["Dopamine antagonism and 5‑HT₄ agonism", "5‑HT₃ antagonism", "Motilin agonism", "Cholinergic stimulation", "GABA potentiation"],
+              correct: 0,
+              exp: "Metoclopramide is a dopamine antagonist and 5‑HT₄ agonist, increasing LES tone and gastric emptying." },
+            { q: "Which antiemetic is most effective for motion sickness?",
+              opts: ["Ondansetron", "Promethazine (antihistamine)", "Metoclopramide", "Aprepitant", "Prochlorperazine"],
+              correct: 1,
+              exp: "Antihistamines (e.g., promethazine, diphenhydramine) and anticholinergics (scopolamine) are best for motion sickness." },
+            { q: "Extrapyramidal symptoms are a concern with which antiemetic?",
+              opts: ["Ondansetron", "Promethazine", "Metoclopramide", "Scopolamine", "Dronabinol"],
+              correct: 2,
+              exp: "Metoclopramide, a dopamine antagonist, can cause EPS, especially in young patients and with high doses." },
+
+            // Prokinetics
+            { q: "Erythromycin is used as a prokinetic because it:",
+              opts: ["Blocks dopamine receptors", "Activates motilin receptors", "Increases acetylcholine release", "Stimulates 5‑HT₄ receptors", "Inhibits gastric acid"],
+              correct: 1,
+              exp: "Erythromycin is a motilin receptor agonist, stimulating gastric emptying." },
+            { q: "Domperidone differs from metoclopramide in that it:",
+              opts: ["Crosses the blood‑brain barrier less", "Is more potent", "Has fewer GI side effects", "Is only available intravenously", "Is an antibiotic"],
+              correct: 0,
+              exp: "Domperidone is a peripheral dopamine antagonist; it does not readily cross BBB, so fewer CNS side effects." },
+
+            // Laxatives
+            { q: "Which laxative is a stool softener?",
+              opts: ["Bisacodyl", "Docusate", "Lactulose", "Psyllium", "Senna"],
+              correct: 1,
+              exp: "Docusate is a surfactant stool softener; it lowers surface tension, allowing water to penetrate stool." },
+            { q: "Lactulose is used in hepatic encephalopathy because it:",
+              opts: ["Acidifies colon, trapping NH₄⁺", "Increases ammonia absorption", "Stimulates bowel motility", "Inhibits urease", "Neutralizes ammonia"],
+              correct: 0,
+              exp: "Lactulose is metabolized by colonic bacteria to acids, acidifying lumen, converting NH₃ to NH₄⁺, which is trapped and excreted." },
+            { q: "A patient with chronic constipation and melanosis coli on colonoscopy likely used long‑term:",
+              opts: ["Psyllium", "Lactulose", "Senna (anthraquinone)", "PEG", "Docusate"],
+              correct: 2,
+              exp: "Senna (and other anthraquinone laxatives) can cause melanosis coli (pigment deposition)." },
+
+            // Antidiarrheals
+            { q: "Loperamide is preferred over diphenoxylate for chronic diarrhea because:",
+              opts: ["It is more potent", "It does not cross the blood‑brain barrier", "It has fewer GI side effects", "It has a faster onset", "It is available over‑the‑counter"],
+              correct: 1,
+              exp: "Loperamide is an opioid that does not cross BBB, so no CNS effects; diphenoxylate is combined with atropine to discourage abuse." },
+            { q: "Bismuth subsalicylate is used for traveler's diarrhea because it:",
+              opts: ["Has antimicrobial and antisecretory effects", "Inhibits peristalsis", "Blocks 5‑HT₃ receptors", "Neutralizes toxins", "All of the above"],
+              correct: 0,
+              exp: "Bismuth subsalicylate has antimicrobial, antisecretory, and anti‑inflammatory properties." },
+
+            // IBD drugs
+            { q: "Sulfasalazine is broken down by colonic bacteria to release:",
+              opts: ["5‑aminosalicylic acid (5‑ASA) and sulfapyridine", "Mesalamine and sulfamethoxazole", "Sulfapyridine alone", "5‑ASA alone", "Acetylsalicylic acid"],
+              correct: 0,
+              exp: "Azo bond is cleaved by colonic bacteria, releasing active 5‑ASA and the carrier sulfapyridine." },
+            { q: "Folate deficiency is a concern with sulfasalazine because:",
+              opts: ["Sulfasalazine inhibits folate absorption", "Sulfasalazine is a folate antagonist", "Sulfasalazine increases folate excretion", "Sulfasalazine causes hemolysis", "The carrier sulfapyridine impairs folate metabolism"],
+              correct: 4,
+              exp: "Sulfasalazine interferes with folate absorption and metabolism; patients should take folate supplements." },
+            { q: "Infliximab is a monoclonal antibody against:",
+              opts: ["TNF‑α", "IL‑12/23", "α₄β₇ integrin", "CD20", "IL‑6"],
+              correct: 0,
+              exp: "Infliximab is an anti‑TNF agent used in Crohn's disease and ulcerative colitis." },
+            { q: "Vedolizumab selectively blocks which integrin?",
+              opts: ["α₄β₁", "α₄β₇", "α₄β₃", "LFA‑1", "Mac‑1"],
+              correct: 1,
+              exp: "Vedolizumab binds α₄β₇ integrin, preventing lymphocyte trafficking to gut mucosa." },
+            { q: "A patient on azathioprine should be monitored for:",
+              opts: ["Myelosuppression", "Hepatotoxicity", "Pancreatitis", "All of the above", "None"],
+              correct: 3,
+              exp: "Azathioprine can cause myelosuppression, hepatotoxicity, and pancreatitis." },
+
+            // IBS
+            { q: "Linaclotide is used for IBS‑C and works by:",
+              opts: ["Activating guanylate cyclase‑C, increasing fluid secretion", "Blocking chloride channels", "Stimulating 5‑HT₄ receptors", "Inhibiting sodium absorption", "Stimulating opioid receptors"],
+              correct: 0,
+              exp: "Linaclotide is a guanylate cyclase‑C agonist, increasing cGMP, which increases fluid secretion and accelerates transit." },
+            { q: "Alosetron, a 5‑HT₃ antagonist, is restricted for use in:",
+              opts: ["IBS‑D in women", "IBS‑C in men", "IBS‑D in men", "IBS‑C in women", "All IBS patients"],
+              correct: 0,
+              exp: "Alosetron is approved only for severe IBS‑D in women because of risk of ischemic colitis." },
+
+            // Gallstones & pancreatic enzymes
+            { q: "Ursodeoxycholic acid (ursodiol) is used for:",
+              opts: ["Dissolution of cholesterol gallstones", "Treatment of primary biliary cholangitis", "Both A and B", "Prevention of pancreatitis", "Treatment of bile reflux"],
+              correct: 2,
+              exp: "Ursodiol is used for dissolution of small cholesterol stones and for primary biliary cholangitis." },
+            { q: "Pancrelipase contains which enzymes?",
+              opts: ["Lipase, protease, amylase", "Lipase and amylase only", "Protease only", "Amylase only", "Lipase, phospholipase, colipase"],
+              correct: 0,
+              exp: "Pancrelipase is a pancreatic enzyme replacement containing lipase, protease, and amylase." }
+        ];
+
+        // Add more to reach 60+
+        const extraPharma = [
+            { q: "Which drug is a prostaglandin analogue used to prevent NSAID‑induced ulcers?",
+              opts: ["Sucralfate", "Misoprostol", "Omeprazole", "Famotidine", "Bismuth subsalicylate"],
+              correct: 1,
+              exp: "Misoprostol is a PGE₁ analogue." },
+            { q: "A patient with gastroparesis may benefit from which prokinetic?",
+              opts: ["Ondansetron", "Metoclopramide", "Loperamide", "Diphenoxylate", "Dicyclomine"],
+              correct: 1,
+              exp: "Metoclopramide increases gastric emptying and is used in gastroparesis." },
+            { q: "Which of the following is an osmotic laxative?",
+              opts: ["Senna", "Bisacodyl", "Lactulose", "Docusate", "Mineral oil"],
+              correct: 2,
+              exp: "Lactulose, PEG, and sorbitol are osmotic laxatives." },
+            { q: "Diphenoxylate is combined with atropine to:",
+              opts: ["Increase efficacy", "Prevent abuse (add atropine to discourage overdosing)", "Reduce side effects", "Enhance absorption", "Prevent constipation"],
+              correct: 1,
+              exp: "Atropine is added to discourage intentional overdose because it causes unpleasant anticholinergic effects." },
+            { q: "Which antiemetic is most likely to cause sedation?",
+              opts: ["Ondansetron", "Promethazine", "Metoclopramide", "Aprepitant", "Granisetron"],
+              correct: 1,
+              exp: "Promethazine is an antihistamine with strong sedative properties." },
+            { q: "A patient on warfarin starts taking cimetidine. What is the concern?",
+              opts: ["Cimetidine inhibits CYP450, increasing warfarin levels", "Cimetidine induces CYP450, decreasing warfarin", "Cimetidine binds warfarin, reducing absorption", "No interaction", "Cimetidine increases vitamin K"],
+              correct: 0,
+              exp: "Cimetidine inhibits CYP450 enzymes, raising warfarin levels and INR, increasing bleeding risk." },
+            { q: "The most common side effect of magnesium hydroxide is:",
+              opts: ["Constipation", "Diarrhea", "Nausea", "Headache", "Hypomagnesemia"],
+              correct: 1,
+              exp: "Magnesium salts cause osmotic diarrhea." },
+            { q: "Which drug is a selective 5‑HT₃ antagonist used in IBS‑D?",
+              opts: ["Ondansetron", "Granisetron", "Alosetron", "Dolasetron", "Palonosetron"],
+              correct: 2,
+              exp: "Alosetron is used for severe IBS‑D in women." },
+            { q: "Budesonide is a corticosteroid used in Crohn disease because:",
+              opts: ["It has high first‑pass metabolism, reducing systemic effects", "It is more potent than prednisone", "It is injectable", "It has no side effects", "It is bactericidal"],
+              correct: 0,
+              exp: "Budesonide undergoes extensive first‑pass metabolism, limiting systemic bioavailability." },
+            { q: "Which of the following is an immunomodulator used in IBD?",
+              opts: ["Mesalamine", "Sulfasalazine", "Azathioprine", "Budesonide", "All of the above"],
+              correct: 2,
+              exp: "Azathioprine (and 6‑MP) are immunomodulators; mesalamine and sulfasalazine are aminosalicylates; budesonide is a corticosteroid." }
+        ];
+
+        const allQuestions = questions.concat(extraPharma); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

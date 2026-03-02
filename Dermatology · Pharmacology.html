@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatology · Pharmacology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-hand"></i>
+        <h1>Dermatology · Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>TOPICAL STEROIDS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#topical-steroids"><i class="fas fa-syringe"></i> 1. Topical Corticosteroids</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>RETINOIDS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#retinoids"><i class="fas fa-capsules"></i> 2. Retinoids</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIBIOTICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antibiotics"><i class="fas fa-bacteria"></i> 3. Topical & Systemic Antibiotics</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIFUNGALS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antifungals"><i class="fas fa-spider"></i> 4. Antifungals</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ANTIVIRALS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antivirals"><i class="fas fa-virus"></i> 5. Antivirals</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>IMMUNOMODULATORS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#immunomodulators"><i class="fas fa-shield-alt"></i> 6. Immunomodulators (Topical & Systemic)</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>BIOLOGICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#biologics"><i class="fas fa-syringe"></i> 7. Biologics for Psoriasis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>OTHER AGENTS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#other"><i class="fas fa-capsules"></i> 8. Other Dermatologic Drugs</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== TOPICAL STEROIDS ==================== -->
+        <section id="topical-steroids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 1. Topical Corticosteroids</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Topical corticosteroids are the most frequently prescribed dermatologic drugs. They have anti‑inflammatory, antiproliferative, and immunosuppressive effects.
+                </div>
+                <div class="subsection-heading">Mechanism of Action</div>
+                <ul>
+                    <li>Diffuse into cells, bind glucocorticoid receptors → complex translocates to nucleus → regulate gene transcription (trans‑repression of NF‑κB, AP‑1).</li>
+                    <li>Inhibit cytokine production (IL‑1, IL‑2, IFN‑γ, TNF‑α).</li>
+                    <li>Induce lipocortin, which inhibits phospholipase A2 → ↓ prostaglandins and leukotrienes.</li>
+                    <li>Vasoconstriction (blanching effect).</li>
+                </ul>
+                <div class="subsection-heading">Potency Classification (US system – Classes I‑VII)</div>
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Potency</th><th>Examples</th></tr></thead>
+                    <tbody>
+                        <tr><td>I</td><td>Super‑high</td><td>Clobetasol propionate 0.05%, Betamethasone dipropionate 0.05% (optimized vehicle)</td></tr>
+                        <tr><td>II‑III</td><td>High</td><td>Mometasone furoate 0.1%, Triamcinolone acetonide 0.1%</td></tr>
+                        <tr><td>IV‑V</td><td>Medium</td><td>Hydrocortisone valerate 0.2%, Betamethasone valerate 0.1%</td></tr>
+                        <tr><td>VI‑VII</td><td>Low</td><td>Hydrocortisone 1‑2.5%, Dexamethasone 0.1%</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Choice of potency:</strong> Use lowest potency that is effective. Low potency for face, intertriginous areas; high potency for palms, soles, thick plaques.</p>
+                </div>
+                <div class="subsection-heading">Adverse Effects</div>
+                <ul>
+                    <li><strong>Local:</strong> Skin atrophy, striae, telangiectasias, hypopigmentation, acneiform eruptions, perioral dermatitis, rosacea exacerbation, tinea incognito.</li>
+                    <li><strong>Systemic (with high potency/large area/occlusion):</strong> HPA axis suppression, Cushing syndrome, hyperglycemia.</li>
+                </ul>
+                <div class="subsection-heading">Vehicle Selection</div>
+                <ul>
+                    <li><strong>Ointments:</strong> Greasy, more occlusive, best for dry, lichenified lesions.</li>
+                    <li><strong>Creams:</strong> Water‑washable, good for acute/subacute dermatoses.</li>
+                    <li><strong>Lotions/gels:</strong> For scalp, hairy areas.</li>
+                    <li><strong>Foams:</strong> Easy application for scalp.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== RETINOIDS ==================== -->
+        <section id="retinoids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 2. Retinoids</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Retinoids are vitamin A derivatives that regulate cell proliferation, differentiation, and inflammation.
+                </div>
+                <div class="subsection-heading">Topical Retinoids</div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Receptor</th><th>Uses</th><th>Key Points</th></tr></thead>
+                    <tbody>
+                        <tr><td>Tretinoin (all‑trans retinoic acid)</td><td>RAR</td><td>Acne, photoaging, hyperpigmentation</td><td>Irritant dermatitis; start low concentration, use sunscreen</td></tr>
+                        <tr><td>Adapalene</td><td>RAR‑β/γ selective</td><td>Acne (OTC)</td><td>Less irritant; available 0.1%, 0.3%</td></tr>
+                        <tr><td>Tazarotene</td><td>RAR‑β/γ selective</td><td>Acne, psoriasis, photoaging</td><td>More potent; more irritation; contraindicated in pregnancy</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Systemic Retinoids</div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Uses</th><th>Mechanism</th><th>Major Side Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Isotretinoin (13‑cis retinoic acid)</td><td>Severe nodulocystic acne</td><td>Reduces sebum production, normalizes follicular keratinization, anti‑inflammatory</td><td>Teratogenicity (iPLEDGE program), cheilitis, dry skin, epistaxis, myalgias, elevated triglycerides, transaminitis, mood changes</td></tr>
+                        <tr><td>Acitretin</td><td>Psoriasis (especially pustular, erythrodermic)</td><td>Normalizes keratinocyte proliferation</td><td>Teratogenicity (long half‑life; avoid pregnancy for 3 years), hepatotoxicity, hyperlipidemia, mucocutaneous dryness</td></tr>
+                        <tr><td>Bexarotene</td><td>Cutaneous T‑cell lymphoma (CTCL)</td><td>RXR agonist</td><td>Hyperlipidemia, hypothyroidism, leukopenia</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== ANTIBIOTICS ==================== -->
+        <section id="antibiotics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 3. Topical & Systemic Antibiotics</div>
+            <div class="section-card">
+                <div class="subsection-heading">Topical Antibiotics</div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Spectrum</th><th>Uses</th></tr></thead>
+                    <tbody>
+                        <tr><td>Mupirocin</td><td>Staph, Strep (including MRSA)</td><td>Impetigo, folliculitis, eradication of nasal MRSA</td></tr>
+                        <tr><td>Retapamulin</td><td>Staph, Strep</td><td>Impetigo</td></tr>
+                        <tr><td>Clindamycin</td><td>Cutibacterium acnes, Staph, Strep</td><td>Acne (with benzoyl peroxide to prevent resistance), bacterial vaginosis</td></tr>
+                        <tr><td>Erythromycin</td><td>Staph, Strep, Cutibacterium</td><td>Acne (resistance common), erythrasma</td></tr>
+                        <tr><td>Metronidazole</td><td>Anaerobic bacteria, Demodex</td><td>Rosacea (topical gel/cream)</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Systemic Antibiotics in Dermatology</div>
+                <ul>
+                    <li><strong>Tetracyclines (doxycycline, minocycline):</strong> First‑line for moderate‑severe acne, rosacea, perioral dermatitis. Also anti‑inflammatory effects (MMP inhibition). Side effects: photosensitivity (doxycycline), vertigo (minocycline), hyperpigmentation (minocycline).</li>
+                    <li><strong>Macrolides (azithromycin, erythromycin):</strong> Alternative in acne, also for Bartonella, Lyme disease.</li>
+                    <li><strong>Cephalexin:</strong> For staphylococcal and streptococcal skin infections (cellulitis, impetigo).</li>
+                    <li><strong>Dicloxacillin:</strong> Anti‑staphylococcal penicillin.</li>
+                    <li><strong>Sulfamethoxazole‑trimethoprim:</strong> MRSA skin infections, acne.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTIFUNGALS ==================== -->
+        <section id="antifungals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-spider"></i> 4. Antifungals</div>
+            <div class="section-card">
+                <div class="subsection-heading">Topical Antifungals</div>
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Examples</th><th>Spectrum</th></tr></thead>
+                    <tbody>
+                        <tr><td>Azoles</td><td>Clotrimazole, miconazole, econazole, ketoconazole</td><td>Dermatophytes, Candida, Malassezia</td></tr>
+                        <tr><td>Allylamines</td><td>Terbinafine, naftifine</td><td>Dermatophytes (fungicidal)</td></tr>
+                        <tr><td>Others</td><td>Ciclopirox, tolnaftate, nystatin</td><td>Broad; nystatin only for Candida</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Systemic Antifungals</div>
+                <ul>
+                    <li><strong>Terbinafine:</strong> For onychomycosis, tinea capitis (dermatophytes). Hepatotoxicity risk.</li>
+                    <li><strong>Itraconazole:</strong> Broad spectrum (dermatophytes, Candida, Malassezia, histoplasmosis). Capsule absorption variable; pulse dosing for onychomycosis.</li>
+                    <li><strong>Fluconazole:</strong> For Candida infections, tinea versicolor; good CSF penetration.</li>
+                    <li><strong>Griseofulvin:</strong> Older agent for tinea capitis (fungistatic); interferes with microtubule function. Discontinued in many countries.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ANTIVIRALS ==================== -->
+        <section id="antivirals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-virus"></i> 5. Antivirals</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Mainly used for herpes simplex and varicella‑zoster infections.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Uses</th></tr></thead>
+                    <tbody>
+                        <tr><td>Acyclovir</td><td>Inhibits viral DNA polymerase after phosphorylation by viral thymidine kinase</td><td>HSV, VZV (oral, IV, topical)</td></tr>
+                        <tr><td>Valacyclovir</td><td>Prodrug of acyclovir; higher oral bioavailability</td><td>HSV, VZV (fewer daily doses)</td></tr>
+                        <tr><td>Famciclovir</td><td>Prodrug of penciclovir</td><td>HSV, VZV</td></tr>
+                        <tr><td>Penciclovir</td><td>Topical for herpes labialis</td><td>HSV</td></tr>
+                        <tr><td>Docosanol</td><td>Inhibits viral entry (OTC)</td><td>Herpes labialis</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Immunocompromised patients:</strong> May require IV acyclovir for severe HSV/VZV.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== IMMUNOMODULATORS ==================== -->
+        <section id="immunomodulators" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 6. Immunomodulators (Topical & Systemic)</div>
+            <div class="section-card">
+                <div class="subsection-heading">Topical Calcineurin Inhibitors (TCIs)</div>
+                <ul>
+                    <li><strong>Tacrolimus ointment, Pimecrolimus cream:</strong> Inhibit T‑cell activation by blocking calcineurin → ↓ IL‑2.</li>
+                    <li><strong>Uses:</strong> Atopic dermatitis (second‑line, steroid‑sparing for sensitive areas).</li>
+                    <li><strong>Side effects:</strong> Burning, stinging; black box warning for rare malignancy (risk vs benefit).</li>
+                </ul>
+                <div class="subsection-heading">Systemic Immunomodulators</div>
+                <ul>
+                    <li><strong>Methotrexate:</strong> Inhibits dihydrofolate reductase; used in psoriasis, atopic dermatitis, autoimmune bullous diseases. Monitor LFTs, CBC; supplement folic acid.</li>
+                    <li><strong>Cyclosporine:</strong> Calcineurin inhibitor; rapid onset for severe psoriasis, atopic dermatitis. Nephrotoxic, hypertension; short‑term use.</li>
+                    <li><strong>Azathioprine:</strong> Purine analog; used in autoimmune bullous diseases, atopic dermatitis, lupus. Check TPMT before use.</li>
+                    <li><strong>Mycophenolate mofetil:</strong> Inhibits inosine monophosphate dehydrogenase; used in autoimmune bullous diseases, eczema.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== BIOLOGICS ==================== -->
+        <section id="biologics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 7. Biologics for Psoriasis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Biologics target specific immune pathways in psoriasis (IL‑23/Th17 axis).
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Target</th><th>Drugs</th><th>Notes</th></tr></thead>
+                    <tbody>
+                        <tr><td>TNF‑α</td><td>Adalimumab, etanercept, infliximab, certolizumab</td><td>Also used for psoriatic arthritis; screen for TB</td></tr>
+                        <tr><td>IL‑12/23 (p40)</td><td>Ustekinumab</td><td>Blocks both IL‑12 and IL‑23; subcutaneous every 12 weeks</td></tr>
+                        <tr><td>IL‑23 (p19)</td><td>Guselkumab, tildrakizumab, risankizumab</td><td>Highly selective for IL‑23; excellent efficacy</td></tr>
+                        <tr><td>IL‑17A</td><td>Secukinumab, ixekizumab, brodalumab (anti‑IL‑17RA)</td><td>Rapid onset; risk of Candida infections</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== OTHER AGENTS ==================== -->
+        <section id="other" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-capsules"></i> 8. Other Dermatologic Drugs</div>
+            <div class="section-card">
+                <div class="subsection-heading">Antiparasitics</div>
+                <ul>
+                    <li><strong>Permethrin 5% cream:</strong> First‑line for scabies; safe in infants.</li>
+                    <li><strong>Ivermectin (oral):</strong> For scabies (especially crusted), head lice, rosacea (topical).</li>
+                    <li><strong>Crotamiton:</strong> Antipruritic and scabicidal.</li>
+                    <li><strong>Malathion, lindane:</strong> Second‑line for lice (neurotoxic).</li>
+                </ul>
+                <div class="subsection-heading">Agents for Hyperpigmentation</div>
+                <ul>
+                    <li><strong>Hydroquinone:</strong> Inhibits tyrosinase; used for melasma. Risk of ochronosis with long‑term use.</li>
+                    <li><strong>Azelaic acid:</strong> For acne, rosacea, melasma (tyrosinase inhibitor).</li>
+                    <li><strong>Tranexamic acid (oral/topical):</strong> For melasma (inhibits plasmin).</li>
+                    <li><strong>Kojic acid, arbutin:</strong> Cosmetic lightening agents.</li>
+                </ul>
+                <div class="subsection-heading">Miscellaneous</div>
+                <ul>
+                    <li><strong>Calcipotriene (vitamin D analog):</strong> For psoriasis; inhibits proliferation, induces differentiation. Often combined with betamethasone.</li>
+                    <li><strong>Tazarotene (retinoid):</strong> Already covered.</li>
+                    <li><strong>Pimecrolimus/tacrolimus:</strong> Covered.</li>
+                    <li><strong>Crisaborole (PDE4 inhibitor):</strong> Topical for mild‑moderate atopic dermatitis.</li>
+                    <li><strong>Ruxolitinib (JAK inhibitor):</strong> Topical for atopic dermatitis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Dermatology Pharmacology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

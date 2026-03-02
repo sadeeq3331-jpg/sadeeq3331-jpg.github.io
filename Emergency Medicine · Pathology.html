@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Medicine · Pathology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-ambulance"></i>
+        <h1>Emergency Medicine · Pathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>GENERAL PRINCIPLES</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#cell-injury-em"><i class="fas fa-microscope"></i> 1. Cell Injury & Death in Emergencies</a></li>
+                <li class="chapter-item"><a href="#inflammation"><i class="fas fa-fire"></i> 2. Acute Inflammation & SIRS</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>TRAUMA & SHOCK</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#trauma-path"><i class="fas fa-car-crash"></i> 3. Trauma Pathology</a></li>
+                <li class="chapter-item"><a href="#hemorrhagic-shock"><i class="fas fa-tint"></i> 4. Hemorrhagic Shock</a></li>
+                <li class="chapter-item"><a href="#fat-embolism"><i class="fas fa-droplet"></i> 5. Fat Embolism Syndrome</a></li>
+                <li class="chapter-item"><a href="#compartment"><i class="fas fa-hand"></i> 6. Compartment Syndrome</a></li>
+                <li class="chapter-item"><a href="#crush"><i class="fas fa-weight-hanging"></i> 7. Crush Injury & Rhabdomyolysis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CARDIOVASCULAR PATHOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#mi"><i class="fas fa-heart-broken"></i> 8. Myocardial Infarction</a></li>
+                <li class="chapter-item"><a href="#myocarditis"><i class="fas fa-heart"></i> 9. Myocarditis</a></li>
+                <li class="chapter-item"><a href="#aortic-dissection-path"><i class="fas fa-syringe"></i> 10. Aortic Dissection</a></li>
+                <li class="chapter-item"><a href="#cardiac-tamponade"><i class="fas fa-heart"></i> 11. Cardiac Tamponade</a></li>
+                <li class="chapter-item"><a href="#pe-path"><i class="fas fa-lungs"></i> 12. Pulmonary Embolism Pathology</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>RESPIRATORY PATHOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#ards-path"><i class="fas fa-lungs"></i> 13. ARDS</a></li>
+                <li class="chapter-item"><a href="#pneumonia-path"><i class="fas fa-bacteria"></i> 14. Pneumonia</a></li>
+                <li class="chapter-item"><a href="#tension-pneumo"><i class="fas fa-wind"></i> 15. Tension Pneumothorax</a></li>
+                <li class="chapter-item"><a href="#hemothorax"><i class="fas fa-tint"></i> 16. Hemothorax</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>NEUROLOGIC PATHOLOGY</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#stroke-path"><i class="fas fa-brain"></i> 17. Ischemic Stroke</a></li>
+                <li class="chapter-item"><a href="#ich-path"><i class="fas fa-head-side-brain"></i> 18. Intracranial Hemorrhage</a></li>
+                <li class="chapter-item"><a href="#meningitis-path"><i class="fas fa-skull"></i> 19. Meningitis</a></li>
+                <li class="chapter-item"><a href="#encephalitis"><i class="fas fa-brain"></i> 20. Encephalitis</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>METABOLIC & TOXICOLOGIC</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#dka-hhs"><i class="fas fa-tint"></i> 21. DKA & HHS</a></li>
+                <li class="chapter-item"><a href="#electrolyte-path"><i class="fas fa-flask"></i> 22. Electrolyte Disorders</a></li>
+                <li class="chapter-item"><a href="#overdose-path"><i class="fas fa-skull-crossbones"></i> 23. Overdose Pathology</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>ENVIRONMENTAL</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#hyperthermia"><i class="fas fa-temperature-high"></i> 24. Hyperthermia & Heat Stroke</a></li>
+                <li class="chapter-item"><a href="#hypothermia"><i class="fas fa-temperature-low"></i> 25. Hypothermia</a></li>
+                <li class="chapter-item"><a href="#drowning"><i class="fas fa-water"></i> 26. Drowning</a></li>
+                <li class="chapter-item"><a href="#electrical"><i class="fas fa-bolt"></i> 27. Electrical & Lightning Injuries</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== GENERAL PRINCIPLES ==================== -->
+        <section id="cell-injury-em" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-microscope"></i> 1. Cell Injury & Death in Emergencies</div>
+            <div class="section-card">
+                <div class="body-text">
+                    In emergency medicine, rapid recognition of cell injury patterns is crucial. Common causes: ischemia, trauma, toxins, infection.
+                </div>
+                <ul>
+                    <li><strong>Reversible injury:</strong> Cellular swelling, fatty change, mitochondrial changes. If insult removed, cell recovers.</li>
+                    <li><strong>Irreversible injury:</strong> Membrane damage, nuclear changes (pyknosis, karyorrhexis, karyolysis).</li>
+                </ul>
+                <div class="subsection-heading">Necrosis vs Apoptosis</div>
+                <table class="premium-table">
+                    <thead><tr><th>Feature</th><th>Necrosis</th><th>Apoptosis</th></tr></thead>
+                    <tbody>
+                        <tr><td>Cause</td><td>Hypoxia, toxins, trauma</td><td>DNA damage, withdrawal of growth factors</td></tr>
+                        <tr><td>Cell size</td><td>Swelling</td><td>Shrinkage</td></tr>
+                        <tr><td>Nucleus</td><td>Pyknosis, karyorrhexis, karyolysis</td><td>Fragmentation</td></tr>
+                        <tr><td>Inflammation</td><td>Yes</td><td>No</td></tr>
+                        <tr><td>Examples</td><td>Myocardial infarction, pancreatitis</td><td>Viral hepatitis, chemotherapeutic effects</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="inflammation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fire"></i> 2. Acute Inflammation & SIRS</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Systemic Inflammatory Response Syndrome (SIRS) is a common pathway in critical illness. Criteria: temp >38°C or <36°C, HR >90, RR >20 or PaCO₂ <32, WBC >12k or <4k or >10% bands.
+                </div>
+                <ul>
+                    <li><strong>Sepsis:</strong> SIRS + infection.</li>
+                    <li><strong>Septic shock:</strong> Sepsis + hypotension despite fluid resuscitation.</li>
+                    <li><strong>Pathology:</strong> Endothelial activation, microvascular thrombosis, capillary leak, multi‑organ dysfunction.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== TRAUMA & SHOCK ==================== -->
+        <section id="trauma-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-car-crash"></i> 3. Trauma Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Blunt trauma:</strong> Acceleration‑deceleration, crushing, shearing. Causes contusions, lacerations, fractures.</li>
+                    <li><strong>Penetrating trauma:</strong> Stab wounds, gunshot wounds. Cavitation effect.</li>
+                    <li><strong>Specific organ injuries:</strong> Splenic rupture (most common in blunt abdominal trauma), liver laceration, pulmonary contusion.</li>
+                    <li><strong>Fat embolism syndrome:</strong> Long bone fractures → fat globules enter circulation → pulmonary and neurologic symptoms, petechiae.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hemorrhagic-shock" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 4. Hemorrhagic Shock</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Hypovolemic shock due to blood loss. Classes I‑IV (ATLS).
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Blood loss (mL)</th><th>Heart rate</th><th>BP</th><th>Respiratory rate</th><th>Urine output</th></tr></thead>
+                    <tbody>
+                        <tr><td>I</td><td><750</td><td>Normal</td><td>Normal</td><td>Normal</td><td>>30</td></tr>
+                        <tr><td>II</td><td>750‑1500</td><td>>100</td><td>Normal</td><td>20‑30</td><td>20‑30</td></tr>
+                        <tr><td>III</td><td>1500‑2000</td><td>>120</td><td>Decreased</td><td>30‑40</td><td>5‑15</td></tr>
+                        <tr><td>IV</td><td>>2000</td><td>>140</td><td>Decreased</td><td>>35</td><td>Negligible</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="fat-embolism" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-droplet"></i> 5. Fat Embolism Syndrome</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Cause:</strong> Long bone fractures, orthopedic surgery.</li>
+                    <li><strong>Pathology:</strong> Fat globules occlude pulmonary and cerebral microvasculature → endothelial damage, release of free fatty acids.</li>
+                    <li><strong>Clinical triad:</strong> Hypoxemia, neurologic dysfunction, petechial rash.</li>
+                    <li><strong>Onset:</strong> 24‑72 hours after injury.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="compartment" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-hand"></i> 6. Compartment Syndrome</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Definition:</strong> Increased pressure within a closed fascial compartment → decreased perfusion → ischemia.</li>
+                    <li><strong>Causes:</strong> Fractures, crush injury, tight casts, burns.</li>
+                    <li><strong>Pathology:</strong> Ischemia of muscles and nerves; irreversible damage after 4‑6 hours.</li>
+                    <li><strong>Clinical:</strong> Pain out of proportion, paresthesia, pallor, paralysis, pulselessness (late).</li>
+                    <li><strong>Treatment:</strong> Fasciotomy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="crush" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight-hanging"></i> 7. Crush Injury & Rhabdomyolysis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Mechanism:</strong> Prolonged compression of muscles → ischemia, necrosis, release of intracellular contents (myoglobin, K⁺, phosphate).</li>
+                    <li><strong>Rhabdomyolysis:</strong> Myoglobinuria → acute kidney injury (pigment casts, tubular necrosis).</li>
+                    <li><strong>Complications:</strong> Hyperkalemia, hypocalcemia, metabolic acidosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CARDIOVASCULAR PATHOLOGY ==================== -->
+        <section id="mi" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart-broken"></i> 8. Myocardial Infarction</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathogenesis:</strong> Plaque rupture → thrombosis → coronary occlusion → ischemia.</li>
+                    <li><strong>Timeline:</strong> 
+                        <ul>
+                            <li>0‑12h: Coagulative necrosis, wavy fibers.</li>
+                            <li>12‑24h: Neutrophilic infiltrate.</li>
+                            <li>1‑3 days: Myocyte necrosis, inflammation peak.</li>
+                            <li>4‑7 days: Macrophages, granulation tissue.</li>
+                            <li>1‑2 weeks: Fibrosis begins.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Complications:</strong> Arrhythmia, heart failure, ventricular rupture (3‑7 days), pericarditis (Dressler).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="myocarditis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 9. Myocarditis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Causes:</strong> Viral (coxsackie, influenza), bacterial, autoimmune.</li>
+                    <li><strong>Pathology:</strong> Lymphocytic infiltration, myocyte necrosis. May progress to dilated cardiomyopathy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="aortic-dissection-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 10. Aortic Dissection</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathology:</strong> Intimal tear → blood enters media → false lumen. Hypertension is main risk.</li>
+                    <li><strong>Types:</strong> Stanford A (ascending) – surgical; Stanford B (descending) – medical.</li>
+                    <li><strong>Complications:</strong> Rupture, tamponade, aortic regurgitation, myocardial infarction, stroke.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="cardiac-tamponade" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 11. Cardiac Tamponade</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathophysiology:</strong> Fluid in pericardial space → increased pressure → impaired diastolic filling → decreased cardiac output.</li>
+                    <li><strong>Causes:</strong> Trauma, post‑MI, uremia, malignancy.</li>
+                    <li><strong>Signs:</strong> Beck's triad (hypotension, muffled heart sounds, JVD), pulsus paradoxus.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pe-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 12. Pulmonary Embolism Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Source:</strong> Deep vein thrombosis (95%).</li>
+                    <li><strong>Pathology:</strong> Thrombus lodges in pulmonary arteries → infarction (hemorrhagic, wedge‑shaped) if collateral circulation inadequate.</li>
+                    <li><strong>Microscopy:</strong> Fresh thrombus, later organization.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== RESPIRATORY PATHOLOGY ==================== -->
+        <section id="ards-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 13. Acute Respiratory Distress Syndrome (ARDS)</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Definition:</strong> Acute onset, bilateral infiltrates, PaO₂/FiO₂ ≤300, no evidence of cardiogenic edema.</li>
+                    <li><strong>Pathology:</strong> Diffuse alveolar damage (DAD): 
+                        <ul>
+                            <li>Exudative phase (0‑7 days): edema, hyaline membranes.</li>
+                            <li>Proliferative phase (7‑21 days): type II pneumocyte hyperplasia, fibroblast proliferation.</li>
+                            <li>Fibrotic phase (>21 days): fibrosis.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="pneumonia-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 14. Pneumonia</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Lobar pneumonia:</strong> Entire lobe – stages: congestion, red hepatization (RBCs, fibrin), gray hepatization (neutrophils), resolution.</li>
+                    <li><strong>Bronchopneumonia:</strong> Patchy, peribronchiolar inflammation.</li>
+                    <li><strong>Interstitial pneumonia:</strong> Viral, mycoplasma – inflammation in alveolar septa.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="tension-pneumo" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-wind"></i> 15. Tension Pneumothorax</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathophysiology:</strong> Air enters pleural space but cannot escape → increased intrapleural pressure → mediastinal shift, impaired venous return, hypotension.</li>
+                    <li><strong>Signs:</strong> Hypotension, tracheal deviation, absent breath sounds, distended neck veins.</li>
+                    <li><strong>Treatment:</strong> Needle decompression, chest tube.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hemothorax" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 16. Hemothorax</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Cause:</strong> Trauma (intercostal or internal mammary vessels, lung laceration).</li>
+                    <li><strong>Pathology:</strong> Blood in pleural space → hypovolemia, lung collapse.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NEUROLOGIC PATHOLOGY ==================== -->
+        <section id="stroke-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 17. Ischemic Stroke</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathology:</strong> Infarction of brain tissue. Early (6‑12h): red neurons (eosinophilic cytoplasm, pyknotic nuclei).</li>
+                    <li><strong>Later:</strong> Neutrophils (day 1‑3), macrophages (day 3‑7), gliosis (weeks).</li>
+                    <li><strong>Embolic stroke:</strong> Source from heart or carotid.</li>
+                    <li><strong>Lacunar stroke:</strong> Hypertensive small vessel disease.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ich-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-head-side-brain"></i> 18. Intracranial Hemorrhage</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Epidural:</strong> Arterial (middle meningeal) – lens‑shaped, often after trauma with skull fracture.</li>
+                    <li><strong>Subdural:</strong> Venous (bridging veins) – crescent‑shaped, often in elderly, anticoagulated.</li>
+                    <li><strong>Subarachnoid:</strong> Berry aneurysm rupture → blood in CSF.</li>
+                    <li><strong>Intracerebral:</strong> Hypertension, amyloid angiopathy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="meningitis-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-skull"></i> 19. Meningitis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathology:</strong> Inflammation of pia‑arachnoid. Exudate in subarachnoid space.</li>
+                    <li><strong>Bacterial:</strong> Neutrophils; complications: hydrocephalus, cranial nerve palsies.</li>
+                    <li><strong>Viral:</strong> Lymphocytes; usually milder.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="encephalitis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 20. Encephalitis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pathology:</strong> Inflammation of brain parenchyma, perivascular cuffing, microglial nodules, neuronophagia.</li>
+                    <li><strong>Causes:</strong> HSV‑1 (temporal lobe), arboviruses, CMV.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== METABOLIC & TOXICOLOGIC ==================== -->
+        <section id="dka-hhs" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 21. Diabetic Ketoacidosis & HHS</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>DKA:</strong> Insulin deficiency → lipolysis, ketogenesis → metabolic acidosis, hyperglycemia, ketonuria.</li>
+                    <li><strong>HHS:</strong> Severe hyperglycemia, hyperosmolarity, minimal ketosis. Typically type 2 diabetics.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="electrolyte-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 22. Electrolyte Disorders</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Hyperkalemia:</strong> ECG changes: peaked T, wide QRS, sine wave. Pathology: no specific histology.</li>
+                    <li><strong>Hypokalemia:</strong> U waves; myocyte necrosis (in severe).</li>
+                    <li><strong>Hyponatremia:</strong> Cerebral edema; risk of osmotic demyelination if corrected too fast.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="overdose-path" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-skull-crossbones"></i> 23. Overdose Pathology</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Acetaminophen:</strong> Centrilobular necrosis.</li>
+                    <li><strong>Opioids:</strong> Pulmonary edema, brain hypoxic injury.</li>
+                    <li><strong>Tricyclics:</strong> Cardiac necrosis.</li>
+                    <li><strong>Salicylates:</strong> Pulmonary edema, petechial hemorrhages.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== ENVIRONMENTAL ==================== -->
+        <section id="hyperthermia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-temperature-high"></i> 24. Hyperthermia & Heat Stroke</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Heat stroke:</strong> Core temp >40°C, neurologic dysfunction. Pathology: multi‑organ failure, rhabdomyolysis, DIC.</li>
+                    <li><strong>Malignant hyperthermia:</strong> RYR1 mutation, triggered by succinylcholine/volatile anesthetics → massive muscle contraction, hyperthermia, acidosis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hypothermia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-temperature-low"></i> 25. Hypothermia</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Definition:</strong> Core temp <35°C. Pathophysiology: decreased metabolic rate, arrhythmias (J wave), coagulopathy.</li>
+                    <li><strong>Post‑mortem:</strong> Wischnewsky spots (gastric erosions).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="drowning" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-water"></i> 26. Drowning</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Freshwater:</strong> Hypotonic → alveolar damage, dilution of surfactant, atelectasis.</li>
+                    <li><strong>Saltwater:</strong> Hypertonic → pulmonary edema, fluid shift into alveoli.</li>
+                    <li><strong>Both:</strong> Hypoxia, cerebral edema.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="electrical" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 27. Electrical & Lightning Injuries</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Electrical:</strong> Current path determines injury. Myocardial necrosis, arrhythmias, deep tissue burns, myoglobinuria.</li>
+                    <li><strong>Lightning:</strong> Massive current, flashover phenomenon, cardiac arrest, neurologic sequelae, Lichtenberg figures.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Emergency Medicine Pathology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hematology Physiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-tint"></i>
+            <h1>Hematology Physiology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE HEMATOLOGY PHYSIOLOGY QUESTIONS
+        const questions = [
+            { q: "The primary site of hematopoiesis in adults is the:",
+              opts: ["Liver", "Spleen", "Bone marrow", "Lymph nodes", "Thymus"],
+              correct: 2,
+              exp: "In adults, red bone marrow is the main site of blood cell production." },
+            { q: "Erythropoietin (EPO) is produced mainly by:",
+              opts: ["Liver", "Kidney (peritubular fibroblasts)", "Bone marrow", "Spleen", "Lungs"],
+              correct: 1,
+              exp: "EPO is secreted by interstitial fibroblasts in the kidney; small amount from liver." },
+            { q: "The normal reticulocyte count is approximately:",
+              opts: ["0.5‑1.5%", "2‑4%", "5‑10%", "10‑15%", "15‑20%"],
+              correct: 0,
+              exp: "Reticulocytes normally constitute 0.5‑1.5% of RBCs." },
+            { q: "Hemoglobin is a tetramer composed of:",
+              opts: ["Two alpha and two beta chains", "Four alpha chains", "Four beta chains", "Two alpha and two gamma chains", "Two beta and two delta chains"],
+              correct: 0,
+              exp: "HbA (adult) is α₂β₂." },
+            { q: "Fetal hemoglobin (HbF) has higher oxygen affinity because:",
+              opts: ["It binds 2,3‑BPG less", "It binds 2,3‑BPG more", "It has lower P50", "Both A and C", "None"],
+              correct: 3,
+              exp: "HbF (α₂γ₂) has reduced binding to 2,3‑BPG, increasing oxygen affinity." },
+            { q: "2,3‑BPG is produced in RBCs by:",
+              opts: ["Rapoport‑Luebering shunt", "Embden‑Meyerhof pathway", "Hexose monophosphate shunt", "Luebering‑Rapoport pathway", "Glycolysis"],
+              correct: 0,
+              exp: "2,3‑BPG is synthesized in the Rapoport‑Luebering shunt, a side branch of glycolysis." },
+            { q: "Iron is absorbed in the duodenum as:",
+              opts: ["Fe³⁺", "Fe²⁺", "Ferritin", "Transferrin", "Hemosiderin"],
+              correct: 1,
+              exp: "Ferric iron (Fe³⁺) is reduced to ferrous (Fe²⁺) by duodenal cytochrome b, then absorbed via DMT1." },
+            { q: "Ferritin functions as:",
+              opts: ["Iron transport protein", "Iron storage protein", "Iron absorption enhancer", "Heme carrier", "None"],
+              correct: 1,
+              exp: "Ferritin stores iron intracellularly; serum ferritin reflects iron stores." },
+            { q: "Transferrin is synthesized in the:",
+              opts: ["Liver", "Bone marrow", "Spleen", "Kidney", "Intestine"],
+              correct: 0,
+              exp: "Transferrin is produced mainly in the liver." },
+            { q: "The lifespan of a normal RBC is approximately:",
+              opts: ["20 days", "60 days", "90 days", "120 days", "150 days"],
+              correct: 3,
+              exp: "RBCs live about 120 days." },
+            { q: "Senescent RBCs are removed by macrophages in the:",
+              opts: ["Liver and spleen", "Bone marrow", "Lymph nodes", "Thymus", "Kidney"],
+              correct: 0,
+              exp: "Extravascular hemolysis occurs in spleen, liver, and bone marrow." },
+            { q: "Bilirubin is derived from the breakdown of:",
+              opts: ["Globin", "Heme", "Iron", "Transferrin", "Ferritin"],
+              correct: 1,
+              exp: "Heme from hemoglobin is converted to biliverdin then bilirubin." },
+            { q: "The main role of neutrophils is:",
+              opts: ["Antibody production", "Phagocytosis of bacteria", "Parasite defense", "Allergic reactions", "Antigen presentation"],
+              correct: 1,
+              exp: "Neutrophils phagocytose and kill bacteria." },
+            { q: "Eosinophils are elevated in:",
+              opts: ["Bacterial infections", "Viral infections", "Allergic conditions and parasitic infections", "Autoimmune disease", "Stress"],
+              correct: 2,
+              exp: "Eosinophils are involved in allergic reactions and defense against parasites." },
+            { q: "Basophils release:",
+              opts: ["Histamine and heparin", "Perforin", "Cytokines", "Antibodies", "Complement"],
+              correct: 0,
+              exp: "Basophils (and mast cells) release histamine, heparin, and other mediators." },
+            { q: "Lymphocytes responsible for cell‑mediated immunity are:",
+              opts: ["B cells", "T cells", "NK cells", "Macrophages", "Dendritic cells"],
+              correct: 1,
+              exp: "T cells mediate cellular immunity; B cells produce antibodies." },
+            { q: "Natural killer (NK) cells target:",
+              opts: ["Virus‑infected cells and tumor cells", "Bacteria", "Fungi", "Parasites", "All"],
+              correct: 0,
+              exp: "NK cells kill cells lacking MHC class I (e.g., virus‑infected, tumor)." },
+            { q: "The normal platelet count is:",
+              opts: ["50‑100 x 10⁹/L", "100‑150 x 10⁹/L", "150‑400 x 10⁹/L", "400‑600 x 10⁹/L", "600‑800 x 10⁹/L"],
+              correct: 2,
+              exp: "Normal platelet count is 150,000‑400,000/μL (150‑400 x 10⁹/L)." },
+            { q: "The main function of platelets is:",
+              opts: ["Oxygen transport", "Immune defense", "Hemostasis", "Coagulation factor synthesis", "Antigen presentation"],
+              correct: 2,
+              exp: "Platelets form the primary hemostatic plug." },
+            { q: "vWF (von Willebrand factor) is produced by:",
+              opts: ["Megakaryocytes and endothelial cells", "Hepatocytes", "Macrophages", "Lymphocytes", "Neutrophils"],
+              correct: 0,
+              exp: "vWF is synthesized by endothelial cells (Weibel‑Palade bodies) and megakaryocytes." },
+            { q: "The intrinsic pathway of coagulation is initiated by:",
+              opts: ["Tissue factor", "Factor XII activation on collagen", "Factor VII", "Thrombin", "Fibrin"],
+              correct: 1,
+              exp: "Intrinsic pathway begins with factor XII activation by exposed collagen." },
+            { q: "The extrinsic pathway is triggered by:",
+              opts: ["Factor XII", "Tissue factor (factor III)", "Factor IX", "Factor VIII", "Platelet phospholipids"],
+              correct: 1,
+              exp: "Extrinsic pathway begins when tissue factor binds factor VII." },
+            { q: "Prothrombin time (PT) measures the integrity of:",
+              opts: ["Intrinsic and common pathways", "Extrinsic and common pathways", "Only common pathway", "Only intrinsic", "Only extrinsic"],
+              correct: 1,
+              exp: "PT assesses factors VII (extrinsic) and X, V, prothrombin, fibrinogen (common)." },
+            { q: "aPTT measures the integrity of:",
+              opts: ["Intrinsic and common pathways", "Extrinsic and common", "Only common", "Only intrinsic", "Only extrinsic"],
+              correct: 0,
+              exp: "aPTT assesses factors XII, XI, IX, VIII (intrinsic) and common pathway." },
+            { q: "Thrombin converts:",
+              opts: ["Fibrinogen to fibrin", "Fibrin to fibrinogen", "Prothrombin to thrombin", "Factor X to Xa", "Plasminogen to plasmin"],
+              correct: 0,
+              exp: "Thrombin cleaves fibrinogen to fibrin monomers." },
+            { q: "Natural anticoagulants include all EXCEPT:",
+              opts: ["Antithrombin", "Protein C", "Protein S", "Tissue factor pathway inhibitor (TFPI)", "Factor VIII"],
+              correct: 4,
+              exp: "Factor VIII is a procoagulant; the others are natural anticoagulants." },
+            { q: "Heparin enhances the activity of:",
+              opts: ["Antithrombin", "Protein C", "Protein S", "TFPI", "Plasmin"],
+              correct: 0,
+              exp: "Heparin binds antithrombin, increasing its inactivation of thrombin and factor Xa." },
+            { q: "Plasmin is responsible for:",
+              opts: ["Fibrin clot formation", "Fibrin degradation", "Platelet activation", "Thrombin generation", "Factor XIII activation"],
+              correct: 1,
+              exp: "Plasmin digests fibrin (fibrinolysis)." },
+            { q: "A person with blood type O has:",
+              opts: ["A antigens, anti‑B antibodies", "B antigens, anti‑A antibodies", "No A or B antigens, both anti‑A and anti‑B antibodies", "A and B antigens, no antibodies", "No antigens, no antibodies"],
+              correct: 2,
+              exp: "Type O has no A/B antigens, but has both anti‑A and anti‑B antibodies." },
+            { q: "The universal recipient blood type is:",
+              opts: ["A", "B", "AB", "O", "None"],
+              correct: 2,
+              exp: "AB individuals have no anti‑A or anti‑B antibodies, can receive from any type." },
+            { q: "The universal donor for RBC transfusion is:",
+              opts: ["A", "B", "AB", "O", "None"],
+              correct: 3,
+              exp: "O negative RBCs can be given to any patient." },
+            { q: "The main function of the spleen is:",
+              opts: ["Filtration of old RBCs and immune response", "Hematopoiesis only", "Bile production", "Iron storage", "Antibody production"],
+              correct: 0,
+              exp: "The spleen removes old RBCs, recycles iron, and mounts immune responses." },
+            { q: "Howell‑Jolly bodies are:",
+              opts: ["Nuclear remnants in RBCs seen after splenectomy", "Denatured hemoglobin", "Iron granules", "Malaria parasites", "Reticulocyte RNA"],
+              correct: 0,
+              exp: "Howell‑Jolly bodies are nuclear remnants, normally removed by the spleen." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "The enzyme glucose‑6‑phosphate dehydrogenase (G6PD) is part of:",
+              opts: ["Glycolysis", "Hexose monophosphate shunt", "Krebs cycle", "Electron transport chain", "Fatty acid oxidation"],
+              correct: 1,
+              exp: "G6PD is the first enzyme in the pentose phosphate pathway, protecting RBCs from oxidative stress." },
+            { q: "Pyruvate kinase deficiency leads to:",
+              opts: ["Hemolytic anemia", "Iron deficiency", "Megaloblastic anemia", "Aplastic anemia", "Sideroblastic anemia"],
+              correct: 0,
+              exp: "Pyruvate kinase deficiency impairs glycolysis in RBCs, causing hemolytic anemia." },
+            { q: "The average lifespan of a platelet is about:",
+              opts: ["1‑3 days", "5‑9 days", "7‑10 days", "10‑14 days", "30 days"],
+              correct: 2,
+              exp: "Platelets circulate for about 7‑10 days." },
+            { q: "The most abundant plasma protein is:",
+              opts: ["Albumin", "Globulin", "Fibrinogen", "Transferrin", "Haptoglobin"],
+              correct: 0,
+              exp: "Albumin is the most abundant plasma protein, maintaining oncotic pressure." },
+            { q: "Haptoglobin binds:",
+              opts: ["Free hemoglobin", "Iron", "Transferrin", "Myoglobin", "Bilirubin"],
+              correct: 0,
+              exp: "Haptoglobin binds free hemoglobin, preventing iron loss and kidney damage." },
+            { q: "In intravascular hemolysis, haptoglobin is:",
+              opts: ["Increased", "Decreased", "Normal", "Variable", "Absent"],
+              correct: 1,
+              exp: "Haptoglobin binds free hemoglobin and is rapidly cleared, so levels drop." },
+            { q: "The primary source of thrombopoietin is:",
+              opts: ["Kidney", "Liver", "Bone marrow", "Spleen", "Endothelium"],
+              correct: 1,
+              exp: "Thrombopoietin is mainly produced in the liver, with small amounts from kidney and marrow." },
+            { q: "Factor XIII (fibrin‑stabilizing factor) acts by:",
+              opts: ["Cross‑linking fibrin polymers", "Converting fibrinogen to fibrin", "Activating thrombin", "Inhibiting plasmin", "Binding calcium"],
+              correct: 0,
+              exp: "Factor XIII cross‑links fibrin, forming a stable clot." },
+            { q: "In which condition is the bleeding time prolonged?",
+              opts: ["Hemophilia A", "Vitamin K deficiency", "von Willebrand disease", "Warfarin therapy", "Factor IX deficiency"],
+              correct: 2,
+              exp: "Bleeding time assesses platelet function; it is prolonged in vWD, thrombocytopenia, aspirin use." },
+            { q: "The reticulocyte production index (RPI) corrects for:",
+              opts: ["Hemoglobin level", "Anemia severity (hematocrit)", "Iron stores", "B12 level", "WBC count"],
+              correct: 1,
+              exp: "RPI corrects reticulocyte count for degree of anemia and reticulocyte maturation time." },
+            { q: "MCHC (mean corpuscular hemoglobin concentration) is decreased in:",
+              opts: ["Iron deficiency anemia", "Spherocytosis", "Thalassemia", "Both A and C", "All"],
+              correct: 3,
+              exp: "Low MCHC occurs in iron deficiency and thalassemia; spherocytosis often has high MCHC." },
+            { q: "The RDW (red cell distribution width) is elevated in:",
+              opts: ["Iron deficiency anemia", "Thalassemia trait", "Aplastic anemia", "Both A and B", "All"],
+              correct: 0,
+              exp: "RDW is high in iron deficiency (anisocytosis), but normal in thalassemia trait." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

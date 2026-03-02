@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Pathology · Principles of Disease</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-microscope"></i>
+        <h1>General Pathology · Principles of Disease</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>CELL INJURY & DEATH</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#cell-injury"><i class="fas fa-bolt"></i> 1. Cell Injury & Adaptation</a></li>
+                <li class="chapter-item"><a href="#necrosis"><i class="fas fa-skull"></i> 2. Necrosis</a></li>
+                <li class="chapter-item"><a href="#apoptosis"><i class="fas fa-dna"></i> 3. Apoptosis</a></li>
+                <li class="chapter-item"><a href="#autophagy"><i class="fas fa-recycle"></i> 4. Autophagy</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>INFLAMMATION</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#acute-inflammation"><i class="fas fa-fire"></i> 5. Acute Inflammation</a></li>
+                <li class="chapter-item"><a href="#chronic-inflammation"><i class="fas fa-clock"></i> 6. Chronic Inflammation</a></li>
+                <li class="chapter-item"><a href="#chemical-mediators"><i class="fas fa-flask"></i> 7. Chemical Mediators</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>REPAIR & HEALING</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#repair"><i class="fas fa-bandaid"></i> 8. Tissue Repair & Regeneration</a></li>
+                <li class="chapter-item"><a href="#fibrosis"><i class="fas fa-dna"></i> 9. Fibrosis & Scarring</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>HEMODYNAMIC DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#edema"><i class="fas fa-tint"></i> 10. Edema & Effusions</a></li>
+                <li class="chapter-item"><a href="#thrombosis"><i class="fas fa-blood"></i> 11. Thrombosis & Embolism</a></li>
+                <li class="chapter-item"><a href="#infarction"><i class="fas fa-heart-broken"></i> 12. Infarction</a></li>
+                <li class="chapter-item"><a href="#shock"><i class="fas fa-tachometer-alt"></i> 13. Shock</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>NEOPLASIA</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#neoplasia"><i class="fas fa-tumor"></i> 14. Neoplasia: Definitions</a></li>
+                <li class="chapter-item"><a href="#carcinogenesis"><i class="fas fa-dna"></i> 15. Carcinogenesis</a></li>
+                <li class="chapter-item"><a href="#tumor-progression"><i class="fas fa-chart-line"></i> 16. Tumor Progression & Metastasis</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CELL INJURY & ADAPTATION ==================== -->
+        <section id="cell-injury" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 1. Cell Injury & Adaptation</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Cells maintain homeostasis within a range of physiologic stress. When stress exceeds adaptive capacity, injury occurs.
+                </div>
+                <div class="subsection-heading">Causes of Cell Injury</div>
+                <ul>
+                    <li><strong>Hypoxia/Ischemia:</strong> Oxygen deprivation (ischemia worse than hypoxia).</li>
+                    <li><strong>Physical agents:</strong> Trauma, temperature, radiation.</li>
+                    <li><strong>Chemical agents:</strong> Toxins, drugs, pollutants.</li>
+                    <li><strong>Infectious agents:</strong> Viruses, bacteria, fungi, parasites.</li>
+                    <li><strong>Immunologic reactions:</strong> Autoimmunity, hypersensitivity.</li>
+                    <li><strong>Genetic abnormalities:</strong> Enzyme defects, mutations.</li>
+                    <li><strong>Nutritional imbalances:</strong> Deficiency or excess.</li>
+                </ul>
+                <div class="subsection-heading">Cellular Adaptations</div>
+                <ul>
+                    <li><strong>Atrophy:</strong> Decreased cell size (disuse, denervation, loss of nutrition).</li>
+                    <li><strong>Hypertrophy:</strong> Increased cell size (increased workload).</li>
+                    <li><strong>Hyperplasia:</strong> Increased cell number (hormonal, compensatory).</li>
+                    <li><strong>Metaplasia:</strong> Reversible change from one mature cell type to another (e.g., squamous metaplasia in smokers).</li>
+                    <li><strong>Dysplasia:</strong> Disordered growth (pre‑neoplastic).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NECROSIS ==================== -->
+        <section id="necrosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-skull"></i> 2. Necrosis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Necrosis is irreversible cell death with enzymatic digestion and denaturation of proteins, leading to inflammation.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Features</th><th>Examples</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Coagulative</strong></td><td>Architecture preserved, cells become eosinophilic, nuclei lost</td><td>Ischemia (MI, kidney infarction)</td></tr>
+                        <tr><td><strong>Liquefactive</strong></td><td>Enzymatic digestion, cyst formation</td><td>Brain infarction, abscess</td></tr>
+                        <tr><td><strong>Caseous</strong></td><td>Soft, friable, cheesy; combination of coagulative and liquefactive</td><td>Tuberculosis, fungal</td></tr>
+                        <tr><td><strong>Fat</strong></td><td>Fatty acids with calcium (saponification)</td><td>Acute pancreatitis, breast trauma</td></tr>
+                        <tr><td><strong>Fibrinoid</strong></td><td>Deposition of fibrin‑like material in vessel walls</td><td>Hypertension, vasculitis</td></tr>
+                        <tr><td><strong>Gangrenous</strong></td><td>Coagulative necrosis with superimposed putrefaction (wet gangrene if infection)</td><td>Limb ischemia + infection</td></tr>
+                    </tbody>
+                </table>
+                <div class="definition-box">
+                    <strong>Nuclear changes:</strong> Pyknosis (nuclear shrinkage, basophilia), karyorrhexis (fragmentation), karyolysis (dissolution).
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== APOPTOSIS ==================== -->
+        <section id="apoptosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 3. Apoptosis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Apoptosis is programmed cell death, eliminating unwanted cells without inflammation.
+                </div>
+                <ul>
+                    <li><strong>Pathways:</strong>
+                        <ul>
+                            <li><strong>Intrinsic (mitochondrial):</strong> Stress, DNA damage → BH3 proteins → cytochrome c release → caspase activation.</li>
+                            <li><strong>Extrinsic (death receptor):</strong> Fas‑FasL, TNF‑TNF receptor → caspase activation.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Morphology:</strong> Cell shrinkage, chromatin condensation (pyknosis), membrane blebbing, apoptotic bodies.</li>
+                    <li><strong>Examples:</strong> Embryonic development, hormone‑induced atrophy, cytotoxic T‑cell killing, viral hepatitis (Councilman bodies).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== AUTOPHAGY ==================== -->
+        <section id="autophagy" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-recycle"></i> 4. Autophagy</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Autophagy is lysosomal digestion of cellular components; can be adaptive (survival under nutrient deprivation) or lead to autophagic cell death.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ACUTE INFLAMMATION ==================== -->
+        <section id="acute-inflammation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-fire"></i> 5. Acute Inflammation</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Acute inflammation is a rapid, innate response to injury, characterized by vascular changes and neutrophil infiltration.
+                </div>
+                <ul>
+                    <li><strong>Vascular changes:</strong>
+                        <ul>
+                            <li>Transient vasoconstriction → vasodilation (histamine, NO) → increased blood flow (rubor, calor).</li>
+                            <li>Increased vascular permeability (tumor, swelling) → exudate formation.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Cellular events:</strong>
+                        <ul>
+                            <li>Margination, rolling, adhesion (selectins, integrins).</li>
+                            <li>Emigration (diapedesis) through vessel wall.</li>
+                            <li>Chemotaxis (leukotrienes, chemokines).</li>
+                            <li>Phagocytosis and degranulation.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Outcomes:</strong> Resolution, abscess formation, progression to chronic inflammation.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHRONIC INFLAMMATION ==================== -->
+        <section id="chronic-inflammation" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-clock"></i> 6. Chronic Inflammation</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Chronic inflammation is prolonged, with lymphocytes, macrophages, plasma cells, and fibrosis.
+                </div>
+                <ul>
+                    <li><strong>Causes:</strong> Persistent infection (TB, viruses), autoimmune disease, prolonged toxin exposure, foreign bodies.</li>
+                    <li><strong>Cells:</strong> Macrophages (epithelioid, giant cells), lymphocytes, plasma cells, eosinophils (allergy, parasites).</li>
+                    <li><strong>Granulomatous inflammation:</strong> Compact collection of epithelioid macrophages, may form giant cells. Seen in TB, sarcoid, Crohn, fungal infections.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CHEMICAL MEDIATORS ==================== -->
+        <section id="chemical-mediators" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 7. Chemical Mediators of Inflammation</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Mediator</th><th>Source</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <tr><td>Histamine</td><td>Mast cells, basophils</td><td>Vasodilation, increased permeability</td></tr>
+                        <tr><td>Prostaglandins</td><td>Cyclooxygenase pathway</td><td>Pain, fever, vasodilation</td></tr>
+                        <tr><td>Leukotrienes</td><td>Lipoxygenase pathway</td><td>Chemotaxis, vasoconstriction, bronchospasm</td></tr>
+                        <tr><td>Cytokines (IL‑1, TNF, IL‑6)</td><td>Macrophages, lymphocytes</td><td>Fever, acute‑phase response, activation</td></tr>
+                        <tr><td>Chemokines</td><td>Many cells</td><td>Leukocyte recruitment</td></tr>
+                        <tr><td>Complement</td><td>Liver, macrophages</td><td>C3a, C5a (anaphylatoxins), C5‑9 (lysis), C3b (opsonization)</td></tr>
+                        <tr><td>Nitric oxide</td><td>Endothelium, macrophages</td><td>Vasodilation, microbial killing</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== TISSUE REPAIR & REGENERATION ==================== -->
+        <section id="repair" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bandaid"></i> 8. Tissue Repair & Regeneration</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Regeneration:</strong> Replacement with identical cells (labile or stable cells). Requires intact stem cells and matrix.</li>
+                    <li><strong>Repair by connective tissue (scarring):</strong> When regeneration not possible.</li>
+                    <li><strong>Steps:</strong>
+                        <ul>
+                            <li>Angiogenesis (new vessels).</li>
+                            <li>Fibroblast proliferation and collagen deposition.</li>
+                            <li>Remodeling.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Growth factors:</strong> TGF‑β (fibrosis), PDGF, FGF, VEGF.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== FIBROSIS & SCARRING ==================== -->
+        <section id="fibrosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 9. Fibrosis & Scarring</div>
+            <div class="section-card">
+                <ul>
+                    <li>Excess collagen deposition in chronic inflammation or after severe injury.</li>
+                    <li><strong>Cirrhosis</strong> (liver), <strong>pulmonary fibrosis</strong>, <strong>myocardial fibrosis</strong>.</li>
+                    <li><strong>Keloid:</strong> Excessive scar beyond wound boundaries; genetic predisposition.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== EDEMA & EFFUSIONS ==================== -->
+        <section id="edema" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tint"></i> 10. Edema & Effusions</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Edema:</strong> Increased interstitial fluid. Mechanisms:
+                        <ul>
+                            <li>Increased hydrostatic pressure (heart failure).</li>
+                            <li>Decreased oncotic pressure (hypoalbuminemia).</li>
+                            <li>Increased capillary permeability (inflammation).</li>
+                            <li>Lymphatic obstruction (filariasis).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Effusions:</strong> Fluid in body cavities (pleural, pericardial, peritoneal).</li>
+                    <li><strong>Transudate vs exudate:</strong> Transudate low protein, low specific gravity (hydrostatic); exudate high protein (inflammation).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== THROMBOSIS & EMBOLISM ==================== -->
+        <section id="thrombosis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 11. Thrombosis & Embolism</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <strong>Virchow's triad:</strong> Endothelial injury, stasis/turbulent flow, hypercoagulability.
+                </div>
+                <ul>
+                    <li><strong>Thrombus:</strong> Intravascular clot; arterial (platelet‑rich) vs venous (fibrin‑rich).</li>
+                    <li><strong>Fate of thrombus:</strong> Propagation, embolization, dissolution, organization (recanalization).</li>
+                    <li><strong>Embolism:</strong> Detached intravascular mass (thrombus, fat, air, amniotic fluid).</li>
+                    <li><strong>Infarction:</strong> Tissue death due to ischemia.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== INFARCTION ==================== -->
+        <section id="infarction" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart-broken"></i> 12. Infarction</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Pale (white) infarct:</strong> Solid organs with end‑arterial supply (heart, kidney, spleen).</li>
+                    <li><strong>Red (hemorrhagic) infarct:</strong> Loose tissues (lung) or dual circulation (liver, intestine).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SHOCK ==================== -->
+        <section id="shock" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tachometer-alt"></i> 13. Shock</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Hypovolemic:</strong> Hemorrhage, dehydration.</li>
+                    <li><strong>Cardiogenic:</strong> Pump failure.</li>
+                    <li><strong>Distributive:</strong> Septic, anaphylactic, neurogenic.</li>
+                    <li><strong>Obstructive:</strong> PE, tamponade, tension pneumothorax.</li>
+                    <li>Pathology: Multi‑organ failure, DIC, ARDS.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== NEOPLASIA ==================== -->
+        <section id="neoplasia" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tumor"></i> 14. Neoplasia: Definitions</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Neoplasm:</strong> Abnormal mass of tissue, growth exceeds and is uncoordinated with normal tissue.</li>
+                    <li><strong>Benign:</strong> Well‑differentiated, slow growth, encapsulated, no metastasis.</li>
+                    <li><strong>Malignant:</strong> Poorly differentiated, rapid growth, invasive, metastatic.</li>
+                    <li><strong>Dysplasia:</strong> Disordered growth, not yet neoplastic.</li>
+                    <li><strong>Anaplasia:</strong> Lack of differentiation (hallmark of malignancy).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CARCINOGENESIS ==================== -->
+        <section id="carcinogenesis" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 15. Carcinogenesis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Initiation:</strong> DNA mutation (e.g., from carcinogen).</li>
+                    <li><strong>Promotion:</strong> Proliferation of initiated cells (hormones, growth factors).</li>
+                    <li><strong>Progression:</strong> Accumulation of additional mutations, malignant behavior.</li>
+                    <li><strong>Oncogenes:</strong> Promote growth (RAS, MYC, HER2).</li>
+                    <li><strong>Tumor suppressor genes:</strong> Inhibit growth (p53, RB, APC).</li>
+                    <li><strong>DNA repair genes:</strong> e.g., BRCA, MSH2.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== TUMOR PROGRESSION & METASTASIS ==================== -->
+        <section id="tumor-progression" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 16. Tumor Progression & Metastasis</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Invasion:</strong> Loss of cell adhesion, ECM degradation (proteases), migration.</li>
+                    <li><strong>Angiogenesis:</strong> VEGF, FGF – required for growth beyond 1‑2 mm.</li>
+                    <li><strong>Metastasis routes:</strong> Lymphatic (carcinomas), hematogenous (sarcomas), seeding (body cavities).</li>
+                    <li><strong>Epithelial‑mesenchymal transition (EMT):</strong> Cells gain migratory phenotype.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive General Pathology · Principles of Disease · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

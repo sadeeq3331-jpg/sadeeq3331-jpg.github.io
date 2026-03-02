@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetics · Physiology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-dna"></i>
+        <h1>Genetics · Physiology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ GENETICS PHYSIOLOGY (MOLECULAR GENETICS) QUESTIONS
+    const questions = [
+        { q: "Which of the following is a purine base?",
+          opts: ["Adenine", "Cytosine", "Thymine", "Uracil", "Guanine"],
+          correct: 0,
+          exp: "Purines: adenine and guanine (two rings). Pyrimidines: cytosine, thymine, uracil (one ring)." },
+        { q: "In DNA, the base pairing between guanine and cytosine involves how many hydrogen bonds?",
+          opts: ["Two", "Three", "Four", "One", "Five"],
+          correct: 1,
+          exp: "G‑C pairs have three hydrogen bonds, making them stronger than A‑T (two bonds)." },
+        { q: "The enzyme that unwinds the DNA double helix during replication is:",
+          opts: ["Helicase", "Topoisomerase", "DNA polymerase", "Ligase", "Primase"],
+          correct: 0,
+          exp: "Helicase unwinds DNA; topoisomerase relieves supercoiling." },
+        { q: "Okazaki fragments are synthesized on which strand?",
+          opts: ["Lagging strand", "Leading strand", "Template strand", "Coding strand", "Both strands"],
+          correct: 0,
+          exp: "On the lagging strand, synthesis is discontinuous, producing Okazaki fragments." },
+        { q: "Which enzyme joins Okazaki fragments?",
+          opts: ["DNA ligase", "DNA polymerase I", "DNA polymerase III", "Primase", "Helicase"],
+          correct: 0,
+          exp: "DNA ligase seals nicks between Okazaki fragments." },
+        { q: "Telomeres are repetitive sequences that protect the ends of chromosomes and are synthesized by:",
+          opts: ["Telomerase (contains RNA template)", "DNA polymerase α", "Primase", "Ligase", "Topoisomerase"],
+          correct: 0,
+          exp: "Telomerase adds telomere repeats to prevent shortening." },
+        { q: "The direction of DNA synthesis is always:",
+          opts: ["5' → 3'", "3' → 5'", "Both directions", "Random", "Depends on enzyme"],
+          correct: 0,
+          exp: "DNA polymerases add nucleotides only to the 3'‑OH group, so synthesis proceeds 5'→3'." },
+        { q: "Which of the following is required for initiation of DNA replication?",
+          opts: ["RNA primer", "DNA primer", "Protein primer", "ATP", "GTP"],
+          correct: 0,
+          exp: "Primase synthesizes a short RNA primer to provide a free 3'‑OH for DNA polymerase." },
+        { q: "The genetic code is said to be degenerate because:",
+          opts: ["Multiple codons encode the same amino acid", "One codon encodes multiple amino acids", "It is universal", "It has punctuation", "It is non‑overlapping"],
+          correct: 0,
+          exp: "Degeneracy means most amino acids are specified by more than one codon." },
+        { q: "Which of the following is a stop codon?",
+          opts: ["UAA", "AUG", "GUG", "UGC", "CUG"],
+          correct: 0,
+          exp: "Stop codons: UAA, UAG, UGA." },
+        { q: "The Shine‑Dalgarno sequence is found in:",
+          opts: ["Prokaryotic mRNA (ribosome binding site)", "Eukaryotic mRNA", "tRNA", "rRNA", "DNA promoters"],
+          correct: 0,
+          exp: "Shine‑Dalgarno (AGGAGG) pairs with 16S rRNA to initiate translation in prokaryotes." },
+        { q: "The enzyme that synthesizes RNA from a DNA template is:",
+          opts: ["RNA polymerase", "DNA polymerase", "Reverse transcriptase", "Primase", "Ligase"],
+          correct: 0,
+          exp: "RNA polymerase catalyzes transcription." },
+        { q: "Introns are removed from pre‑mRNA by:",
+          opts: ["Spliceosome (snRNPs)", "Ribosome", "RNA polymerase", "RNase", "Exonuclease"],
+          correct: 0,
+          exp: "The spliceosome cuts introns and joins exons." },
+        { q: "The 5' cap of eukaryotic mRNA is:",
+          opts: ["7‑methylguanosine linked 5'→5' triphosphate", "Poly‑A tail", "Modified adenosine", "Methylated cytosine", "Inosine"],
+          correct: 0,
+          exp: "The cap protects mRNA and aids ribosome binding." },
+        { q: "Alternative splicing allows:",
+          opts: ["One gene to produce multiple protein variants", "Exon skipping", "Intron retention", "RNA editing", "All of the above"],
+          correct: 4,
+          exp: "Alternative splicing generates different mRNAs from the same gene." },
+        { q: "Which of the following is a silent mutation?",
+          opts: ["A change that does not alter the amino acid", "A change that introduces a stop codon", "A change that alters the amino acid", "A change that shifts the reading frame", "A change that alters splicing"],
+          correct: 0,
+          exp: "Silent mutation: codon still codes for same amino acid." },
+        { q: "A missense mutation is a change that:",
+          opts: ["Substitutes one amino acid for another", "Creates a stop codon", "Adds or removes nucleotides", "Has no effect", "Alters splicing"],
+          correct: 0,
+          exp: "Missense: different amino acid; e.g., sickle cell (Glu→Val)." },
+        { q: "A nonsense mutation:",
+          opts: ["Introduces a premature stop codon", "Changes one amino acid to another", "Does nothing", "Shifts reading frame", "Deletes one amino acid"],
+          correct: 0,
+          exp: "Nonsense mutation results in truncated protein." },
+        { q: "Frameshift mutations are caused by:",
+          opts: ["Insertion or deletion of nucleotides not in multiples of three", "Point mutations", "Substitution", "Translocation", "Inversion"],
+          correct: 0,
+          exp: "Frameshifts alter the reading frame downstream." },
+        { q: "Which DNA repair mechanism corrects UV‑induced thymine dimers?",
+          opts: ["Nucleotide excision repair (NER)", "Base excision repair (BER)", "Mismatch repair (MMR)", "Homologous recombination", "Non‑homologous end joining"],
+          correct: 0,
+          exp: "NER removes bulky lesions like pyrimidine dimers; defective in xeroderma pigmentosum." },
+        { q: "Xeroderma pigmentosum is caused by defects in:",
+          opts: ["Nucleotide excision repair", "Base excision repair", "Mismatch repair", "Double‑strand break repair", "Telomere maintenance"],
+          correct: 0,
+          exp: "XP patients lack NER → extreme photosensitivity, skin cancers." },
+        { q: "Hereditary non‑polyposis colorectal cancer (HNPCC) is due to defects in:",
+          opts: ["Mismatch repair (e.g., MLH1, MSH2)", "Nucleotide excision repair", "Base excision repair", "Homologous recombination", "Non‑homologous end joining"],
+          correct: 0,
+          exp: "MMR defects cause microsatellite instability." },
+        { q: "The enzyme that removes damaged bases in base excision repair is:",
+          opts: ["DNA glycosylase", "Helicase", "Ligase", "Polymerase", "Endonuclease"],
+          correct: 0,
+          exp: "Glycosylase removes the damaged base, leaving an abasic site." },
+        { q: "In double‑strand break repair, homologous recombination:",
+          opts: ["Uses sister chromatid as template, error‑free", "Joins ends without template, error‑prone", "Occurs in G1 phase", "Is only in prokaryotes", "Uses RNA template"],
+          correct: 0,
+          exp: "Homologous recombination occurs in S/G2, using sister chromatid for accurate repair." },
+        { q: "The enzyme that relieves supercoiling ahead of the replication fork is:",
+          opts: ["Topoisomerase", "Helicase", "Gyrase (bacteria)", "Both A and C", "Ligase"],
+          correct: 3,
+          exp: "Topoisomerases (including DNA gyrase in bacteria) relieve torsional stress." },
+        { q: "Eukaryotic DNA polymerase that synthesizes the leading strand is:",
+          opts: ["DNA polymerase ε", "DNA polymerase α", "DNA polymerase δ", "DNA polymerase γ", "DNA polymerase β"],
+          correct: 0,
+          exp: "Pol ε synthesizes leading strand; Pol δ synthesizes lagging strand." },
+        { q: "Which polymerase is involved in mitochondrial DNA replication?",
+          opts: ["DNA polymerase γ", "DNA polymerase α", "DNA polymerase β", "DNA polymerase ε", "DNA polymerase δ"],
+          correct: 0,
+          exp: "Pol γ replicates mitochondrial DNA." },
+        { q: "The function of the origin recognition complex (ORC) in eukaryotes is:",
+          opts: ["Binding to origins of replication", "Unwinding DNA", "Synthesizing primers", "Elongating DNA", "Sealing nicks"],
+          correct: 0,
+          exp: "ORC marks the origin for initiation of replication." },
+        { q: "Which protein keeps single‑stranded DNA from re‑annealing during replication?",
+          opts: ["Single‑strand binding protein (SSB)", "Helicase", "Primase", "Clamp loader", "PCNA"],
+          correct: 0,
+          exp: "SSB (RPA in eukaryotes) stabilizes single strands." },
+        { q: "The sliding clamp in prokaryotes is:",
+          opts: ["β‑clamp (dimer)", "PCNA", "Clamp loader", "Helicase", "Primase"],
+          correct: 0,
+          exp: "β‑clamp encircles DNA and tethers DNA polymerase III." },
+        { q: "In eukaryotes, the sliding clamp is:",
+          opts: ["PCNA (proliferating cell nuclear antigen)", "β‑clamp", "RFC", "RPA", "MCM"],
+          correct: 0,
+          exp: "PCNA is the processivity factor for Pol δ and ε." },
+        { q: "The enzyme that adds the poly‑A tail to eukaryotic mRNA is:",
+          opts: ["Poly(A) polymerase", "RNA polymerase II", "Spliceosome", "RNase", "Ligase"],
+          correct: 0,
+          exp: "Poly(A) polymerase adds ~200 adenine nucleotides." },
+        { q: "Capping of eukaryotic mRNA occurs:",
+          opts: ["Co‑transcriptionally (soon after initiation)", "After splicing", "After polyadenylation", "In the cytoplasm", "During translation"],
+          correct: 0,
+          exp: "The cap is added when the transcript is ~25 nucleotides long." },
+        { q: "RNA interference (RNAi) is mediated by:",
+          opts: ["Small interfering RNA (siRNA) and microRNA (miRNA)", "Ribozymes", "snRNA", "tRNA", "rRNA"],
+          correct: 0,
+          exp: "siRNA and miRNA bind to target mRNA and inhibit translation or promote degradation." },
+        { q: "Reverse transcriptase is an enzyme used by:",
+          opts: ["Retroviruses (e.g., HIV)", "All viruses", "Bacteria", "Eukaryotes", "Plasmids"],
+          correct: 0,
+          exp: "Retroviruses use reverse transcriptase to make DNA from RNA." },
+        { q: "CRISPR‑Cas systems provide bacteria with:",
+          opts: ["Adaptive immunity against phages", "Resistance to antibiotics", "DNA repair", "Metabolic regulation", "Competence"],
+          correct: 0,
+          exp: "CRISPR stores phage DNA fragments; Cas proteins cleave invader DNA." },
+        { q: "The Lac operon is induced by:",
+          opts: ["Allolactose (binds repressor)", "Lactose", "Glucose", "cAMP", "CAP"],
+          correct: 0,
+          exp: "Allolactose (or IPTG) binds lac repressor, inactivating it." },
+        { q: "In the trp operon, tryptophan acts as a:",
+          opts: ["Co‑repressor", "Inducer", "Activator", "Inhibitor of RNA polymerase", "Allosteric activator"],
+          correct: 0,
+          exp: "Tryptophan binds the repressor, enabling it to bind the operator." },
+        { q: "The enzyme that synthesizes cDNA from mRNA is:",
+          opts: ["Reverse transcriptase", "RNA polymerase", "DNA polymerase", "Primase", "Ligase"],
+          correct: 0,
+          exp: "cDNA is made by reverse transcriptase for cloning or expression studies." },
+        { q: "Southern blotting detects:",
+          opts: ["DNA", "RNA", "Protein", "Lipids", "Carbohydrates"],
+          correct: 0,
+          exp: "Southern: DNA; Northern: RNA; Western: protein." },
+        { q: "Northern blotting is used to detect:",
+          opts: ["RNA", "DNA", "Protein", "Lipids", "Carbohydrates"],
+          correct: 0,
+          exp: "Northern blotting detects specific RNA sequences." },
+        { q: "Western blotting uses antibodies to detect:",
+          opts: ["Proteins", "DNA", "RNA", "Lipids", "Carbohydrates"],
+          correct: 0,
+          exp: "Western blot (immunoblot) detects proteins." },
+        { q: "Polymerase chain reaction (PCR) requires all of the following EXCEPT:",
+          opts: ["RNA polymerase", "Taq polymerase", "Primers", "dNTPs", "DNA template"],
+          correct: 0,
+          exp: "PCR uses DNA polymerase (Taq), not RNA polymerase." },
+        { q: "In PCR, the step that denatures DNA is typically carried out at what temperature?",
+          opts: ["94‑96°C", "50‑65°C", "72°C", "37°C", "4°C"],
+          correct: 0,
+          exp: "Denaturation: high heat to separate strands." },
+        { q: "Restriction enzymes recognize:",
+          opts: ["Specific palindromic DNA sequences", "RNA sequences", "Protein sequences", "Lipid motifs", "Carbohydrate motifs"],
+          correct: 0,
+          exp: "Restriction endonucleases cut DNA at specific recognition sites." },
+        { q: "DNA ligase is used in molecular cloning to:",
+          opts: ["Join DNA fragments with compatible ends", "Cut DNA at specific sites", "Synthesize new DNA", "Amplify DNA", "Sequence DNA"],
+          correct: 0,
+          exp: "Ligase seals nicks between fragments." },
+        { q: "A plasmid vector must contain which element for selection in bacteria?",
+          opts: ["Antibiotic resistance gene", "Origin of replication", "Multiple cloning site", "Promoter", "Ribosome binding site"],
+          correct: 0,
+          exp: "Selectable marker (e.g., ampicillin resistance) allows only transformed bacteria to grow." },
+        { q: "The CRISPR‑Cas9 system for genome editing requires:",
+          opts: ["Cas9 protein and guide RNA", "Cas9 only", "Guide RNA only", "DNA template", "Reverse transcriptase"],
+          correct: 0,
+          exp: "Cas9 endonuclease is guided by sgRNA to target DNA for cutting." },
+        { q: "DNA footprinting is used to identify:",
+          opts: ["Protein‑binding regions on DNA", "DNA mutations", "RNA transcripts", "Protein size", "DNA methylation"],
+          correct: 0,
+          exp: "Footprinting reveals where proteins (e.g., transcription factors) bind DNA." },
+        { q: "Electrophoretic mobility shift assay (EMSA) detects:",
+          opts: ["Protein‑DNA interactions", "Protein‑protein interactions", "DNA methylation", "RNA splicing", "DNA replication"],
+          correct: 0,
+          exp: "EMSA (gel shift) shows protein binding to DNA." },
+        { q: "The term 'genome' refers to:",
+          opts: ["The complete set of genetic material in an organism", "The entire protein set", "All mRNA transcripts", "All non‑coding RNAs", "The mitochondrial DNA only"],
+          correct: 0,
+          exp: "Genome = all nuclear + organellar DNA." },
+        { q: "Epigenetics refers to:",
+          opts: ["Heritable changes in gene expression without DNA sequence alteration", "Mutations in DNA", "Changes in chromosome number", "Gene duplications", "Alternative splicing"],
+          correct: 0,
+          exp: "Epigenetic changes (methylation, histone modifications) alter gene expression." },
+        { q: "CpG islands are often associated with:",
+          opts: ["Gene promoters; methylation silences expression", "Exons", "Introns", "Telomeres", "Centromeres"],
+          correct: 0,
+          exp: "CpG islands are GC‑rich regions near promoters; methylation represses transcription." },
+        { q: "Histone acetylation generally leads to:",
+          opts: ["Increased transcription (open chromatin)", "Gene silencing", "DNA methylation", "Heterochromatin formation", "Condensation"],
+          correct: 0,
+          exp: "Acetylation neutralizes positive charge on histones, loosening chromatin." },
+        { q: "The enzyme that adds methyl groups to DNA is:",
+          opts: ["DNA methyltransferase (DNMT)", "Histone acetyltransferase", "Histone methyltransferase", "Kinase", "Phosphatase"],
+          correct: 0,
+          exp: "DNMT methylates cytosine in CpG dinucleotides." },
+        { q: "Imprinting involves:",
+          opts: ["Parent‑of‑origin specific gene expression (epigenetic)", "Gene duplication", "Mutation", "X‑inactivation", "Genomic rearrangements"],
+          correct: 0,
+          exp: "Imprinted genes are expressed depending on whether they came from mother or father." },
+        { q: "X‑inactivation (lyonization) results in:",
+          opts: ["Formation of Barr body (inactive X)", "Two active X chromosomes", "Y chromosome inactivation", "Increased transcription", "Deletion of one X"],
+          correct: 0,
+          exp: "One X in female cells is randomly inactivated and condensed." },
+        { q: "Which of the following is an example of a trinucleotide repeat expansion?",
+          opts: ["Huntington disease (CAG repeats)", "Sickle cell anemia", "Cystic fibrosis", "Down syndrome", "Turner syndrome"],
+          correct: 0,
+          exp: "Huntington, fragile X, myotonic dystrophy are caused by repeat expansions." },
+        { q: "Anticipation refers to:",
+          opts: ["Earlier onset and increased severity in successive generations", "Later onset in successive generations", "Reduced severity in offspring", "Skewed sex ratio", "Decreased penetrance"],
+          correct: 0,
+          exp: "Anticipation occurs in trinucleotide repeat disorders due to expansion." },
+        { q: "A gene that shows pleiotropy:",
+          opts: ["Affects multiple traits", "Affects a single trait", "Is expressed only in one sex", "Is imprinted", "Is lethal"],
+          correct: 0,
+          exp: "Pleiotropy: one gene influences multiple seemingly unrelated phenotypes (e.g., Marfan syndrome)." },
+        { q: "Variable expressivity means:",
+          opts: ["Same genotype produces different phenotypic severity", "Not all individuals with genotype show phenotype", "Phenotype appears only in some generations", "Phenotype changes with age", "Sex‑limited expression"],
+          correct: 0,
+          exp: "Expressivity: degree of expression; penetrance: all‑or‑none." },
+        { q: "Incomplete penetrance means:",
+          opts: ["Not all individuals with genotype express phenotype", "Phenotype varies in severity", "Phenotype skips generations", "Gene is only expressed in one sex", "Gene is imprinted"],
+          correct: 0,
+          exp: "Penetrance: proportion of individuals with genotype who manifest phenotype." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "A linkage map is based on:",
+          opts: ["Recombination frequencies between genes", "Physical distances in base pairs", "Chromosome banding", "DNA sequencing", "Protein sequences"],
+          correct: 0,
+          exp: "Genetic map units (centimorgans) represent recombination frequency." },
+        { q: "Fluorescence in situ hybridization (FISH) is used to:",
+          opts: ["Localize specific DNA sequences on chromosomes", "Sequence DNA", "Amplify DNA", "Detect RNA expression", "Measure protein levels"],
+          correct: 0,
+          exp: "FISH uses fluorescent probes to detect chromosomal abnormalities." },
+        { q: "Comparative genomic hybridization (CGH) detects:",
+          opts: ["Copy number variations (gains/losses)", "Single nucleotide changes", "Methylation", "RNA expression", "Protein levels"],
+          correct: 0,
+          exp: "CGH compares DNA from test and reference to find CNVs." },
+        { q: "SNP (single nucleotide polymorphism) microarrays are used for:",
+          opts: ["Genome‑wide association studies (GWAS)", "Gene sequencing", "Protein analysis", "RNA quantification", "Chromosome painting"],
+          correct: 0,
+          exp: "SNP arrays identify genetic variants associated with traits/diseases." },
+        { q: "The human genome contains approximately how many protein‑coding genes?",
+          opts: ["~20,000", "~50,000", "~100,000", "~200,000", "~5,000"],
+          correct: 0,
+          exp: "Current estimate is about 20,000 protein‑coding genes." },
+        { q: "Next‑generation sequencing (NGS) allows:",
+          opts: ["High‑throughput, rapid DNA sequencing", "Protein sequencing", "Lipid analysis", "Carbohydrate profiling", "Metabolite detection"],
+          correct: 0,
+          exp: "NGS massively parallel sequencing enables whole genomes/exomes." },
+        { q: "Whole exome sequencing targets:",
+          opts: ["All protein‑coding regions (exons)", "Entire genome", "Only mitochondrial DNA", "Only non‑coding DNA", "Only mRNA"],
+          correct: 0,
+          exp: "Exome sequencing covers ~2% of genome but most known disease mutations." },
+        { q: "The term 'epigenome' refers to:",
+          opts: ["Genome‑wide epigenetic modifications (methylation, histone marks)", "All transcribed RNAs", "All proteins", "All metabolites", "Chromosome structure"],
+          correct: 0,
+          exp: "Epigenome encompasses all epigenetic changes across the genome." },
+        { q: "A restriction fragment length polymorphism (RFLP) is:",
+          opts: ["Variation in fragment lengths due to restriction site changes", "Variation in number of repeats", "Single nucleotide change", "Chromosomal rearrangement", "Gene duplication"],
+          correct: 0,
+          exp: "RFLPs are used for linkage analysis and DNA fingerprinting." },
+        { q: "Variable number tandem repeats (VNTRs) are used in:",
+          opts: ["DNA fingerprinting", "Gene therapy", "Protein sequencing", "RNA interference", "Epigenetic analysis"],
+          correct: 0,
+          exp: "VNTRs (minisatellites) differ between individuals, used in forensics." },
+        { q: "Knockout mice are used to study:",
+          opts: ["Gene function by disrupting a specific gene", "Gene expression", "Protein interactions", "Metabolic pathways", "Drug efficacy"],
+          correct: 0,
+          exp: "Knockouts reveal the normal function of a gene." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

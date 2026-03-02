@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endocrinology Pharmacology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-pills"></i>
+        <h1>Endocrinology Pharmacology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Introduction to Endocrine Pharmacology</a></li>
+                <li><a href="#ch2"><i class="fas fa-brain"></i> 2. Hypothalamic & Pituitary Hormones</a></li>
+                <li><a href="#ch3"><i class="fas fa-shield"></i> 3. Thyroid & Antithyroid Drugs</a></li>
+                <li><a href="#ch4"><i class="fas fa-bone"></i> 4. Calcium & Bone Metabolism Drugs</a></li>
+                <li><a href="#ch5"><i class="fas fa-bolt"></i> 5. Adrenal Hormones & Antagonists</a></li>
+                <li><a href="#ch6"><i class="fas fa-heart"></i> 6. Pancreatic Hormones & Antidiabetic Drugs</a></li>
+                <li><a href="#ch7"><i class="fas fa-venus-mars"></i> 7. Gonadal Hormones & Modulators</a></li>
+                <li><a href="#ch8"><i class="fas fa-child"></i> 8. Drugs for Infertility & Menopause</a></li>
+                <li><a href="#ch9"><i class="fas fa-weight-scale"></i> 9. Anti‑Obesity Drugs</a></li>
+                <li><a href="#ch10"><i class="fas fa-dna"></i> 10. Drugs for Endocrine Neoplasia & Miscellaneous</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: INTRODUCTION -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Introduction to Endocrine Pharmacology</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Endocrine pharmacology deals with drugs that either replace deficient hormones, inhibit excessive hormone production, or modulate hormone receptors. Many endocrine drugs are peptides (requiring injection), while steroids and small molecules are often oral.</p>
+                </div>
+                <div class="key-points">
+                    <ul>
+                        <li><i class="fas fa-check"></i> Replacement therapy: levothyroxine, insulin, hydrocortisone.</li>
+                        <li><i class="fas fa-check"></i> Suppressive therapy: anti‑thyroid drugs, somatostatin analogs.</li>
+                        <li><i class="fas fa-check"></i> Hormone antagonists: tamoxifen, finasteride, mifepristone.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: HYPOTHALAMIC & PITUITARY DRUGS -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 2. Hypothalamic & Pituitary Hormones</div>
+            <div class="section-card">
+                <div class="subsection-heading">Hypothalamic Hormone Analogs</div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Action</th><th>Uses</th><th>Side Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>GnRH agonists (leuprolide, goserelin)</td><td>Initially stimulate, then downregulate GnRH receptors → ↓ LH/FSH</td><td>Prostate cancer, endometriosis, precocious puberty</td><td>Hot flashes, bone loss, initial flare</td></tr>
+                        <tr><td>GnRH antagonists (cetrorelix, ganirelix)</td><td>Immediate blockade</td><td>Assisted reproduction</td><td>Injection site reactions</td></tr>
+                        <tr><td>Somatostatin analogs (octreotide, lanreotide)</td><td>Inhibit GH, glucagon, insulin</td><td>Acromegaly, carcinoid syndrome, variceal bleeding</td><td>Gallstones, bradycardia, glucose disturbances</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Pituitary Hormones</div>
+                <ul>
+                    <li><strong>Growth hormone (somatropin):</strong> Used for GH deficiency, Turner syndrome, chronic renal failure. Side effects: fluid retention, glucose intolerance.</li>
+                    <li><strong>Mecasermin (IGF‑1):</strong> For severe GH insensitivity.</li>
+                    <li><strong>Pegvisomant:</strong> GH receptor antagonist; for acromegaly.</li>
+                    <li><strong>Desmopressin (DDAVP):</strong> ADH analog; used for central DI, nocturnal enuresis, hemophilia A (increases factor VIII).</li>
+                    <li><strong>Oxytocin:</strong> Stimulates uterine contractions (induction of labor) and milk ejection.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: THYROID & ANTITHYROID DRUGS -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield"></i> 3. Thyroid & Antithyroid Drugs</div>
+            <div class="section-card">
+                <div class="subsection-heading">Thyroid Hormone Replacement</div>
+                <ul>
+                    <li><strong>Levothyroxine (T₄):</strong> Drug of choice for hypothyroidism. Half‑life ~7 days. Monitor TSH. Absorption reduced by food, calcium, iron.</li>
+                    <li><strong>Liothyronine (T₃):</strong> Rarely used; shorter half‑life; may be used in myxedema coma (IV).</li>
+                </ul>
+                <div class="subsection-heading">Antithyroid Drugs</div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Uses</th><th>Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Propylthiouracil (PTU)</td><td>Inhibits TPO; blocks T₄→T₃ conversion</td><td>Graves' disease (pregnancy first trimester)</td><td>Agranulocytosis, hepatotoxicity (black box)</td></tr>
+                        <tr><td>Methimazole</td><td>Inhibits TPO</td><td>First‑line for hyperthyroidism</td><td>Agranulocytosis, cholestatic jaundice, rash</td></tr>
+                        <tr><td>Iodides (Lugol's, SSKI)</td><td>Inhibit hormone release (Wolff‑Chaikoff effect), decrease vascularity</td><td>Pre‑op thyroidectomy, thyroid storm</td><td>Rash, sialadenitis, metallic taste</td></tr>
+                        <tr><td>Radioactive iodine (I‑131)</td><td>Destroys thyroid tissue</td><td>Definitive therapy for hyperthyroidism (non‑pregnant)</td><td>Permanent hypothyroidism, radiation precautions</td></tr>
+                        <tr><td>β‑blockers (propranolol)</td><td>Control symptoms (tachycardia, tremor) in hyperthyroidism</td><td>Adjunct in thyroid storm, Graves'</td><td>Bradycardia, bronchospasm</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Thyroid storm:</strong> PTU, iodides, propranolol, steroids, supportive care.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: CALCIUM & BONE METABOLISM -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 4. Calcium & Bone Metabolism Drugs</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Drugs</th><th>Mechanism</th><th>Uses</th><th>Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Bisphosphonates</td><td>Alendronate, risedronate, ibandronate, zoledronic acid</td><td>Inhibit osteoclasts, reduce bone resorption</td><td>Osteoporosis, Paget's disease, hypercalcemia of malignancy</td><td>Esophagitis (oral), ONJ, atypical femur fracture, hypocalcemia</td></tr>
+                        <tr><td>Denosumab</td><td>RANKL inhibitor (monoclonal antibody)</td><td>Inhibits osteoclast maturation</td><td>Osteoporosis, bone metastases</td><td>Hypocalcemia, infection risk, ONJ</td></tr>
+                        <tr><td>Teriparatide</td><td>PTH analog</td><td>Stimulates bone formation (anabolic)</td><td>Severe osteoporosis</td><td>Hypercalcemia, osteosarcoma risk (black box)</td></tr>
+                        <tr><td>Calcitonin</td><td>Salmon calcitonin</td><td>Inhibits osteoclasts</td><td>Paget's, hypercalcemia</td><td>Nausea, flushing, allergic reactions</td></tr>
+                        <tr><td>Calcium & Vitamin D</td><td>Calcium carbonate, calcium citrate; ergocalciferol (D₂), cholecalciferol (D₃), calcitriol</td><td>Supplementation</td><td>Hypocalcemia, prevention of osteoporosis, renal osteodystrophy</td><td>Hypercalcemia, kidney stones</td></tr>
+                        <tr><td>Cinacalcet</td><td>Calcimimetic</td><td>Increases sensitivity of CaSR to calcium → ↓PTH</td><td>Secondary hyperparathyroidism in CKD, parathyroid carcinoma</td><td>Hypocalcemia, nausea</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: ADRENAL HORMONES & ANTAGONISTS -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 5. Adrenal Hormones & Antagonists</div>
+            <div class="section-card">
+                <div class="subsection-heading">Glucocorticoids</div>
+                <ul>
+                    <li><strong>Hydrocortisone, prednisone, methylprednisolone, dexamethasone</strong></li>
+                    <li><strong>Uses:</strong> Adrenal insufficiency, inflammatory/autoimmune disorders, asthma, allergic reactions, immunosuppression.</li>
+                    <li><strong>Adverse effects:</strong> Cushingoid features, hyperglycemia, osteoporosis, immunosuppression, adrenal suppression. Long‑term use requires slow taper.</li>
+                </ul>
+                <div class="subsection-heading">Mineralocorticoids</div>
+                <ul>
+                    <li><strong>Fludrocortisone:</strong> Used in adrenal insufficiency (Addison's) to replace aldosterone. Causes sodium retention, hypertension, hypokalemia.</li>
+                </ul>
+                <div class="subsection-heading">Adrenal Antagonists</div>
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Uses</th></tr></thead>
+                    <tbody>
+                        <tr><td>Spironolactone</td><td>Aldosterone antagonist (mineralocorticoid receptor)</td><td>Primary hyperaldosteronism, heart failure, hypertension, hirsutism</td></tr>
+                        <tr><td>Eplerenone</td><td>Selective aldosterone antagonist</td><td>Hypertension, heart failure post‑MI</td></tr>
+                        <tr><td>Metyrapone</td><td>Inhibits 11β‑hydroxylase → ↓ cortisol</td><td>Diagnostic test for ACTH reserve; Cushing's (off‑label)</td></tr>
+                        <tr><td>Ketoconazole (high dose)</td><td>Inhibits several cytochrome P450 enzymes (including steroid synthesis)</td><td>Cushing's syndrome</td></tr>
+                        <tr><td>Mitotane</td><td>Adrenolytic; used for adrenocortical carcinoma</td><td>Adrenocortical carcinoma</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: PANCREATIC HORMONES & ANTIDIABETIC DRUGS -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 6. Pancreatic Hormones & Antidiabetic Drugs</div>
+            <div class="section-card">
+                <div class="subsection-heading">Insulin Preparations</div>
+                <table class="premium-table">
+                    <thead><tr><th>Type</th><th>Onset</th><th>Peak</th><th>Duration</th><th>Examples</th></tr></thead>
+                    <tbody>
+                        <tr><td>Rapid‑acting</td><td>5‑15 min</td><td>30‑90 min</td><td>3‑5 h</td><td>Lispro, aspart, glulisine</td></tr>
+                        <tr><td>Short‑acting (regular)</td><td>30‑60 min</td><td>2‑3 h</td><td>5‑8 h</td><td>Regular insulin</td></tr>
+                        <tr><td>Intermediate‑acting</td><td>2‑4 h</td><td>4‑10 h</td><td>10‑18 h</td><td>NPH</td></tr>
+                        <tr><td>Long‑acting</td><td>2‑4 h</td><td>No peak</td><td>20‑24 h</td><td>Glargine, detemir, degludec</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Insulin is the mainstay for type 1 diabetes. In type 2, it is used when oral agents fail.</p>
+                </div>
+                <div class="subsection-heading">Oral Hypoglycemics & Other Antidiabetics</div>
+                <table class="premium-table">
+                    <thead><tr><th>Class</th><th>Drugs</th><th>Mechanism</th><th>Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sulfonylureas</td><td>Glipizide, glyburide, glimepiride</td><td>Close K<sub>ATP</sub> channels → insulin secretion</td><td>Hypoglycemia, weight gain</td></tr>
+                        <tr><td>Meglitinides</td><td>Repaglinide, nateglinide</td><td>Similar to sulfonylureas (short‑acting)</td><td>Hypoglycemia, weight gain</td></tr>
+                        <tr><td>Biguanides</td><td>Metformin</td><td>↓ hepatic gluconeogenesis, ↑ insulin sensitivity</td><td>GI upset, lactic acidosis (rare), vitamin B12 deficiency</td></tr>
+                        <tr><td>Thiazolidinediones (TZDs)</td><td>Pioglitazone, rosiglitazone</td><td>PPAR‑γ agonists → ↑ insulin sensitivity</td><td>Weight gain, fluid retention, heart failure, fractures, bladder cancer (pioglitazone)</td></tr>
+                        <tr><td>α‑Glucosidase inhibitors</td><td>Acarbose, miglitol</td><td>Delay carbohydrate absorption</td><td>Flatulence, diarrhea</td></tr>
+                        <tr><td>DPP‑4 inhibitors</td><td>Sitagliptin, saxagliptin, linagliptin</td><td>↑ GLP‑1, GIP</td><td>Well tolerated; pancreatitis, joint pain</td></tr>
+                        <tr><td>GLP‑1 receptor agonists</td><td>Exenatide, liraglutide, semaglutide</td><td>↑ insulin, ↓ glucagon, slows gastric emptying, promotes weight loss</td><td>Nausea, vomiting, pancreatitis, thyroid C‑cell tumors (in rodents)</td></tr>
+                        <tr><td>SGLT2 inhibitors</td><td>Empagliflozin, dapagliflozin, canagliflozin</td><td>Block glucose reabsorption in kidney</td><td>UTI, genital mycosis, volume depletion, ketoacidosis (euglycemic), amputations (canagliflozin)</td></tr>
+                        <tr><td>Amylin analog</td><td>Pramlintide</td><td>Slows gastric emptying, ↓ glucagon</td><td>Nausea, hypoglycemia</td></tr>
+                        <tr><td>Dopamine agonist</td><td>Bromocriptine (quick‑release)</td><td>Unknown (circadian rhythm?)</td><td>Nausea, hypotension</td></tr>
+                        <tr><td>Bile acid sequestrant</td><td>Colesevelam</td><td>Unknown (improves glucose)</td><td>Constipation, ↑ TG</td></tr>
+                    </tbody>
+                </table>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “Metformin is first‑line, sulfonylureas cause weight gain, GLP‑1 cause weight loss, SGLT2i have cardio/renal benefits.”</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: GONADAL HORMONES & MODULATORS -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-venus-mars"></i> 7. Gonadal Hormones & Modulators</div>
+            <div class="section-card">
+                <div class="subsection-heading">Estrogens & Progestins</div>
+                <ul>
+                    <li><strong>Estrogen (ethinyl estradiol, conjugated estrogens, estradiol):</strong> Used in hormone replacement therapy (HRT), contraception. Adverse effects: thromboembolism, breast tenderness, endometrial hyperplasia (if unopposed).</li>
+                    <li><strong>Progestins (medroxyprogesterone, norethindrone, levonorgestrel):</strong> Used in contraception, HRT, endometriosis. Adverse effects: weight gain, depression, acne.</li>
+                    <li><strong>SERMs (Selective Estrogen Receptor Modulators):</strong>
+                        <ul>
+                            <li><strong>Tamoxifen:</strong> Antagonist in breast, agonist in bone/uterus. Used for breast cancer; risk of endometrial cancer, hot flashes.</li>
+                            <li><strong>Raloxifene:</strong> Agonist in bone, antagonist in breast/uterus. Used for osteoporosis; lower risk of endometrial cancer; hot flashes.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="subsection-heading">Androgens & Anti‑Androgens</div>
+                <ul>
+                    <li><strong>Testosterone (androgen replacement):</strong> For hypogonadism. Adverse effects: erythrocytosis, acne, sleep apnea, prostate stimulation.</li>
+                    <li><strong>Danazol:</strong> Weak androgen; used for endometriosis (now less common).</li>
+                    <li><strong>Anti‑androgens:</strong>
+                        <ul>
+                            <li><strong>Finasteride, dutasteride:</strong> 5α‑reductase inhibitors → ↓ DHT; used for BPH, male pattern baldness.</li>
+                            <li><strong>Flutamide, bicalutamide:</strong> Androgen receptor antagonists; used for prostate cancer.</li>
+                            <li><strong>Spironolactone:</strong> Androgen receptor antagonist (also anti‑mineralocorticoid); used for hirsutism, female acne.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: DRUGS FOR INFERTILITY & MENOPAUSE -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-child"></i> 8. Drugs for Infertility & Menopause</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Clomiphene citrate:</strong> SERM; blocks estrogen feedback → ↑ FSH/LH → ovulation induction. Side effects: hot flashes, multiple pregnancy.</li>
+                    <li><strong>Gonadotropins (FSH, LH, hCG):</strong> Used for ovulation induction and assisted reproduction. Risk of OHSS.</li>
+                    <li><strong>Cabergoline, bromocriptine:</strong> Dopamine agonists; lower prolactin → restore fertility in hyperprolactinemia.</li>
+                    <li><strong>Hormone replacement therapy (HRT):</strong> Estrogen ± progestin for menopausal symptoms. Risk: breast cancer, thromboembolism.</li>
+                    <li><strong>Ospemifene:</strong> SERM for dyspareunia due to vulvovaginal atrophy.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: ANTI‑OBESITY DRUGS -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-weight-scale"></i> 9. Anti‑Obesity Drugs</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Adverse Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Orlistat</td><td>Lipase inhibitor → ↓ fat absorption</td><td>Oily stools, flatulence, fecal incontinence</td></tr>
+                        <tr><td>Phentermine / topiramate</td><td>Sympathomimetic + anticonvulsant</td><td>Insomnia, dry mouth, paresthesia</td></tr>
+                        <tr><td>Naltrexone / bupropion</td><td>Opioid antagonist + dopamine/norepinephrine reuptake inhibitor</td><td>Nausea, headache, ↑ BP</td></tr>
+                        <tr><td>Liraglutide, semaglutide (high dose)</td><td>GLP‑1 agonists – reduce appetite, slow gastric emptying</td><td>Nausea, pancreatitis, gallbladder disease</td></tr>
+                        <tr><td>Setmelanotide</td><td>MC4R agonist for rare obesity</td><td>Injection site reactions, dyspigmentation</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: DRUGS FOR ENDOCRINE NEOPLASIA & MISCELLANEOUS -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 10. Drugs for Endocrine Neoplasia & Miscellaneous</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Metyrosine:</strong> Inhibits tyrosine hydroxylase; used in pheochromocytoma (pre‑op).</li>
+                    <li><strong>Phentolamine, phenoxybenzamine:</strong> α‑blockers for pheochromocytoma (phenoxybenzamine non‑selective, long‑acting).</li>
+                    <li><strong>Vandetanib, cabozantinib:</strong> Tyrosine kinase inhibitors for medullary thyroid cancer.</li>
+                    <li><strong>Lutetium‑177 dotatate (PRRT):</strong> Peptide receptor radionuclide therapy for somatostatin receptor‑positive NETs.</li>
+                    <li><strong>Everolimus, sunitinib:</strong> mTOR inhibitor and TKI for pancreatic NETs.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Endocrinology Pharmacology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

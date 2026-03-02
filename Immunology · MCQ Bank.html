@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immunology · MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-shield-alt"></i>
+        <h1>Immunology · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ IMMUNOLOGY MCQ QUESTIONS (high‑yield)
+    const questions = [
+        { q: "Which cells are the primary antigen‑presenting cells (APCs) that activate naïve T cells?",
+          opts: ["Dendritic cells", "Macrophages", "B cells", "Neutrophils", "Mast cells"],
+          correct: 0,
+          exp: "Dendritic cells are the most potent APCs for initiating primary T‑cell responses." },
+        { q: "Which immunoglobulin is the first to be produced during a primary immune response?",
+          opts: ["IgM", "IgG", "IgA", "IgE", "IgD"],
+          correct: 0,
+          exp: "IgM is the first antibody produced; IgG appears later and dominates secondary response." },
+        { q: "The most abundant immunoglobulin in serum is:",
+          opts: ["IgG", "IgA", "IgM", "IgD", "IgE"],
+          correct: 0,
+          exp: "IgG constitutes ~75‑80% of serum immunoglobulins." },
+        { q: "Which immunoglobulin is primarily responsible for mucosal immunity?",
+          opts: ["IgA (secretory)", "IgG", "IgM", "IgE", "IgD"],
+          correct: 0,
+          exp: "Secretory IgA (dimeric) protects mucosal surfaces." },
+        { q: "IgE is involved in:",
+          opts: ["Allergic reactions and defense against parasites", "Opsonization", "Complement activation", "Mucosal immunity", "Neonatal immunity"],
+          correct: 0,
+          exp: "IgE binds mast cells and basophils, triggering degranulation in allergy and helminth defense." },
+        { q: "The complement pathway that is activated by antigen‑antibody complexes is the:",
+          opts: ["Classical pathway", "Alternative pathway", "Lectin pathway", "Terminal pathway", "Membrane attack pathway"],
+          correct: 0,
+          exp: "Classical pathway begins when C1 binds antibody (IgG or IgM) complexed with antigen." },
+        { q: "The alternative complement pathway is activated by:",
+          opts: ["Microbial surfaces (e.g., LPS) without antibody", "Antigen‑antibody complexes", "Mannose‑binding lectin", "C‑reactive protein", "Properdin"],
+          correct: 0,
+          exp: "Alternative pathway spontaneously hydrolyzes C3 on microbial surfaces." },
+        { q: "C3b functions as an:",
+          opts: ["Opsonin", "Anaphylatoxin", "Chemotactic factor", "Membrane attack complex component", "Convertase"],
+          correct: 0,
+          exp: "C3b opsonizes pathogens, promoting phagocytosis." },
+        { q: "Which complement component is a potent anaphylatoxin?",
+          opts: ["C5a", "C3b", "C4a", "C2a", "C9"],
+          correct: 0,
+          exp: "C5a (and C3a, C4a) are anaphylatoxins: induce mast cell degranulation, smooth muscle contraction." },
+        { q: "Deficiency of which complement component is associated with hereditary angioedema?",
+          opts: ["C1 inhibitor", "C3", "C4", "C2", "C5"],
+          correct: 0,
+          exp: "C1‑INH deficiency leads to uncontrolled bradykinin production → angioedema." },
+        { q: "The membrane attack complex (MAC) consists of:",
+          opts: ["C5b‑C9", "C3b‑C5", "C1qrs", "C4b2a", "C3bBb"],
+          correct: 0,
+          exp: "MAC (C5b‑C9) forms pores in target cell membranes." },
+        { q: "Which cytokine is primarily responsible for fever and acute‑phase response?",
+          opts: ["IL‑1", "IL‑2", "IL‑4", "IL‑10", "TGF‑β"],
+          correct: 0,
+          exp: "IL‑1 (along with TNF‑α and IL‑6) induces fever, acute‑phase proteins." },
+        { q: "Which cytokine is the major growth factor for T cells?",
+          opts: ["IL‑2", "IL‑4", "IL‑7", "IL‑12", "IFN‑γ"],
+          correct: 0,
+          exp: "IL‑2 promotes T‑cell proliferation and activation." },
+        { q: "Th1 cells produce which cytokine that activates macrophages?",
+          opts: ["IFN‑γ", "IL‑4", "IL‑5", "IL‑17", "TGF‑β"],
+          correct: 0,
+          exp: "IFN‑γ (Th1) activates macrophages and promotes cell‑mediated immunity." },
+        { q: "Th2 cells produce IL‑4, IL‑5, and IL‑13, which promote:",
+          opts: ["Humoral immunity and allergic responses", "Cytotoxic T‑cell responses", "Delayed‑type hypersensitivity", "Inflammation", "Autoimmunity"],
+          correct: 0,
+          exp: "Th2 drives B‑cell class switching (IgE), eosinophil activation, and allergic inflammation." },
+        { q: "Th17 cells produce IL‑17, which recruits:",
+          opts: ["Neutrophils", "Eosinophils", "Basophils", "Macrophages", "Mast cells"],
+          correct: 0,
+          exp: "IL‑17 stimulates neutrophil recruitment and defense against extracellular bacteria/fungi." },
+        { q: "Regulatory T cells (Treg) characteristically express:",
+          opts: ["CD4, CD25, FoxP3", "CD8, CD28", "CD4, CD40L", "CD8, FoxP3", "CD4, CTLA‑4"],
+          correct: 0,
+          exp: "Treg (CD4+CD25+FoxP3+) suppress immune responses." },
+        { q: "MHC class I molecules present antigens to:",
+          opts: ["CD8+ cytotoxic T cells", "CD4+ helper T cells", "B cells", "NK cells", "Macrophages"],
+          correct: 0,
+          exp: "MHC I (on all nucleated cells) presents endogenous peptides to CD8+ T cells." },
+        { q: "MHC class II molecules are found on:",
+          opts: ["Dendritic cells, macrophages, B cells (APCs)", "All nucleated cells", "Red blood cells", "Neurons", "Hepatocytes"],
+          correct: 0,
+          exp: "MHC II is expressed only on professional APCs." },
+        { q: "The T‑cell receptor (TCR) recognizes:",
+          opts: ["Peptide‑MHC complex", "Native antigen", "Free peptide", "Antibody", "CD3"],
+          correct: 0,
+          exp: "TCR recognizes antigen only when presented by MHC molecules." },
+        { q: "The co‑receptor for MHC class I on T cells is:",
+          opts: ["CD8", "CD4", "CD28", "CD40L", "CD2"],
+          correct: 0,
+          exp: "CD8 binds MHC I, CD4 binds MHC II." },
+        { q: "Negative selection of T cells in the thymus eliminates:",
+          opts: ["Self‑reactive T cells", "Non‑functional T cells", "Double‑positive T cells", "T cells with high affinity for self‑MHC", "All of the above"],
+          correct: 0,
+          exp: "Negative selection removes T cells that strongly recognize self‑peptide‑MHC." },
+        { q: "Which of the following is a primary lymphoid organ?",
+          opts: ["Thymus", "Lymph node", "Spleen", "Tonsils", "Peyer's patches"],
+          correct: 0,
+          exp: "Primary lymphoid organs: bone marrow and thymus (where lymphocytes develop)." },
+        { q: "Which cell type is responsible for antibody‑dependent cell‑mediated cytotoxicity (ADCC)?",
+          opts: ["NK cells", "Cytotoxic T cells", "Macrophages", "Neutrophils", "B cells"],
+          correct: 0,
+          exp: "NK cells mediate ADCC via FcγRIII (CD16) recognizing antibody‑coated targets." },
+        { q: "NK cells kill target cells without prior sensitization by recognizing:",
+          opts: ["Loss of MHC I (missing self)", "Expression of MHC II", "Peptide‑MHC complexes", "Antibody coating", "Complement deposition"],
+          correct: 0,
+          exp: "NK cells are inhibited by MHC I; when MHC I is absent, they kill." },
+        { q: "Which type of hypersensitivity reaction is mediated by IgE and mast cells?",
+          opts: ["Type I", "Type II", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Type I: immediate (allergic) hypersensitivity; IgE binds FcεRI on mast cells." },
+        { q: "Goodpasture syndrome is an example of which type of hypersensitivity?",
+          opts: ["Type II (anti‑basement membrane antibody)", "Type I", "Type III", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Goodpasture: anti‑collagen IV antibodies cause glomerulonephritis and lung hemorrhage." },
+        { q: "Arthus reaction and serum sickness are examples of:",
+          opts: ["Type III hypersensitivity (immune complex)", "Type I", "Type II", "Type IV", "Type V"],
+          correct: 0,
+          exp: "Type III: antigen‑antibody complexes deposit in tissues, activating complement." },
+        { q: "Tuberculin reaction (PPD) is an example of:",
+          opts: ["Type IV hypersensitivity (delayed)", "Type I", "Type II", "Type III", "Type V"],
+          correct: 0,
+          exp: "Type IV: T‑cell mediated (memory Th1 cells)." },
+        { q: "Which primary immunodeficiency is characterized by absent T cells due to thymic aplasia?",
+          opts: ["DiGeorge syndrome (22q11.2 deletion)", "Severe combined immunodeficiency (SCID)", "Bruton agammaglobulinemia", "Chediak‑Higashi syndrome", "Chronic granulomatous disease"],
+          correct: 0,
+          exp: "DiGeorge: thymic hypoplasia → T‑cell deficiency, hypoparathyroidism, cardiac defects." },
+        { q: "X‑linked agammaglobulinemia (Bruton) is caused by a defect in:",
+          opts: ["BTK (Bruton tyrosine kinase)", "CD40L", "IL‑2 receptor γ chain", "Adenosine deaminase", "NADPH oxidase"],
+          correct: 0,
+          exp: "BTK mutation → B‑cell maturation arrest → absent immunoglobulins, recurrent bacterial infections." },
+        { q: "Severe combined immunodeficiency (SCID) can result from deficiency of:",
+          opts: ["Adenosine deaminase (ADA)", "CD40L", "MHC class II", "TAP", "C1 inhibitor"],
+          correct: 0,
+          exp: "ADA deficiency leads to accumulation of toxic metabolites, killing lymphocytes." },
+        { q: "Chronic granulomatous disease (CGD) is caused by defects in:",
+          opts: ["NADPH oxidase (phagocyte respiratory burst)", "Myeloperoxidase", "Complement C3", "IgG", "Mannose‑binding lectin"],
+          correct: 0,
+          exp: "CGD: phagocytes cannot produce superoxide; recurrent infections with catalase‑positive bacteria/fungi." },
+        { q: "Leukocyte adhesion deficiency (LAD) type I is due to lack of:",
+          opts: ["CD18 (β2 integrin)", "CD11a", "CD15s", "ICAM‑1", "Selectin"],
+          correct: 0,
+          exp: "CD18 deficiency impairs neutrophil adhesion/migration → delayed umbilical cord separation, infections." },
+        { q: "Wiskott‑Aldrich syndrome (WAS) is characterized by:",
+          opts: ["Thrombocytopenia (small platelets), eczema, recurrent infections, lymphoma risk", "Hepatosplenomegaly, pancytopenia", "Hyper‑IgM, neutropenia", "Ataxia, telangiectasias", "Mucocutaneous candidiasis"],
+          correct: 0,
+          exp: "WAS: X‑linked; WAS protein mutation affects cytoskeleton → immunodeficiency, thrombocytopenia, eczema." },
+        { q: "Hyper‑IgM syndrome (X‑linked) is most commonly due to mutation in:",
+          opts: ["CD40 ligand (CD40L)", "CD40", "AID", "UNG", "NEMO"],
+          correct: 0,
+          exp: "CD40L deficiency → B cells cannot class switch, so IgM elevated, other isotypes low." },
+        { q: "Which immunoglobulin is elevated in allergic individuals?",
+          opts: ["IgE", "IgG", "IgA", "IgM", "IgD"],
+          correct: 0,
+          exp: "IgE mediates type I hypersensitivity." },
+        { q: "Mast cell degranulation is triggered by cross‑linking of:",
+          opts: ["FcεRI (high‑affinity IgE receptor)", "FcγR", "FcαR", "TCR", "BCR"],
+          correct: 0,
+          exp: "Allergen cross‑links IgE bound to FcεRI on mast cells." },
+        { q: "Desensitization (allergy shots) works by promoting:",
+          opts: ["IgG blocking antibodies and Treg induction", "IgE synthesis", "Mast cell stabilization", "Complement inhibition", "Histamine receptor blockade"],
+          correct: 0,
+          exp: "Allergen immunotherapy increases IgG4 (blocking antibodies) and IL‑10/Treg, reducing IgE response." },
+        { q: "Systemic lupus erythematosus (SLE) is an autoimmune disease characterized by antibodies to:",
+          opts: ["Double‑stranded DNA, Sm, etc.", "Acetylcholine receptor", "TSH receptor", "Intrinsic factor", "Mitochondria"],
+          correct: 0,
+          exp: "Anti‑dsDNA and anti‑Sm are specific for SLE." },
+        { q: "Rheumatoid arthritis is associated with autoantibodies to:",
+          opts: ["Fc portion of IgG (rheumatoid factor) and citrullinated proteins (anti‑CCP)", "dsDNA", "SS‑A/Ro", "Scl‑70", "Jo‑1"],
+          correct: 0,
+          exp: "RF (anti‑IgG) and anti‑CCP are markers for RA." },
+        { q: "In myasthenia gravis, autoantibodies target:",
+          opts: ["Acetylcholine receptor (AChR)", "Muscle‑specific kinase (MuSK)", "Presynaptic calcium channels", "Ryanodine receptor", "Both A and B"],
+          correct: 4,
+          exp: "MG: antibodies to AChR (most common) or MuSK cause muscle weakness." },
+        { q: "Graves disease is caused by autoantibodies that:",
+          opts: ["Stimulate the TSH receptor", "Block the TSH receptor", "Bind to thyroglobulin", "Target thyroid peroxidase", "Induce thyroid apoptosis"],
+          correct: 0,
+          exp: "TSI (thyroid‑stimulating immunoglobulins) activate TSH receptor → hyperthyroidism." },
+        { q: "Pernicious anemia is associated with autoantibodies to:",
+          opts: ["Intrinsic factor and parietal cells", "Gastrin receptors", "Vitamin B12", "H+/K+ ATPase", "Gastric H. pylori"],
+          correct: 0,
+          exp: "Anti‑intrinsic factor and anti‑parietal cell antibodies cause B12 deficiency." },
+        { q: "The autoantibody most specific for type 1 diabetes is:",
+          opts: ["Anti‑glutamic acid decarboxylase (GAD)", "Anti‑islet cell (ICA)", "Anti‑insulin", "Anti‑IA‑2", "All of the above"],
+          correct: 4,
+          exp: "Multiple autoantibodies (GAD, ICA, insulin, IA‑2) appear in type 1 diabetes." },
+        { q: "Antinuclear antibodies (ANA) are most commonly detected in:",
+          opts: ["SLE", "Rheumatoid arthritis", "Sjögren syndrome", "Systemic sclerosis", "Polymyositis"],
+          correct: 0,
+          exp: "ANA is highly sensitive but not specific for SLE; positive in many autoimmune diseases." },
+        { q: "Which virus is associated with Kaposi sarcoma in immunocompromised patients?",
+          opts: ["HHV‑8 (KSHV)", "EBV", "CMV", "HPV", "HIV"],
+          correct: 0,
+          exp: "Kaposi sarcoma herpesvirus (HHV‑8) causes all forms of Kaposi sarcoma." },
+        { q: "Post‑streptococcal glomerulonephritis is an example of:",
+          opts: ["Type III hypersensitivity", "Type I", "Type II", "Type IV", "Autoimmunity"],
+          correct: 0,
+          exp: "It results from deposition of streptococcal antigen‑antibody complexes in glomeruli." },
+        { q: "Which cytokine is targeted by biologic therapy in rheumatoid arthritis?",
+          opts: ["TNF‑α", "IL‑1", "IL‑6", "All of the above", "None"],
+          correct: 3,
+          exp: "Biologics against TNF, IL‑1, IL‑6 are used in RA and other autoimmune diseases." },
+        { q: "Rituximab is a monoclonal antibody against:",
+          opts: ["CD20 on B cells", "CD3 on T cells", "CD52 on lymphocytes", "CD25 on activated T cells", "CD4"],
+          correct: 0,
+          exp: "Rituximab depletes B cells; used in lymphoma, autoimmune diseases." },
+        { q: "Cyclosporine and tacrolimus inhibit:",
+          opts: ["Calcineurin, blocking T‑cell activation", "mTOR", "JAK kinases", "NF‑κB", "Proteasome"],
+          correct: 0,
+          exp: "Calcineurin inhibitors prevent IL‑2 transcription." },
+        { q: "Sirolimus (rapamycin) inhibits:",
+          opts: ["mTOR", "Calcineurin", "DHFR", "IMPDH", "COX"],
+          correct: 0,
+          exp: "mTOR inhibitors block cell proliferation in response to IL‑2." },
+        { q: "Mycophenolate mofetil inhibits:",
+          opts: ["Inosine monophosphate dehydrogenase (IMPDH)", "Dihydrofolate reductase", "Xanthine oxidase", "Thymidylate synthase", "DNA polymerase"],
+          correct: 0,
+          exp: "IMPDH inhibition depletes guanine nucleotides, suppressing lymphocyte proliferation." },
+        { q: "Azathioprine metabolism is affected by polymorphisms in:",
+          opts: ["TPMT (thiopurine methyltransferase)", "CYP2D6", "CYP2C19", "UGT1A1", "DPYD"],
+          correct: 0,
+          exp: "TPMT deficiency increases azathioprine toxicity; test before use." },
+        { q: "Intravenous immunoglobulin (IVIG) is used in:",
+          opts: ["Kawasaki disease, ITP, Guillain‑Barré", "SLE", "Rheumatoid arthritis", "Psoriasis", "Multiple sclerosis"],
+          correct: 0,
+          exp: "IVIG has immunomodulatory effects; used in autoimmune and inflammatory conditions." },
+        { q: "A positive tuberculin skin test (PPD) indicates:",
+          opts: ["Memory T‑cell response to mycobacterial antigens (Type IV hypersensitivity)", "Active TB", "Previous BCG vaccination", "Exposure to environmental mycobacteria", "All of the above may cause positive"],
+          correct: 4,
+          exp: "PPD positivity reflects cellular immunity (Type IV) from infection, vaccination, or exposure." },
+        { q: "Which vaccine is a live attenuated vaccine?",
+          opts: ["MMR (measles, mumps, rubella)", "DTaP", "Hepatitis B", "Inactivated polio (IPV)", "Pneumococcal conjugate"],
+          correct: 0,
+          exp: "MMR, varicella, rotavirus, live influenza are live vaccines." },
+        { q: "Anaphylaxis is best treated with:",
+          opts: ["Epinephrine (adrenaline) IM", "Antihistamines", "Corticosteroids", "Beta‑agonists", "IV fluids"],
+          correct: 0,
+          exp: "Epinephrine is first‑line; antihistamines and steroids are adjunctive." },
+        { q: "HLA‑B27 is strongly associated with:",
+          opts: ["Ankylosing spondylitis", "Rheumatoid arthritis", "SLE", "Multiple sclerosis", "Type 1 diabetes"],
+          correct: 0,
+          exp: "HLA‑B27 >90% in ankylosing spondylitis; also reactive arthritis, psoriatic arthritis." },
+        { q: "HLA‑DR4 is associated with:",
+          opts: ["Rheumatoid arthritis", "Ankylosing spondylitis", "Narcolepsy", "Celiac disease", "Multiple sclerosis"],
+          correct: 0,
+          exp: "HLA‑DR4 linked to RA, type 1 diabetes, pemphigus vulgaris." },
+        { q: "The most common cause of transplant rejection is:",
+          opts: ["Cell‑mediated (T‑cell) rejection", "Antibody‑mediated rejection", "Hyperacute rejection", "Graft‑vs‑host disease", "Infection"],
+          correct: 0,
+          exp: "Acute cellular rejection is T‑cell mediated." },
+        { q: "Graft‑vs‑host disease (GVHD) occurs after:",
+          opts: ["Allogeneic bone marrow transplant", "Solid organ transplant", "Blood transfusion", "Both A and C", "None"],
+          correct: 3,
+          exp: "GVHD occurs when donor T cells attack recipient tissues; common in BMT and transfusion (irradiate blood)." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "The component of the adaptive immune system responsible for immunological memory is:",
+          opts: ["Memory B and T cells", "Naïve lymphocytes", "Plasma cells", "Effector T cells", "Natural killer cells"],
+          correct: 0,
+          exp: "Memory cells provide rapid response upon re‑exposure." },
+        { q: "Which complement regulatory protein deficiency leads to paroxysmal nocturnal hemoglobinuria (PNH)?",
+          opts: ["CD55 and CD59 (decay‑accelerating factor)", "C1 inhibitor", "Factor H", "Factor I", "Properdin"],
+          correct: 0,
+          exp: "PNH: loss of GPI‑anchored proteins (CD55, CD59) → complement‑mediated RBC lysis." },
+        { q: "Which immunoglobulin can cross the placenta?",
+          opts: ["IgG (only)", "IgM", "IgA", "IgE", "IgD"],
+          correct: 0,
+          exp: "IgG (especially IgG1, IgG3) is actively transported across placenta." },
+        { q: "Opsonization is the process of:",
+          opts: ["Coating pathogens to enhance phagocytosis", "Killing bacteria by complement", "Neutralizing viruses", "Stimulating inflammation", "Activating T cells"],
+          correct: 0,
+          exp: "Opsonins (antibodies, C3b, collectins) promote phagocyte recognition." },
+        { q: "Which cell type is the main source of histamine in allergic reactions?",
+          opts: ["Mast cells", "Basophils", "Eosinophils", "Neutrophils", "Macrophages"],
+          correct: 0,
+          exp: "Mast cells in tissues; basophils in blood also release histamine." },
+        { q: "Interleukin‑5 (IL‑5) is a growth factor for:",
+          opts: ["Eosinophils", "Neutrophils", "B cells", "T cells", "Macrophages"],
+          correct: 0,
+          exp: "IL‑5 promotes eosinophil production, activation, and survival." },
+        { q: "Which of the following is a feature of the innate immune system?",
+          opts: ["Rapid response, no memory", "Slow response, antigen‑specific", "Clonal selection", "MHC restriction", "Affinity maturation"],
+          correct: 0,
+          exp: "Innate immunity is immediate, non‑specific, and lacks memory." },
+        { q: "The mannose‑binding lectin (MBL) pathway of complement activation is triggered by:",
+          opts: ["Mannose on microbial surfaces", "Antigen‑antibody complexes", "C3 hydrolysis", "Properdin", "Factor B"],
+          correct: 0,
+          exp: "MBL binds mannose residues on pathogens, activating MASP‑1 and MASP‑2." },
+        { q: "Affinity maturation of antibodies occurs in:",
+          opts: ["Germinal centers of lymphoid follicles", "Bone marrow", "Thymus", "Periphery", "Blood"],
+          correct: 0,
+          exp: "Somatic hypermutation and selection in germinal centers increase antibody affinity." },
+        { q: "The CD40‑CD40L interaction is critical for:",
+          opts: ["T‑cell help to B cells (class switching, germinal center formation)", "Cytotoxic T‑cell activation", "NK cell activation", "Macrophage activation", "Dendritic cell maturation"],
+          correct: 0,
+          exp: "CD40L on activated T cells binds CD40 on B cells; defect causes hyper‑IgM syndrome." },
+        { q: "What is the mechanism of action of intravenous immunoglobulin (IVIG) in immune thrombocytopenia (ITP)?",
+          opts: ["Fc receptor blockade, anti‑idiotype antibodies, immunomodulation", "B‑cell depletion", "T‑cell suppression", "Complement inhibition", "Cytokine neutralization"],
+          correct: 0,
+          exp: "IVIG works through multiple mechanisms including Fc blockade, modulating antibody production." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endocrinology Physiology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-droplet"></i>
+            <h1>Endocrinology Physiology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE ENDOCRINOLOGY PHYSIOLOGY QUESTIONS
+        const questions = [
+            { q: "Which hypothalamic hormone inhibits prolactin secretion?",
+              opts: ["TRH", "CRH", "Dopamine", "Somatostatin", "GnRH"],
+              correct: 2,
+              exp: "Dopamine (prolactin inhibitory factor) tonically inhibits prolactin." },
+            { q: "Growth hormone releasing hormone (GHRH) is produced in the:",
+              opts: ["Anterior pituitary", "Posterior pituitary", "Hypothalamus", "Thyroid", "Adrenal"],
+              correct: 2,
+              exp: "GHRH is synthesized in the hypothalamus and stimulates GH release from anterior pituitary." },
+            { q: "Antidiuretic hormone (ADH) acts primarily on which part of the nephron?",
+              opts: ["Proximal tubule", "Loop of Henle", "Distal convoluted tubule", "Collecting duct", "Glomerulus"],
+              correct: 3,
+              exp: "ADH increases water reabsorption in the collecting duct by inserting aquaporin‑2 channels." },
+            { q: "Which of the following is a direct effect of growth hormone?",
+              opts: ["Increased glucose uptake", "Lipogenesis", "Increased protein synthesis", "Increased insulin secretion", "Decreased lipolysis"],
+              correct: 2,
+              exp: "GH directly stimulates protein synthesis, lipolysis, and antagonizes insulin." },
+            { q: "The thyroid gland secretes which hormone that regulates calcium?",
+              opts: ["PTH", "Calcitonin", "Calcitriol", "Thyroxine", "TSH"],
+              correct: 1,
+              exp: "Parafollicular C cells secrete calcitonin, which lowers blood calcium." },
+            { q: "Thyroid hormone synthesis requires the enzyme thyroid peroxidase (TPO) for all EXCEPT:",
+              opts: ["Iodide oxidation", "Iodination of tyrosine", "Coupling of MIT and DIT", "Thyroglobulin synthesis", "None of the above"],
+              correct: 3,
+              exp: "TPO catalyzes oxidation, iodination, and coupling; thyroglobulin synthesis occurs in follicular cells." },
+            { q: "The active form of thyroid hormone is:",
+              opts: ["T₄", "T₃", "rT₃", "MIT", "DIT"],
+              correct: 1,
+              exp: "T₃ (triiodothyronine) is the active form; T₄ is a prohormone." },
+            { q: "TSH stimulates thyroid hormone release by binding to receptors on:",
+              opts: ["Follicular cells", "Parafollicular C cells", "Thyroglobulin", "Colloid", "Endothelial cells"],
+              correct: 0,
+              exp: "TSH receptors are on thyroid follicular cells, activating cAMP cascade." },
+            { q: "Parathyroid hormone (PTH) increases serum calcium by all EXCEPT:",
+              opts: ["Bone resorption", "Renal calcium reabsorption", "Stimulating calcitriol synthesis", "Direct intestinal calcium absorption", "Phosphate excretion"],
+              correct: 3,
+              exp: "PTH indirectly increases intestinal calcium absorption via calcitriol." },
+            { q: "Calcitriol (1,25‑dihydroxyvitamin D) is synthesized in the:",
+              opts: ["Liver", "Kidney", "Skin", "Intestine", "Bone"],
+              correct: 1,
+              exp: "The final 1α‑hydroxylation occurs in the kidney." },
+            { q: "Zona glomerulosa of the adrenal cortex secretes:",
+              opts: ["Cortisol", "Aldosterone", "DHEA", "Epinephrine", "Norepinephrine"],
+              correct: 1,
+              exp: "Zona glomerulosa produces mineralocorticoids (aldosterone)." },
+            { q: "Cortisol is secreted by the:",
+              opts: ["Zona glomerulosa", "Zona fasciculata", "Zona reticularis", "Adrenal medulla", "Chromaffin cells"],
+              correct: 1,
+              exp: "Zona fasciculata produces glucocorticoids (cortisol)." },
+            { q: "Epinephrine is synthesized from:",
+              opts: ["Dopamine", "Norepinephrine", "Tyrosine", "Tryptophan", "Histidine"],
+              correct: 1,
+              exp: "Epinephrine is formed by methylation of norepinephrine via PNMT." },
+            { q: "Insulin secretion from β‑cells is primarily triggered by:",
+              opts: ["Increased blood glucose", "Decreased blood glucose", "Glucagon", "Somatostatin", "Epinephrine"],
+              correct: 0,
+              exp: "Glucose enters β‑cells via GLUT2, increasing ATP/ADP, closing K<sub>ATP</sub> channels, depolarizing the cell, and opening Ca²⁺ channels, leading to exocytosis." },
+            { q: "Glucagon is secreted by:",
+              opts: ["β‑cells", "α‑cells", "δ‑cells", "PP‑cells", "ε‑cells"],
+              correct: 1,
+              exp: "Pancreatic α‑cells secrete glucagon." },
+            { q: "Somatostatin secreted by δ‑cells acts to:",
+              opts: ["Stimulate insulin", "Stimulate glucagon", "Inhibit insulin and glucagon", "Inhibit somatostatin", "Increase GH"],
+              correct: 2,
+              exp: "Somatostatin inhibits both insulin and glucagon release locally (paracrine)." },
+            { q: "The primary action of insulin is to:",
+              opts: ["Increase blood glucose", "Decrease blood glucose", "Increase ketogenesis", "Increase glycogenolysis", "Increase lipolysis"],
+              correct: 1,
+              exp: "Insulin lowers blood glucose by promoting uptake, glycogenesis, and inhibiting gluconeogenesis." },
+            { q: "Which of the following hormones acts via a tyrosine kinase receptor?",
+              opts: ["Insulin", "Glucagon", "Cortisol", "Epinephrine", "ADH"],
+              correct: 0,
+              exp: "Insulin receptor is a tyrosine kinase; glucagon, epinephrine, and ADH act via GPCRs; cortisol via intracellular receptor." },
+            { q: "LH in males acts on:",
+              opts: ["Sertoli cells", "Leydig cells", "Spermatogonia", "Prostate", "Epididymis"],
+              correct: 1,
+              exp: "LH stimulates Leydig cells to produce testosterone." },
+            { q: "FSH in males acts on:",
+              opts: ["Leydig cells", "Sertoli cells", "Spermatids", "Prostate", "Seminal vesicles"],
+              correct: 1,
+              exp: "FSH stimulates Sertoli cells to support spermatogenesis." },
+            { q: "Estrogen is primarily produced by:",
+              opts: ["Theca interna", "Granulosa cells", "Corpus luteum", "Placenta", "All of the above"],
+              correct: 1,
+              exp: "Granulosa cells produce estradiol (aromatization of androstenedione from theca)." },
+            { q: "Progesterone is mainly secreted by:",
+              opts: ["Granulosa cells", "Theca cells", "Corpus luteum", "Placenta", "Both C and D"],
+              correct: 4,
+              exp: "Corpus luteum secretes progesterone in luteal phase; placenta produces it during pregnancy." },
+            { q: "The mid‑cycle LH surge is triggered by:",
+              opts: ["Low estrogen", "High estrogen for at least 48 hours", "Low progesterone", "High progesterone", "FSH"],
+              correct: 1,
+              exp: "Elevated estrogen for about 2 days exerts positive feedback on LH." },
+            { q: "Melatonin is synthesized from:",
+              opts: ["Tryptophan", "Tyrosine", "Serotonin", "Dopamine", "Histidine"],
+              correct: 2,
+              exp: "Melatonin is derived from serotonin, which comes from tryptophan." },
+            { q: "The suprachiasmatic nucleus (SCN) regulates:",
+              opts: ["Body temperature", "Circadian rhythms", "Appetite", "Thirst", "Sleep"],
+              correct: 1,
+              exp: "SCN is the master circadian pacemaker, influenced by light input." },
+            { q: "Leptin is produced by:",
+              opts: ["Adipocytes", "Hypothalamus", "Stomach", "Pancreas", "Intestine"],
+              correct: 0,
+              exp: "Leptin is secreted by adipose tissue; suppresses appetite." },
+            { q: "Ghrelin is produced by:",
+              opts: ["Adipocytes", "Stomach", "Hypothalamus", "Pancreas", "Liver"],
+              correct: 1,
+              exp: "Ghrelin (hunger hormone) is mainly secreted by gastric cells." },
+            { q: "Which hormone stimulates lipolysis and ketogenesis?",
+              opts: ["Insulin", "Glucagon", "Estrogen", "Testosterone", "Prolactin"],
+              correct: 1,
+              exp: "Glucagon promotes lipolysis and ketogenesis during fasting." },
+            { q: "Cortisol exhibits a circadian rhythm with peak at:",
+              opts: ["Midnight", "Early morning (6‑8 AM)", "Noon", "After meals", "Evening"],
+              correct: 1,
+              exp: "Cortisol peaks in early morning, declines throughout the day." },
+            { q: "Aldosterone secretion is primarily regulated by:",
+              opts: ["ACTH", "Angiotensin II and K⁺", "Na⁺ levels", "Cortisol", "ANP"],
+              correct: 1,
+              exp: "Aldosterone is mainly stimulated by angiotensin II and hyperkalemia." },
+            { q: "Renin is secreted by:",
+              opts: ["Juxtaglomerular cells", "Macula densa", "Mesangial cells", "Podocytes", "Proximal tubule cells"],
+              correct: 0,
+              exp: "Renin is secreted by JG cells in response to low BP, low Na⁺, or sympathetic stimulation." },
+            { q: "Angiotensin II causes all EXCEPT:",
+              opts: ["Vasoconstriction", "Aldosterone release", "Increased thirst", "Vasodilation", "Sympathetic activation"],
+              correct: 3,
+              exp: "Angiotensin II is a potent vasoconstrictor, not vasodilator." },
+            { q: "Atrial natriuretic peptide (ANP) causes:",
+              opts: ["Vasoconstriction", "Na⁺ retention", "Increased blood volume", "Na⁺ excretion and vasodilation", "Renin release"],
+              correct: 3,
+              exp: "ANP promotes natriuresis, diuresis, and vasodilation, lowering BP." },
+            { q: "The second messenger for insulin is:",
+              opts: ["cAMP", "cGMP", "IP₃", "Tyrosine kinase cascade", "Ca²⁺"],
+              correct: 3,
+              exp: "Insulin receptor is a tyrosine kinase; signaling involves IRS, PI3K, Akt." },
+            { q: "Which hormone uses cAMP as second messenger?",
+              opts: ["Insulin", "Glucagon", "Estrogen", "Testosterone", "T₃"],
+              correct: 1,
+              exp: "Glucagon, catecholamines, ACTH, etc., act via G<sub>s</sub> and cAMP." },
+            { q: "Thyroxine-binding globulin (TBG) transports:",
+              opts: ["T₃ only", "T₄ only", "Both T₃ and T₄", "Reverse T₃", "Iodide"],
+              correct: 2,
+              exp: "TBG carries about 70% of circulating T₃ and T₄." },
+            { q: "Iodide trapping in thyroid follicular cells is mediated by:",
+              opts: ["Na⁺/I⁻ symporter (NIS)", "Pendrin", "Thyroglobulin", "TPO", "Iodotyrosine deiodinase"],
+              correct: 0,
+              exp: "NIS on basolateral membrane actively transports iodide into follicular cells." },
+            { q: "Calcitonin acts to:",
+              opts: ["Increase bone resorption", "Decrease bone resorption", "Increase intestinal Ca²⁺ absorption", "Increase renal Ca²⁺ reabsorption", "Increase PTH secretion"],
+              correct: 1,
+              exp: "Calcitonin inhibits osteoclast activity, lowering serum Ca²⁺." },
+            { q: "PTH increases phosphate excretion by acting on:",
+              opts: ["Proximal tubule", "Loop of Henle", "Distal tubule", "Collecting duct", "Glomerulus"],
+              correct: 0,
+              exp: "PTH inhibits phosphate reabsorption in proximal tubule, causing phosphaturia." },
+            { q: "1α‑hydroxylase activity in kidney is stimulated by:",
+              opts: ["High Ca²⁺", "PTH", "High PO₄³⁻", "Calcitonin", "Vitamin D"],
+              correct: 1,
+              exp: "PTH stimulates 1α‑hydroxylase, increasing calcitriol production." },
+            { q: "Cortisol's anti‑inflammatory effects include all EXCEPT:",
+              opts: ["Decreased prostaglandin synthesis", "Decreased leukocyte migration", "Increased antibody production", "Inhibition of cytokines", "Stabilization of lysosomes"],
+              correct: 2,
+              exp: "Cortisol suppresses immune response; antibody production may decrease." },
+            { q: "Epinephrine causes which metabolic effect?",
+              opts: ["Increased glycogen synthesis", "Decreased lipolysis", "Increased glycogenolysis", "Increased insulin secretion", "Decreased glucose release"],
+              correct: 2,
+              exp: "Epinephrine promotes glycogenolysis, lipolysis, and gluconeogenesis." },
+            { q: "Testosterone is converted to dihydrotestosterone (DHT) by the enzyme:",
+              opts: ["Aromatase", "5α‑reductase", "17β‑hydroxysteroid dehydrogenase", "3β‑HSD", "11β‑hydroxylase"],
+              correct: 1,
+              exp: "5α‑reductase converts testosterone to more potent DHT in target tissues." },
+            { q: "In females, androstenedione is converted to estrone by:",
+              opts: ["5α‑reductase", "Aromatase", "17β‑HSD", "3β‑HSD", "P450c17"],
+              correct: 1,
+              exp: "Aromatase converts androgens to estrogens." },
+            { q: "Oxytocin is released from:",
+              opts: ["Anterior pituitary", "Posterior pituitary", "Hypothalamus (released from posterior pituitary)", "Uterus", "Placenta"],
+              correct: 2,
+              exp: "Oxytocin is synthesized in hypothalamus and released from posterior pituitary." },
+            { q: "Prolactin secretion is stimulated by:",
+              opts: ["Dopamine", "Somatostatin", "TRH", "GABA", "GHRH"],
+              correct: 2,
+              exp: "TRH stimulates prolactin release (as well as TSH)." },
+            { q: "The main inhibitor of GH release is:",
+              opts: ["GHRH", "Somatostatin", "IGF‑1", "Ghrelin", "Dopamine"],
+              correct: 1,
+              exp: "Somatostatin inhibits GH (and TSH) release." },
+            { q: "Which hormone acts as a negative feedback inhibitor on both GnRH and gonadotropins?",
+              opts: ["Estrogen (low levels)", "Progesterone", "Inhibin", "Testosterone", "Activin"],
+              correct: 3,
+              exp: "Testosterone (and estrogen at high levels) inhibits GnRH and LH/FSH." },
+            { q: "Inhibin specifically inhibits:",
+              opts: ["GnRH", "LH", "FSH", "Prolactin", "ACTH"],
+              correct: 2,
+              exp: "Inhibin from gonads feeds back to pituitary to inhibit FSH secretion." },
+            { q: "Activin stimulates:",
+              opts: ["FSH", "LH", "GH", "Prolactin", "ACTH"],
+              correct: 0,
+              exp: "Activin promotes FSH synthesis and secretion." },
+            { q: "The zona reticularis produces:",
+              opts: ["Aldosterone", "Cortisol", "DHEA (androgens)", "Epinephrine", "Norepinephrine"],
+              correct: 2,
+              exp: "Zona reticularis secretes adrenal androgens, mainly DHEA." },
+            { q: "Chromaffin cells of adrenal medulla secrete:",
+              opts: ["Cortisol", "Aldosterone", "Epinephrine and norepinephrine", "Dopamine", "Serotonin"],
+              correct: 2,
+              exp: "Adrenal medulla releases catecholamines (epinephrine ~80%, norepinephrine ~20%)." },
+            { q: "Which hormone is responsible for milk production?",
+              opts: ["Oxytocin", "Prolactin", "Estrogen", "Progesterone", "hCG"],
+              correct: 1,
+              exp: "Prolactin stimulates milk synthesis; oxytocin causes milk ejection." },
+            { q: "The luteal phase of menstrual cycle is dominated by:",
+              opts: ["Estrogen", "Progesterone", "FSH", "LH", "Inhibin"],
+              correct: 1,
+              exp: "Corpus luteum secretes progesterone, preparing endometrium for implantation." },
+            { q: "Menopause results from:",
+              opts: ["Loss of pituitary gonadotropins", "Loss of ovarian follicles", "Hypothalamic failure", "Increased inhibin", "Decreased GnRH"],
+              correct: 1,
+              exp: "Menopause occurs due to depletion of ovarian follicles and loss of estrogen." },
+            { q: "The primary action of glucagon on the liver is:",
+              opts: ["Glycogenesis", "Glycogenolysis and gluconeogenesis", "Lipogenesis", "Protein synthesis", "Cholesterol synthesis"],
+              correct: 1,
+              exp: "Glucagon stimulates glycogen breakdown and gluconeogenesis, raising blood glucose." }
+        ];
+
+        // Ensure 60+ (we already have >50; add more)
+        const extra = [
+            { q: "Which of the following is a sign of Cushing syndrome due to cortisol excess?",
+              opts: ["Weight loss", "Hypoglycemia", "Central obesity with purple striae", "Hypotension", "Bronze pigmentation"],
+              correct: 2,
+              exp: "Cortisol excess causes central obesity, moon facies, striae, hypertension." },
+            { q: "Aldosterone acts on the kidney to:",
+              opts: ["Decrease Na⁺ reabsorption", "Increase K⁺ secretion", "Decrease H⁺ secretion", "Increase water reabsorption only", "Decrease Na⁺ excretion"],
+              correct: 1,
+              exp: "Aldosterone increases Na⁺ reabsorption and K⁺ secretion in principal cells." },
+            { q: "The major carrier of thyroid hormones in blood is:",
+              opts: ["Albumin", "Transthyretin", "TBG", "Lipoproteins", "α‑globulin"],
+              correct: 2,
+              exp: "TBG binds about 70% of T₃ and T₄." },
+            { q: "Parathyroid hormone (PTH) secretion is increased by:",
+              opts: ["Hypercalcemia", "Hypocalcemia", "Hyperphosphatemia", "Calcitriol", "High magnesium"],
+              correct: 1,
+              exp: "Low blood calcium stimulates PTH secretion." },
+            { q: "The enzyme 5′‑deiodinase converts:",
+              opts: ["T₄ to T₃", "T₃ to T₄", "rT₃ to T₂", "MIT to DIT", "Iodide to iodine"],
+              correct: 0,
+              exp: "5′‑deiodinase converts T₄ (inactive) to T₃ (active) in peripheral tissues." },
+            { q: "Which of the following inhibits insulin secretion?",
+              opts: ["GLP‑1", "GIP", "Somatostatin", "Glucagon", "Gastrin"],
+              correct: 2,
+              exp: "Somatostatin inhibits insulin and glucagon." },
+            { q: "Growth hormone stimulates production of:",
+              opts: ["IGF‑1 (somatomedin C)", "IGF‑2", "EGF", "NGF", "FGF"],
+              correct: 0,
+              exp: "GH acts via IGF‑1, mainly from liver." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        // Shuffle
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            // dots
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

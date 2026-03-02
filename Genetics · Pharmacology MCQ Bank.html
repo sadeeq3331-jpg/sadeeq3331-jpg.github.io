@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetics · Pharmacology MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-dna"></i>
+        <h1>Genetics · Pharmacology MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ GENETICS PHARMACOLOGY (PHARMACOGENETICS) QUESTIONS
+    const questions = [
+        { q: "Which cytochrome P450 enzyme is responsible for metabolizing codeine to its active form morphine?",
+          opts: ["CYP2D6", "CYP2C19", "CYP3A4", "CYP2C9", "CYP1A2"],
+          correct: 0,
+          exp: "CYP2D6 converts codeine to morphine; ultrarapid metabolizers risk toxicity." },
+        { q: "Poor metabolizers of clopidogrel due to CYP2C19 loss‑of‑function alleles have:",
+          opts: ["Reduced activation of clopidogrel, increased risk of stent thrombosis", "Increased bleeding risk", "Enhanced antiplatelet effect", "No change", "Increased efficacy"],
+          correct: 0,
+          exp: "CYP2C19 converts clopidogrel to active metabolite; poor metabolizers have less platelet inhibition." },
+        { q: "Warfarin dosing is influenced by polymorphisms in which two genes?",
+          opts: ["CYP2C9 and VKORC1", "CYP2D6 and VKORC1", "CYP2C19 and CYP2C9", "VKORC1 and Factor V", "CYP3A4 and VKORC1"],
+          correct: 0,
+          exp: "CYP2C9 metabolizes S‑warfarin; VKORC1 is the target (warfarin sensitivity)." },
+        { q: "Patients with CYP2C9*2 or *3 alleles require _____ warfarin doses.",
+          opts: ["Lower", "Higher", "Same", "Variable", "Unchanged"],
+          correct: 0,
+          exp: "Reduced CYP2C9 function leads to slower clearance, so lower doses needed." },
+        { q: "The VKORC1 −1639G>A polymorphism is associated with:",
+          opts: ["Increased warfarin sensitivity (lower dose required)", "Warfarin resistance", "No effect", "Increased bleeding on standard doses", "Decreased drug metabolism"],
+          correct: 0,
+          exp: "A allele reduces VKORC1 expression, increasing warfarin sensitivity." },
+        { q: "Thiopurine drugs (azathioprine, 6‑mercaptopurine) can cause severe myelosuppression in patients with deficiency of:",
+          opts: ["Thiopurine methyltransferase (TPMT)", "Dihydropyrimidine dehydrogenase (DPD)", "UGT1A1", "NAT2", "G6PD"],
+          correct: 0,
+          exp: "TPMT deficiency leads to accumulation of thioguanine nucleotides; dose reduction needed." },
+        { q: "Which genetic test is recommended before starting azathioprine?",
+          opts: ["TPMT genotyping or phenotyping", "CYP2C19", "CYP2D6", "UGT1A1", "DPYD"],
+          correct: 0,
+          exp: "TPMT testing identifies poor metabolizers at risk for toxicity." },
+        { q: "Irinotecan (CPT‑11) toxicity (neutropenia, diarrhea) is increased in patients with:",
+          opts: ["UGT1A1*28 allele (reduced glucuronidation of SN‑38)", "DPYD deficiency", "TPMT deficiency", "CYP2D6 poor metabolizers", "NAT2 slow acetylators"],
+          correct: 0,
+          exp: "UGT1A1*28 (TA7) reduces SN‑38 inactivation; FDA recommends dose reduction in homozygotes." },
+        { q: "Abacavir hypersensitivity reaction is strongly associated with which HLA allele?",
+          opts: ["HLA‑B*5701", "HLA‑B*1502", "HLA‑A*3101", "HLA‑DR4", "HLA‑B27"],
+          correct: 0,
+          exp: "HLA‑B*5701 screening is mandatory before abacavir; positive patients should not receive it." },
+        { q: "Carbamazepine‑induced Stevens‑Johnson syndrome is associated with which HLA allele in Asian populations?",
+          opts: ["HLA‑B*1502", "HLA‑B*5701", "HLA‑A*3101", "HLA‑DRB1*07", "HLA‑B27"],
+          correct: 0,
+          exp: "HLA‑B*1502 strongly predicts SJS/TEN in Asians; FDA recommends screening." },
+        { q: "Allopurinol hypersensitivity syndrome (severe cutaneous adverse reactions) is linked to:",
+          opts: ["HLA‑B*5801", "HLA‑B*5701", "HLA‑B*1502", "HLA‑A*3101", "HLA‑DR4"],
+          correct: 0,
+          exp: "HLA‑B*5801 is a strong risk factor; screening recommended in high‑risk populations." },
+        { q: "Patients with G6PD deficiency should avoid which drugs?",
+          opts: ["Primaquine, sulfonamides, dapsone", "Penicillins", "Statins", "PPIs", "NSAIDs"],
+          correct: 0,
+          exp: "Oxidant drugs trigger hemolysis in G6PD deficiency." },
+        { q: "Malignant hyperthermia susceptibility is associated with mutations in:",
+          opts: ["RYR1 (ryanodine receptor) and CACNA1S", "CYP2D6", "DPYD", "TPMT", "UGT1A1"],
+          correct: 0,
+          exp: "RYR1 mutations cause uncontrolled calcium release with volatile anesthetics/succinylcholine." },
+        { q: "Succinylcholine apnea (prolonged paralysis) is seen in patients with deficiency of:",
+          opts: ["Butyrylcholinesterase (pseudocholinesterase)", "CYP2D6", "NAT2", "TPMT", "G6PD"],
+          correct: 0,
+          exp: "Pseudocholinesterase deficiency (BCHE gene variants) prolongs succinylcholine effect." },
+        { q: "Patients with DPYD deficiency (dihydropyrimidine dehydrogenase) are at risk for severe toxicity from:",
+          opts: ["5‑fluorouracil and capecitabine", "Irinotecan", "Methotrexate", "Thiopurines", "Platinum agents"],
+          correct: 0,
+          exp: "DPD deficiency impairs degradation of 5‑FU, leading to severe myelosuppression and neurotoxicity." },
+        { q: "NAT2 slow acetylators are at increased risk for toxicity from which drugs?",
+          opts: ["Isoniazid (peripheral neuropathy), hydralazine (lupus), procainamide (lupus)", "Statins", "Warfarin", "Clopidogrel", "Opioids"],
+          correct: 0,
+          exp: "Slow acetylators have higher drug levels and toxicity from these drugs." },
+        { q: "CYP2D6 ultrarapid metabolizers may experience toxicity from codeine due to:",
+          opts: ["Rapid conversion to morphine", "Slow conversion", "Accumulation of codeine", "Decreased drug levels", "No effect"],
+          correct: 0,
+          exp: "Ultrarapid metabolizers produce more morphine, risking respiratory depression." },
+        { q: "Tramadol, like codeine, is metabolized by CYP2D6 to an active O‑desmethyl metabolite. Ultrarapid metabolizers may experience:",
+          opts: ["Increased opioid effects (toxicity)", "Decreased analgesia", "No effect", "Increased seizure risk", "Both A and D"],
+          correct: 4,
+          exp: "Ultrarapid metabolizers have higher active metabolite levels, risking opioid toxicity and seizures." },
+        { q: "Tamoxifen requires conversion by CYP2D6 to endoxifen, its active metabolite. Poor metabolizers may have:",
+          opts: ["Increased risk of breast cancer recurrence", "More side effects", "Better response", "No effect", "Increased tamoxifen levels"],
+          correct: 0,
+          exp: "Poor metabolizers produce less endoxifen, potentially reducing tamoxifen efficacy." },
+        { q: "Statins (e.g., simvastatin) are metabolized by CYP3A4. However, myopathy risk is also influenced by polymorphisms in:",
+          opts: ["SLCO1B1 (OATP1B1 transporter)", "CYP2C9", "VKORC1", "TPMT", "UGT1A1"],
+          correct: 0,
+          exp: "SLCO1B1 variants reduce hepatic uptake, increasing statin levels and myopathy risk." },
+        { q: "The SLCO1B1*5 allele is associated with:",
+          opts: ["Increased simvastatin levels and myopathy risk", "Decreased statin efficacy", "Reduced LDL lowering", "No effect", "Increased HDL"],
+          correct: 0,
+          exp: "OATP1B1 transports statins into hepatocytes; *5 allele reduces function." },
+        { q: "Methotrexate polyglutamation and toxicity may be influenced by polymorphisms in:",
+          opts: ["SLC19A1 (reduced folate carrier)", "TYMS", "MTHFR", "RFC1", "All of the above"],
+          correct: 4,
+          exp: "Multiple genes affect methotrexate disposition and response." },
+        { q: "Patients with TPMT deficiency receiving azathioprine should receive what percentage of the standard dose?",
+          opts: ["10‑20% of standard dose", "50%", "100%", "200%", "No dose adjustment"],
+          correct: 0,
+          exp: "TPMT deficient patients need dramatic dose reduction (e.g., 10% of full dose)." },
+        { q: "Homozygous TPMT deficiency occurs in approximately what frequency?",
+          opts: ["1 in 300 (0.3%)", "1 in 10", "1 in 1000", "1 in 100", "1 in 10,000"],
+          correct: 0,
+          exp: "About 0.3% of the population is TPMT deficient." },
+        { q: "The anticoagulant effect of warfarin is potentiated by CYP2C9 inhibitors because:",
+          opts: ["They reduce S‑warfarin metabolism, increasing levels", "They increase VKORC1 expression", "They affect platelet function", "They alter vitamin K absorption", "They increase clotting factor synthesis"],
+          correct: 0,
+          exp: "CYP2C9 inhibitors (e.g., amiodarone, fluconazole) increase warfarin effect." },
+        { q: "Clopidogrel is a prodrug activated primarily by CYP2C19. Which alternative antiplatelet agent should be considered in CYP2C19 poor metabolizers?",
+          opts: ["Prasugrel or ticagrelor", "Aspirin", "Dipyridamole", "Cilostazol", "Warfarin"],
+          correct: 0,
+          exp: "Prasugrel and ticagrelor are not affected by CYP2C19 genotype." },
+        { q: "CYP2C19*17 allele confers:",
+          opts: ["Increased enzyme activity (ultrarapid metabolizer)", "Loss of function", "No effect", "Reduced drug levels", "Increased toxicity"],
+          correct: 0,
+          exp: "*17 increases CYP2C19 expression, leading to faster metabolism of some drugs." },
+        { q: "Phenytoin toxicity is more likely in patients with CYP2C9*2 or *3 alleles because:",
+          opts: ["Reduced metabolism of phenytoin", "Increased absorption", "Decreased protein binding", "Altered renal clearance", "Increased target sensitivity"],
+          correct: 0,
+          exp: "CYP2C9 metabolizes phenytoin; poor metabolizers require lower doses." },
+        { q: "HLA‑B*5701 testing is recommended before starting which HIV medication?",
+          opts: ["Abacavir", "Efavirenz", "Tenofovir", "Ritonavir", "Zidovudine"],
+          correct: 0,
+          exp: "Abacavir hypersensitivity strongly linked to HLA‑B*5701." },
+        { q: "Which HLA allele is associated with increased risk of carbamazepine‑induced maculopapular exanthema in Europeans?",
+          opts: ["HLA‑A*3101", "HLA‑B*1502", "HLA‑B*5701", "HLA‑DRB1*07", "HLA‑B27"],
+          correct: 0,
+          exp: "HLA‑A*3101 increases risk of hypersensitivity reactions in Europeans." },
+        { q: "Isoniazid‑induced peripheral neuropathy is more common in slow acetylators (NAT2). This can be prevented by:",
+          opts: ["Pyridoxine (vitamin B6) supplementation", "Increasing isoniazid dose", "Rifampin co‑administration", "Monitoring liver function", "Acetylcysteine"],
+          correct: 0,
+          exp: "Pyridoxine prevents neuropathy by compensating for isoniazid‑induced B6 deficiency." },
+        { q: "Azathioprine metabolism involves TPMT and also:",
+          opts: ["NUDT15 (nudix hydrolase 15)", "DPYD", "UGT1A1", "CYP2C19", "CYP2D6"],
+          correct: 0,
+          exp: "NUDT15 variants also cause thiopurine toxicity, especially in Asians." },
+        { q: "Fluoropyrimidine toxicity (5‑FU, capecitabine) can occur in patients with DPYD variants. The most common risk variant is:",
+          opts: ["DPYD*2A (c.1905+1G>A)", "DPYD*13", "DPYD c.2846A>T", "All of the above", "None"],
+          correct: 3,
+          exp: "Multiple DPYD variants increase toxicity risk; genotyping is recommended." },
+        { q: "UGT1A1*28 allele is associated with reduced glucuronidation of SN‑38 (irinotecan active metabolite). This allele is also associated with:",
+          opts: ["Gilbert syndrome (mild unconjugated hyperbilirubinemia)", "Crigler‑Najjar syndrome", "Dubin‑Johnson syndrome", "Rotor syndrome", "None"],
+          correct: 0,
+          exp: "UGT1A1*28 causes Gilbert syndrome (mild, benign hyperbilirubinemia)." },
+        { q: "CYP2C9*2 and *3 alleles are more common in which population?",
+          opts: ["Caucasians", "Asians", "Africans", "Hispanics", "Equal across populations"],
+          correct: 0,
+          exp: "CYP2C9 variants are most frequent in Caucasians (~10‑20%)." },
+        { q: "CYP2C19*2 and *3 are loss‑of‑function alleles more common in:",
+          opts: ["Asians", "Caucasians", "Africans", "Hispanics", "Equal"],
+          correct: 0,
+          exp: "About 15‑20% of Asians are CYP2C19 poor metabolizers." },
+        { q: "CYP2D6 gene duplications leading to ultrarapid metabolism are most common in:",
+          opts: ["North Africans, Ethiopians, Middle Eastern populations", "Caucasians", "Asians", "Native Americans", "Pacific Islanders"],
+          correct: 0,
+          exp: "Up to 30% in some North African populations have duplications." },
+        { q: "The FDA recommends genetic testing for which drug due to HLA‑B*1502 risk in Asians?",
+          opts: ["Carbamazepine", "Abacavir", "Allopurinol", "Phenytoin", "Lamotrigine"],
+          correct: 0,
+          exp: "Carbamazepine label recommends HLA‑B*1502 testing in Asians." },
+        { q: "Phenytoin‑induced Stevens‑Johnson syndrome has also been associated with which HLA allele?",
+          opts: ["HLA‑B*1502", "HLA‑B*5701", "HLA‑A*3101", "HLA‑B*5801", "HLA‑DRB1*07"],
+          correct: 0,
+          exp: "HLA‑B*1502 also increases risk of SJS with phenytoin." },
+        { q: "Lamotrigine hypersensitivity may be associated with:",
+          opts: ["HLA‑A*3101 and HLA‑B*5801", "HLA‑B*1502 only", "HLA‑B*5701", "CYP2C9 variants", "TPMT deficiency"],
+          correct: 0,
+          exp: "HLA‑A*3101 and HLA‑B*5801 have been linked to lamotrigine SJS." },
+        { q: "The anticoagulant effect of warfarin is influenced by vitamin K intake. Which gene affects vitamin K recycling?",
+          opts: ["VKORC1", "CYP2C9", "GGCX", "CYP4F2", "EPHX1"],
+          correct: 0,
+          exp: "VKORC1 is the target of warfarin; variants alter sensitivity." },
+        { q: "CYP4F2 variants affect warfarin dosing because CYP4F2 is involved in:",
+          opts: ["Vitamin K oxidation (metabolism)", "S‑warfarin metabolism", "R‑warfarin metabolism", "Vitamin K reduction", "Clotting factor synthesis"],
+          correct: 0,
+          exp: "CYP4F2 metabolizes vitamin K; variants increase vitamin K levels, requiring higher warfarin doses." },
+        { q: "The clinical utility of CYP2D6 testing for tamoxifen is most established for:",
+          opts: ["Postmenopausal women with ER+ breast cancer", "Prevention", "Male breast cancer", "All patients", "None"],
+          correct: 0,
+          exp: "Some guidelines recommend CYP2D6 testing for tamoxifen, though not universally adopted." },
+        { q: "Which genotype is associated with increased risk of simvastatin‑induced myopathy?",
+          opts: ["SLCO1B1*5 (c.521T>C)", "CYP2C9*2", "VKORC1 A haplotype", "CYP3A4*22", "ABCB1 C3435T"],
+          correct: 0,
+          exp: "SLCO1B1*5 reduces hepatic uptake, increasing systemic exposure." },
+        { q: "The anticoagulant rivaroxaban is metabolized by CYP3A4 and is a substrate of P‑glycoprotein. Which genetic variant may affect its levels?",
+          opts: ["ABCB1 (P‑gp) polymorphisms", "CYP2C9", "VKORC1", "CYP2D6", "SLCO1B1"],
+          correct: 0,
+          exp: "P‑gp (ABCB1) effluxes rivaroxaban; variants may alter absorption." },
+        { q: "Proton pump inhibitors (e.g., omeprazole) are metabolized by CYP2C19. Poor metabolizers have:",
+          opts: ["Higher drug levels and increased efficacy for H. pylori eradication", "Lower drug levels", "No change", "Increased side effects", "Both A and D"],
+          correct: 4,
+          exp: "Poor metabolizers have higher omeprazole levels, better acid suppression, and possible increased side effects." },
+        { q: "Voriconazole, an antifungal, is metabolized by CYP2C19. Poor metabolizers require:",
+          opts: ["Lower doses to avoid toxicity", "Higher doses", "No adjustment", "Alternative agent", "Monitoring of levels"],
+          correct: 0,
+          exp: "CYP2C19 poor metabolizers have high voriconazole levels; dose reduction recommended." },
+        { q: "NUDT15 variants are associated with thiopurine toxicity, particularly in:",
+          opts: ["East Asians", "Caucasians", "Africans", "Hispanics", "All populations equally"],
+          correct: 0,
+          exp: "NUDT15 variants are more common in East Asians; they increase thiopurine sensitivity." },
+        { q: "The FDA recommends testing for TPMT and NUDT15 before starting which drug?",
+          opts: ["Thioguanine and azathioprine", "5‑FU", "Irinotecan", "Methotrexate", "Pemetrexed"],
+          correct: 0,
+          exp: "FDA label for thiopurines includes information on TPMT and NUDT15." },
+        { q: "Cisplatin‑induced ototoxicity has been associated with variants in:",
+          opts: ["TPMT (thiopurine methyltransferase)", "COMT", "ACYP2", "GSTP1", "All of the above"],
+          correct: 3,
+          exp: "ACYP2 variants have been linked to cisplatin ototoxicity." },
+        { q: "Anthracycline‑induced cardiotoxicity risk is increased in patients with variants in:",
+          opts: ["RARG (retinoic acid receptor gamma)", "CBR3", "UGT1A6", "ABCC1", "All of the above"],
+          correct: 4,
+          exp: "Multiple genes influence anthracycline cardiotoxicity." },
+        { q: "Methotrexate elimination is impaired in patients with variants in:",
+          opts: ["SLCO1B1", "ABCC2", "ABCC4", "All of the above", "None"],
+          correct: 3,
+          exp: "Transporters involved in methotrexate disposition include SLCO1B1, ABCC2, ABCC4." },
+        { q: "The anticoagulant effect of warfarin can be reversed by vitamin K. Which gene affects vitamin K cycling?",
+          opts: ["VKORC1", "CYP2C9", "GGCX", "CYP4F2", "EPHX1"],
+          correct: 0,
+          exp: "VKORC1 recycles vitamin K epoxide; inhibition by warfarin reduces clotting factor synthesis." },
+        { q: "Patients with the VKORC1 −1639AA genotype typically require what warfarin dose compared to GG genotype?",
+          opts: ["Much lower (e.g., 2‑3 mg/day)", "Much higher", "Same", "Slightly higher", "No difference"],
+          correct: 0,
+          exp: "AA genotype is more sensitive to warfarin; typical maintenance dose ~2‑3 mg." },
+        { q: "CYP2C9*2 and *3 heterozygotes typically require what warfarin dose adjustment?",
+          opts: ["20‑30% lower dose", "20‑30% higher dose", "No change", "50% higher dose", "Double dose"],
+          correct: 0,
+          exp: "Reduced CYP2C9 function decreases warfarin clearance, so lower doses needed." },
+        { q: "The CPIC (Clinical Pharmacogenetics Implementation Consortium) guidelines recommend an alternative antiplatelet agent for CYP2C19 poor metabolizers taking clopidogrel. Which one?",
+          opts: ["Prasugrel or ticagrelor", "Aspirin only", "Dipyridamole", "Cilostazol", "Warfarin"],
+          correct: 0,
+          exp: "Prasugrel and ticagrelor are not affected by CYP2C19." },
+        { q: "Which drug is a substrate of CYP2D6 and also an inhibitor, leading to phenoconversion?",
+          opts: ["Paroxetine (potent CYP2D6 inhibitor)", "Omeprazole", "Rifampin", "Phenytoin", "Carbamazepine"],
+          correct: 0,
+          exp: "Paroxetine both is metabolized by and potently inhibits CYP2D6." },
+        { q: "Phenoconversion refers to:",
+          opts: ["Drug‑induced alteration of predicted phenotype (e.g., inhibitor makes someone appear poor metabolizer)", "Genetic polymorphism", "Enzyme induction", "Loss of function allele", "Gene duplication"],
+          correct: 0,
+          exp: "Drug interactions can change metabolizer status." },
+        { q: "Rifampin is a potent CYP3A4 inducer. What effect would it have on oral contraceptive efficacy?",
+          opts: ["Decreased efficacy (increased metabolism)", "Increased efficacy", "No effect", "Toxicity", "None"],
+          correct: 0,
+          exp: "Rifampin induces CYP3A4, increasing metabolism of estrogen/progestin." },
+        { q: "Which antifungal drug is a strong CYP3A4 inhibitor and can increase statin levels?",
+          opts: ["Itraconazole", "Fluconazole", "Terbinafine", "Griseofulvin", "Nystatin"],
+          correct: 0,
+          exp: "Itraconazole and ketoconazole are strong CYP3A4 inhibitors." },
+        { q: "Grapefruit juice inhibits intestinal CYP3A4, increasing bioavailability of:",
+          opts: ["Felodipine, simvastatin, cyclosporine", "Paracetamol", "Amoxicillin", "Warfarin", "Digoxin"],
+          correct: 0,
+          exp: "Grapefruit juice inhibits CYP3A4 and P‑gp, increasing levels of many drugs." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Which of the following is an example of a drug with HLA‑associated hypersensitivity?",
+          opts: ["Allopurinol (HLA‑B*5801)", "Abacavir (HLA‑B*5701)", "Carbamazepine (HLA‑B*1502)", "All of the above", "None"],
+          correct: 3,
+          exp: "All three have strong HLA associations for severe cutaneous adverse reactions." },
+        { q: "Flucloxacillin‑induced liver injury is associated with:",
+          opts: ["HLA‑B*5701", "HLA‑B*1502", "HLA‑B*5801", "HLA‑A*3101", "HLA‑DRB1*07"],
+          correct: 0,
+          exp: "HLA‑B*5701 increases risk of flucloxacillin DILI." },
+        { q: "Amoxicillin‑clavulanate‑induced liver injury is associated with:",
+          opts: ["HLA‑DRB1*15:01", "HLA‑B*5701", "HLA‑A*3101", "HLA‑B*1502", "HLA‑B*5801"],
+          correct: 0,
+          exp: "HLA‑DRB1*15:01 increases risk of cholestatic hepatitis with amoxicillin‑clavulanate." },
+        { q: "Lumacaftor‑ivacaftor is used for cystic fibrosis patients with which mutation?",
+          opts: ["F508del (CFTR)", "G551D", "R117H", "W1282X", "All of the above"],
+          correct: 0,
+          exp: "Lumacaftor corrects F508del CFTR processing; ivacaftor potentiates channel function." },
+        { q: "Ivacaftor is specifically indicated for CF patients with:",
+          opts: ["G551D and other gating mutations", "F508del", "R117H", "All mutations", "None"],
+          correct: 0,
+          exp: "Ivacaftor potentiates CFTR channels with gating defects." },
+        { q: "Crizotinib is effective in non‑small cell lung cancer with which genetic alteration?",
+          opts: ["ALK rearrangement", "EGFR mutation", "KRAS mutation", "ROS1 rearrangement", "Both A and D"],
+          correct: 4,
+          exp: "Crizotinib targets ALK and ROS1 fusions." },
+        { q: "Osimertinib is a third‑generation EGFR inhibitor used in NSCLC with:",
+          opts: ["EGFR T790M resistance mutation", "EGFR exon 19 deletion", "L858R", "All of the above", "None"],
+          correct: 0,
+          exp: "Osimertinib is effective in T790M‑positive NSCLC." },
+        { q: "Vemurafenib is a BRAF inhibitor used in melanoma with which mutation?",
+          opts: ["BRAF V600E", "NRAS mutation", "c‑KIT mutation", "GNAQ mutation", "BRAF fusion"],
+          correct: 0,
+          exp: "Vemurafenib targets BRAF V600E mutant melanoma." },
+        { q: "Imatinib is a tyrosine kinase inhibitor effective in:",
+          opts: ["CML (BCR‑ABL), GIST (c‑KIT)", "EGFR‑mutant lung cancer", "ALK‑positive lung cancer", "BRAF‑mutant melanoma", "HER2‑positive breast cancer"],
+          correct: 0,
+          exp: "Imatinib targets BCR‑ABL, c‑KIT, PDGFR." },
+        { q: "Trastuzumab is a monoclonal antibody used in HER2‑positive breast cancer. HER2 amplification can be detected by:",
+          opts: ["IHC or FISH", "PCR", "Next‑generation sequencing", "Cytogenetics", "All of the above"],
+          correct: 0,
+          exp: "IHC measures protein; FISH measures gene amplification." },
+        { q: "Rituximab targets which antigen on B cells?",
+          opts: ["CD20", "CD19", "CD22", "CD52", "CD30"],
+          correct: 0,
+          exp: "Rituximab is an anti‑CD20 monoclonal antibody." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65+
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

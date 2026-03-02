@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatology Pathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-biohazard"></i>
+        <h1>Dermatology Pathology · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ UNIQUE DERMATOLOGY PATHOLOGY QUESTIONS
+    const questions = [
+        { q: "The most common skin cancer is:",
+          opts: ["Malignant melanoma", "Squamous cell carcinoma", "Basal cell carcinoma", "Merkel cell carcinoma", "Kaposi sarcoma"],
+          correct: 2,
+          exp: "Basal cell carcinoma (BCC) is the most common malignancy in fair‑skinned individuals." },
+        { q: "Basal cell carcinoma arises from:",
+          opts: ["Melanocytes", "Keratinocytes of stratum basale", "Sweat glands", "Sebaceous glands", "Hair follicles"],
+          correct: 1,
+          exp: "BCC originates from basal layer keratinocytes or follicular infundibulum." },
+        { q: "Which type of BCC is most common?",
+          opts: ["Nodular", "Superficial", "Morpheaform", "Pigmented", "Fibroepithelioma"],
+          correct: 0,
+          exp: "Nodular BCC accounts for about 60% of cases." },
+        { q: "Squamous cell carcinoma in situ is also called:",
+          opts: ["Bowen disease", "Actinic keratosis", "Keratoacanthoma", "Paget disease", "Melanoma in situ"],
+          correct: 0,
+          exp: "Bowen disease is SCC confined to the epidermis." },
+        { q: "Which virus is associated with squamous cell carcinoma in immunocompromised patients?",
+          opts: ["HPV (high‑risk types)", "EBV", "HSV", "HHV‑8", "Molluscum contagiosum"],
+          correct: 0,
+          exp: "HPV types 16, 18, etc., are linked to anogenital and periungual SCC." },
+        { q: "Malignant melanoma arises from:",
+          opts: ["Keratinocytes", "Melanocytes", "Langerhans cells", "Merkel cells", "Fibroblasts"],
+          correct: 1,
+          exp: "Melanoma is a malignancy of melanocytes." },
+        { q: "The most important prognostic factor for melanoma is:",
+          opts: ["Breslow thickness", "Clark level", "Ulceration", "Mitotic rate", "Age"],
+          correct: 0,
+          exp: "Breslow thickness (measured in mm) is the strongest predictor of survival." },
+        { q: "Atypical moles (dysplastic nevi) are characterized by:",
+          opts: ["Cytologic atypia and architectural disorder", "Uniform color", "Symmetry", "Sharp borders", "Small size"],
+          correct: 0,
+          exp: "Dysplastic nevi show random cytologic atypia and lentiginous hyperplasia." },
+        { q: "Which melanoma subtype has a radial growth phase and is most common in sun‑damaged skin?",
+          opts: ["Nodular melanoma", "Lentigo maligna melanoma", "Superficial spreading melanoma", "Acral lentiginous melanoma", "Desmoplastic melanoma"],
+          correct: 1,
+          exp: "Lentigo maligna melanoma arises on chronically sun‑exposed skin, often face." },
+        { q: "Acral lentiginous melanoma occurs on:",
+          opts: ["Face", "Trunk", "Palms, soles, subungual", "Scalp", "Mucosa"],
+          correct: 2,
+          exp: "Acral melanoma is the most common type in non‑Caucasians, occurring on palms, soles, nail beds." },
+        { q: "The ABCD rule for melanoma includes:",
+          opts: ["Asymmetry, border irregularity, color variegation, diameter >6mm", "Asymmetry, bleeding, crusting, diameter", "Annular, border, color, depth", "All", "None"],
+          correct: 0,
+          exp: "ABCD: Asymmetry, Border irregular, Color variation, Diameter >6mm." },
+        { q: "Psoriasis is characterized by:",
+          opts: ["Thinned epidermis", "Parakeratosis and Munro microabscesses", "Spongiosis", "Acantholysis", "Basal vacuolization"],
+          correct: 1,
+          exp: "Psoriasis shows parakeratosis, loss of granular layer, and neutrophil microabscesses." },
+        { q: "The histologic hallmark of psoriasis is:",
+          opts: ["Spongiosis", "Acanthosis with elongated rete ridges", "Hypergranulosis", "Papillomatosis", "Dermal eosinophils"],
+          correct: 1,
+          exp: "Regular acanthosis with suprapapillary thinning and club‑shaped rete ridges." },
+        { q: "Munro microabscesses contain:",
+          opts: ["Lymphocytes", "Neutrophils", "Eosinophils", "Macrophages", "Plasma cells"],
+          correct: 1,
+          exp: "Munro microabscesses are collections of neutrophils in stratum corneum." },
+        { q: "Pustular psoriasis is characterized by:",
+          opts: ["Spongiform pustules of Kogoj", "Eosinophilic spongiosis", "Subcorneal pustules", "Intraepidermal vesicles", "Dermal edema"],
+          correct: 0,
+          exp: "Kogoj spongiform pustules are neutrophils in spinous layer." },
+        { q: "Atopic dermatitis histology shows:",
+          opts: ["Spongiosis and lymphocytic infiltrate", "Acantholysis", "Neutrophilic abscesses", "Granulomas", "Vasculitis"],
+          correct: 0,
+          exp: "Acute eczema shows intercellular edema (spongiosis) and lymphocytes." },
+        { q: "The most common type of eczema is:",
+          opts: ["Atopic dermatitis", "Contact dermatitis", "Stasis dermatitis", "Nummular dermatitis", "Seborrheic dermatitis"],
+          correct: 0,
+          exp: "Atopic dermatitis is a common chronic inflammatory skin disease." },
+        { q: "Allergic contact dermatitis is a type __ hypersensitivity reaction:",
+          opts: ["Type I", "Type II", "Type III", "Type IV", "Type V"],
+          correct: 3,
+          exp: "Contact dermatitis is a delayed‑type (Type IV) hypersensitivity." },
+        { q: "The most common allergen in poison ivy is:",
+          opts: ["Urushiol", "Nickel", "Chromate", "Formaldehyde", "Neomycin"],
+          correct: 0,
+          exp: "Urushiol oil from Toxicodendron plants causes contact dermatitis." },
+        { q: "Lichen planus is characterized by:",
+          opts: ["Wickham striae and polygonal purple papules", "Silvery scale", "Vesicles", "Pustules", "Telangiectasias"],
+          correct: 0,
+          exp: "Lichen planus: 6 P's – purple, polygonal, planar, pruritic, papules, plaques." },
+        { q: "Histology of lichen planus shows:",
+          opts: ["Saw‑tooth rete ridges, band‑like lymphocytic infiltrate, Civatte bodies", "Spongiosis", "Parakeratosis", "Acantholysis", "Granulomas"],
+          correct: 0,
+          exp: "Lichenoid infiltrate at dermoepidermal junction with apoptotic keratinocytes." },
+        { q: "Civatte bodies (colloid bodies) are apoptotic keratinocytes seen in:",
+          opts: ["Psoriasis", "Lichen planus", "Pemphigus vulgaris", "Bullous pemphigoid", "Eczema"],
+          correct: 1,
+          exp: "Civatte bodies are characteristic of lichen planus." },
+        { q: "Pemphigus vulgaris is caused by autoantibodies against:",
+          opts: ["Desmoglein 1 and 3", "BP180 (collagen XVII)", "BP230", "Type VII collagen", "Laminin 332"],
+          correct: 0,
+          exp: "Autoantibodies target desmogleins (cadherins) in desmosomes." },
+        { q: "The histologic finding in pemphigus vulgaris is:",
+          opts: ["Subepidermal blister", "Intraepidermal acantholysis", "Spongiosis", "Dermal‑epidermal separation", "Eosinophilic spongiosis"],
+          correct: 1,
+          exp: "Acantholysis (loss of adhesion) leads to intraepidermal blister above basal layer." },
+        { q: "Tzanck cells are seen in:",
+          opts: ["Pemphigus vulgaris", "Bullous pemphigoid", "Dermatitis herpetiformis", "Erythema multiforme", "Porphyria cutanea tarda"],
+          correct: 0,
+          exp: "Tzanck cells are rounded acantholytic keratinocytes in pemphigus." },
+        { q: "Bullous pemphigoid autoantibodies target:",
+          opts: ["Desmoglein 3", "BP180 and BP230 (hemidesmosome antigens)", "Type VII collagen", "Transglutaminase", "Desmoplakin"],
+          correct: 1,
+          exp: "BP180 (collagen XVII) and BP230 are components of hemidesmosomes." },
+        { q: "Bullous pemphigoid blister is:",
+          opts: ["Intraepidermal", "Subepidermal", "Subcorneal", "Suprabasal", "Subbasal"],
+          correct: 1,
+          exp: "Blister forms at the dermoepidermal junction (subepidermal)." },
+        { q: "Dermatitis herpetiformis is associated with:",
+          opts: ["Celiac disease", "Ulcerative colitis", "Crohn disease", "Thyroiditis", "SLE"],
+          correct: 0,
+          exp: "DH is gluten‑sensitive, with IgA deposits in dermal papillae." },
+        { q: "The histology of dermatitis herpetiformis shows:",
+          opts: ["Neutrophilic microabscesses in dermal papillae", "Eosinophilic spongiosis", "Subcorneal pustules", "Acantholysis", "Granulomas"],
+          correct: 0,
+          exp: "Neutrophils accumulate at tips of dermal papillae with fibrin." },
+        { q: "Erythema multiforme target lesions are caused by:",
+          opts: ["HSV infection", "Drugs", "Mycoplasma", "All of the above", "None"],
+          correct: 3,
+          exp: "EM can be triggered by infections (HSV, Mycoplasma) and drugs." },
+        { q: "Stevens‑Johnson syndrome and toxic epidermal necrolysis are severe forms of:",
+          opts: ["Erythema multiforme", "Fixed drug eruption", "Urticaria", "Contact dermatitis", "Psoriasis"],
+          correct: 0,
+          exp: "SJS/TEN are severe, widespread epidermal detachment often drug‑induced." },
+        { q: "The histology of SJS/TEN shows:",
+          opts: ["Full‑thickness epidermal necrosis", "Acantholysis", "Spongiosis", "Subepidermal blister with eosinophils", "Intraepidermal vesicle"],
+          correct: 0,
+          exp: "Widespread keratinocyte apoptosis and necrosis, subepidermal split." },
+        { q: "Acne vulgaris involves:",
+          opts: ["Follicular hyperkeratinization, sebum, Cutibacterium acnes, inflammation", "Sweat gland blockage", "Allergic reaction", "Autoimmunity", "Viral infection"],
+          correct: 0,
+          exp: "Four factors: increased sebum, follicular plugging, C. acnes, inflammation." },
+        { q: "The organism primarily involved in acne is:",
+          opts: ["Staphylococcus aureus", "Streptococcus pyogenes", "Cutibacterium acnes", "Malassezia", "Demodex"],
+          correct: 2,
+          exp: "C. acnes (formerly Propionibacterium acnes) is anaerobic, lipophilic." },
+        { q: "Rosacea is characterized by:",
+          opts: ["Telangiectasias, flushing, papules, pustules, no comedones", "Comedones and cysts", "Silvery scale", "Honey‑crusted lesions", "Violaceous plaques"],
+          correct: 0,
+          exp: "Rosacea lacks comedones, distinguishing it from acne." },
+        { q: "Which skin infection is caused by Staphylococcus aureus and presents with honey‑colored crusts?",
+          opts: ["Impetigo", "Erysipelas", "Cellulitis", "Folliculitis", "Furuncle"],
+          correct: 0,
+          exp: "Impetigo (non‑bullous) is caused by S. aureus or Streptococcus." },
+        { q: "Bullous impetigo is caused by:",
+          opts: ["S. aureus exfoliative toxin", "Streptococcal pyrogenic toxin", "HSV", "VZV", "Candida"],
+          correct: 0,
+          exp: "Exfoliative toxin cleaves desmoglein 1, causing superficial blisters." },
+        { q: "Erysipelas is a superficial infection of the:",
+          opts: ["Epidermis", "Dermis and upper subcutaneous", "Deep fascia", "Muscle", "Bone"],
+          correct: 1,
+          exp: "Erysipelas involves upper dermis and lymphatics, often facial, caused by Streptococcus." },
+        { q: "Cellulitis involves:",
+          opts: ["Epidermis only", "Dermis and subcutaneous fat", "Fascia", "Muscle", "Bone"],
+          correct: 1,
+          exp: "Cellulitis is deeper than erysipelas, affecting dermis and subcutis." },
+        { q: "Necrotizing fasciitis is most commonly caused by:",
+          opts: ["Streptococcus pyogenes", "Staphylococcus aureus", "Clostridium perfringens", "E. coli", "Pseudomonas"],
+          correct: 0,
+          exp: "Group A Strep (S. pyogenes) is the classic cause, often with toxin." },
+        { q: "Warts (verrucae) are caused by:",
+          opts: ["HPV", "HSV", "VZV", "Molluscum contagiosum virus", "Poxvirus"],
+          correct: 0,
+          exp: "Human papillomavirus causes verruca vulgaris, plantaris, etc." },
+        { q: "Molluscum contagiosum is characterized by:",
+          opts: ["Umbilicated papules with eosinophilic cytoplasmic inclusions (molluscum bodies)", "Vesicles on erythematous base", "Honey‑crusted lesions", "Pustules", "Scale"],
+          correct: 0,
+          exp: "Molluscum bodies (Henderson‑Patterson) are large intracytoplasmic inclusions." },
+        { q: "Herpes simplex virus infection shows histologically:",
+          opts: ["Multinucleated giant cells with nuclear molding and Cowdry type A inclusions", "Acantholysis", "Eosinophilic spongiosis", "Granulomas", "Vasculitis"],
+          correct: 0,
+          exp: "Herpes cytopathic effect: ballooning degeneration, multinucleation, inclusions." },
+        { q: "Varicella‑zoster virus (shingles) is a reactivation of:",
+          opts: ["HSV‑1", "HSV‑2", "VZV", "EBV", "CMV"],
+          correct: 2,
+          exp: "Shingles is reactivation of varicella (chickenpox) virus in sensory ganglia." },
+        { q: "Tinea versicolor is caused by:",
+          opts: ["Malassezia species", "Trichophyton rubrum", "Epidermophyton floccosum", "Microsporum canis", "Candida albicans"],
+          correct: 0,
+          exp: "Malassezia (yeast) causes hypopigmented or hyperpigmented patches." },
+        { q: "Dermatophyte fungi (tinea) infect:",
+          opts: ["Keratinized tissue (skin, hair, nails)", "Mucous membranes", "Deep dermis", "Subcutaneous tissue", "Blood vessels"],
+          correct: 0,
+          exp: "Dermatophytes (Trichophyton, Microsporum, Epidermophyton) use keratin." },
+        { q: "A KOH preparation of scale from tinea corporis shows:",
+          opts: ["Branching hyphae", "Pseudohyphae", "Yeast buds", "Spores only", "None"],
+          correct: 0,
+          exp: "Dermatophytes show septate hyphae; KOH dissolves keratin." },
+        { q: "Candidiasis typically involves:",
+          opts: ["Moist areas (oral, intertriginous)", "Dry skin", "Scalp", "Nails only", "Palms"],
+          correct: 0,
+          exp: "Candida thrives in warm, moist environments." },
+        { q: "Scabies is caused by:",
+          opts: ["Sarcoptes scabiei mite", "Pediculus humanus", "Demodex folliculorum", "Trombicula mites", "Fleas"],
+          correct: 0,
+          exp: "Scabies mite burrows in stratum corneum, causing intense pruritus." },
+        { q: "The diagnostic finding in scabies is:",
+          opts: ["Mite, eggs, or scybala in skin scraping", "Burrows visualized with ink", "Eosinophilic spongiosis", "Perivascular lymphocytes", "IgA deposits"],
+          correct: 0,
+          exp: "Microscopic identification of mite, eggs, or fecal pellets confirms scabies." },
+        { q: "Pediculosis capitis is infestation with:",
+          opts: ["Head louse", "Body louse", "Pubic louse", "Flea", "Bedbug"],
+          correct: 0,
+          exp: "Pediculus humanus capitis infests scalp hair." },
+        { q: "Urticaria (hives) is mediated by:",
+          opts: ["Mast cell degranulation and histamine release", "IgG immune complexes", "T cells", "Neutrophils", "Eosinophils"],
+          correct: 0,
+          exp: "Urticaria is a Type I hypersensitivity with mast cell activation." },
+        { q: "Angioedema involves swelling of:",
+          opts: ["Deep dermis and subcutaneous tissue", "Epidermis", "Superficial dermis", "Mucosa only", "Subcutaneous fat only"],
+          correct: 0,
+          exp: "Angioedema is deeper than urticaria, often periorbital/lips." },
+        { q: "Erythema nodosum presents as:",
+          opts: ["Tender, erythematous nodules on shins", "Target lesions", "Vesicles on palms", "Pustules", "Scale"],
+          correct: 0,
+          exp: "EN is a panniculitis with septal inflammation, often post‑streptococcal." },
+        { q: "Histology of erythema nodosum shows:",
+          opts: ["Septal panniculitis without vasculitis", "Lobular panniculitis", "Leukocytoclastic vasculitis", "Granulomas", "Eosinophilic infiltrate"],
+          correct: 0,
+          exp: "EN involves inflammation of fibrous septa of fat." },
+        { q: "Pyoderma gangrenosum is associated with:",
+          opts: ["Inflammatory bowel disease", "Rheumatoid arthritis", "SLE", "Diabetes", "All of the above"],
+          correct: 0,
+          exp: "PG is often linked to IBD (ulcerative colitis, Crohn)." },
+        { q: "Sarcoidosis skin lesions show:",
+          opts: ["Non‑caseating granulomas", "Caseating granulomas", "Lymphohistocytic infiltrate", "Eosinophils", "Neutrophils"],
+          correct: 0,
+          exp: "Sarcoidosis has naked non‑caseating granulomas." },
+        { q: "Lupus erythematosus skin biopsy shows:",
+          opts: ["Lichenoid infiltrate, basement membrane thickening, dermal mucin", "Spongiosis", "Acantholysis", "Neutrophilic pustules", "Granulomas"],
+          correct: 0,
+          exp: "Discoid LE: interface dermatitis, basement membrane thickening, periappendageal infiltrate." },
+        { q: "The lupus band test detects:",
+          opts: ["Immunoglobulin and complement at dermoepidermal junction", "Antinuclear antibodies", "Anti‑dsDNA", "Anti‑Sm", "Rheumatoid factor"],
+          correct: 0,
+          exp: "Direct immunofluorescence shows granular IgG, IgM, C3 at BMZ." },
+        { q: "Dermatomyositis skin findings include:",
+          opts: ["Heliotrope rash and Gottron papules", "Malar rash", "Discoid lesions", "Photosensitivity", "Oral ulcers"],
+          correct: 0,
+          exp: "Heliotrope (periorbital violaceous) and Gottron (knuckle papules) are characteristic." }
+    ];
+    // Add extra 10 to reach 65+
+    const extra = [
+        { q: "Kaposi sarcoma is associated with:",
+          opts: ["HHV‑8", "EBV", "HPV", "HTLV‑1", "CMV"],
+          correct: 0,
+          exp: "Kaposi sarcoma herpesvirus (KSHV) / HHV‑8 causes all forms." },
+        { q: "Histology of Kaposi sarcoma shows:",
+          opts: ["Slit‑like vascular spaces and spindle cells", "Nests of melanocytes", "Keratin pearls", "Giant cells", "Granulomas"],
+          correct: 0,
+          exp: "Kaposi: proliferating spindle cells with vascular clefts, extravasated RBCs." },
+        { q: "Merkel cell carcinoma is an aggressive tumor derived from:",
+          opts: ["Merkel cells (neuroendocrine)", "Melanocytes", "Keratinocytes", "Fibroblasts", "Langerhans cells"],
+          correct: 0,
+          exp: "Merkel cell carcinoma is a primary neuroendocrine carcinoma of skin." },
+        { q: "Dermatofibroma is a benign proliferation of:",
+          opts: ["Fibroblasts and histiocytes", "Smooth muscle", "Vessels", "Nerves", "Fat"],
+          correct: 0,
+          exp: "Dermatofibroma (fibrous histiocytoma) shows spindle cells and storiform pattern." },
+        { q: "Atypical fibroxanthoma occurs on sun‑damaged skin of elderly and is a:",
+          opts: ["Superficial pleomorphic dermal sarcoma", "Benign lesion", "Melanoma", "SCC variant", "BCC variant"],
+          correct: 0,
+          exp: "AFX is a low‑grade sarcoma with pleomorphic cells, often on head/neck." },
+        { q: "Keratoacanthoma is a rapidly growing lesion that histologically resembles:",
+          opts: ["Squamous cell carcinoma (well‑differentiated) but with central crater", "Basal cell carcinoma", "Melanoma", "Verruca", "Seborrheic keratosis"],
+          correct: 0,
+          exp: "KA shows a cup‑shaped architecture with keratin plug and glassy cytoplasm." },
+        { q: "Seborrheic keratosis is characterized by:",
+          opts: ["Basaloid cells, horn cysts, stuck‑on appearance", "Melanin incontinence", "Acantholysis", "Papillomatosis", "All"],
+          correct: 0,
+          exp: "SK: exophytic proliferation of basaloid cells with pseudohorn cysts." },
+        { q: "The 'stuck‑on' appearance is typical of:",
+          opts: ["Seborrheic keratosis", "Actinic keratosis", "SCC", "BCC", "Melanoma"],
+          correct: 0,
+          exp: "Seborrheic keratosis often looks like a waxy plaque stuck on skin." },
+        { q: "Actinic keratosis is a:",
+          opts: ["Premalignant lesion (in situ atypia of keratinocytes)", "Malignant", "Benign", "Viral wart", "Inflammatory"],
+          correct: 0,
+          exp: "AK shows partial‑thickness atypia, can progress to SCC." },
+        { q: "Histology of actinic keratosis shows:",
+          opts: ["Alternating parakeratosis and orthokeratosis, atypia of basal keratinocytes", "Full‑thickness atypia", "Acantholysis", "Spongiosis", "Hypergranulosis"],
+          correct: 0,
+          exp: "AK: buds of atypical keratinocytes at basal layer, overlying parakeratosis." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetics · MCQ Bank (2.0 Style)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-dna"></i>
+        <h1>Genetics · MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/65</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // 65+ GENETICS MCQ QUESTIONS (high‑yield)
+    const questions = [
+        { q: "Which of the following is NOT a purine base?",
+          opts: ["Adenine", "Guanine", "Cytosine", "Hypoxanthine", "Xanthine"],
+          correct: 2,
+          exp: "Cytosine is a pyrimidine. Purines: adenine, guanine, hypoxanthine, xanthine." },
+        { q: "In DNA, the base pairing between adenine and thymine involves how many hydrogen bonds?",
+          opts: ["One", "Two", "Three", "Four", "Five"],
+          correct: 1,
+          exp: "A‑T pair has two hydrogen bonds; G‑C has three." },
+        { q: "The enzyme that unwinds DNA during replication is:",
+          opts: ["Helicase", "Topoisomerase", "DNA polymerase", "Ligase", "Primase"],
+          correct: 0,
+          exp: "Helicase unwinds DNA double helix; topoisomerase relieves supercoiling." },
+        { q: "Okazaki fragments are found on which strand during DNA replication?",
+          opts: ["Leading strand", "Lagging strand", "Both strands", "Neither", "Template strand"],
+          correct: 1,
+          exp: "Okazaki fragments are short pieces synthesized on the lagging strand." },
+        { q: "The genetic code is said to be degenerate because:",
+          opts: ["Multiple codons code for the same amino acid", "One codon codes for multiple amino acids", "It is universal", "It has start and stop codons", "It is non‑overlapping"],
+          correct: 0,
+          exp: "Degeneracy means most amino acids are specified by more than one codon." },
+        { q: "Which of the following is a stop codon?",
+          opts: ["AUG", "UAA", "GUG", "UGC", "CUG"],
+          correct: 1,
+          exp: "Stop codons: UAA, UAG, UGA." },
+        { q: "The Shine‑Dalgarno sequence is important for:",
+          opts: ["Initiation of translation in prokaryotes", "Termination of transcription", "Splicing of introns", "DNA replication origin", "RNA stability"],
+          correct: 0,
+          exp: "Shine‑Dalgarno (ribosome binding site) aligns mRNA with prokaryotic ribosome." },
+        { q: "A mutation that changes a codon to another codon for the same amino acid is called:",
+          opts: ["Missense", "Nonsense", "Silent", "Frameshift", "Neutral"],
+          correct: 2,
+          exp: "Silent mutation does not alter amino acid sequence." },
+        { q: "Sickle cell anemia is caused by a point mutation that results in:",
+          opts: ["Missense (Glu→Val)", "Nonsense", "Frameshift", "Deletion", "Silent"],
+          correct: 0,
+          exp: "β‑globin gene A→T (GAG→GTG) causes Glu6Val missense." },
+        { q: "A mutation that creates a premature stop codon is called:",
+          opts: ["Missense", "Nonsense", "Silent", "Frameshift", "Insertion"],
+          correct: 1,
+          exp: "Nonsense mutation introduces a stop codon → truncated protein." },
+        { q: "Which DNA repair mechanism corrects UV‑induced thymine dimers?",
+          opts: ["Base excision repair", "Nucleotide excision repair", "Mismatch repair", "Homologous recombination", "Non‑homologous end joining"],
+          correct: 1,
+          exp: "NER removes bulky lesions like pyrimidine dimers; defective in xeroderma pigmentosum." },
+        { q: "Hereditary non‑polyposis colorectal cancer (HNPCC) is associated with defects in:",
+          opts: ["Base excision repair", "Nucleotide excision repair", "Mismatch repair", "Homologous recombination", "Non‑homologous end joining"],
+          correct: 2,
+          exp: "Mismatch repair defects (MLH1, MSH2) cause microsatellite instability." },
+        { q: "The most common form of Down syndrome (trisomy 21) results from:",
+          opts: ["Meiotic nondisjunction", "Robertsonian translocation", "Mosaicism", "Deletion", "Duplication"],
+          correct: 0,
+          exp: "95% of Down syndrome is due to meiotic nondisjunction (maternal age‑related)." },
+        { q: "A Robertsonian translocation between chromosomes 14 and 21 can result in a carrier with how many chromosomes?",
+          opts: ["45", "46", "47", "44", "48"],
+          correct: 0,
+          exp: "Robertsonian translocation carriers have 45 chromosomes (one fused chromosome)." },
+        { q: "Klinefelter syndrome has which karyotype?",
+          opts: ["47,XXY", "45,X", "47,XXX", "47,XYY", "46,XY"],
+          correct: 0,
+          exp: "Klinefelter: 47,XXY; male with tall stature, hypogonadism, gynecomastia." },
+        { q: "Turner syndrome is associated with:",
+          opts: ["45,X", "47,XXY", "47,XXX", "46,XY", "46,XX"],
+          correct: 0,
+          exp: "Turner: 45,X; female with short stature, webbed neck, coarctation, streak ovaries." },
+        { q: "Which of the following is an autosomal dominant disorder?",
+          opts: ["Cystic fibrosis", "Sickle cell anemia", "Huntington disease", "Tay‑Sachs", "Phenylketonuria"],
+          correct: 2,
+          exp: "Huntington disease is AD; the others are AR." },
+        { q: "Cystic fibrosis is caused by mutations in the gene encoding:",
+          opts: ["CFTR (chloride channel)", "Dystrophin", "Fibrillin", "LDL receptor", "Hemoglobin"],
+          correct: 0,
+          exp: "CFTR gene (chromosome 7) mutations cause cystic fibrosis." },
+        { q: "The ΔF508 mutation in CFTR is an example of:",
+          opts: ["Missense", "Nonsense", "Frameshift", "In‑frame deletion", "Silent"],
+          correct: 3,
+          exp: "ΔF508 is a deletion of three nucleotides (phenylalanine) – in‑frame." },
+        { q: "Duchenne muscular dystrophy is caused by mutation in the gene for:",
+          opts: ["Dystrophin", "Dystroglycan", "Sarcoglycan", "Laminin", "Dysferlin"],
+          correct: 0,
+          exp: "DMD is X‑linked recessive; mutations in dystrophin gene (large deletions)." },
+        { q: "Hemophilia A is due to deficiency of:",
+          opts: ["Factor VIII", "Factor IX", "Factor XI", "von Willebrand factor", "Factor VII"],
+          correct: 0,
+          exp: "Hemophilia A – factor VIII deficiency; hemophilia B – factor IX." },
+        { q: "X‑linked recessive disorders typically:",
+          opts: ["Affect males more than females", "Affect both sexes equally", "Are never expressed in females", "Show male‑to‑male transmission", "Are lethal in males"],
+          correct: 0,
+          exp: "Males (hemizygous) are affected; females are carriers; no male‑to‑male." },
+        { q: "In mitochondrial inheritance, the disease is transmitted by:",
+          opts: ["Mother only", "Father only", "Both parents", "Either parent", "Spontaneous mutations"],
+          correct: 0,
+          exp: "Mitochondria are maternally inherited." },
+        { q: "Which of the following is an example of a trinucleotide repeat disorder?",
+          opts: ["Huntington disease", "Cystic fibrosis", "Sickle cell anemia", "Down syndrome", "Turner syndrome"],
+          correct: 0,
+          exp: "Huntington (CAG repeat), fragile X (CGG), myotonic dystrophy (CTG)." },
+        { q: "Anticipation refers to:",
+          opts: ["Earlier onset and increased severity in successive generations", "Delayed onset in later generations", "Decreased severity in offspring", "Skewed sex ratio", "Increased penetrance with age"],
+          correct: 0,
+          exp: "Anticipation occurs in trinucleotide repeat disorders (e.g., Huntington, myotonic dystrophy)." },
+        { q: "Fragile X syndrome is associated with which repeat?",
+          opts: ["CGG", "CAG", "CTG", "GAA", "CCG"],
+          correct: 0,
+          exp: "FMR1 gene CGG repeat expansion (>200) silences gene." },
+        { q: "Which of the following is an example of genomic imprinting?",
+          opts: ["Prader‑Willi and Angelman syndromes", "Down syndrome", "Turner syndrome", "Klinefelter syndrome", "Cri‑du‑chat syndrome"],
+          correct: 0,
+          exp: "Both involve 15q11‑13 but different parental origin: paternal deletion → PWS; maternal → AS." },
+        { q: "Prader‑Willi syndrome is typically caused by:",
+          opts: ["Paternal deletion of 15q11‑13", "Maternal deletion of 15q11‑13", "Paternal uniparental disomy of 15", "Maternal uniparental disomy of 15", "Both A and C"],
+          correct: 4,
+          exp: "PWS: paternal deletion or maternal UPD; Angelman: maternal deletion or paternal UPD." },
+        { q: "Achondroplasia is most commonly caused by a mutation in:",
+          opts: ["FGFR3", "FBN1", "COL1A1", "DMD", "CFTR"],
+          correct: 0,
+          exp: "FGFR3 mutation (G380R) causes achondroplasia (AD)." },
+        { q: "Marfan syndrome is due to mutation in:",
+          opts: ["FBN1 (fibrillin)", "COL1A1", "FBN2", "TGFBR1", "TGFBR2"],
+          correct: 0,
+          exp: "Fibrillin‑1 gene mutation leads to tall stature, lens dislocation, aortic root dilation." },
+        { q: "Which of the following is a tumor suppressor gene?",
+          opts: ["RB1", "MYC", "RAS", "HER2", "BCR‑ABL"],
+          correct: 0,
+          exp: "RB1, TP53, APC are tumor suppressors; MYC, RAS are oncogenes." },
+        { q: "Li‑Fraumeni syndrome is associated with mutation in:",
+          opts: ["TP53", "RB1", "APC", "BRCA1", "PTEN"],
+          correct: 0,
+          exp: "TP53 mutation predisposes to sarcomas, breast cancer, brain tumors, etc." },
+        { q: "Familial adenomatous polyposis (FAP) is caused by mutation in:",
+          opts: ["APC", "MLH1", "MSH2", "KRAS", "SMAD4"],
+          correct: 0,
+          exp: "APC gene (chromosome 5) mutation leads to hundreds of colon polyps." },
+        { q: "Hereditary breast‑ovarian cancer syndrome is most commonly associated with mutations in:",
+          opts: ["BRCA1 and BRCA2", "TP53", "PTEN", "STK11", "CDH1"],
+          correct: 0,
+          exp: "BRCA1/BRCA2 (DNA repair) increase risk of breast, ovarian, pancreatic, prostate cancers." },
+        { q: "Which type of mutation causes loss of function in tumor suppressor genes?",
+          opts: ["Both alleles inactivated", "One allele activated", "Dominant negative", "Gain‑of‑function", "Amplification"],
+          correct: 0,
+          exp: "Knudson two‑hit hypothesis: both alleles must be inactivated." },
+        { q: "Oncogenes typically result from:",
+          opts: ["Gain‑of‑function mutations", "Loss‑of‑function mutations", "Deletions", "Methylation", "Chromosome loss"],
+          correct: 0,
+          exp: "Oncogenes (e.g., RAS, MYC) are activated by gain‑of‑function." },
+        { q: "The Philadelphia chromosome is a translocation between chromosomes:",
+          opts: ["9 and 22", "8 and 14", "14 and 18", "11 and 22", "15 and 17"],
+          correct: 0,
+          exp: "t(9;22)(q34;q11) creates BCR‑ABL fusion in CML, ALL." },
+        { q: "Burkitt lymphoma is associated with translocation:",
+          opts: ["t(8;14)", "t(9;22)", "t(14;18)", "t(11;14)", "t(2;5)"],
+          correct: 0,
+          exp: "t(8;14) places c‑MYC next to Ig heavy chain enhancer." },
+        { q: "Which syndrome is caused by deletion of chromosome 22q11.2?",
+          opts: ["DiGeorge syndrome", "Williams syndrome", "Cri‑du‑chat", "Wolf‑Hirschhorn", "Angelman"],
+          correct: 0,
+          exp: "22q11.2 deletion → thymic aplasia, cardiac defects, hypocalcemia." },
+        { q: "Williams syndrome is associated with deletion of:",
+          opts: ["Elastin gene (7q11.23)", "FBN1", "NF1", "DMD", "CFTR"],
+          correct: 0,
+          exp: "Williams: 7q11.23 deletion (elastin) → supravalvular aortic stenosis, elfin facies, hypercalcemia." },
+        { q: "Cri‑du‑chat syndrome is caused by deletion of:",
+          opts: ["5p", "4p", "15q", "22q", "7q"],
+          correct: 0,
+          exp: "5p deletion → cat‑like cry, microcephaly, intellectual disability." },
+        { q: "Wolf‑Hirschhorn syndrome is caused by deletion of:",
+          opts: ["4p", "5p", "15q", "22q", "11p"],
+          correct: 0,
+          exp: "4p deletion → Greek helmet facies, growth retardation, seizures." },
+        { q: "Which of the following is an example of uniparental disomy?",
+          opts: ["Both chromosomes 15 from mother in Prader‑Willi", "Trisomy 21", "Monosomy X", "Translocation carrier", "Inversion"],
+          correct: 0,
+          exp: "UPD: both copies from one parent; maternal UPD15 causes Prader‑Willi." },
+        { q: "The chance that a child of two carriers of an autosomal recessive disorder will be affected is:",
+          opts: ["25%", "50%", "75%", "100%", "0%"],
+          correct: 0,
+          exp: "AR: carrier × carrier → 25% affected, 50% carrier, 25% normal." },
+        { q: "For an autosomal dominant disorder with complete penetrance, an affected heterozygous parent and an unaffected partner have what chance of having an affected child?",
+          opts: ["50%", "25%", "75%", "100%", "0%"],
+          correct: 0,
+          exp: "Each child has 50% chance of inheriting the mutant allele." },
+        { q: "In X‑linked recessive inheritance, an affected male transmits the disease to:",
+          opts: ["All daughters (carriers), no sons", "All sons (affected), all daughters (carriers)", "Half of sons and daughters", "None of the children", "Only daughters (affected)"],
+          correct: 0,
+          exp: "Affected male gives X to all daughters (carriers), Y to sons (unaffected)." },
+        { q: "A woman who is a carrier of an X‑linked recessive disorder has a 50% chance of having an affected son. What is the chance her daughter will be a carrier?",
+          opts: ["50%", "25%", "75%", "100%", "0%"],
+          correct: 0,
+          exp: "Daughter inherits father's normal X and either mother's normal or mutant X → 50% carrier." },
+        { q: "The Hardy‑Weinberg equation p² + 2pq + q² = 1 represents:",
+          opts: ["Genotype frequencies", "Allele frequencies", "Phenotype frequencies", "Mutation rates", "Carrier rates"],
+          correct: 0,
+          exp: "p² = homozygous dominant, 2pq = heterozygous, q² = homozygous recessive." },
+        { q: "If the incidence of an autosomal recessive disorder is 1/2500, the carrier frequency is approximately:",
+          opts: ["1/25", "1/50", "1/100", "1/200", "1/500"],
+          correct: 0,
+          exp: "q² = 1/2500 → q = 1/50 → p ≈ 1 → carrier frequency 2pq = 2/50 = 1/25." },
+        { q: "A lethal dominant allele that reduces fitness to zero would be maintained in the population by:",
+          opts: ["New mutations", "Heterozygote advantage", "Genetic drift", "Founder effect", "Migration"],
+          correct: 0,
+          exp: "Lethal dominant alleles are constantly removed and reintroduced by mutation." },
+        { q: "Heterozygote advantage is exemplified by:",
+          opts: ["Sickle cell trait in malaria regions", "Cystic fibrosis carriers", "Tay‑Sachs carriers", "Huntington disease", "Marfan syndrome"],
+          correct: 0,
+          exp: "Sickle cell trait (HbAS) confers resistance to malaria." },
+        { q: "The founder effect explains:",
+          opts: ["High frequency of certain genetic diseases in isolated populations", "Random changes in allele frequency", "Migration of populations", "Natural selection", "Assortative mating"],
+          correct: 0,
+          exp: "Founder effect: small group establishes new population with limited gene pool." },
+        { q: "Genetic drift is more significant in:",
+          opts: ["Small populations", "Large populations", "Random mating populations", "Populations with high mutation rate", "Populations under selection"],
+          correct: 0,
+          exp: "Drift has greater effect in small populations." },
+        { q: "DNA fingerprinting (STR analysis) is based on:",
+          opts: ["Variable number of tandem repeats", "Single nucleotide polymorphisms", "Restriction fragment length polymorphisms", "DNA sequencing", "Gene expression"],
+          correct: 0,
+          exp: "Short tandem repeats (STRs) vary between individuals." },
+        { q: "Southern blotting is used to detect:",
+          opts: ["Specific DNA sequences", "RNA", "Proteins", "Lipids", "Carbohydrates"],
+          correct: 0,
+          exp: "Southern: DNA; Northern: RNA; Western: protein." },
+        { q: "The polymerase chain reaction (PCR) requires all of the following EXCEPT:",
+          opts: ["DNA ligase", "Taq polymerase", "Primers", "dNTPs", "DNA template"],
+          correct: 0,
+          exp: "PCR uses DNA polymerase (Taq), not ligase. Ligase joins Okazaki fragments." },
+        { q: "Which of the following is a restriction enzyme?",
+          opts: ["EcoRI", "DNA polymerase", "Reverse transcriptase", "RNA polymerase", "Ligase"],
+          correct: 0,
+          exp: "EcoRI is a restriction enzyme that cuts DNA at specific sites." },
+        { q: "Knockout mice are used to study:",
+          opts: ["Gene function", "Gene therapy", "Gene expression", "Gene regulation", "Gene mapping"],
+          correct: 0,
+          exp: "Knockout removes a gene to study its function." },
+        { q: "CRISPR‑Cas9 technology is used for:",
+          opts: ["Genome editing", "Gene sequencing", "Protein synthesis", "RNA interference", "Cloning"],
+          correct: 0,
+          exp: "CRISPR‑Cas9 enables targeted DNA editing." },
+        { q: "Which of the following is an example of a pleiotropic gene?",
+          opts: ["Marfan syndrome (FBN1 mutations affect skeletal, ocular, cardiovascular systems)", "Huntington disease", "Cystic fibrosis", "Sickle cell anemia", "All of the above"],
+          correct: 4,
+          exp: "Pleiotropy: one gene influences multiple traits; all these are pleiotropic." },
+        { q: "Variable expressivity means:",
+          opts: ["Same genotype produces different phenotypes", "Not all individuals with genotype express phenotype", "Phenotype becomes more severe over generations", "Phenotype changes with age", "Sex‑limited expression"],
+          correct: 0,
+          exp: "Variable expressivity: severity differs; penetrance: all‑or‑none." },
+        { q: "Incomplete penetrance means:",
+          opts: ["Not all individuals with genotype show phenotype", "Phenotype is milder", "Phenotype varies in severity", "Phenotype appears only in some generations", "Gene is only expressed in one sex"],
+          correct: 0,
+          exp: "Penetrance: proportion with genotype who express phenotype." },
+        { q: "A genetic disease that shows anticipation is most likely due to:",
+          opts: ["Trinucleotide repeat expansion", "Mitochondrial mutation", "Chromosomal translocation", "Single nucleotide substitution", "Deletion"],
+          correct: 0,
+          exp: "Anticipation occurs in repeat expansion disorders." }
+    ];
+    // Add extra to reach 65
+    const extra = [
+        { q: "Which term describes the phenomenon where a single gene has multiple phenotypic effects?",
+          opts: ["Pleiotropy", "Penetrance", "Expressivity", "Epistasis", "Codominance"],
+          correct: 0,
+          exp: "Pleiotropy: one gene affects multiple traits (e.g., Marfan syndrome)." },
+        { q: "Epistasis refers to:",
+          opts: ["One gene masking the expression of another", "Multiple alleles for a gene", "Interaction of two genes to produce a new phenotype", "Gene on X chromosome", "Genes linked on same chromosome"],
+          correct: 0,
+          exp: "Epistasis: one gene interferes with expression of another (e.g., Bombay phenotype)." },
+        { q: "The Bombay phenotype is caused by mutation in the gene for:",
+          opts: ["H antigen (FUT1)", "ABO glycosyltransferase", "Rh factor", "Lewis antigen", "I antigen"],
+          correct: 0,
+          exp: "Bombay: lack of H antigen due to FUT1 mutation; cannot form A/B antigens." },
+        { q: "A child with blood type O born to parents with blood types A and B is an example of:",
+          opts: ["Codominance", "Multiple alleles", "Complete dominance", "Incomplete dominance", "Epistasis"],
+          correct: 1,
+          exp: "ABO blood group is determined by multiple alleles (A, B, O)." },
+        { q: "In a pedigree, an autosomal dominant trait will show:",
+          opts: ["Vertical transmission, both sexes affected, male‑to‑male possible", "Horizontal transmission, males only", "Skips generations, carriers", "Only females affected", "Only males affected"],
+          correct: 0,
+          exp: "AD traits appear in every generation; no skipping (if penetrant)." },
+        { q: "Lyon hypothesis refers to:",
+          opts: ["X‑inactivation", "Y‑chromosome inactivation", "Mitochondrial inheritance", "Imprinting", "Translocation"],
+          correct: 0,
+          exp: "Lyonization: random inactivation of one X in females (Barr body)." },
+        { q: "A Barr body represents:",
+          opts: ["Inactivated X chromosome", "Activated X chromosome", "Y chromosome", "Chromosome 21", "Mitochondrial DNA"],
+          correct: 0,
+          exp: "Number of Barr bodies = number of X chromosomes minus one." },
+        { q: "Chorionic villus sampling (CVS) is performed at:",
+          opts: ["10‑12 weeks gestation", "15‑20 weeks", "5‑8 weeks", "After 24 weeks", "At birth"],
+          correct: 0,
+          exp: "CVS at 10‑12 weeks for early prenatal diagnosis." },
+        { q: "Amniocentesis for genetic analysis is typically done at:",
+          opts: ["15‑20 weeks", "10‑12 weeks", "5‑8 weeks", "24‑28 weeks", "After birth"],
+          correct: 0,
+          exp: "Amniocentesis at 15‑20 weeks." },
+        { q: "Fluorescence in situ hybridization (FISH) is used to detect:",
+          opts: ["Specific DNA sequences on chromosomes", "RNA expression", "Protein levels", "Enzyme activity", "Metabolite concentrations"],
+          correct: 0,
+          exp: "FISH uses fluorescent probes to detect specific DNA sequences (e.g., microdeletions)." }
+    ];
+    const allQuestions = questions.concat(extra); // now 65
+
+    // Shuffle
+    let shuffled = allQuestions.sort(()=>0.5-Math.random());
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>

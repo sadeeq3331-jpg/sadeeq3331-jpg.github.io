@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetics · Pathology Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-dna"></i>
+        <h1>Genetics · Pathology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <h3>CYTOGENETIC DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#numerical-abnormalities"><i class="fas fa-chromosome"></i> 1. Numerical Chromosome Abnormalities</a></li>
+                <li class="chapter-item"><a href="#structural-abnormalities"><i class="fas fa-arrows"></i> 2. Structural Chromosome Abnormalities</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>SINGLE GENE DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#autosomal-dominant"><i class="fas fa-dna"></i> 3. Autosomal Dominant Disorders</a></li>
+                <li class="chapter-item"><a href="#autosomal-recessive"><i class="fas fa-dna"></i> 4. Autosomal Recessive Disorders</a></li>
+                <li class="chapter-item"><a href="#x-linked"><i class="fas fa-x"></i> 5. X‑Linked Disorders</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>TRINUCLEOTIDE REPEAT DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#trinucleotide"><i class="fas fa-repeat"></i> 6. Repeat Expansion Disorders</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>MITOCHONDRIAL DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#mitochondrial-disease"><i class="fas fa-power-off"></i> 7. Mitochondrial Diseases</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>IMPRINTING DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#imprinting"><i class="fas fa-dna"></i> 8. Genomic Imprinting Disorders</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>MULTIFACTORIAL DISORDERS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#multifactorial"><i class="fas fa-chart-line"></i> 9. Multifactorial Inheritance</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>CANCER GENETICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#oncogenes"><i class="fas fa-tumor"></i> 10. Oncogenes & Tumor Suppressors</a></li>
+                <li class="chapter-item"><a href="#hereditary-cancers"><i class="fas fa-families"></i> 11. Hereditary Cancer Syndromes</a></li>
+            </ul>
+        </div>
+        <div class="toc-section">
+            <h3>PHARMACOGENETICS</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#pharmacogenetics"><i class="fas fa-pills"></i> 12. Pharmacogenetics</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- ==================== CYTOGENETIC DISORDERS ==================== -->
+        <section id="numerical-abnormalities" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chromosome"></i> 1. Numerical Chromosome Abnormalities</div>
+            <div class="section-card">
+                <div class="body-text">
+                    Aneuploidy: abnormal chromosome number due to nondisjunction in meiosis or mitosis.
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Syndrome</th><th>Karyotype</th><th>Key Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Down syndrome</td><td>Trisomy 21 (95%), translocation (4%), mosaic (1%)</td><td>Intellectual disability, flat facies, simian crease, Brushfield spots, duodenal atresia, AVSD, Alzheimer risk</td></tr>
+                        <tr><td>Edwards syndrome</td><td>Trisomy 18</td><td>Rocker bottom feet, low-set ears, micrognathia, clenched fists, severe intellectual disability; most die in first year</td></tr>
+                        <tr><td>Patau syndrome</td><td>Trisomy 13</td><td>Cleft lip/palate, polydactyly, holoprosencephaly, scalp defects, severe intellectual disability</td></tr>
+                        <tr><td>Turner syndrome</td><td>45,X</td><td>Short stature, webbed neck, coarctation, streak ovaries, lymphedema, normal intelligence</td></tr>
+                        <tr><td>Klinefelter syndrome</td><td>47,XXY</td><td>Tall, hypogonadism, gynecomastia, infertility, learning difficulties</td></tr>
+                        <tr><td>Triple X syndrome</td><td>47,XXX</td><td>Tall, normal fertility, possible learning issues</td></tr>
+                        <tr><td>XYY syndrome</td><td>47,XYY</td><td>Tall, normal phenotype, possible behavioral issues</td></tr>
+                    </tbody>
+                </table>
+                <div class="clinical-correlation">
+                    <p>Maternal age risk increases for trisomies (especially Down).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="structural-abnormalities" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-arrows"></i> 2. Structural Chromosome Abnormalities</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Translocation:</strong> Reciprocal (balanced) or Robertsonian (centric fusion; acrocentric chromosomes 13,14,15,21,22). Robertsonian translocation carriers have 45 chromosomes but phenotypically normal; risk of unbalanced offspring (e.g., Down syndrome translocation type).</li>
+                    <li><strong>Deletion:</strong> Loss of part of chromosome. Examples: Cri‑du‑chat (5p‑), Wolf‑Hirschhorn (4p‑), 22q11.2 deletion (DiGeorge syndrome).</li>
+                    <li><strong>Duplication:</strong> Extra copy of segment.</li>
+                    <li><strong>Inversion:</strong> Segment reversed; carriers usually normal but risk of unbalanced gametes.</li>
+                    <li><strong>Isochromosome:</strong> Two identical arms (e.g., isochromosome Xq in Turner).</li>
+                    <li><strong>Ring chromosome:</strong> Caused by deletion of both telomeres and fusion.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== SINGLE GENE DISORDERS ==================== -->
+        <section id="autosomal-dominant" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 3. Autosomal Dominant Disorders</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Disorder</th><th>Gene/Protein</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Huntington disease</td><td>HTT (CAG repeat)</td><td>Chorea, dementia, caudate atrophy; anticipation</td></tr>
+                        <tr><td>Neurofibromatosis type 1</td><td>NF1 (neurofibromin)</td><td>Café‑au‑lait spots, Lisch nodules, neurofibromas, optic glioma</td></tr>
+                        <tr><td>Marfan syndrome</td><td>FBN1 (fibrillin)</td><td>Arachnodactyly, tall, aortic root dilation, lens dislocation</td></tr>
+                        <tr><td>Familial hypercholesterolemia</td><td>LDL receptor</td><td>↑ LDL, xanthomas, premature CAD</td></tr>
+                        <tr><td>Polycystic kidney disease (ADPKD)</td><td>PKD1, PKD2</td><td>Renal cysts, hypertension, liver cysts, berry aneurysms</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="autosomal-recessive" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 4. Autosomal Recessive Disorders</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Disorder</th><th>Gene/Protein</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Cystic fibrosis</td><td>CFTR (ΔF508 common)</td><td>Lung disease, pancreatic insufficiency, meconium ileus, male infertility</td></tr>
+                        <tr><td>Sickle cell disease</td><td>HBB (Glu6Val)</td><td>Hemolytic anemia, pain crises, infarction</td></tr>
+                        <tr><td>Tay‑Sachs disease</td><td>HEXA (hexosaminidase A)</td><td>Progressive neurodegeneration, cherry‑red spot, lysosomal storage</td></tr>
+                        <tr><td>Phenylketonuria</td><td>PAH (phenylalanine hydroxylase)</td><td>Intellectual disability, musty odor, eczema; diet management</td></tr>
+                        <tr><td>Galactosemia</td><td>GALT</td><td>Jaundice, hepatomegaly, cataracts; failure to thrive</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="x-linked" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-x"></i> 5. X‑Linked Disorders</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Disorder</th><th>Gene/Protein</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Duchenne muscular dystrophy</td><td>Dystrophin</td><td>Proximal weakness, pseudohypertrophy, cardiomyopathy; death by 20s‑30s</td></tr>
+                        <tr><td>Hemophilia A</td><td>Factor VIII</td><td>Bleeding into joints, easy bruising</td></tr>
+                        <tr><td>G6PD deficiency</td><td>G6PD</td><td>Hemolytic anemia triggered by oxidative stress (drugs, fava beans)</td></tr>
+                        <tr><td>Fragile X syndrome</td><td>FMR1 (CGG repeat)</td><td>Intellectual disability, long face, macroorchidism</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== TRINUCLEOTIDE REPEAT DISORDERS ==================== -->
+        <section id="trinucleotide" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-repeat"></i> 6. Repeat Expansion Disorders</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Disorder</th><th>Repeat (Gene)</th><th>Mechanism</th><th>Anticipation</th></tr></thead>
+                    <tbody>
+                        <tr><td>Huntington disease</td><td>CAG (HTT)</td><td>Polyglutamine, toxic gain</td><td>Yes (paternal)</td></tr>
+                        <tr><td>Fragile X syndrome</td><td>CGG (FMR1)</td><td>Silencing (loss)</td><td>Yes (maternal)</td></tr>
+                        <tr><td>Friedreich ataxia</td><td>GAA (FXN)</td><td>Loss of frataxin</td><td>Yes</td></tr>
+                        <tr><td>Myotonic dystrophy</td><td>CTG (DMPK) or CCTG (CNBP)</td><td>RNA toxicity</td><td>Yes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== MITOCHONDRIAL DISORDERS ==================== -->
+        <section id="mitochondrial-disease" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-power-off"></i> 7. Mitochondrial Diseases</div>
+            <div class="section-card">
+                <ul>
+                    <li>Maternal inheritance; heteroplasmy; tissues with high energy demand affected.</li>
+                    <li>Examples:
+                        <ul>
+                            <li><strong>MELAS:</strong> Mitochondrial encephalomyopathy, lactic acidosis, stroke‑like episodes.</li>
+                            <li><strong>MERRF:</strong> Myoclonic epilepsy with ragged red fibers.</li>
+                            <li><strong>Leber hereditary optic neuropathy (LHON):</strong> Acute vision loss.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== IMPRINTING DISORDERS ==================== -->
+        <section id="imprinting" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-dna"></i> 8. Genomic Imprinting Disorders</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Disorder</th><th>Gene/Chromosome</th><th>Parental Origin</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Prader‑Willi syndrome</td><td>15q11.2‑q13 deletion</td><td>Paternal</td><td>Hyperphagia, obesity, hypotonia, intellectual disability</td></tr>
+                        <tr><td>Angelman syndrome</td><td>Same region (UBE3A)</td><td>Maternal</td><td>Jerky movements, happy demeanor, ataxia, severe intellectual disability</td></tr>
+                        <tr><td>Beckwith‑Wiedemann syndrome</td><td>11p15 (IGF2, CDKN1C)</td><td>Altered imprinting</td><td>Macrosomia, omphalocele, macroglossia, neonatal hypoglycemia, tumor risk</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== MULTIFACTORIAL DISORDERS ==================== -->
+        <section id="multifactorial" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-chart-line"></i> 9. Multifactorial Inheritance</div>
+            <div class="section-card">
+                <ul>
+                    <li>Interaction of multiple genes + environment.</li>
+                    <li>Family history shows increased risk but not Mendelian pattern.</li>
+                    <li>Examples: Neural tube defects (folic acid prevention), cleft lip/palate, diabetes, hypertension, congenital heart defects.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==================== CANCER GENETICS ==================== -->
+        <section id="oncogenes" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tumor"></i> 10. Oncogenes & Tumor Suppressors</div>
+            <div class="section-card">
+                <div class="subsection-heading">Oncogenes</div>
+                <ul>
+                    <li>Proto‑oncogenes promote growth; mutations cause gain‑of‑function (dominant).</li>
+                    <li>Examples: RAS (point mutation), MYC (translocation), HER2 (amplification).</li>
+                </ul>
+                <div class="subsection-heading">Tumor Suppressor Genes</div>
+                <ul>
+                    <li>Inhibit growth; mutations cause loss‑of‑function (recessive, but one hit inherited in hereditary syndromes). Two‑hit hypothesis.</li>
+                    <li>Examples: RB1 (retinoblastoma), TP53 (Li‑Fraumeni), APC (FAP), BRCA1/BRCA2 (breast/ovarian).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="hereditary-cancers" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-families"></i> 11. Hereditary Cancer Syndromes</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Syndrome</th><th>Gene</th><th>Features</th></tr></thead>
+                    <tbody>
+                        <tr><td>Retinoblastoma</td><td>RB1</td><td>Bilateral (heritable) vs unilateral (sporadic); osteosarcoma risk</td></tr>
+                        <tr><td>Li‑Fraumeni syndrome</td><td>TP53</td><td>Sarcomas, breast, brain, adrenal cortical</td></tr>
+                        <tr><td>Familial adenomatous polyposis (FAP)</td><td>APC</td><td>Hundreds of colon polyps, inevitable colon cancer</td></tr>
+                        <tr><td>Hereditary non‑polyposis colorectal cancer (HNPCC)</td><td>MLH1, MSH2, etc. (mismatch repair)</td><td>Colon, endometrial, ovarian; microsatellite instability</td></tr>
+                        <tr><td>BRCA1/BRCA2</td><td>BRCA1, BRCA2</td><td>Breast, ovarian, pancreatic, prostate</td></tr>
+                        <tr><td>Von Hippel‑Lindau</td><td>VHL</td><td>Renal cell carcinoma, hemangioblastomas, pheochromocytoma</td></tr>
+                        <tr><td>Multiple endocrine neoplasia (MEN1, MEN2)</td><td>MEN1, RET</td><td>MEN1: pituitary, parathyroid, pancreas; MEN2: medullary thyroid, pheochromocytoma</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== PHARMACOGENETICS ==================== -->
+        <section id="pharmacogenetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-pills"></i> 12. Pharmacogenetics</div>
+            <div class="section-card">
+                <table class="premium-table">
+                    <thead><tr><th>Gene Variant</th><th>Drug</th><th>Effect</th></tr></thead>
+                    <tbody>
+                        <tr><td>CYP2D6 poor metabolizer</td><td>Codeine</td><td>Reduced conversion to morphine → ineffective; ultrarapid → toxicity</td></tr>
+                        <tr><td>CYP2C19 poor metabolizer</td><td>Clopidogrel</td><td>Reduced activation → decreased antiplatelet effect</td></tr>
+                        <tr><td>TPMT deficiency</td><td>Azathioprine, 6‑MP</td><td>Severe myelosuppression</td></tr>
+                        <tr><td>G6PD deficiency</td><td>Primaquine, sulfonamides</td><td>Hemolytic anemia</td></tr>
+                        <tr><td>HLA‑B*5701</td><td>Abacavir</td><td>Hypersensitivity reaction</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Genetics Pathology · Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

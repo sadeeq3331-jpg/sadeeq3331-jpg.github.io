@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endocrinology Pathology · MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-droplet"></i>
+            <h1>Endocrinology Pathology · MCQ Bank</h1>
+            <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <span id="qCounter">0/60</span>
+                <span id="scoreDisplay">Score: 0</span>
+            </div>
+        </div>
+        <div class="question-container" id="questionContainer">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <div class="dots" id="dotsContainer"></div>
+            <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // 60+ UNIQUE ENDOCRINOLOGY PATHOLOGY QUESTIONS
+        const questions = [
+            { q: "Which pituitary tumor is most common?",
+              opts: ["Somatotroph adenoma", "Corticotroph adenoma", "Prolactinoma", "Thyrotroph adenoma", "Null cell adenoma"],
+              correct: 2,
+              exp: "Prolactinomas account for about 40‑50% of pituitary adenomas." },
+            { q: "Sheehan syndrome is caused by:",
+              opts: ["Pituitary apoplexy", "Postpartum hemorrhage → pituitary infarction", "Autoimmune hypophysitis", "Pituitary radiation", "Empty sella syndrome"],
+              correct: 1,
+              exp: "Sheehan syndrome results from ischemic necrosis of the anterior pituitary due to severe postpartum hemorrhage." },
+            { q: "Acromegaly is most commonly caused by:",
+              opts: ["Hypothalamic GHRH excess", "Pituitary somatotroph adenoma", "Pancreatic tumor secreting GH", "Lung cancer", "Ectopic GHRH"],
+              correct: 1,
+              exp: ">95% of acromegaly cases are due to a benign pituitary adenoma secreting GH." },
+            { q: "Diabetes insipidus presents with all EXCEPT:",
+              opts: ["Polyuria", "Polydipsia", "Hypernatremia", "High urine specific gravity", "Low urine osmolality"],
+              correct: 3,
+              exp: "DI causes dilute urine (low specific gravity, low osmolality). Hypernatremia may occur if thirst impaired." },
+            { q: "The most common cause of hyperthyroidism is:",
+              opts: ["Toxic multinodular goiter", "Graves disease", "Thyroiditis", "Toxic adenoma", "TSH‑secreting tumor"],
+              correct: 1,
+              exp: "Graves disease is the most common cause of hyperthyroidism." },
+            { q: "Histologic finding in Graves disease is:",
+              opts: ["Lymphocytic infiltration", "Granulomatous inflammation", "Papillary hyperplasia with colloid scalloping", "Hürthle cells", "Fibrosis"],
+              correct: 2,
+              exp: "Graves shows diffuse follicular hyperplasia with scalloped colloid and lymphocytic infiltration." },
+            { q: "Hashimoto thyroiditis is characterized by all EXCEPT:",
+              opts: ["Lymphocytic infiltrate with germinal centers", "Hürthle cell change", "Fibrosis", "Granulomas with giant cells", "Autoantibodies to TPO and thyroglobulin"],
+              correct: 3,
+              exp: "Granulomas with giant cells are seen in subacute (De Quervain) thyroiditis." },
+            { q: "Papillary thyroid carcinoma is associated with:",
+              opts: ["RET/PTC rearrangements", "BRAF V600E mutations", "Psammoma bodies", "Orphan Annie nuclei", "All of the above"],
+              correct: 4,
+              exp: "Papillary carcinoma often shows RET/PTC rearrangements, BRAF mutations, psammoma bodies, and clear nuclei (Orphan Annie)." },
+            { q: "Medullary thyroid carcinoma arises from:",
+              opts: ["Follicular cells", "Parafollicular C cells", "Hurthle cells", "Squamous metaplasia", "Thyroglossal duct remnants"],
+              correct: 1,
+              exp: "Medullary carcinoma originates from parafollicular C cells and secretes calcitonin." },
+            { q: "Anaplastic thyroid carcinoma is known for:",
+              opts: ["Excellent prognosis", "Slow growth", "Aggressive behavior and poor prognosis", "Association with RET mutations", "Lymph node metastases only"],
+              correct: 2,
+              exp: "Anaplastic carcinoma is highly aggressive with a dismal prognosis." },
+            { q: "Primary hyperparathyroidism is most often due to:",
+              opts: ["Parathyroid carcinoma", "Single adenoma", "Four‑gland hyperplasia", "Parathyroid cysts", "Ectopic PTH secretion"],
+              correct: 1,
+              exp: "80‑85% of primary hyperparathyroidism is due to a single adenoma." },
+            { q: "Hypoparathyroidism most commonly results from:",
+              opts: ["Autoimmune destruction", "Surgical removal/ injury", "Radiation", "Infiltration (hemochromatosis)", "Pseudohypoparathyroidism"],
+              correct: 1,
+              exp: "Most common cause is anterior neck surgery (thyroidectomy, parathyroidectomy)." },
+            { q: "Cushing disease refers to:",
+              opts: ["Adrenal adenoma causing hypercortisolism", "Pituitary ACTH‑secreting adenoma", "Ectopic ACTH production", "Iatrogenic steroid use", "Adrenal carcinoma"],
+              correct: 1,
+              exp: "Cushing disease is specifically pituitary‑driven ACTH excess." },
+            { q: "Conn syndrome is caused by:",
+              opts: ["Adrenal cortical carcinoma", "Aldosterone‑secreting adenoma", "Bilateral adrenal hyperplasia", "Both A and B", "Both B and C"],
+              correct: 4,
+              exp: "Primary aldosteronism is most often due to adrenal adenoma (Conn) or bilateral hyperplasia." },
+            { q: "Addison disease with hyperpigmentation indicates:",
+              opts: ["Secondary adrenal insufficiency", "Primary adrenal insufficiency", "Pituitary failure", "Iatrogenic steroid use", "ACTH deficiency"],
+              correct: 1,
+              exp: "Hyperpigmentation in primary adrenal insufficiency is due to high ACTH (stimulates melanocytes)." },
+            { q: "Pheochromocytoma is associated with all EXCEPT:",
+              opts: ["Hypertension (often episodic)", "Palpitations", "Weight gain", "Headache", "Sweating"],
+              correct: 2,
+              exp: "Pheochromocytoma presents with weight loss due to increased metabolism." },
+            { q: "Type 1 diabetes is characterized by:",
+              opts: ["Insulin resistance", "Autoimmune β‑cell destruction", "Amylin deposits in islets", "Obesity", "Ketoacidosis rare"],
+              correct: 1,
+              exp: "Type 1 DM is autoimmune destruction of β‑cells, leading to absolute insulin deficiency." },
+            { q: "Insulinoma classically presents with:",
+              opts: ["Whipple triad (hypoglycemia, symptoms, relief with glucose)", "Diabetes", "Steatorrhea", "Peptic ulcers", "Diarrhea"],
+              correct: 0,
+              exp: "Insulinoma causes hypoglycemia, often with neuroglycopenic symptoms." },
+            { q: "Zollinger‑Ellison syndrome is caused by:",
+              opts: ["Gastrinoma", "VIPoma", "Glucagonoma", "Somatostatinoma", "Insulinoma"],
+              correct: 0,
+              exp: "Gastrinoma causes recurrent peptic ulcers and diarrhea." },
+            { q: "MEN2A includes medullary thyroid carcinoma, pheochromocytoma, and:",
+              opts: ["Parathyroid adenoma", "Pituitary adenoma", "Pancreatic NET", "Mucosal neuromas", "Marfanoid habitus"],
+              correct: 0,
+              exp: "MEN2A: MTC + pheochromocytoma + parathyroid hyperplasia/adenoma." },
+            { q: "MEN2B is characterized by medullary thyroid carcinoma, pheochromocytoma, and:",
+              opts: ["Parathyroid hyperplasia", "Mucosal neuromas, marfanoid habitus", "Pituitary adenoma", "Pancreatic tumors", "Carcinoid tumors"],
+              correct: 1,
+              exp: "MEN2B includes MTC, pheochromocytoma, mucosal neuromas, and marfanoid features; no parathyroid involvement." },
+            { q: "The most common thyroid cancer is:",
+              opts: ["Papillary", "Follicular", "Medullary", "Anaplastic", "Lymphoma"],
+              correct: 0,
+              exp: "Papillary carcinoma accounts for about 80% of thyroid cancers." },
+            { q: "Orphan Annie nuclei are characteristic of:",
+              opts: ["Papillary thyroid carcinoma", "Follicular thyroid carcinoma", "Medullary thyroid carcinoma", "Hashimoto thyroiditis", "Graves disease"],
+              correct: 0,
+              exp: "Papillary carcinoma has clear nuclei with intranuclear grooves (Orphan Annie)." },
+            { q: "Graves ophthalmopathy is due to:",
+              opts: ["TSH receptor antibodies stimulating orbital fibroblasts", "Thyroid hormone toxicity", "Iodine deficiency", "T cell infiltration", "Amyloid deposition"],
+              correct: 0,
+              exp: "TSH receptor antibodies cross‑react with orbital fibroblasts, causing inflammation and edema." },
+            { q: "Water‑clear cell hyperplasia of the parathyroid is associated with:",
+              opts: ["Primary hyperplasia", "Secondary hyperplasia", "Tertiary hyperplasia", "Parathyroid adenoma", "Parathyroid carcinoma"],
+              correct: 1,
+              exp: "Secondary hyperparathyroidism (e.g., renal failure) often causes water‑clear cell hyperplasia." },
+            { q: "Nelson syndrome occurs after:",
+              opts: ["Bilateral adrenalectomy for Cushing disease", "Pituitary radiation", "Adrenal adenoma resection", "Removal of pheochromocytoma", "Thyroidectomy"],
+              correct: 0,
+              exp: "After bilateral adrenalectomy for Cushing disease, an ACTH‑secreting pituitary adenoma may enlarge (Nelson syndrome)." },
+            { q: "Schmidt syndrome is:",
+              opts: ["Addison + type 1 diabetes", "Addison + autoimmune thyroid disease", "Autoimmune thyroid + type 1 diabetes", "Addison + Graves", "Addison + vitiligo"],
+              correct: 1,
+              exp: "Schmidt syndrome is type 2 autoimmune polyglandular syndrome: Addison + autoimmune thyroid disease (Hashimoto or Graves)." },
+            { q: "Ectopic ACTH syndrome is most commonly associated with:",
+              opts: ["Small cell lung cancer", "Bronchial carcinoid", "Pancreatic NET", "Medullary thyroid cancer", "Pheochromocytoma"],
+              correct: 0,
+              exp: "Small cell lung cancer is the most common cause of ectopic ACTH." },
+            { q: "Pituitary apoplexy is a complication of:",
+              opts: ["Prolactinoma", "Pituitary adenoma (hemorrhage)", "Craniopharyngioma", "Meningioma", "Sheehan syndrome"],
+              correct: 1,
+              exp: "Pituitary apoplexy is sudden hemorrhage into a pituitary adenoma, causing headache, visual loss, and hypopituitarism." },
+            { q: "Craniopharyngioma is a tumor arising from:",
+              opts: ["Rathke's pouch remnants", "Anterior pituitary", "Posterior pituitary", "Hypothalamus", "Pineal gland"],
+              correct: 0,
+              exp: "Craniopharyngiomas derive from Rathke's pouch epithelium; often calcify." },
+            { q: "Sipple syndrome refers to:",
+              opts: ["MEN1", "MEN2A", "MEN2B", "MEN3", "MEN4"],
+              correct: 1,
+              exp: "Sipple syndrome is another name for MEN2A." },
+            { q: "Wermer syndrome is:",
+              opts: ["MEN1", "MEN2A", "MEN2B", "MEN3", "MEN4"],
+              correct: 0,
+              exp: "Wermer syndrome is MEN1." },
+            { q: "A pancreatic neuroendocrine tumor associated with watery diarrhea, hypokalemia, achlorhydria is:",
+              opts: ["Insulinoma", "Gastrinoma", "VIPoma", "Glucagonoma", "Somatostatinoma"],
+              correct: 2,
+              exp: "VIPoma secretes vasoactive intestinal peptide, causing WDHA syndrome." },
+            { q: "Necrolytic migratory erythema is characteristic of:",
+              opts: ["Glucagonoma", "VIPoma", "Gastrinoma", "Somatostatinoma", "Insulinoma"],
+              correct: 0,
+              exp: "Glucagonoma causes a characteristic rash – necrolytic migratory erythema." },
+            { q: "Somatostatinoma can cause all EXCEPT:",
+              opts: ["Diabetes mellitus", "Gallstones", "Steatorrhea", "Hypoglycemia", "Weight loss"],
+              correct: 3,
+              exp: "Somatostatin inhibits insulin and glucagon, leading to mild diabetes, not hypoglycemia." },
+            { q: "Multiple endocrine neoplasia type 1 (MEN1) classically includes:",
+              opts: ["Parathyroid adenoma, pancreatic NET, pituitary adenoma", "Medullary thyroid cancer, pheochromocytoma, parathyroid adenoma", "Medullary thyroid cancer, pheochromocytoma, mucosal neuromas", "Pituitary adenoma, pheochromocytoma, pancreatic NET", "Parathyroid adenoma, medullary thyroid cancer, adrenal adenoma"],
+              correct: 0,
+              exp: "MEN1 triad: parathyroid (most common), pancreatic NET (gastrinoma, insulinoma), pituitary." },
+            { q: "A thyroid nodule with psammoma bodies on histology is most likely:",
+              opts: ["Follicular adenoma", "Papillary carcinoma", "Medullary carcinoma", "Anaplastic carcinoma", "Hurthle cell adenoma"],
+              correct: 1,
+              exp: "Psammoma bodies are concentric calcified structures common in papillary thyroid carcinoma." },
+            { q: "Hashimoto thyroiditis is associated with increased risk of:",
+              opts: ["Papillary carcinoma", "Follicular carcinoma", "Medullary carcinoma", "Anaplastic carcinoma", "Thyroid lymphoma"],
+              correct: 4,
+              exp: "Hashimoto thyroiditis predisposes to thyroid lymphoma (and rarely papillary cancer)." },
+            { q: "Which of the following is a feature of Plummer disease (toxic multinodular goiter)?",
+              opts: ["Diffusely hyperplastic gland", "Hyperfunctioning nodules, usually in elderly", "Exophthalmos", "Pretibial myxedema", "High TSH receptor antibodies"],
+              correct: 1,
+              exp: "Plummer disease is toxic multinodular goiter; no ophthalmopathy; TSI negative." },
+            { q: "Riedel thyroiditis is characterized by:",
+              opts: ["Granulomatous inflammation", "Fibrous invasion of thyroid and surrounding tissues", "Lymphocytic infiltration with germinal centers", "Scalloped colloid", "Hurthle cells"],
+              correct: 1,
+              exp: "Riedel thyroiditis is a rare fibrosing process that can mimic cancer." },
+            { q: "Watery diarrhea, hypokalemia, and achlorhydria (WDHA) syndrome is most often due to:",
+              opts: ["VIPoma", "Gastrinoma", "Glucagonoma", "Somatostatinoma", "Insulinoma"],
+              correct: 0,
+              exp: "VIPoma secretes VIP, leading to WDHA." },
+            { q: "A patient with episodic hypertension, headache, and palpitations; urine shows elevated VMA. The most likely diagnosis is:",
+              opts: ["Pheochromocytoma", "Cushing syndrome", "Conn syndrome", "Addison disease", "Renal artery stenosis"],
+              correct: 0,
+              exp: "Pheochromocytoma presents with catecholamine excess; urine VMA increased." },
+            { q: "The most common cause of Cushing syndrome is:",
+              opts: ["Pituitary adenoma", "Adrenal adenoma", "Ectopic ACTH", "Iatrogenic steroids", "Adrenal carcinoma"],
+              correct: 3,
+              exp: "Iatrogenic steroids are the most common cause; endogenous causes: pituitary adenoma (Cushing disease) is most common." },
+            { q: "Adrenal myelolipoma is a benign tumor composed of:",
+              opts: ["Fat and hematopoietic tissue", "Lipid‑rich cortical cells", "Chromaffin cells", "Ganglioneuroma", "Fibrous tissue"],
+              correct: 0,
+              exp: "Myelolipoma contains mature adipose and hematopoietic elements." },
+            { q: "Adrenocortical carcinoma is often associated with:",
+              opts: ["Small size (<2 cm)", "Excess hormone secretion (often mixed)", "Good prognosis", "No metastases", "Young age only"],
+              correct: 1,
+              exp: "Adrenocortical carcinoma is usually large, may secrete multiple hormones, and has poor prognosis." },
+            { q: "The most common cause of hypoglycemia in a non‑diabetic adult is:",
+              opts: ["Insulinoma", "Factitious hypoglycemia", "Adrenal insufficiency", "Liver failure", "Sepsis"],
+              correct: 1,
+              exp: "Factitious use of insulin or sulfonylureas is a common cause; insulinoma is rarer." },
+            { q: "Polycystic ovary syndrome (PCOS) is characterized by all EXCEPT:",
+              opts: ["Hyperandrogenism", "Oligo‑anovulation", "Polycystic ovaries", "Elevated FSH", "Insulin resistance"],
+              correct: 3,
+              exp: "In PCOS, LH is often elevated, FSH normal or low." },
+            { q: "Klinefelter syndrome karyotype is:",
+              opts: ["XO", "XXY", "XYY", "XX", "XY"],
+              correct: 1,
+              exp: "Klinefelter syndrome is 47,XXY." },
+            { q: "Turner syndrome karyotype is:",
+              opts: ["XO", "XXY", "XYY", "XX", "XY"],
+              correct: 0,
+              exp: "Turner syndrome is 45,XO." },
+            { q: "Testicular tumor that secretes hCG and may cause gynecomastia:",
+              opts: ["Seminoma", "Embryonal carcinoma", "Choriocarcinoma", "Yolk sac tumor", "Teratoma"],
+              correct: 2,
+              exp: "Choriocarcinoma produces hCG, causing gynecomastia." },
+            { q: "Ovarian tumor associated with estrogen production and precocious puberty:",
+              opts: ["Dysgerminoma", "Granulosa cell tumor", "Sertoli‑Leydig cell tumor", "Teratoma", "Mucinous cystadenoma"],
+              correct: 1,
+              exp: "Granulosa cell tumor secretes estrogen, can cause precocious puberty or postmenopausal bleeding." },
+            { q: "Carcinoid syndrome (flushing, diarrhea, wheezing) typically occurs when:",
+              opts: ["Carcinoid tumor is in appendix", "Carcinoid tumor is in lung", "Liver metastases present (bypass hepatic degradation)", "Tumor secretes serotonin only", "Tumor is well differentiated"],
+              correct: 2,
+              exp: "Carcinoid syndrome occurs when vasoactive substances reach systemic circulation, usually with liver metastases." }
+        ];
+
+        // Add more to reach 60+
+        const extra = [
+            { q: "Insulin resistance in type 2 diabetes is associated with which histologic finding in islets?",
+              opts: ["Lymphocytic infiltration", "Amylin deposition (amyloid)", "Beta‑cell necrosis", "Alpha‑cell hyperplasia", "Fibrosis"],
+              correct: 1,
+              exp: "Amyloid deposits (amylin) are common in type 2 diabetes islets." },
+            { q: "The most common cause of primary adrenal insufficiency in developed countries is:",
+              opts: ["Tuberculosis", "Metastatic cancer", "Autoimmune adrenalitis", "Fungal infection", "Adrenal hemorrhage"],
+              correct: 2,
+              exp: "Autoimmune destruction (Addison disease) is most common; TB is common in developing countries." },
+            { q: "Which of the following is a feature of multiple endocrine neoplasia type 2B?",
+              opts: ["Marfanoid habitus", "Mucosal neuromas", "Medullary thyroid carcinoma", "Pheochromocytoma", "All of the above"],
+              correct: 4,
+              exp: "MEN2B includes all these features plus no parathyroid involvement." },
+            { q: "A patient with bilateral pheochromocytoma, medullary thyroid carcinoma, and parathyroid hyperplasia likely has:",
+              opts: ["MEN1", "MEN2A", "MEN2B", "Von Hippel‑Lindau", "Neurofibromatosis"],
+              correct: 1,
+              exp: "MEN2A includes MTC, pheochromocytoma, and parathyroid hyperplasia." },
+            { q: "The gene mutated in MEN2 is:",
+              opts: ["RET", "MEN1", "VHL", "NF1", "SDHB"],
+              correct: 0,
+              exp: "MEN2 is caused by RET proto‑oncogene mutations." },
+            { q: "The most common pancreatic neuroendocrine tumor is:",
+              opts: ["Insulinoma", "Gastrinoma", "VIPoma", "Glucagonoma", "Somatostatinoma"],
+              correct: 0,
+              exp: "Insulinoma is the most common functional pancreatic NET." },
+            { q: "Zollinger‑Ellison syndrome is associated with:",
+              opts: ["Gastrinoma in duodenum/pancreas", "Gastric carcinoid", "Pernicious anemia", "Atrophic gastritis", "H. pylori infection"],
+              correct: 0,
+              exp: "Gastrinoma causes ZES; often in duodenum, part of MEN1." },
+            { q: "Primary hyperparathyroidism due to four‑gland hyperplasia is most often:",
+              opts: ["Sporadic", "Familial (MEN1, MEN2A)", "Associated with lithium", "Due to radiation", "Malignant"],
+              correct: 1,
+              exp: "Four‑gland hyperplasia often occurs in MEN syndromes." },
+            { q: "Lithium therapy can cause:",
+              opts: ["Hypoparathyroidism", "Hyperparathyroidism", "Hyperthyroidism", "Hypothyroidism", "Both B and D"],
+              correct: 4,
+              exp: "Lithium can cause both hyperparathyroidism (↑PTH) and hypothyroidism." }
+        ];
+
+        const allQuestions = questions.concat(extra); // now >60
+
+        let shuffled = allQuestions.sort(()=>0.5-Math.random());
+        let currentIndex = 0;
+        let userAnswers = new Array(shuffled.length).fill(null);
+        let showExplanation = new Array(shuffled.length).fill(false);
+        const letters = ['A','B','C','D','E'];
+
+        function render() {
+            const q = shuffled[currentIndex];
+            document.getElementById('questionText').innerText = q.q;
+            let optsHtml = '';
+            q.opts.forEach((opt, idx) => {
+                let cls = 'option';
+                if (userAnswers[currentIndex] === idx) cls += ' selected';
+                if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                    if (idx === q.correct) cls += ' correct';
+                    else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+                }
+                optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+            });
+            document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    let idx = parseInt(opt.dataset.idx);
+                    if (userAnswers[currentIndex] === idx) {
+                        userAnswers[currentIndex] = null;
+                        showExplanation[currentIndex] = false;
+                    } else {
+                        userAnswers[currentIndex] = idx;
+                        showExplanation[currentIndex] = true;
+                    }
+                    render();
+                });
+            });
+
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+                document.getElementById('explanation').classList.add('show');
+            } else {
+                document.getElementById('explanation').classList.remove('show');
+            }
+
+            document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+            let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+            document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+            document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+            let dots = '';
+            for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+                let cls = 'dot';
+                if (i === currentIndex) cls += ' active';
+                if (userAnswers[i] !== null) cls += ' answered';
+                dots += `<div class="${cls}" data-index="${i}"></div>`;
+            }
+            document.getElementById('dotsContainer').innerHTML = dots;
+            document.querySelectorAll('.dot').forEach(d => {
+                d.addEventListener('click', () => {
+                    let idx = parseInt(d.dataset.index);
+                    if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                        currentIndex = idx;
+                        render();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+        render();
+    </script>
+</body>
+</html>

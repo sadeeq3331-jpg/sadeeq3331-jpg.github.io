@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endocrinology Physiology · Complete Textbook</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
+        .top-bar {
+            background:linear-gradient(145deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
+        .top-bar .author {
+            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
+            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
+            font-weight:500; font-size:1rem;
+        }
+        .menu-toggle {
+            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
+            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+        }
+        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+        .toc-sidebar {
+            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
+            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
+            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+        }
+        .toc-sidebar.open { left:0; }
+        .toc-sidebar h2 {
+            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
+            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+        }
+        .toc-section { margin-bottom:1.5rem; }
+        .toc-section h3 { font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem; padding-left:0.5rem; }
+        .chapter-list { list-style:none; }
+        .chapter-item { margin-bottom:0.3rem; }
+        .chapter-item a {
+            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
+            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
+            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .chapter-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
+        .chapter-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .reader-panel {
+            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
+            background:white; min-height:calc(100vh - 5rem);
+        }
+        .reader-panel.shifted { margin-left:320px; }
+        .chapter-content { max-width:1000px; margin:0 auto; }
+        .chapter-title {
+            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:#0a2942;
+            margin-bottom:0.5rem; border-bottom:3px solid #ffd966; padding-bottom:0.5rem;
+            display:flex; align-items:center; gap:1rem;
+        }
+        .chapter-title i { font-size:2.5rem; color:#2c7cb0; }
+        .section-card {
+            background:#ffffff; border-radius:20px; padding:2rem; margin:2rem 0;
+            box-shadow:0 8px 20px -10px rgba(10,41,66,0.1); border:1px solid #eef6ff;
+        }
+        .section-heading {
+            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:#0a2942;
+            margin-bottom:1.5rem; border-left:6px solid #ffd966; padding-left:20px;
+        }
+        .subsection-heading {
+            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:#154f78;
+            margin:1.5rem 0 1rem 0;
+        }
+        .body-text {
+            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:#34495e; line-height:1.7; margin-bottom:1.2rem;
+        }
+        .body-text strong { color:#0a2942; }
+        .definition-box {
+            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #2c7cb0;
+        }
+        .clinical-correlation {
+            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #f39c12;
+        }
+        .memory-aid {
+            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border-left:6px solid #27ae60;
+        }
+        .key-points {
+            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
+            border:2px dashed #8e44ad;
+        }
+        .key-points ul { list-style:none; }
+        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
+        .key-points li i { color:#8e44ad; }
+        .premium-table {
+            width:100%; border-collapse:collapse; background:white; border-radius:20px; overflow:hidden;
+            box-shadow:0 10px 30px -10px rgba(0,0,0,0.1); margin:2rem 0;
+        }
+        .premium-table th { background:#0a2942; color:white; padding:1rem; text-align:left; }
+        .premium-table td { padding:1rem; border-bottom:1px solid #ecf0f1; }
+        .premium-table tr:last-child td { border-bottom:none; }
+        .diagram-placeholder {
+            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
+            border:2px dashed #b9d5f0; text-align:center; color:#2c7cb0;
+        }
+        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+        .footer-note {
+            margin-top:4rem; font-style:italic; color:#7f8c8d; text-align:right;
+            border-top:1px solid #ecf0f1; padding-top:1.5rem;
+        }
+        @media (max-width:1000px) {
+            .toc-sidebar { width:280px; }
+            .reader-panel.shifted { margin-left:280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-droplet"></i>
+        <h1>Endocrinology Physiology</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="toc-sidebar" id="sidebar">
+        <h2><i class="fas fa-list-ul"></i> Contents</h2>
+        <div class="toc-section">
+            <ul class="chapter-list">
+                <li><a href="#ch1"><i class="fas fa-info-circle"></i> 1. Overview of Endocrine System</a></li>
+                <li><a href="#ch2"><i class="fas fa-brain"></i> 2. Hypothalamus & Pituitary</a></li>
+                <li><a href="#ch3"><i class="fas fa-shield"></i> 3. Thyroid Gland</a></li>
+                <li><a href="#ch4"><i class="fas fa-bone"></i> 4. Parathyroid & Calcium Homeostasis</a></li>
+                <li><a href="#ch5"><i class="fas fa-bolt"></i> 5. Adrenal Gland</a></li>
+                <li><a href="#ch6"><i class="fas fa-heart"></i> 6. Endocrine Pancreas & Diabetes</a></li>
+                <li><a href="#ch7"><i class="fas fa-mars"></i> 7. Male Reproductive Hormones</a></li>
+                <li><a href="#ch8"><i class="fas fa-venus"></i> 8. Female Reproductive Hormones</a></li>
+                <li><a href="#ch9"><i class="fas fa-moon"></i> 9. Pineal Gland & Circadian Rhythms</a></li>
+                <li><a href="#ch10"><i class="fas fa-flask"></i> 10. Local Hormones (Eicosanoids, etc.)</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="reader-panel" id="readerPanel">
+        <!-- CHAPTER 1: OVERVIEW -->
+        <section id="ch1" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-info-circle"></i> 1. Overview of the Endocrine System</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The endocrine system consists of glands that secrete hormones into the bloodstream to regulate distant target organs. Hormones are chemical messengers that influence metabolism, growth, reproduction, and homeostasis.</p>
+                </div>
+                <div class="subsection-heading">Classification of Hormones</div>
+                <ul>
+                    <li><strong>Peptide hormones:</strong> Water‑soluble, act via surface receptors (e.g., insulin, GH, TRH).</li>
+                    <li><strong>Steroid hormones:</strong> Lipid‑soluble, derived from cholesterol, act via intracellular receptors (e.g., cortisol, aldosterone, sex steroids).</li>
+                    <li><strong>Amine hormones:</strong> Derived from tyrosine (thyroid hormones, catecholamines).</li>
+                </ul>
+                <div class="subsection-heading">Feedback Loops</div>
+                <div class="body-text">
+                    <p>Most endocrine axes are regulated by negative feedback. For example, thyroid hormone inhibits TRH and TSH secretion. Positive feedback is rare (e.g., LH surge before ovulation).</p>
+                </div>
+                <div class="diagram-placeholder"><i class="fas fa-project-diagram"></i> [Diagram: Hypothalamic‑pituitary axis feedback loops]</div>
+                <div class="clinical-correlation">
+                    <p><strong>Pearl:</strong> Disorders can arise from hormone excess (e.g., Cushing's) or deficiency (e.g., Addison's).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: HYPOTHALAMUS & PITUITARY -->
+        <section id="ch2" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 2. Hypothalamus & Pituitary Gland</div>
+            <div class="section-card">
+                <div class="subsection-heading">Hypothalamic Releasing/Inhibiting Hormones</div>
+                <table class="premium-table">
+                    <thead><tr><th>Hypothalamic Hormone</th><th>Pituitary Effect</th></tr></thead>
+                    <tbody>
+                        <tr><td>TRH (thyrotropin‑releasing hormone)</td><td>↑ TSH, ↑ prolactin</td></tr>
+                        <tr><td>CRH (corticotropin‑releasing hormone)</td><td>↑ ACTH</td></tr>
+                        <tr><td>GnRH (gonadotropin‑releasing hormone)</td><td>↑ LH, ↑ FSH</td></tr>
+                        <tr><td>GHRH (growth hormone‑releasing hormone)</td><td>↑ GH</td></tr>
+                        <tr><td>Somatostatin (SS)</td><td>↓ GH, ↓ TSH</td></tr>
+                        <tr><td>Dopamine (PIF)</td><td>↓ prolactin</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Anterior Pituitary Hormones</div>
+                <ul>
+                    <li><strong>GH (growth hormone):</strong> Promotes growth via IGF‑1; increases protein synthesis, lipolysis, and blood glucose.</li>
+                    <li><strong>TSH (thyroid‑stimulating hormone):</strong> Stimulates thyroid hormone synthesis.</li>
+                    <li><strong>ACTH (adrenocorticotropic hormone):</strong> Stimulates adrenal cortisol release.</li>
+                    <li><strong>FSH & LH:</strong> Regulate gonadal function.</li>
+                    <li><strong>Prolactin:</strong> Stimulates milk production; inhibited by dopamine.</li>
+                </ul>
+                <div class="subsection-heading">Posterior Pituitary Hormones</div>
+                <ul>
+                    <li><strong>ADH (vasopressin):</strong> Increases water reabsorption in collecting ducts.</li>
+                    <li><strong>Oxytocin:</strong> Stimulates uterine contractions and milk ejection.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Disorders:</strong> Hypopituitarism (Sheehan's), acromegaly, prolactinoma, diabetes insipidus.</p>
+                </div>
+                <div class="memory-aid">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Memory aid:</strong> “GOAT FLAP” for anterior pituitary: GH, Oxytocin (actually posterior), ACTH, TSH, FSH, LH, Prolactin (but oxytocin is posterior). Better: “FLAT PiG” – FSH, LH, ACTH, TSH, Prolactin, GH.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: THYROID GLAND -->
+        <section id="ch3" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield"></i> 3. Thyroid Gland</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Thyroid produces T₃ (triiodothyronine) and T₄ (thyroxine). T₃ is the active form; T₄ is a prohormone. Synthesis requires iodine and thyroglobulin.</p>
+                </div>
+                <div class="subsection-heading">Synthesis Steps (Iodine trapping, oxidation, iodination, coupling)</div>
+                <ul>
+                    <li><strong>Iodide trapping:</strong> NIS (Na/I symporter) concentrates iodide in follicular cells.</li>
+                    <li><strong>Oxidation:</strong> Thyroid peroxidase (TPO) oxidizes I⁻ to I⁰.</li>
+                    <li><strong>Iodination:</strong> Tyrosine residues on thyroglobulin become MIT and DIT.</li>
+                    <li><strong>Coupling:</strong> MIT + DIT → T₃; DIT + DIT → T₄.</li>
+                </ul>
+                <div class="subsection-heading">Regulation</div>
+                <div class="body-text">
+                    <p>Hypothalamus releases TRH → anterior pituitary releases TSH → TSH stimulates thyroid hormone synthesis and release. Thyroid hormones exert negative feedback on TRH and TSH.</p>
+                </div>
+                <div class="subsection-heading">Physiologic Effects</div>
+                <ul>
+                    <li>Increase basal metabolic rate, calorigenesis, heart rate, sensitivity to catecholamines.</li>
+                    <li>Promote growth and CNS development (critical in infancy).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Disorders:</strong> Hyperthyroidism (Graves’ disease), hypothyroidism (Hashimoto’s, iodine deficiency), goiter.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: PARATHYROID & CALCIUM -->
+        <section id="ch4" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bone"></i> 4. Parathyroid & Calcium Homeostasis</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Calcium homeostasis is regulated by parathyroid hormone (PTH), vitamin D, and calcitonin.</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Hormone</th><th>Source</th><th>Effect on Ca²⁺</th></tr></thead>
+                    <tbody>
+                        <tr><td>PTH</td><td>Parathyroid chief cells</td><td>↑ serum Ca²⁺ (bone resorption, kidney reabsorption, ↑ calcitriol)</td></tr>
+                        <tr><td>Calcitriol (1,25(OH)₂D)</td><td>Kidney (activated)</td><td>↑ intestinal Ca²⁺ and PO₄³⁻ absorption</td></tr>
+                        <tr><td>Calcitonin</td><td>Parafollicular cells (C cells) of thyroid</td><td>↓ serum Ca²⁺ (inhibits bone resorption)</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">PTH Actions</div>
+                <ul>
+                    <li><strong>Bone:</strong> Stimulates osteoclast activity (indirectly via RANKL on osteoblasts) → Ca²⁺ release.</li>
+                    <li><strong>Kidney:</strong> Increases Ca²⁺ reabsorption in DCT, inhibits PO₄³⁻ reabsorption (phosphaturia), and stimulates 1α‑hydroxylase → calcitriol.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Disorders:</strong> Hyperparathyroidism (↑PTH → hypercalcemia), hypoparathyroidism (↓PTH → hypocalcemia, tetany). Vitamin D deficiency → rickets/osteomalacia.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 5: ADRENAL GLAND -->
+        <section id="ch5" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bolt"></i> 5. Adrenal Gland</div>
+            <div class="section-card">
+                <div class="subsection-heading">Adrenal Cortex (Zones)</div>
+                <ul>
+                    <li><strong>Zona glomerulosa:</strong> Mineralocorticoids (aldosterone) – regulated by angiotensin II and K⁺; ↑ Na⁺ reabsorption, K⁺ excretion.</li>
+                    <li><strong>Zona fasciculata:</strong> Glucocorticoids (cortisol) – regulated by ACTH; ↑ blood glucose, anti‑inflammatory, catabolic.</li>
+                    <li><strong>Zona reticularis:</strong> Androgens (DHEA) – weak androgens, converted peripherally.</li>
+                </ul>
+                <div class="subsection-heading">Adrenal Medulla</div>
+                <div class="body-text">
+                    <p>Secretes catecholamines (epinephrine 80%, norepinephrine 20%) in response to sympathetic stimulation (fight‑or‑flight).</p>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Disorders:</strong> Cushing's syndrome (cortisol excess), Addison's disease (cortisol/aldosterone deficiency), Conn's syndrome (aldosteronism), pheochromocytoma (catecholamine excess).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 6: PANCREAS & DIABETES -->
+        <section id="ch6" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-heart"></i> 6. Endocrine Pancreas & Diabetes</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The islets of Langerhans contain α‑cells (glucagon), β‑cells (insulin), δ‑cells (somatostatin), and PP‑cells (pancreatic polypeptide).</p>
+                </div>
+                <table class="premium-table">
+                    <thead><tr><th>Hormone</th><th>Effects</th></tr></thead>
+                    <tbody>
+                        <tr><td>Insulin</td><td>↑ glucose uptake (muscle, fat), ↑ glycogenesis, ↑ lipogenesis, ↑ protein synthesis, ↓ gluconeogenesis, ↓ lipolysis, ↓ ketogenesis.</td></tr>
+                        <tr><td>Glucagon</td><td>↑ glycogenolysis, ↑ gluconeogenesis, ↑ lipolysis, ↑ ketogenesis – opposite of insulin.</td></tr>
+                        <tr><td>Somatostatin</td><td>Paracrine inhibitor of insulin and glucagon release.</td></tr>
+                    </tbody>
+                </table>
+                <div class="subsection-heading">Regulation of Insulin Release</div>
+                <ul>
+                    <li>Glucose enters β‑cells via GLUT2 → metabolized → ↑ATP/ADP ratio → closes K<sub>ATP</sub> channels → depolarization → opens voltage‑gated Ca²⁺ channels → insulin exocytosis.</li>
+                    <li>Also stimulated by incretins (GIP, GLP‑1).</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Diabetes mellitus:</strong> Type 1 (autoimmune β‑cell destruction), Type 2 (insulin resistance + relative deficiency). Complications: microvascular (retinopathy, nephropathy, neuropathy) and macrovascular.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 7: MALE REPRODUCTIVE HORMONES -->
+        <section id="ch7" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-mars"></i> 7. Male Reproductive Hormones</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>Hypothalamic GnRH stimulates pituitary LH and FSH.</p>
+                    <ul>
+                        <li><strong>LH</strong> acts on Leydig cells → testosterone.</li>
+                        <li><strong>FSH</strong> acts on Sertoli cells → spermatogenesis.</li>
+                        <li><strong>Testosterone</strong> promotes male secondary sex characteristics, spermatogenesis, anabolic effects. Negative feedback on LH.</li>
+                        <li><strong>Inhibin</strong> from Sertoli cells inhibits FSH.</li>
+                    </ul>
+                </div>
+                <div class="clinical-correlation">
+                    <p><strong>Disorders:</strong> Hypogonadism, Klinefelter syndrome (XXY), 5α‑reductase deficiency (impaired DHT synthesis).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 8: FEMALE REPRODUCTIVE HORMONES -->
+        <section id="ch8" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-venus"></i> 8. Female Reproductive Hormones</div>
+            <div class="section-card">
+                <div class="subsection-heading">Menstrual Cycle Phases</div>
+                <ul>
+                    <li><strong>Follicular phase:</strong> FSH stimulates follicle growth → estradiol from granulosa cells → endometrial proliferation. Estradiol positive feedback triggers LH surge.</li>
+                    <li><strong>Ovulation:</strong> LH surge triggers oocyte release.</li>
+                    <li><strong>Luteal phase:</strong> Corpus luteum secretes progesterone and estradiol → endometrial secretory phase. If no pregnancy, corpus luteum degenerates, hormone levels drop, menstruation.</li>
+                </ul>
+                <div class="subsection-heading">Hormones</div>
+                <ul>
+                    <li><strong>Estrogen:</strong> Proliferative effects, feedback on GnRH/LH/FSH (negative except mid‑cycle positive).</li>
+                    <li><strong>Progesterone:</strong> Secretory endometrium, thermogenic, maintains pregnancy.</li>
+                    <li><strong>hCG:</strong> From placenta, maintains corpus luteum in early pregnancy.</li>
+                </ul>
+                <div class="clinical-correlation">
+                    <p><strong>Disorders:</strong> PCOS, amenorrhea, menopause, infertility.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 9: PINEAL GLAND -->
+        <section id="ch9" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-moon"></i> 9. Pineal Gland & Circadian Rhythms</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p>The pineal gland secretes <strong>melatonin</strong>, which regulates circadian rhythms. Synthesis from serotonin is stimulated by darkness and inhibited by light (via retinohypothalamic tract and suprachiasmatic nucleus). Melatonin induces sleep and influences seasonal breeding in some animals.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 10: LOCAL HORMONES -->
+        <section id="ch10" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-flask"></i> 10. Local Hormones (Eicosanoids, etc.)</div>
+            <div class="section-card">
+                <div class="body-text">
+                    <p><strong>Eicosanoids:</strong> Derived from arachidonic acid via COX (prostaglandins, thromboxane, prostacyclin) or LOX (leukotrienes). Act locally as paracrine/autocrine signals.</p>
+                    <ul>
+                        <li><strong>Prostaglandins:</strong> Diverse effects: inflammation, pain, fever, cytoprotection (PGE₂), platelet aggregation (TXA₂), vasodilation (PGI₂).</li>
+                        <li><strong>Leukotrienes:</strong> Bronchoconstriction, chemotaxis.</li>
+                    </ul>
+                    <p><strong>Other local mediators:</strong> Histamine, serotonin, bradykinin, platelet‑activating factor.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Endocrinology Physiology · Teacher‑style explanations by Abubakar Sadeeq</div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const readerPanel = document.getElementById('readerPanel');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            readerPanel.classList.toggle('shifted');
+        });
+
+        document.querySelectorAll('.chapter-item a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (window.innerWidth < 1000) {
+                    sidebar.classList.remove('open');
+                    readerPanel.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
