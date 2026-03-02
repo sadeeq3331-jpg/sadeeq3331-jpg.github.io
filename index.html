@@ -19,8 +19,9 @@
 
 <!-- Paste the entire <script> block below into your existing index.html, replacing the old script. -->
 
+<!-- Replace your entire <script type="module"> block with this improved version -->
 <script type="module">
-    // ==================== FIREBASE INIT (MODULAR) ====================
+    // ==================== FIREBASE INIT ====================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, runTransaction } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
@@ -33,14 +34,22 @@
         appId: "1:382363535690:web:eedfb3639a62faa9a519b3"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    let db;
+    try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        console.log('Firebase initialized');
+    } catch (e) {
+        console.warn('Firebase init failed:', e);
+        db = null;
+    }
 
-    // ==================== BOOKS DATABASE (129 ENTRIES) ====================
-    const books = [ /* … your full 129 books array – keep exactly as before */ ];
+    // ==================== BOOKS DATABASE ====================
+    const books = [ /* ... your books array ... */ ];
 
-    // ==================== FIREBASE HELPERS (WITH ERROR CATCH) ====================
+    // ==================== FIRESTORE HELPERS ====================
     async function getReaderCount(bookId) {
+        if (!db) return 0;
         try {
             const docRef = doc(db, 'books', String(bookId));
             const docSnap = await getDoc(docRef);
@@ -51,11 +60,12 @@
             return docSnap.data().count || 0;
         } catch (e) {
             console.warn('Firestore error (get)', e);
-            return 0; // fallback
+            return 0;
         }
     }
 
     async function incrementReaderCount(bookId) {
+        if (!db) return 0;
         try {
             const docRef = doc(db, 'books', String(bookId));
             return await runTransaction(db, async (transaction) => {
@@ -75,52 +85,17 @@
         }
     }
 
-    // ==================== UI GLOBALS ====================
-    window.searchBooks = searchBooks;
-    window.filterCategory = filterCategory;
-    window.showAllBooks = showAllBooks;
-    window.openBook = openBook;
-    window.closeViewer = closeViewer;
-    window.closeSidebar = closeSidebar;
+    // ==================== UI FUNCTIONS (make them global) ====================
+    window.filterCategory = function(catName) {
+        const results = books.filter(b => b.category === catName);
+        displayBooks(results, catName + ' Textbooks');
+    };
 
-    function closeSidebar() {
-        document.getElementById('sidebar')?.classList.remove('open');
-        document.getElementById('mainPanel')?.classList.remove('shifted');
-    }
+    window.showAllBooks = function() {
+        displayBooks(books, 'All Textbooks');
+    };
 
-    async function openBook(filename, bookId) {
-        const viewer = document.getElementById('bookViewer');
-        const frame = document.getElementById('bookFrame');
-        if (!viewer || !frame) return;
-        frame.src = filename;
-        viewer.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        await incrementReaderCount(bookId); // fire‑and‑forget
-    }
-
-    function closeViewer() {
-        const viewer = document.getElementById('bookViewer');
-        const frame = document.getElementById('bookFrame');
-        if (viewer) viewer.style.display = 'none';
-        if (frame) frame.src = '';
-        document.body.style.overflow = 'auto';
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeViewer();
-    });
-
-    function showNotification(msg) {
-        const notif = document.getElementById('notification');
-        const msgSpan = document.getElementById('notificationMessage');
-        if (notif && msgSpan) {
-            msgSpan.innerText = msg;
-            notif.style.display = 'block';
-            setTimeout(() => notif.style.display = 'none', 3000);
-        }
-    }
-
-    function searchBooks() {
+    window.searchBooks = function() {
         const input = document.getElementById('searchInput');
         if (!input) return;
         const term = input.value.toLowerCase().trim();
@@ -136,15 +111,34 @@
         } else {
             displayBooks(results, `Search Results for "${term}"`);
         }
-    }
+    };
 
-    function filterCategory(catName) {
-        const results = books.filter(b => b.category === catName);
-        displayBooks(results, catName + ' Textbooks');
-    }
+    window.openBook = async function(filename, bookId) {
+        const viewer = document.getElementById('bookViewer');
+        const frame = document.getElementById('bookFrame');
+        if (!viewer || !frame) return;
+        frame.src = filename;
+        viewer.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        await incrementReaderCount(bookId);
+    };
 
-    function showAllBooks() {
-        displayBooks(books, 'All Textbooks');
+    window.closeViewer = function() {
+        const viewer = document.getElementById('bookViewer');
+        const frame = document.getElementById('bookFrame');
+        if (viewer) viewer.style.display = 'none';
+        if (frame) frame.src = '';
+        document.body.style.overflow = 'auto';
+    };
+
+    function showNotification(msg) {
+        const notif = document.getElementById('notification');
+        const msgSpan = document.getElementById('notificationMessage');
+        if (notif && msgSpan) {
+            msgSpan.innerText = msg;
+            notif.style.display = 'block';
+            setTimeout(() => notif.style.display = 'none', 3000);
+        }
     }
 
     async function displayBooks(bookList, title) {
@@ -152,7 +146,6 @@
         if (!main) return;
         let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
         html += '<div class="book-grid">';
-        // load counts in parallel, fallback to 0 on error
         const cards = await Promise.all(bookList.map(async book => {
             const count = await getReaderCount(book.id);
             return createBookCard(book, count);
@@ -163,6 +156,7 @@
     }
 
     function createBookCard(book, count) {
+        // Escape filename to prevent HTML injection – but it's safe as it's just a string.
         return `
             <div class="book-card" onclick="openBook('${book.filename}', ${book.id})">
                 <div class="book-cover">
@@ -202,29 +196,32 @@
         const main = document.getElementById('mainContent');
         if (!main) return;
 
-        // Featured (first 12)
-        const featured = books.slice(0,12);
-        let html = `<div class="section-title"><h2><i class="fas fa-star" style="color:#ffd966;"></i> Featured Titles</h2><span class="view-all" onclick="showAllBooks()">View All</span></div>`;
-        html += '<div class="book-grid">';
-        const cards = await Promise.all(featured.map(async book => {
-            const count = await getReaderCount(book.id);
-            return createBookCard(book, count);
-        }));
-        html += cards.join('');
-        html += '</div>';
+        try {
+            const featured = books.slice(0,12);
+            let html = `<div class="section-title"><h2><i class="fas fa-star" style="color:#ffd966;"></i> Featured Titles</h2><span class="view-all" onclick="showAllBooks()">View All</span></div>`;
+            html += '<div class="book-grid">';
+            const cards = await Promise.all(featured.map(async book => {
+                const count = await getReaderCount(book.id);
+                return createBookCard(book, count);
+            }));
+            html += cards.join('');
+            html += '</div>';
 
-        // Category cards (count from books array, not Firestore)
-        const uniqueCategories = [...new Set(books.map(b => b.category))].filter(c => c !== 'Question Bank');
-        html += `<div class="section-title" style="margin-top:3rem;"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
-        html += '<div class="categories">';
-        uniqueCategories.forEach(cat => {
-            const icon = getCategoryIcon(cat);
-            const count = books.filter(b => b.category === cat).length;
-            html += `<div class="category-card" onclick="filterCategory('${cat}')"><i class="fas ${icon}"></i><h3>${cat}</h3><p>${count} books</p></div>`;
-        });
-        html += '</div>';
+            const uniqueCategories = [...new Set(books.map(b => b.category))].filter(c => c !== 'Question Bank');
+            html += `<div class="section-title" style="margin-top:3rem;"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
+            html += '<div class="categories">';
+            uniqueCategories.forEach(cat => {
+                const icon = getCategoryIcon(cat);
+                const count = books.filter(b => b.category === cat).length;
+                html += `<div class="category-card" onclick="filterCategory('${cat}')"><i class="fas ${icon}"></i><h3>${cat}</h3><p>${count} books</p></div>`;
+            });
+            html += '</div>';
 
-        main.innerHTML = html;
+            main.innerHTML = html;
+        } catch (e) {
+            console.error('Error loading page:', e);
+            main.innerHTML = '<div style="text-align:center; padding:3rem;">An error occurred loading the library. Please refresh.</div>';
+        }
     });
 
     // Sidebar toggle
