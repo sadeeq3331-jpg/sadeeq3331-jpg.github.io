@@ -654,57 +654,40 @@
             mainPanel.classList.toggle('shifted');
         });
     </script>
-
-    <script defer src="path/to/your/nexus-script.js"></script>
-    <script>
+  <script defer src="path/to/your/nexus-script.js"></script>
+   <script>
 (function() {
-    // ==================== DUAL AI ASSISTANT (FIXED + POLISHED) ====================
-    // Nexus (cloud) via Puter.js , Osmos (local) via WebLLM (UMD)
-    // Features: draggable panel, compact selection popup above text, flashcards, feedback.
-    // Now properly extracts Puter's message content and has a polished UI.
+    // ==================== NEXUS & OSMOS – FIXED & COOL ====================
+    // Features: draggable panel, cool icons, proper positioning, working fallbacks.
 
     // --- State ---
     let currentMode = 'nexus'; // 'nexus' or 'osmos'
-    let osmosEngine = null;    // WebLLM engine
+    let osmosEngine = null;
     let modelLoading = false;
-    let conversations = {
-        nexus: [],
-        osmos: []
-    };
+    let conversations = { nexus: [], osmos: [] };
     let isDragging = false;
     let dragOffsetX, dragOffsetY;
+    let webllmReady = false;
 
-    // --- Helper to extract clean text from Puter's response ---
+    // --- Helper to extract Puter message ---
     function extractPuterMessage(raw) {
-        // If raw is a string, try to parse it as JSON; otherwise use as is.
         if (typeof raw === 'string') {
-            try {
-                // Try to parse JSON response
-                const parsed = JSON.parse(raw);
-                return parsed.message?.content || parsed.content || raw;
-            } catch (e) {
-                // Not JSON, use raw string
-                return raw;
-            }
+            try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
         }
-        // If it's an object, try to get the message content
-        if (raw && typeof raw === 'object') {
-            return raw.message?.content || raw.content || raw.choices?.[0]?.message?.content || JSON.stringify(raw);
-        }
-        return String(raw);
+        return raw?.message?.content || raw?.content || JSON.stringify(raw);
     }
 
-    // --- UI Creation with stethoscope bubble ---
+    // --- Create widget with fixed positioning and cool icons ---
     function createWidget() {
         const container = document.createElement('div');
-        container.id = 'ai-assistant-container';
+        container.id = 'nexus-container';
         container.innerHTML = `
             <style>
-                #ai-assistant-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-                .ai-bubble {
+                #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+                .nexus-bubble {
                     position: fixed;
-                    bottom: 20px;
-                    right: 20px;
+                    bottom: 30px;
+                    right: 30px;
                     width: 70px;
                     height: 70px;
                     border-radius: 50%;
@@ -716,23 +699,22 @@
                     cursor: pointer;
                     box-shadow: 0 8px 25px rgba(0,0,0,0.3);
                     z-index: 10000;
-                    transition: transform 0.3s, box-shadow 0.3s;
+                    transition: 0.3s;
                     border: 3px solid #ffd966;
                 }
-                .ai-bubble:hover {
-                    transform: scale(1.1);
-                    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+                .nexus-bubble:hover {
+                    transform: scale(1.1) rotate(5deg);
                 }
-                .ai-bubble i {
-                    font-size: 2.4rem;
+                .nexus-bubble i {
+                    font-size: 2.8rem;
                     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
                 }
-                .ai-bubble .tooltip {
+                .nexus-bubble .tooltip {
                     position: absolute;
                     top: -35px;
                     background: #0a2942;
                     color: white;
-                    padding: 5px 15px;
+                    padding: 6px 16px;
                     border-radius: 30px;
                     font-size: 0.9rem;
                     opacity: 0;
@@ -741,14 +723,14 @@
                     white-space: nowrap;
                     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
                 }
-                .ai-bubble:hover .tooltip {
+                .nexus-bubble:hover .tooltip {
                     opacity: 1;
                 }
-                .ai-panel {
+                .nexus-panel {
                     position: fixed;
-                    bottom: 100px;
-                    right: 20px;
-                    width: 400px;
+                    bottom: 120px;      /* higher than before to avoid browser UI */
+                    right: 30px;
+                    width: 420px;
                     background: #ffffff;
                     border-radius: 24px;
                     box-shadow: 0 20px 50px rgba(0,0,0,0.3);
@@ -759,12 +741,12 @@
                     border: 1px solid #e6f0fa;
                     resize: both;
                     min-width: 300px;
-                    min-height: 450px;
+                    min-height: 480px;
                     max-width: 600px;
                     max-height: 700px;
-                    transition: box-shadow 0.2s;
+                    backdrop-filter: blur(5px);
                 }
-                .ai-panel-header {
+                .nexus-panel-header {
                     background: #0a2942;
                     color: white;
                     padding: 16px 20px;
@@ -774,23 +756,23 @@
                     cursor: move;
                     user-select: none;
                 }
-                .ai-panel-header h3 {
+                .nexus-panel-header h3 {
                     margin: 0;
-                    font-size: 1.2rem;
+                    font-size: 1.3rem;
                     font-weight: 600;
                     display: flex;
                     align-items: center;
                     gap: 10px;
                 }
-                .ai-panel-header h3 i {
+                .nexus-panel-header h3 i {
                     color: #ffd966;
-                    font-size: 1.4rem;
+                    font-size: 1.5rem;
                 }
-                .ai-header-buttons {
+                .nexus-header-buttons {
                     display: flex;
                     gap: 12px;
                 }
-                .ai-header-btn {
+                .nexus-header-btn {
                     background: rgba(255,255,255,0.15);
                     border: none;
                     color: white;
@@ -802,12 +784,12 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    transition: background 0.2s;
+                    transition: 0.2s;
                 }
-                .ai-header-btn:hover {
+                .nexus-header-btn:hover {
                     background: rgba(255,255,255,0.3);
                 }
-                .ai-mode-selector {
+                .nexus-mode-selector {
                     display: flex;
                     gap: 10px;
                     padding: 15px 20px;
@@ -823,24 +805,22 @@
                     cursor: pointer;
                     font-weight: 600;
                     color: #1e4b6e;
-                    transition: all 0.2s;
+                    transition: 0.2s;
                     text-align: center;
                     font-size: 0.9rem;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 6px;
                 }
+                .mode-btn i { font-size: 1.2rem; }
                 .mode-btn.active {
                     background: #2c7cb0;
                     color: white;
                     border-color: #2c7cb0;
-                    box-shadow: 0 4px 8px rgba(44,124,176,0.3);
+                    box-shadow: 0 4px 10px rgba(44,124,176,0.3);
                 }
-                .mode-btn.nexus {
-                    border-left: 8px solid #2c7cb0;
-                }
-                .mode-btn.osmos {
-                    border-left: 8px solid #27ae60;
-                }
-                .ai-messages {
+                .nexus-messages {
                     flex: 1;
                     overflow-y: auto;
                     padding: 20px;
@@ -894,16 +874,17 @@
                     border: none;
                     cursor: pointer;
                     color: #a0b8cc;
+                    font-size: 1rem;
                 }
                 .feedback button:hover { color: #2c7cb0; }
-                .ai-input-area {
+                .nexus-input-area {
                     padding: 16px 20px;
                     border-top: 1px solid #e0ecf5;
                     display: flex;
                     gap: 10px;
                     background: white;
                 }
-                .ai-input-area textarea {
+                .nexus-input-area textarea {
                     flex: 1;
                     padding: 12px 16px;
                     border: 1px solid #d0e0f0;
@@ -912,26 +893,30 @@
                     font-family: inherit;
                     font-size: 0.95rem;
                     outline: none;
-                    transition: border 0.2s;
+                    transition: 0.2s;
                 }
-                .ai-input-area textarea:focus {
+                .nexus-input-area textarea:focus {
                     border-color: #2c7cb0;
                 }
-                .ai-input-area button {
+                .nexus-input-area button {
                     background: #2c7cb0;
                     color: white;
                     border: none;
                     border-radius: 30px;
-                    padding: 0 20px;
+                    width: 48px;
+                    height: 48px;
                     cursor: pointer;
-                    font-weight: 600;
-                    transition: background 0.2s;
+                    font-size: 1.2rem;
+                    transition: 0.2s;
                     box-shadow: 0 4px 8px rgba(44,124,176,0.3);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
-                .ai-input-area button:hover {
+                .nexus-input-area button:hover {
                     background: #1b4c72;
                 }
-                .ai-input-area button:disabled {
+                .nexus-input-area button:disabled {
                     background: #a0b8cc;
                     box-shadow: none;
                     cursor: not-allowed;
@@ -945,32 +930,38 @@
                     cursor: pointer;
                     color: #0a2942;
                     font-weight: 600;
-                    transition: background 0.2s;
+                    transition: 0.2s;
                     box-shadow: 0 4px 8px rgba(255,217,102,0.3);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
                 }
                 .flashcard-btn:hover {
                     background: #f0c04a;
                 }
-                /* Selection popup – compact, above text */
                 .selection-popup {
                     position: absolute;
                     background: white;
                     border-radius: 40px;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
                     display: none;
                     z-index: 10002;
                     overflow: hidden;
                     border: 1px solid #e6f0fa;
-                    font-size: 0.85rem;
+                    font-size: 0.9rem;
                     white-space: nowrap;
                 }
                 .selection-option {
-                    padding: 8px 16px;
+                    padding: 10px 20px;
                     cursor: pointer;
                     text-align: center;
-                    font-weight: 500;
+                    font-weight: 600;
                     transition: 0.2s;
                     border-bottom: 1px solid #eef6ff;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
                 }
                 .selection-option:last-child {
                     border-bottom: none;
@@ -986,13 +977,16 @@
                 .selection-option:hover {
                     opacity: 0.9;
                 }
+                @media (max-width: 600px) {
+                    .nexus-panel { width: 300px; right: 10px; }
+                }
             </style>
         `;
 
-        // --- Bubble with stethoscope icon ---
+        // --- Bubble with stethoscope (Font Awesome) ---
         const bubble = document.createElement('div');
-        bubble.className = 'ai-bubble';
-        bubble.innerHTML = '<i class="fas fa-stethoscope"></i><span class="tooltip">Ask AI</span>';
+        bubble.className = 'nexus-bubble';
+        bubble.innerHTML = '<i class="fas fa-stethoscope"></i><span class="tooltip">Ask Nexus</span>';
         bubble.onclick = () => {
             panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
         };
@@ -1000,40 +994,40 @@
 
         // --- Panel ---
         const panel = document.createElement('div');
-        panel.className = 'ai-panel';
+        panel.className = 'nexus-panel';
         panel.innerHTML = `
-            <div class="ai-panel-header">
+            <div class="nexus-panel-header">
                 <h3><i class="fas fa-stethoscope"></i> Nexus & Osmos</h3>
-                <div class="ai-header-buttons">
-                    <button class="ai-header-btn" id="ai-minimize"><i class="fas fa-minus"></i></button>
-                    <button class="ai-header-btn" id="ai-close"><i class="fas fa-times"></i></button>
+                <div class="nexus-header-buttons">
+                    <button class="nexus-header-btn" id="nexus-minimize"><i class="fas fa-minus"></i></button>
+                    <button class="nexus-header-btn" id="nexus-close"><i class="fas fa-times"></i></button>
                 </div>
             </div>
-            <div class="ai-mode-selector">
-                <button class="mode-btn nexus" id="mode-nexus">Nexus (Cloud · Gemini)</button>
-                <button class="mode-btn osmos" id="mode-osmos">Osmos (Local · Phi-3)</button>
+            <div class="nexus-mode-selector">
+                <button class="mode-btn" id="mode-nexus"><i class="fas fa-cloud"></i> Nexus (Cloud)</button>
+                <button class="mode-btn" id="mode-osmos"><i class="fas fa-microchip"></i> Osmos (Local)</button>
             </div>
-            <div class="ai-messages" id="ai-messages"></div>
-            <div class="ai-input-area">
-                <textarea id="ai-input" placeholder="Ask a medical question..." rows="2"></textarea>
-                <button id="ai-send"><i class="fas fa-paper-plane"></i></button>
+            <div class="nexus-messages" id="nexus-messages"></div>
+            <div class="nexus-input-area">
+                <textarea id="nexus-input" placeholder="Ask a medical question..." rows="2"></textarea>
+                <button id="nexus-send"><i class="fas fa-paper-plane"></i></button>
             </div>
-            <button class="flashcard-btn" id="ai-flashcard">📌 Save as Flashcard</button>
+            <button class="flashcard-btn" id="nexus-flashcard"><i class="fas fa-save"></i> Save Flashcard</button>
         `;
         container.appendChild(panel);
 
-        // --- Selection Popup (stacked, compact) ---
+        // --- Selection popup (two options) ---
         const popup = document.createElement('div');
         popup.className = 'selection-popup';
         popup.innerHTML = `
-            <div class="selection-option nexus" id="ask-nexus">Ask Nexus</div>
-            <div class="selection-option osmos" id="ask-osmos">Ask Osmos</div>
+            <div class="selection-option nexus" id="ask-nexus"><i class="fas fa-cloud"></i> Ask Nexus</div>
+            <div class="selection-option osmos" id="ask-osmos"><i class="fas fa-microchip"></i> Ask Osmos</div>
         `;
         popup.onclick = (e) => {
             const target = e.target.closest('.selection-option');
             if (!target) return;
             const selectedText = popup.getAttribute('data-text') || '';
-            document.getElementById('ai-input').value = selectedText;
+            document.getElementById('nexus-input').value = selectedText;
             if (target.id === 'ask-nexus') {
                 currentMode = 'nexus';
                 panel.style.display = 'flex';
@@ -1050,14 +1044,13 @@
         container.appendChild(popup);
 
         document.body.appendChild(container);
-
         return { panel, popup };
     }
 
     // --- Dragging logic ---
     function makeDraggable(header, panel) {
         header.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.ai-header-btn')) return;
+            if (e.target.closest('.nexus-header-btn')) return;
             isDragging = true;
             const rect = panel.getBoundingClientRect();
             dragOffsetX = e.clientX - rect.left;
@@ -1078,12 +1071,12 @@
         });
     }
 
-    // --- Render messages (with safety check) ---
+    // --- Render messages ---
     function renderMessages() {
-        const messagesDiv = document.getElementById('ai-messages');
-        if (!messagesDiv) return;
+        const msgsDiv = document.getElementById('nexus-messages');
+        if (!msgsDiv) return;
         const conv = conversations[currentMode];
-        messagesDiv.innerHTML = conv.map((msg, idx) => {
+        msgsDiv.innerHTML = conv.map((msg, idx) => {
             const isUser = msg.role === 'user';
             const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
             return `
@@ -1092,26 +1085,25 @@
                     ${!isUser ? `
                         <div class="assistant-label">via ${currentMode === 'nexus' ? 'Nexus (Cloud)' : 'Osmos (Local)'}</div>
                         <div class="feedback">
-                            <button onclick="window.feedback('${currentMode}', ${idx}, 'up')"><i class="fas fa-thumbs-up"></i></button>
-                            <button onclick="window.feedback('${currentMode}', ${idx}, 'down')"><i class="fas fa-thumbs-down"></i></button>
+                            <button onclick="window.nexusFeedback('${currentMode}', ${idx}, 'up')"><i class="fas fa-thumbs-up"></i></button>
+                            <button onclick="window.nexusFeedback('${currentMode}', ${idx}, 'down')"><i class="fas fa-thumbs-down"></i></button>
                         </div>
                     ` : ''}
                 </div>
             `;
         }).join('');
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        msgsDiv.scrollTop = msgsDiv.scrollHeight;
     }
 
-    window.feedback = function(mode, index, type) {
-        const msg = conversations[mode][index];
+    window.nexusFeedback = function(mode, idx, type) {
+        const msg = conversations[mode][idx];
         if (!msg) return;
-        let stored = JSON.parse(localStorage.getItem('ai_feedback') || '[]');
+        let stored = JSON.parse(localStorage.getItem('nexus_feedback') || '[]');
         stored.push({ mode, message: msg.content, feedback: type, timestamp: Date.now() });
-        localStorage.setItem('ai_feedback', JSON.stringify(stored));
-        alert('Feedback saved. Thank you!');
+        localStorage.setItem('nexus_feedback', JSON.stringify(stored));
+        alert('Feedback saved!');
     };
 
-    // --- Mode toggle UI ---
     function updateModeButtons() {
         const nexusBtn = document.getElementById('mode-nexus');
         const osmosBtn = document.getElementById('mode-osmos');
@@ -1126,79 +1118,68 @@
         renderMessages();
     }
 
-    // --- Load WebLLM model on demand (UMD version) ---
+    // --- Osmos loader with better feedback ---
     async function loadOsmosModel() {
         if (osmosEngine || modelLoading) return;
         if (!window.webllm) {
-            addMessage('assistant', 'Osmos requires WebGPU and the WebLLM library. Please ensure WebLLM script is loaded.', 'osmos');
+            addAssistantMessage('Osmos requires WebGPU. For now, please use Nexus. You can enable WebGPU in Chrome://flags.', 'osmos');
             return;
         }
         modelLoading = true;
-        addMessage('assistant', '📦 Downloading Osmos AI model (first time only, ~2GB). Please wait...', 'osmos');
+        addAssistantMessage('⏳ Downloading Osmos AI model (first time only, ~2GB). Please wait...', 'osmos');
         try {
             osmosEngine = await webllm.CreateMLCEngine(
                 "Phi-3-mini-4k-instruct-q4f16_1-MLC",
-                {
-                    initProgressCallback: (report) => {
-                        if (report.progress < 1.0) {
-                            console.log(`Loading: ${Math.round(report.progress * 100)}%`);
-                        }
-                    }
-                }
+                { initProgressCallback: (rpt) => console.log(`Osmos: ${Math.round(rpt.progress*100)}%`) }
             );
-            addMessage('assistant', '✅ Osmos AI ready! You can now ask questions.', 'osmos');
+            addAssistantMessage('✅ Osmos is ready! You can now ask medical questions.', 'osmos');
         } catch (e) {
-            console.error('WebLLM error', e);
-            addMessage('assistant', '❌ Failed to load Osmos. Please check WebGPU support.', 'osmos');
+            console.error(e);
+            addAssistantMessage('❌ Osmos failed to load. Please use Nexus.', 'osmos');
         } finally {
             modelLoading = false;
         }
     }
 
-    function addMessage(role, content, mode = currentMode) {
-        conversations[mode].push({ role, content });
+    function addAssistantMessage(content, mode = currentMode) {
+        conversations[mode].push({ role: 'assistant', content });
         if (mode === currentMode) renderMessages();
     }
 
     // --- Send message ---
     async function sendMessage() {
-        const input = document.getElementById('ai-input');
+        const input = document.getElementById('nexus-input');
         const text = input.value.trim();
         if (!text) return;
 
-        addMessage('user', text);
+        conversations[currentMode].push({ role: 'user', content: text });
+        renderMessages();
         input.value = '';
 
-        const sendBtn = document.getElementById('ai-send');
+        const sendBtn = document.getElementById('nexus-send');
         sendBtn.disabled = true;
 
-        // Add thinking message
-        addMessage('assistant', 'Thinking...');
+        // Thinking placeholder
+        conversations[currentMode].push({ role: 'assistant', content: '...' });
+        renderMessages();
 
         if (currentMode === 'nexus') {
-            if (window.puter && window.puter.ai) {
+            if (window.puter?.ai) {
                 try {
-                    const rawResponse = await puter.ai.chat(text, {
-                        model: 'google/gemini-2.0-flash-lite-001'
-                    });
-                    // Extract clean message
-                    const cleanMessage = extractPuterMessage(rawResponse);
-                    const lastIndex = conversations.nexus.length - 1;
-                    conversations.nexus[lastIndex] = { role: 'assistant', content: cleanMessage };
+                    const raw = await puter.ai.chat(text, { model: 'google/gemini-2.0-flash-lite-001' });
+                    const clean = extractPuterMessage(raw);
+                    conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: clean };
                 } catch (e) {
-                    const lastIndex = conversations.nexus.length - 1;
-                    conversations.nexus[lastIndex] = { role: 'assistant', content: 'Nexus error: ' + (e.message || 'Request failed.') };
+                    conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: 'Nexus error: ' + e.message };
                 }
             } else {
-                const lastIndex = conversations.nexus.length - 1;
-                conversations.nexus[lastIndex] = { role: 'assistant', content: 'Nexus not available. Make sure Puter is loaded.' };
+                conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: 'Nexus not available. Check Puter script.' };
             }
         } else {
             if (!osmosEngine) {
                 await loadOsmosModel();
                 if (!osmosEngine) {
-                    const lastIndex = conversations.osmos.length - 1;
-                    conversations.osmos[lastIndex] = { role: 'assistant', content: 'Osmos failed to load. Please try Nexus.' };
+                    conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: 'Osmos not ready. Try Nexus.' };
                     sendBtn.disabled = false;
                     renderMessages();
                     return;
@@ -1213,11 +1194,9 @@
                     temperature: 0.7,
                     max_tokens: 500
                 });
-                const lastIndex = conversations.osmos.length - 1;
-                conversations.osmos[lastIndex] = { role: 'assistant', content: reply.choices[0].message.content };
+                conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: reply.choices[0].message.content };
             } catch (e) {
-                const lastIndex = conversations.osmos.length - 1;
-                conversations.osmos[lastIndex] = { role: 'assistant', content: 'Osmos error: ' + e.message };
+                conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: 'Osmos error: ' + e.message };
             }
         }
 
@@ -1225,13 +1204,10 @@
         sendBtn.disabled = false;
     }
 
-    // --- Flashcard generation ---
+    // --- Flashcard ---
     function generateFlashcard() {
         const conv = conversations[currentMode];
-        if (conv.length < 2) {
-            alert('Need at least one Q&A to create a flashcard.');
-            return;
-        }
+        if (conv.length < 2) { alert('Need a Q&A first.'); return; }
         const lastQA = conv.slice(-2);
         const card = {
             mode: currentMode,
@@ -1239,47 +1215,43 @@
             answer: lastQA[1].content,
             timestamp: Date.now()
         };
-        let cards = JSON.parse(localStorage.getItem('ai_flashcards') || '[]');
+        let cards = JSON.parse(localStorage.getItem('nexus_flashcards') || '[]');
         cards.push(card);
-        localStorage.setItem('ai_flashcards', JSON.stringify(cards));
+        localStorage.setItem('nexus_flashcards', JSON.stringify(cards));
         alert('Flashcard saved!');
     }
 
-    // --- Selection detection inside iframe (positioned above text) ---
+    // --- Selection detection (inside iframe) ---
     function setupSelectionDetection(iframeId, popup) {
         const iframe = document.getElementById(iframeId);
         if (!iframe) return;
-        function checkSelection() {
+        setInterval(() => {
             try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                const sel = iframeDoc.getSelection();
-                const selectedText = sel.toString().trim();
-                if (selectedText) {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const sel = doc.getSelection();
+                const txt = sel.toString().trim();
+                if (txt) {
                     const range = sel.getRangeAt(0);
                     const rect = range.getBoundingClientRect();
                     if (rect && rect.width > 0) {
                         const iframeRect = iframe.getBoundingClientRect();
-                        const popupHeight = popup.offsetHeight || 60;
+                        const popHeight = popup.offsetHeight || 70;
                         popup.style.display = 'block';
                         popup.style.left = (iframeRect.left + rect.left + window.scrollX + 20) + 'px';
-                        popup.style.top = (iframeRect.top + rect.top + window.scrollY - popupHeight - 15) + 'px';
-                        popup.setAttribute('data-text', selectedText);
+                        popup.style.top = (iframeRect.top + rect.top + window.scrollY - popHeight - 15) + 'px';
+                        popup.setAttribute('data-text', txt);
                         return;
                     }
                 }
                 popup.style.display = 'none';
-            } catch (e) {
-                popup.style.display = 'none';
-            }
-        }
-        setInterval(checkSelection, 500);
+            } catch { popup.style.display = 'none'; }
+        }, 600);
     }
 
-    // --- Initialization ---
+    // --- Initialize ---
     function init() {
         const { panel, popup } = createWidget();
-
-        const header = panel.querySelector('.ai-panel-header');
+        const header = panel.querySelector('.nexus-panel-header');
         makeDraggable(header, panel);
 
         document.getElementById('mode-nexus').onclick = () => {
@@ -1289,29 +1261,25 @@
         document.getElementById('mode-osmos').onclick = () => {
             currentMode = 'osmos';
             updateModeButtons();
-            loadOsmosModel();
+            loadOsmosModel(); // preload
         };
-        document.getElementById('ai-send').onclick = sendMessage;
-        document.getElementById('ai-input').addEventListener('keypress', (e) => {
+        document.getElementById('nexus-send').onclick = sendMessage;
+        document.getElementById('nexus-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
         });
-        document.getElementById('ai-flashcard').onclick = generateFlashcard;
-        document.getElementById('ai-minimize').onclick = () => {
-            panel.style.display = 'none';
-        };
-        document.getElementById('ai-close').onclick = () => {
-            panel.style.display = 'none';
-        };
+        document.getElementById('nexus-flashcard').onclick = generateFlashcard;
+        document.getElementById('nexus-minimize').onclick = () => { panel.style.display = 'none'; };
+        document.getElementById('nexus-close').onclick = () => { panel.style.display = 'none'; };
 
         updateModeButtons();
-
         setupSelectionDetection('bookFrame', popup);
 
-        conversations.nexus.push({ role: 'assistant', content: 'Hello! I am Nexus (cloud AI). Ask me anything medical!' });
-        conversations.osmos.push({ role: 'assistant', content: 'Hi! I am Osmos (local AI). I can answer offline but need a modern browser with WebGPU.' });
+        // Cool welcome messages
+        conversations.nexus.push({ role: 'assistant', content: '👋 Hi, I’m Nexus! Ask me anything about medicine – I’m here to help you ace your studies.' });
+        conversations.osmos.push({ role: 'assistant', content: '🧠 Hello! I’m Osmos, your local AI. I work offline but need a modern browser with WebGPU.' });
         renderMessages();
     }
 
