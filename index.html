@@ -1,25 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google AdSense Code -->
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
-    
-    <!-- Google Site Verification Meta Tag -->
     <meta name="google-site-verification" content="9595657076711413" />
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="https://js.puter.com/v2/"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/dist/web-llm.umd.js"></script>
-    
     <title>MedLib · Complete Medical Textbook Library</title>
-    <!-- Font Awesome Icons -->
+    <!-- Font Awesome (load early, but not critical) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <!-- Preload Firebase scripts (deferred) -->
+    <link rel="preconnect" href="https://www.gstatic.com">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background:#f5f9ff; min-height:100vh; display:flex; flex-direction:column; }
@@ -144,9 +136,34 @@
             .main-panel.shifted { margin-left:280px; }
             .hero h1 { font-size:2rem; }
         }
+        /* Loading spinner */
+        #loading-overlay {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:white; z-index:9999; display:flex;
+            align-items:center; justify-content:center; flex-direction:column;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #2c7cb0;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top:20px; color:#0a2942; font-weight:600;">Loading MedLib...</p>
+    </div>
+
+    <!-- Top bar -->
     <div class="top-bar">
         <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
         <i class="fas fa-book-medical"></i>
@@ -154,57 +171,57 @@
         <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
     </div>
 
-    <!-- Sidebar Navigation -->
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2><i class="fas fa-list-ul"></i> Curriculum</h2>
         <div class="cat-section">
             <h3>📘 Basic Sciences</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="filterCategory('Biochemistry');"><i class="fas fa-flask"></i> Biochemistry</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Genetics');"><i class="fas fa-dna"></i> Genetics</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Immunology');"><i class="fas fa-shield-alt"></i> Immunology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Microbiology');"><i class="fas fa-bacteria"></i> Microbiology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('General Pathology');"><i class="fas fa-microscope"></i> General Pathology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('General Pharmacology');"><i class="fas fa-pills"></i> General Pharmacology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Research');"><i class="fas fa-chart-bar"></i> Research & Biostatistics</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Biochemistry');"><i class="fas fa-flask"></i> Biochemistry</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Genetics');"><i class="fas fa-dna"></i> Genetics</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Immunology');"><i class="fas fa-shield-alt"></i> Immunology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Microbiology');"><i class="fas fa-bacteria"></i> Microbiology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('General Pathology');"><i class="fas fa-microscope"></i> General Pathology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('General Pharmacology');"><i class="fas fa-pills"></i> General Pharmacology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Research');"><i class="fas fa-chart-bar"></i> Research & Biostatistics</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <h3>❤️ Systems Physiology & Pathology</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="filterCategory('Respiratory');"><i class="fas fa-lungs"></i> Respiratory</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Cardiology');"><i class="fas fa-heart"></i> Cardiology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Neurology');"><i class="fas fa-brain"></i> Neurology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Gastroenterology');"><i class="fas fa-stomach"></i> Gastroenterology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Endocrinology');"><i class="fas fa-hormone"></i> Endocrinology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Renal');"><i class="fas fa-kidney"></i> Renal</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Reproductive');"><i class="fas fa-venus-mars"></i> Reproductive</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Musculoskeletal');"><i class="fas fa-bone"></i> Musculoskeletal</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Hematology');"><i class="fas fa-blood"></i> Hematology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Respiratory');"><i class="fas fa-lungs"></i> Respiratory</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Cardiology');"><i class="fas fa-heart"></i> Cardiology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Neurology');"><i class="fas fa-brain"></i> Neurology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Gastroenterology');"><i class="fas fa-stomach"></i> Gastroenterology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Endocrinology');"><i class="fas fa-hormone"></i> Endocrinology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Renal');"><i class="fas fa-kidney"></i> Renal</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Reproductive');"><i class="fas fa-venus-mars"></i> Reproductive</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Musculoskeletal');"><i class="fas fa-bone"></i> Musculoskeletal</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Hematology');"><i class="fas fa-blood"></i> Hematology</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <h3>⚕️ Clinical Specialties</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="filterCategory('Dermatology');"><i class="fas fa-hand"></i> Dermatology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Psychiatry');"><i class="fas fa-brain"></i> Psychiatry</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Ophthalmology');"><i class="fas fa-eye"></i> Ophthalmology & ENT</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Pediatrics');"><i class="fas fa-child"></i> Pediatrics</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Emergency');"><i class="fas fa-ambulance"></i> Emergency Medicine</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Toxicology');"><i class="fas fa-skull-crossbones"></i> Toxicology</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Clinical Skills');"><i class="fas fa-stethoscope"></i> Clinical Skills</a></li>
-                <li class="cat-item"><a onclick="filterCategory('Nutrition');"><i class="fas fa-apple-alt"></i> Nutrition & Metabolism</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Dermatology');"><i class="fas fa-hand"></i> Dermatology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Psychiatry');"><i class="fas fa-brain"></i> Psychiatry</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Ophthalmology');"><i class="fas fa-eye"></i> Ophthalmology & ENT</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Pediatrics');"><i class="fas fa-child"></i> Pediatrics</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Emergency');"><i class="fas fa-ambulance"></i> Emergency Medicine</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Toxicology');"><i class="fas fa-skull-crossbones"></i> Toxicology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Clinical Skills');"><i class="fas fa-stethoscope"></i> Clinical Skills</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Nutrition');"><i class="fas fa-apple-alt"></i> Nutrition & Metabolism</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <h3>📝 Question Banks</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="showAllBooks();"><i class="fas fa-books"></i> All Textbooks</a></li>
+                <li class="cat-item"><a onclick="window.showAllBooks();"><i class="fas fa-books"></i> All Textbooks</a></li>
             </ul>
         </div>
     </div>
@@ -217,7 +234,6 @@
 
     <!-- Main Panel -->
     <div class="main-panel" id="mainPanel">
-        <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
                 <h1>Free Medical Textbooks & MCQ Banks</h1>
@@ -229,10 +245,8 @@
             </div>
         </section>
 
-        <!-- Main Content Area -->
         <main class="main-content" id="mainContent"></main>
 
-        <!-- Footer -->
         <footer class="footer">
             <p>© 2026 MedLib · Free Medical Textbook Library. Created by Abubakar Sadeeq. All resources freely available for medical education.</p>
         </footer>
@@ -241,31 +255,36 @@
     <div class="notification" id="notification">
         <i class="fas fa-check-circle"></i> <span id="notificationMessage"></span>
     </div>
-    
-<script>
-    // ==================== FIREBASE CONFIG ====================
-    const firebaseConfig = {
-        apiKey: "AIzaSyCCFB41XAQZ6S0IbBDLI-FjjjE_NlTBS14",
-        authDomain: "midlib-e3187.firebaseapp.com",
-        projectId: "midlib-e3187",
-        storageBucket: "midlib-e3187.firebasestorage.app",
-        messagingSenderId: "382363535690",
-        appId: "1:382363535690:web:eedfb3639a62faa9a519b3"
-    };
 
-    // Initialize Firebase
-    let db;
-    if (typeof firebase !== 'undefined') {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        console.log('Firebase initialized');
-    } else {
-        console.warn('Firebase SDK not loaded – counts will be 0');
-        db = null;
-    }
+    <!-- Deferred Firebase scripts (load after page content) -->
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-    // ==================== FULL BOOKS DATABASE (129 BOOKS, NO READERS) ====================
-    const books = [
+    <!-- Deferred AI scripts (Puter + WebLLM) – they are heavy, so we load them later -->
+    <script defer src="https://js.puter.com/v2/"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/dist/web-llm.umd.js"></script>
+
+    <!-- Main application script (deferred, so it runs after HTML is parsed) -->
+    <script defer>
+        // ==================== GLOBAL VARIABLES ====================
+        let books = [];
+        let db = null;
+
+        // ==================== LOAD BOOKS WITH CACHE ====================
+        (function loadBooks() {
+            const cached = localStorage.getItem('medlib_books');
+            if (cached) {
+                try {
+                    books = JSON.parse(cached);
+                    console.log('Books loaded from cache');
+                } catch (e) {
+                    console.warn('Cache parse failed, will reload');
+                }
+            }
+            // If no cache or empty, we need to load the full array (embedded below)
+            if (!books || books.length === 0) {
+                // ==================== FULL BOOKS ARRAY ====================
+                books = [
         // === BASIC SCIENCES ===
         // Biochemistry & Mol Bio
         { id:1, title:"Biochemistry & Molecular Biology – Physiology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Physiology", pages:420, filename:"Biochemistry & Molecular Biology · Physiology.html" },
@@ -426,152 +445,175 @@
         { id:129, title:"Nutrition & Metabolism – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Nutrition", pages:65, filename:"Nutrition & Metabolism · MCQ Bank.html" }
     ];
 
-    // ==================== FIRESTORE HELPERS ====================
-    async function getReaderCount(bookId) {
-        if (!db) return 0;
-        try {
-            const docRef = db.collection('books').doc(String(bookId));
-            const doc = await docRef.get();
-            if (!doc.exists) {
-                await docRef.set({ count: 0 });
+                localStorage.setItem('medlib_books', JSON.stringify(books));
+            }
+        })();
+
+        // ==================== INITIALIZE FIREBASE (if loaded) ====================
+        function initFirebase() {
+            if (typeof firebase !== 'undefined' && !db) {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCCFB41XAQZ6S0IbBDLI-FjjjE_NlTBS14",
+                    authDomain: "midlib-e3187.firebaseapp.com",
+                    projectId: "midlib-e3187",
+                    storageBucket: "midlib-e3187.firebasestorage.app",
+                    messagingSenderId: "382363535690",
+                    appId: "1:382363535690:web:eedfb3639a62faa9a519b3"
+                };
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                console.log('Firebase initialized');
+            }
+        }
+        // Try immediately, but also listen for script load
+        initFirebase();
+        document.addEventListener('firebase-ready', initFirebase); // custom event (not used, but safe)
+
+        // ==================== FIRESTORE HELPERS ====================
+        async function getReaderCount(bookId) {
+            if (!db) return 0;
+            try {
+                const docRef = db.collection('books').doc(String(bookId));
+                const doc = await docRef.get();
+                if (!doc.exists) {
+                    await docRef.set({ count: 0 });
+                    return 0;
+                }
+                return doc.data().count || 0;
+            } catch (e) {
+                console.warn('Firestore error (get)', e);
                 return 0;
             }
-            return doc.data().count || 0;
-        } catch (e) {
-            console.warn('Firestore error (get)', e);
-            return 0;
         }
-    }
 
-    async function incrementReaderCount(bookId) {
-        if (!db) return;
-        try {
-            const docRef = db.collection('books').doc(String(bookId));
-            await db.runTransaction(async (transaction) => {
-                const doc = await transaction.get(docRef);
-                if (!doc.exists) {
-                    transaction.set(docRef, { count: 1 });
-                } else {
-                    transaction.update(docRef, { count: (doc.data().count || 0) + 1 });
-                }
-            });
-        } catch (e) {
-            console.warn('Firestore error (increment)', e);
+        async function incrementReaderCount(bookId) {
+            if (!db) return;
+            try {
+                const docRef = db.collection('books').doc(String(bookId));
+                await db.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(docRef);
+                    if (!doc.exists) {
+                        transaction.set(docRef, { count: 1 });
+                    } else {
+                        const newCount = (doc.data().count || 0) + 1;
+                        transaction.update(docRef, { count: newCount });
+                    }
+                });
+            } catch (e) {
+                console.warn('Firestore error (increment)', e);
+            }
         }
-    }
 
-    // ==================== UI FUNCTIONS (GLOBAL) ====================
-    window.closeSidebar = function() {
-        document.getElementById('sidebar')?.classList.remove('open');
-        document.getElementById('mainPanel')?.classList.remove('shifted');
-    };
-
-    window.openBook = function(filename, bookId) {
-        const viewer = document.getElementById('bookViewer');
-        const frame = document.getElementById('bookFrame');
-        if (!viewer || !frame) return;
-        frame.src = filename;
-        viewer.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        incrementReaderCount(bookId);
-    };
-
-    window.closeViewer = function() {
-        const viewer = document.getElementById('bookViewer');
-        const frame = document.getElementById('bookFrame');
-        if (viewer) viewer.style.display = 'none';
-        if (frame) frame.src = '';
-        document.body.style.overflow = 'auto';
-    };
-
-    window.searchBooks = async function() {
-        const input = document.getElementById('searchInput');
-        if (!input) return;
-        const term = input.value.toLowerCase().trim();
-        if (!term) { showNotification('Please enter a search term.'); return; }
-        const results = books.filter(b => 
-            b.title.toLowerCase().includes(term) ||
-            b.author.toLowerCase().includes(term) ||
-            b.category.toLowerCase().includes(term) ||
-            (b.subcat && b.subcat.toLowerCase().includes(term))
-        );
-        if (results.length === 0) {
-            showNotification('No books found.');
-        } else {
-            await renderBooks(results, `Search Results for "${term}"`);
-        }
-    };
-
-    window.filterCategory = async function(catName) {
-        const results = books.filter(b => b.category === catName);
-        await renderBooks(results, catName + ' Textbooks');
-    };
-
-    window.showAllBooks = async function() {
-        await renderBooks(books, 'All Textbooks');
-    };
-
-    function showNotification(msg) {
-        const notif = document.getElementById('notification');
-        const msgSpan = document.getElementById('notificationMessage');
-        if (notif && msgSpan) {
-            msgSpan.innerText = msg;
-            notif.style.display = 'block';
-            setTimeout(() => notif.style.display = 'none', 3000);
-        }
-    }
-
-    async function renderBooks(bookList, title) {
-        const main = document.getElementById('mainContent');
-        if (!main) return;
-        let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="window.location.reload()">Back to Home</span></div>`;
-        html += '<div class="book-grid">';
-        for (const book of bookList) {
-            const count = await getReaderCount(book.id);
-            html += createBookCard(book, count);
-        }
-        html += '</div>';
-        main.innerHTML = html;
-    }
-
-    function createBookCard(book, count) {
-        return `
-            <div class="book-card" onclick="openBook('${book.filename}', ${book.id})">
-                <div class="book-cover">
-                    <i class="fas fa-book"></i>
-                    <span class="book-category">${book.category}</span>
-                </div>
-                <div class="book-info">
-                    <div class="book-title">${book.title}</div>
-                    <div class="book-author">by ${book.author}</div>
-                    <div class="book-stats">
-                        <span><i class="fas fa-file-alt"></i> ${book.pages} pages</span>
-                        <span><i class="fas fa-users"></i> ${count} readers</span>
-                    </div>
-                    <button class="read-btn" onclick="event.stopPropagation(); openBook('${book.filename}', ${book.id})">
-                        <i class="fas fa-book-open"></i> Read Now
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
-    function getCategoryIcon(cat) {
-        const icons = {
-            'Biochemistry':'fa-flask','Genetics':'fa-dna','Immunology':'fa-shield-alt',
-            'Microbiology':'fa-bacteria','General Pathology':'fa-microscope','General Pharmacology':'fa-pills',
-            'Research':'fa-chart-bar','Respiratory':'fa-lungs','Cardiology':'fa-heart','Neurology':'fa-brain',
-            'Gastroenterology':'fa-stomach','Endocrinology':'fa-hormone','Renal':'fa-kidney','Reproductive':'fa-venus-mars',
-            'Musculoskeletal':'fa-bone','Hematology':'fa-blood','Dermatology':'fa-hand','Psychiatry':'fa-brain',
-            'Ophthalmology':'fa-eye','Pediatrics':'fa-child','Emergency':'fa-ambulance','Toxicology':'fa-skull-crossbones',
-            'Clinical Skills':'fa-stethoscope','Nutrition':'fa-apple-alt'
+        // ==================== UI FUNCTIONS ====================
+        window.filterCategory = function(catName) {
+            const results = books.filter(b => b.category === catName);
+            displayBooks(results, catName + ' Textbooks');
         };
-        return icons[cat] || 'fa-book';
-    }
 
-    // ==================== INITIAL LOAD ====================
-    window.addEventListener('load', async function() {
-        try {
+        window.showAllBooks = function() {
+            displayBooks(books, 'All Textbooks');
+        };
+
+        window.searchBooks = function() {
+            const input = document.getElementById('searchInput');
+            if (!input) return;
+            const term = input.value.toLowerCase().trim();
+            if (!term) { showNotification('Please enter a search term.'); return; }
+            const results = books.filter(b => 
+                b.title.toLowerCase().includes(term) ||
+                b.author.toLowerCase().includes(term) ||
+                b.category.toLowerCase().includes(term) ||
+                (b.subcat && b.subcat.toLowerCase().includes(term))
+            );
+            if (results.length === 0) {
+                showNotification('No books found.');
+            } else {
+                displayBooks(results, `Search Results for "${term}"`);
+            }
+        };
+
+        window.openBook = async function(filename, bookId) {
+            const viewer = document.getElementById('bookViewer');
+            const frame = document.getElementById('bookFrame');
+            if (!viewer || !frame) return;
+            frame.src = filename;
+            viewer.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            await incrementReaderCount(bookId);
+        };
+
+        window.closeViewer = function() {
+            const viewer = document.getElementById('bookViewer');
+            const frame = document.getElementById('bookFrame');
+            if (viewer) viewer.style.display = 'none';
+            if (frame) frame.src = '';
+            document.body.style.overflow = 'auto';
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeViewer();
+        });
+
+        function showNotification(msg) {
+            const notif = document.getElementById('notification');
+            const msgSpan = document.getElementById('notificationMessage');
+            if (notif && msgSpan) {
+                msgSpan.innerText = msg;
+                notif.style.display = 'block';
+                setTimeout(() => notif.style.display = 'none', 3000);
+            }
+        }
+
+        async function displayBooks(bookList, title) {
+            const main = document.getElementById('mainContent');
+            if (!main) return;
+            let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
+            html += '<div class="book-grid">';
+            for (const book of bookList) {
+                const count = await getReaderCount(book.id);
+                html += createBookCard(book, count);
+            }
+            html += '</div>';
+            main.innerHTML = html;
+        }
+
+        function createBookCard(book, count) {
+            return `
+                <div class="book-card" onclick="openBook('${book.filename}', ${book.id})">
+                    <div class="book-cover">
+                        <i class="fas fa-book"></i>
+                        <span class="book-category">${book.category}</span>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author}</div>
+                        <div class="book-stats">
+                            <span><i class="fas fa-file-alt"></i> ${book.pages} pages</span>
+                            <span><i class="fas fa-users"></i> ${count} readers</span>
+                        </div>
+                        <button class="read-btn" onclick="event.stopPropagation(); openBook('${book.filename}', ${book.id})">
+                            <i class="fas fa-book-open"></i> Read Now
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getCategoryIcon(cat) {
+            const icons = {
+                'Biochemistry':'fa-flask','Genetics':'fa-dna','Immunology':'fa-shield-alt',
+                'Microbiology':'fa-bacteria','General Pathology':'fa-microscope','General Pharmacology':'fa-pills',
+                'Research':'fa-chart-bar','Respiratory':'fa-lungs','Cardiology':'fa-heart','Neurology':'fa-brain',
+                'Gastroenterology':'fa-stomach','Endocrinology':'fa-hormone','Renal':'fa-kidney','Reproductive':'fa-venus-mars',
+                'Musculoskeletal':'fa-bone','Hematology':'fa-blood','Dermatology':'fa-hand','Psychiatry':'fa-brain',
+                'Ophthalmology':'fa-eye','Pediatrics':'fa-child','Emergency':'fa-ambulance','Toxicology':'fa-skull-crossbones',
+                'Clinical Skills':'fa-stethoscope','Nutrition':'fa-apple-alt'
+            };
+            return icons[cat] || 'fa-book';
+        }
+
+        // ==================== RENDER HOMEPAGE ====================
+        async function renderHome() {
             const main = document.getElementById('mainContent');
             if (!main) return;
             const featured = books.slice(0,12);
@@ -593,29 +635,28 @@
             });
             html += '</div>';
             main.innerHTML = html;
-        } catch (e) {
-            console.error('Load error:', e);
-            document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:3rem;">Error loading library. Check console.</div>';
         }
-    });
 
-    // ==================== SIDEBAR TOGGLE ====================
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainPanel = document.getElementById('mainPanel');
-    if (menuToggle && sidebar && mainPanel) {
+        // ==================== START APPLICATION ====================
+        (async function start() {
+            // Wait for books to be loaded (they already are)
+            await renderHome();
+            // Hide loading overlay
+            document.getElementById('loading-overlay').style.display = 'none';
+        })();
+
+        // Sidebar toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainPanel = document.getElementById('mainPanel');
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
             mainPanel.classList.toggle('shifted');
         });
-    }
+    </script>
 
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeViewer();
-    });
-</script>
-
-<script>
+    <script defer src="path/to/your/nexus-script.js"></script>
+    <script>
 (function() {
     // ==================== DUAL AI ASSISTANT (FIXED + POLISHED) ====================
     // Nexus (cloud) via Puter.js , Osmos (local) via WebLLM (UMD)
