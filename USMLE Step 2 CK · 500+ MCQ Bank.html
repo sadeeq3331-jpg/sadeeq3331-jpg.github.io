@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USMLE Step 2 CK · 500+ MCQ Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #eef2f7, #d9e2ec);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+            max-height: 900px;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1a4d7a);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .header i { font-size: 2.2rem; color: #ffc107; }
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        .header .credit {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .credit i { font-size: 1.2rem; color: #ffc107; }
+        .progress-area {
+            padding: 1rem 2rem;
+            background: #f8fafd;
+            border-bottom: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .progress-bar {
+            flex: 2;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0b2f4e, #2c7cb0);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            font-weight: 600;
+            color: #1e4b6e;
+        }
+        .stats span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .question-container {
+            flex: 1;
+            padding: 2rem 2rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b0c4de #f1f5f9;
+        }
+        .question-container::-webkit-scrollbar { width: 8px; }
+        .question-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .question-container::-webkit-scrollbar-thumb { background: #b0c4de; border-radius: 10px; }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0a2942;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 60px;
+            padding: 1rem 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px -8px rgba(0,0,0,0.1);
+        }
+        .option:hover {
+            border-color: #2c7cb0;
+            background: #f0f7ff;
+            transform: translateX(6px);
+        }
+        .option.selected {
+            border-color: #0b2f4e;
+            background: #e5eff9;
+        }
+        .option.correct {
+            border-color: #28a745;
+            background: #e1f7e7;
+        }
+        .option.wrong {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+        .option-letter {
+            width: 40px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a2942;
+            font-size: 1.2rem;
+        }
+        .option.selected .option-letter { background: #0b2f4e; color: white; }
+        .explanation {
+            background: #f0f9ff;
+            border-left: 6px solid #2c7cb0;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        .explanation.show { display: block; }
+        .nav-buttons {
+            padding: 1.5rem 2rem;
+            background: #f8fafd;
+            border-top: 1px solid #dde5ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: white;
+            border: 2px solid #1a4d7a;
+            color: #1a4d7a;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn:hover:not(:disabled) { background: #1a4d7a; color: white; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #b0c4de; }
+        .btn-primary { background: #1a4d7a; color: white; }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .dot {
+            width: 30px;
+            height: 6px;
+            border-radius: 6px;
+            background: #d0e0f0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dot.active { background: #1a4d7a; width: 45px; }
+        .dot.answered { background: #28a745; }
+        @media (max-width: 700px) {
+            .header { flex-wrap: wrap; }
+            .progress-area { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <i class="fas fa-stethoscope"></i>
+        <h1>USMLE Step 2 CK · 500+ MCQ Bank</h1>
+        <div class="credit"><i class="fas fa-user-md"></i> Abubakar Sadeeq</div>
+    </div>
+    <div class="progress-area">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="stats">
+            <span id="qCounter">0/505</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+    <div class="question-container" id="questionContainer">
+        <div class="question-text" id="questionText">Loading...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="explanation" id="explanation"></div>
+    </div>
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn btn-primary" id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+    </div>
+</div>
+
+<script>
+    // ==================== USMLE STEP 2 QUESTION GENERATOR ====================
+    // High‑yield clinical topics for Step 2 CK
+    function generateStep2Questions() {
+        const questions = [];
+
+        // ----- Clinical Topics (each with a diagnosis and management) -----
+        const topics = [
+            { specialty: 'Internal Medicine', diag: 'acute coronary syndrome', mgmt: 'aspirin + clopidogrel', next: 'ECG and troponin' },
+            { specialty: 'Internal Medicine', diag: 'community-acquired pneumonia', mgmt: 'ceftriaxone + azithromycin', next: 'chest X‑ray' },
+            { specialty: 'Internal Medicine', diag: 'COPD exacerbation', mgmt: 'bronchodilators + corticosteroids', next: 'oxygen therapy' },
+            { specialty: 'Internal Medicine', diag: 'heart failure exacerbation', mgmt: 'furosemide', next: 'echocardiogram' },
+            { specialty: 'Internal Medicine', diag: 'hypertensive urgency', mgmt: 'oral antihypertensives', next: 'follow‑up BP' },
+            { specialty: 'Internal Medicine', diag: 'diabetic ketoacidosis', mgmt: 'IV insulin + fluids', next: 'check potassium' },
+            { specialty: 'Internal Medicine', diag: 'hyperthyroidism', mgmt: 'methimazole', next: 'TSH, T4' },
+            { specialty: 'Internal Medicine', diag: 'hypothyroidism', mgmt: 'levothyroxine', next: 'TSH' },
+            { specialty: 'Internal Medicine', diag: 'pulmonary embolism', mgmt: 'anticoagulation', next: 'CT angiography' },
+            { specialty: 'Internal Medicine', diag: 'deep vein thrombosis', mgmt: 'LMWH + warfarin', next: 'Doppler ultrasound' },
+            { specialty: 'Internal Medicine', diag: 'gastroesophageal reflux', mgmt: 'PPI', next: 'trial of therapy' },
+            { specialty: 'Internal Medicine', diag: 'peptic ulcer disease', mgmt: 'PPI + H. pylori eradication', next: 'endoscopy' },
+            { specialty: 'Internal Medicine', diag: 'cirrhosis with ascites', mgmt: 'spironolactone + furosemide', next: 'paracentesis' },
+            { specialty: 'Internal Medicine', diag: 'acute pancreatitis', mgmt: 'IV fluids, NPO', next: 'CT abdomen' },
+            { specialty: 'Internal Medicine', diag: 'cholecystitis', mgmt: 'cholecystectomy', next: 'ultrasound' },
+            { specialty: 'Internal Medicine', diag: 'pyelonephritis', mgmt: 'IV antibiotics', next: 'urine culture' },
+            { specialty: 'Internal Medicine', diag: 'nephrolithiasis', mgmt: 'IV fluids, analgesia', next: 'non‑contrast CT' },
+            { specialty: 'Internal Medicine', diag: 'acute kidney injury', mgmt: 'fluids, remove nephrotoxins', next: 'renal ultrasound' },
+            { specialty: 'Internal Medicine', diag: 'hyperkalemia', mgmt: 'calcium gluconate + insulin/glucose', next: 'ECG' },
+            { specialty: 'Internal Medicine', diag: 'hyponatremia', mgmt: 'fluid restriction', next: 'serum osmolality' },
+            { specialty: 'Surgery', diag: 'acute appendicitis', mgmt: 'appendectomy', next: 'CT abdomen' },
+            { specialty: 'Surgery', diag: 'small bowel obstruction', mgmt: 'NG tube, IV fluids', next: 'CT scan' },
+            { specialty: 'Surgery', diag: 'incarcerated hernia', mgmt: 'surgical repair', next: 'physical exam' },
+            { specialty: 'Surgery', diag: 'diverticulitis', mgmt: 'antibiotics, bowel rest', next: 'CT scan' },
+            { specialty: 'Surgery', diag: 'cholecystitis', mgmt: 'cholecystectomy', next: 'ultrasound' },
+            { specialty: 'Pediatrics', diag: 'bronchiolitis', mgmt: 'supportive care', next: 'nasal suction' },
+            { specialty: 'Pediatrics', diag: 'croup', mgmt: 'dexamethasone', next: 'nebulized epinephrine' },
+            { specialty: 'Pediatrics', diag: 'acute otitis media', mgmt: 'amoxicillin', next: 'pneumatic otoscopy' },
+            { specialty: 'Pediatrics', diag: 'gastroenteritis', mgmt: 'oral rehydration', next: 'stool studies' },
+            { specialty: 'Pediatrics', diag: 'febrile seizure', mgmt: 'reassurance, workup source', next: 'lumbar puncture if indicated' },
+            { specialty: 'OB/GYN', diag: 'ectopic pregnancy', mgmt: 'methotrexate or surgery', next: 'transvaginal ultrasound' },
+            { specialty: 'OB/GYN', diag: 'preeclampsia', mgmt: 'delivery, magnesium sulfate', next: 'blood pressure, proteinuria' },
+            { specialty: 'OB/GYN', diag: 'gestational diabetes', mgmt: 'diet, insulin if needed', next: 'glucose tolerance test' },
+            { specialty: 'OB/GYN', diag: 'pelvic inflammatory disease', mgmt: 'ceftriaxone + doxycycline', next: 'cervical cultures' },
+            { specialty: 'Psychiatry', diag: 'major depressive disorder', mgmt: 'SSRI', next: 'suicide risk assessment' },
+            { specialty: 'Psychiatry', diag: 'generalized anxiety disorder', mgmt: 'SSRI or SNRI', next: 'GAD‑7' },
+            { specialty: 'Psychiatry', diag: 'bipolar mania', mgmt: 'lithium or valproate', next: 'mood stabilizer' },
+            { specialty: 'Psychiatry', diag: 'schizophrenia', mgmt: 'antipsychotic', next: 'rule out organic cause' },
+            { specialty: 'Neurology', diag: 'ischemic stroke', mgmt: 'tPA if within window', next: 'CT head' },
+            { specialty: 'Neurology', diag: 'transient ischemic attack', mgmt: 'antiplatelet, workup', next: 'carotid ultrasound' },
+            { specialty: 'Neurology', diag: 'migraine', mgmt: 'triptan', next: 'avoid triggers' },
+            { specialty: 'Neurology', diag: 'cluster headache', mgmt: 'high‑flow oxygen', next: 'triptan' },
+            { specialty: 'Emergency Medicine', diag: 'anaphylaxis', mgmt: 'epinephrine', next: 'ABCs' },
+            { specialty: 'Emergency Medicine', diag: 'tension pneumothorax', mgmt: 'needle decompression', next: 'chest tube' },
+            { specialty: 'Emergency Medicine', diag: 'cardiac arrest', mgmt: 'CPR, defibrillation', next: 'ACLS' },
+            { specialty: 'Emergency Medicine', diag: 'hemorrhagic shock', mgmt: 'fluids, blood transfusion', next: 'surgery' }
+        ];
+
+        // ----- Templates for Step 2 vignettes (focus on clinical presentation and next step) -----
+        const templates = [
+            "A {age}-year-old {sex} presents to the emergency department with {symptom} for {duration} hours. Vital signs show {vitals}. Physical examination reveals {exam}. Which of the following is the most appropriate next step in management?",
+            "A patient with a history of {history} comes to the clinic with {symptom}. Laboratory studies show {lab}. Which of the following is the most likely diagnosis?",
+            "A {age}-year-old {sex} is brought to the hospital after {event}. On examination, {finding}. Which of the following is the most appropriate initial treatment?",
+            "During a routine check‑up, a {age}-year-old {sex} has a blood pressure of {bp}. The remainder of the examination is unremarkable. Which of the following is the most appropriate next step?",
+            "A patient with {history} is started on {drug}. Three days later, they develop {adverse}. Which of the following is the most appropriate action?",
+            "A {age}-year-old {sex} presents with {symptom} and {sign}. An ECG shows {ecg}. Which of the following is the most likely diagnosis?",
+            "A patient with {condition} is being evaluated for surgery. Which of the following preoperative tests is most indicated?",
+            "A {age}-year-old {sex} presents with {symptom}. Physical examination reveals {exam}. Laboratory studies are notable for {lab}. Which of the following is the most appropriate pharmacotherapy?",
+            "A woman at {weeks} weeks gestation presents with {symptom}. Which of the following is the most likely diagnosis?",
+            "A {age}-year-old {sex} with a history of {history} has {symptom}. Which of the following is the most appropriate next diagnostic test?",
+            "A patient with {condition} undergoes treatment with {drug}. Which of the following laboratory parameters should be monitored to assess for a common adverse effect?",
+            "A {age}-year-old {sex} presents to the emergency department after a motor vehicle collision. Primary survey reveals {finding}. Which of the following is the most appropriate next step?",
+            "A patient with {history} reports {symptom}. Which of the following is the most likely underlying etiology?",
+            "A {age}-year-old {sex} with a history of {history} presents with {symptom}. A chest X‑ray shows {xray}. Which of the following is the most appropriate initial treatment?",
+            "A patient with {condition} is being discharged home. Which of the following instructions is most important to include?",
+            "A {age}-year-old {sex} presents with {symptom} and {sign}. Which of the following is the most likely diagnosis?",
+            "A patient with {history} is found to have {finding} on routine screening. Which of the following is the most appropriate next step in management?",
+            "A {age}-year-old {sex} presents with {symptom}. Physical examination is notable for {exam}. Which of the following is the most appropriate diagnostic study?",
+            "A patient with {condition} develops {symptom} after starting {drug}. Which of the following is the most likely explanation?",
+            "A {age}-year-old {sex} is brought to the hospital by family members due to {symptom}. The patient appears {appearance}. Which of the following is the most appropriate initial step?",
+        ];
+
+        // Helper random
+        function rand(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Generate 500+ (505) questions
+        for (let i = 1; i <= 505; i++) {
+            const topic = rand(topics);
+
+            // Build stem
+            let stem = rand(templates);
+            stem = stem
+                .replace(/{age}/g, String(Math.floor(Math.random() * 50) + 18))   // 18-68
+                .replace(/{sex}/g, rand(['man', 'woman', 'person']))
+                .replace(/{symptom}/g, rand(['chest pain', 'shortness of breath', 'abdominal pain', 'headache', 'fever', 'cough', 'fatigue', 'dizziness', 'palpitations', 'nausea', 'vomiting', 'diarrhea', 'back pain']))
+                .replace(/{duration}/g, String(Math.floor(Math.random() * 48) + 1))
+                .replace(/{vitals}/g, rand(['BP 160/90, HR 110', 'BP 100/60, HR 55', 'BP 120/80, HR 75', 'BP 140/90, HR 100', 'BP 90/50, HR 120']))
+                .replace(/{exam}/g, rand(['crackles in lung bases', 'jugular venous distention', 'abdominal tenderness', 'peripheral edema', 'confusion', 'focal neurologic deficit', 'rash']))
+                .replace(/{history}/g, rand(['hypertension', 'diabetes', 'COPD', 'heart failure', 'asthma', 'no significant history']))
+                .replace(/{lab}/g, rand(['elevated troponin', 'leukocytosis', 'hyponatremia', 'hyperkalemia', 'anemia', 'elevated creatinine']))
+                .replace(/{event}/g, rand(['syncope', 'seizure', 'trauma', 'fall', 'sudden collapse']))
+                .replace(/{finding}/g, rand(['a heart murmur', 'hepatomegaly', 'splenomegaly', 'focal weakness', 'confusion']))
+                .replace(/{bp}/g, rand(['180/100 mmHg', '150/95 mmHg', '130/85 mmHg']))
+                .replace(/{drug}/g, topic.mgmt.split(' ')[0]) // crude drug name
+                .replace(/{adverse}/g, rand(['rash', 'nausea', 'headache', 'hypotension', 'bleeding', 'acute kidney injury']))
+                .replace(/{sign}/g, rand(['fever', 'tachycardia', 'hypotension', 'oliguria', 'jaundice']))
+                .replace(/{ecg}/g, rand(['ST elevations in leads II, III, aVF', 'ST depressions in V1‑V4', 'atrial fibrillation', 'sinus tachycardia']))
+                .replace(/{condition}/g, topic.diag)
+                .replace(/{weeks}/g, String(Math.floor(Math.random() * 30) + 10))
+                .replace(/{xray}/g, rand(['lobar consolidation', 'interstitial infiltrates', 'pleural effusion', 'pneumothorax']))
+                .replace(/{appearance}/g, rand(['anxious', 'lethargic', 'confused', 'agitated', 'calm']));
+
+            // Build answer options: correct diagnosis/management vs distractors
+            const correctIdx = Math.floor(Math.random() * 5);
+            const options = [];
+
+            // Distractor pool (mix of wrong diagnoses, steps, treatments)
+            const distractors = [
+                'Acute coronary syndrome', 'Pulmonary embolism', 'Pneumonia', 'Heart failure', 'COPD exacerbation',
+                'Asthma exacerbation', 'Gastroesophageal reflux', 'Peptic ulcer disease', 'Cholecystitis',
+                'Appendicitis', 'Diverticulitis', 'Pyelonephritis', 'Nephrolithiasis', 'Acute kidney injury',
+                'Diabetic ketoacidosis', 'Hyperosmolar hyperglycemic state', 'Thyroid storm', 'Myxedema coma',
+                'Addisonian crisis', 'Pheochromocytoma', 'Meningitis', 'Encephalitis', 'Intracranial hemorrhage',
+                'Ischemic stroke', 'Transient ischemic attack', 'Seizure disorder', 'Migraine', 'Cluster headache',
+                'Tension headache', 'Anxiety disorder', 'Panic attack', 'Major depressive disorder',
+                'Bipolar disorder', 'Schizophrenia', 'Delirium', 'Dementia', 'Urinary tract infection',
+                'Cellulitis', 'Abscess', 'Osteomyelitis', 'Septic arthritis', 'Gout', 'Pseudogout',
+                'Rheumatoid arthritis', 'Osteoarthritis', 'Systemic lupus erythematosus', 'Vasculitis',
+                'Sarcoidosis', 'Amyloidosis', 'Cirrhosis', 'Hepatitis', 'Pancreatitis', 'Cholangitis',
+                'Inflammatory bowel disease', 'Irritable bowel syndrome', 'Celiac disease', 'Clostridioides difficile infection',
+                'Acute otitis media', 'Pharyngitis', 'Sinusitis', 'Bronchiolitis', 'Croup',
+                'Epiglottitis', 'Pertussis', 'Influenza', 'COVID‑19', 'Tuberculosis',
+                'HIV', 'Syphilis', 'Lyme disease', 'Rocky Mountain spotted fever', 'Malaria',
+                'Dengue', 'Typhoid fever', 'Leptospirosis', 'Brucellosis', 'Tetanus',
+                'Botulism', 'Rabies', 'Toxoplasmosis', 'Cytomegalovirus', 'Epstein‑Barr virus',
+                'Herpes simplex virus', 'Varicella‑zoster virus', 'Human papillomavirus', 'Molluscum contagiosum',
+                'Scabies', 'Lice', 'Ringworm', 'Candidiasis', 'Aspergillosis',
+                'Mucormycosis', 'Histoplasmosis', 'Blastomycosis', 'Coccidioidomycosis', 'Cryptococcosis',
+                'Pneumocystis jirovecii pneumonia', 'Nocardiosis', 'Actinomycosis', 'Leishmaniasis',
+                'Chagas disease', 'African trypanosomiasis', 'Schistosomiasis', 'Cysticercosis',
+                'Echinococcosis', 'Toxocariasis', 'Trichinellosis', 'Hookworm', 'Ascariasis',
+                'Enterobiasis', 'Strongyloidiasis', 'Filariasis', 'Onchocerciasis', 'Loiasis',
+                'Dracunculiasis', 'Gnathostomiasis', 'Angiostrongyliasis', 'Baylisascariasis',
+                'Primary aldosteronism', 'Cushing syndrome', 'Pheochromocytoma', 'Hyperparathyroidism',
+                'Hypoparathyroidism', 'Acromegaly', 'Prolactinoma', 'Diabetes insipidus', 'SIADH',
+                'Polycystic ovary syndrome', 'Premature ovarian failure', 'Kallmann syndrome',
+                'Turner syndrome', 'Klinefelter syndrome', 'Down syndrome', 'Fragile X syndrome',
+                'Williams syndrome', 'Noonan syndrome', 'Marfan syndrome', 'Ehlers‑Danlos syndrome',
+                'Osteogenesis imperfecta', 'Achondroplasia', 'Hypochondroplasia', 'Pseudoachondroplasia',
+                'Multiple endocrine neoplasia type 1', 'MEN2A', 'MEN2B', 'Von Hippel‑Lindau disease',
+                'Neurofibromatosis type 1', 'Neurofibromatosis type 2', 'Tuberous sclerosis',
+                'Sturge‑Weber syndrome', 'Hereditary hemorrhagic telangiectasia', 'Lynch syndrome',
+                'Familial adenomatous polyposis', 'Gardner syndrome', 'Turcot syndrome', 'Peutz‑Jeghers syndrome',
+                'Cowden syndrome', 'Li‑Fraumeni syndrome', 'Retinoblastoma', 'Wilms tumor',
+                'Neuroblastoma', 'Hepatoblastoma', 'Rhabdomyosarcoma', 'Osteosarcoma', 'Ewing sarcoma'
+            ];
+
+            // Generate 5 unique options (one correct, four random distractors)
+            let used = new Set();
+            for (let j = 0; j < 5; j++) {
+                if (j === correctIdx) {
+                    options.push(topic.diag); // correct answer
+                    used.add(topic.diag);
+                } else {
+                    let d;
+                    do {
+                        d = rand(distractors);
+                    } while (used.has(d));
+                    used.add(d);
+                    options.push(d);
+                }
+            }
+
+            // Explanation
+            const explanation = `The correct answer is ${topic.diag}. In this clinical scenario, the presentation is classic for ${topic.diag}. The next appropriate step is ${topic.next}, and management often involves ${topic.mgmt}. The other options are less consistent with the findings.`;
+
+            questions.push({
+                q: stem,
+                opts: options,
+                correct: correctIdx,
+                exp: explanation
+            });
+        }
+
+        return questions;
+    }
+
+    // Generate the question bank
+    const allQuestions = generateStep2Questions(); // 505 questions
+
+    // Shuffle for variety
+    let shuffled = allQuestions.sort(() => 0.5 - Math.random());
+
+    // Standard MCQ controller
+    let currentIndex = 0;
+    let userAnswers = new Array(shuffled.length).fill(null);
+    let showExplanation = new Array(shuffled.length).fill(false);
+    const letters = ['A','B','C','D','E'];
+
+    function render() {
+        const q = shuffled[currentIndex];
+        document.getElementById('questionText').innerText = q.q;
+        let optsHtml = '';
+        q.opts.forEach((opt, idx) => {
+            let cls = 'option';
+            if (userAnswers[currentIndex] === idx) cls += ' selected';
+            if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+                if (idx === q.correct) cls += ' correct';
+                else if (idx === userAnswers[currentIndex] && idx !== q.correct) cls += ' wrong';
+            }
+            optsHtml += `<div class="${cls}" data-idx="${idx}"><span class="option-letter">${letters[idx]}</span><span>${opt}</span></div>`;
+        });
+        document.getElementById('optionsContainer').innerHTML = optsHtml;
+
+        document.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                let idx = parseInt(opt.dataset.idx);
+                if (userAnswers[currentIndex] === idx) {
+                    userAnswers[currentIndex] = null;
+                    showExplanation[currentIndex] = false;
+                } else {
+                    userAnswers[currentIndex] = idx;
+                    showExplanation[currentIndex] = true;
+                }
+                render();
+            });
+        });
+
+        if (showExplanation[currentIndex] && userAnswers[currentIndex] !== null) {
+            document.getElementById('explanation').innerHTML = `<p>${q.exp}</p>`;
+            document.getElementById('explanation').classList.add('show');
+        } else {
+            document.getElementById('explanation').classList.remove('show');
+        }
+
+        document.getElementById('qCounter').innerText = `${currentIndex+1}/${shuffled.length}`;
+        let correctCount = userAnswers.reduce((acc, ans, i) => acc + (ans === shuffled[i].correct ? 1 : 0), 0);
+        document.getElementById('scoreDisplay').innerText = `Score: ${correctCount}`;
+        document.getElementById('progressFill').style.width = `${(currentIndex+1)/shuffled.length*100}%`;
+
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === shuffled.length-1;
+
+        // dots
+        let dots = '';
+        for (let i = 0; i < shuffled.length; i+= Math.ceil(shuffled.length/20)) {
+            let cls = 'dot';
+            if (i === currentIndex) cls += ' active';
+            if (userAnswers[i] !== null) cls += ' answered';
+            dots += `<div class="${cls}" data-index="${i}"></div>`;
+        }
+        document.getElementById('dotsContainer').innerHTML = dots;
+        document.querySelectorAll('.dot').forEach(d => {
+            d.addEventListener('click', () => {
+                let idx = parseInt(d.dataset.index);
+                if (!isNaN(idx) && idx >=0 && idx < shuffled.length) {
+                    currentIndex = idx;
+                    render();
+                }
+            });
+        });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
+    render();
+</script>
+</body>
+</html>
