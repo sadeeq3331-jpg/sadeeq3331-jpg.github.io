@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Google AdSense -->
@@ -7,14 +7,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedLib · Complete Medical Textbook Library</title>
-    <!-- Font Awesome (load early, but not critical) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
     <!-- Preload Firebase scripts (deferred) -->
     <link rel="preconnect" href="https://www.gstatic.com">
+
+    <!-- Favicon (inline SVG stethoscope) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
+
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
-        body { background:#f5f9ff; min-height:100vh; display:flex; flex-direction:column; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Inter', sans-serif; display:flex; flex-direction:column; min-height:100vh; }
         .top-bar {
             background:linear-gradient(135deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
             display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
@@ -62,8 +67,23 @@
         }
         .main-panel.shifted { margin-left:320px; }
         .hero {
-            background:linear-gradient(135deg,#1b4c72,#2c7cb0); color:white; padding:3rem 5%; text-align:center;
+            position:relative;
+            background-image: url('https://images.unsplash.com/photo-1585435557343-3b092031a831?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color:white; padding:5rem 5%; text-align:center;
             border-radius:0 0 30px 30px;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10,41,66,0.7);
+            border-radius:0 0 30px 30px;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
         }
         .hero h1 { font-size:2.5rem; margin-bottom:1rem; font-weight:700; }
         .hero p { font-size:1.2rem; margin-bottom:2rem; opacity:0.9; }
@@ -112,6 +132,59 @@
             width:100%; font-weight:600; cursor:pointer; transition:0.3s;
         }
         .read-btn:hover { background:#1b4c72; }
+        /* Categories with images */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .category-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+            height: 200px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+        .category-card:hover {
+            transform: scale(1.02);
+        }
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(10,41,66,0.3), rgba(10,41,66,0.8));
+            z-index: 1;
+        }
+        .category-card i, .category-card h3, .category-card p {
+            position: relative;
+            z-index: 2;
+            color: white;
+            margin: 0;
+        }
+        .category-card i {
+            font-size: 2.5rem;
+            margin-top: 1.5rem;
+            margin-left: 1.5rem;
+            display: block;
+            color: #ffd966;
+        }
+        .category-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            margin-left: 1.5rem;
+        }
+        .category-card p {
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+            margin-left: 1.5rem;
+            opacity: 0.9;
+        }
         .footer {
             background:#0a2942; color:white; text-align:center; padding:2rem; margin-top:3rem;
         }
@@ -256,15 +329,11 @@
         <i class="fas fa-check-circle"></i> <span id="notificationMessage"></span>
     </div>
 
-    <!-- Deferred Firebase scripts (load after page content) -->
+    <!-- Deferred Firebase scripts -->
     <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-    <!-- Deferred AI scripts (Puter + WebLLM) – they are heavy, so we load them later -->
-    <script defer src="https://js.puter.com/v2/"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/dist/web-llm.umd.js"></script>
-
-    <!-- Main application script (deferred, so it runs after HTML is parsed) -->
+    <!-- Main application script -->
     <script defer>
         // ==================== GLOBAL VARIABLES ====================
         let books = [];
@@ -281,9 +350,9 @@
                     console.warn('Cache parse failed, will reload');
                 }
             }
-            // If no cache or empty, we need to load the full array (embedded below)
+            // If no cache or empty, load the full array (PASTE YOUR BOOKS HERE)
             if (!books || books.length === 0) {
-                // ==================== FULL BOOKS ARRAY ====================
+                             // ==================== FULL BOOKS ARRAY ====================
                 books = [
         // === BASIC SCIENCES ===
         // Biochemistry & Mol Bio
