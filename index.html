@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- Google AdSense -->
@@ -132,7 +132,6 @@
             width:100%; font-weight:600; cursor:pointer; transition:0.3s;
         }
         .read-btn:hover { background:#1b4c72; }
-        /* Categories with images */
         .categories {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -209,7 +208,6 @@
             .main-panel.shifted { margin-left:280px; }
             .hero h1 { font-size:2rem; }
         }
-        /* Loading spinner */
         #loading-overlay {
             position:fixed; top:0; left:0; width:100%; height:100%;
             background:white; z-index:9999; display:flex;
@@ -333,8 +331,12 @@
     <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
+    <!-- Deferred AI scripts (Puter + WebLLM) -->
+    <script defer src="https://js.puter.com/v2/"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/dist/web-llm.umd.js"></script>
+
     <!-- Main application script -->
-    <script defer>
+    <script>
         // ==================== GLOBAL VARIABLES ====================
         let books = [];
         let db = null;
@@ -350,9 +352,8 @@
                     console.warn('Cache parse failed, will reload');
                 }
             }
-            // If no cache or empty, load the full array (PASTE YOUR BOOKS HERE)
             if (!books || books.length === 0) {
-                             // ==================== FULL BOOKS ARRAY ====================
+                // ==================== FULL BOOKS ARRAY ====================
                 books = [
         // === BASIC SCIENCES ===
         // Biochemistry & Mol Bio
@@ -518,7 +519,7 @@
             }
         })();
 
-        // ==================== INITIALIZE FIREBASE (if loaded) ====================
+        // ==================== INITIALIZE FIREBASE ====================
         function initFirebase() {
             if (typeof firebase !== 'undefined' && !db) {
                 const firebaseConfig = {
@@ -534,9 +535,7 @@
                 console.log('Firebase initialized');
             }
         }
-        // Try immediately, but also listen for script load
         initFirebase();
-        document.addEventListener('firebase-ready', initFirebase); // custom event (not used, but safe)
 
         // ==================== FIRESTORE HELPERS ====================
         async function getReaderCount(bookId) {
@@ -681,7 +680,36 @@
             return icons[cat] || 'fa-book';
         }
 
-        // ==================== RENDER HOMEPAGE ====================
+        function getCategoryImage(cat) {
+            const images = {
+                'Biochemistry': 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Genetics': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Immunology': 'https://images.unsplash.com/photo-1576086212638-5f2a8d3d4f5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Microbiology': 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'General Pathology': 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'General Pharmacology': 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Research': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Respiratory': 'https://images.unsplash.com/photo-1584636633446-2d1f5b4f4b4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Cardiology': 'https://images.unsplash.com/photo-1549737221-bef5e5607b7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Neurology': 'https://images.unsplash.com/photo-1559757175-7cb057fbaedc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Gastroenterology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Endocrinology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Renal': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Reproductive': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Musculoskeletal': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Hematology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Dermatology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Psychiatry': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Ophthalmology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Pediatrics': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Emergency': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Toxicology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Clinical Skills': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+                'Nutrition': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+            };
+            return images[cat] || 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+        }
+
         async function renderHome() {
             const main = document.getElementById('mainContent');
             if (!main) return;
@@ -700,21 +728,22 @@
             uniqueCategories.forEach(cat => {
                 const icon = getCategoryIcon(cat);
                 const count = books.filter(b => b.category === cat).length;
-                html += `<div class="category-card" onclick="filterCategory('${cat}')"><i class="fas ${icon}"></i><h3>${cat}</h3><p>${count} books</p></div>`;
+                const imgUrl = getCategoryImage(cat);
+                html += `<div class="category-card" style="background-image: url('${imgUrl}');" onclick="filterCategory('${cat}')">
+                            <i class="fas ${icon}"></i>
+                            <h3>${cat}</h3>
+                            <p>${count} books</p>
+                        </div>`;
             });
             html += '</div>';
             main.innerHTML = html;
         }
 
-        // ==================== START APPLICATION ====================
         (async function start() {
-            // Wait for books to be loaded (they already are)
             await renderHome();
-            // Hide loading overlay
             document.getElementById('loading-overlay').style.display = 'none';
         })();
 
-        // Sidebar toggle
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
         const mainPanel = document.getElementById('mainPanel');
@@ -723,637 +752,620 @@
             mainPanel.classList.toggle('shifted');
         });
     </script>
-  <script defer src="path/to/your/nexus-script.js"></script>
-   <script>
-(function() {
-    // ==================== NEXUS & OSMOS – FIXED & COOL ====================
-    // Features: draggable panel, cool icons, proper positioning, working fallbacks.
 
-    // --- State ---
-    let currentMode = 'nexus'; // 'nexus' or 'osmos'
-    let osmosEngine = null;
-    let modelLoading = false;
-    let conversations = { nexus: [], osmos: [] };
-    let isDragging = false;
-    let dragOffsetX, dragOffsetY;
-    let webllmReady = false;
+    <!-- ==================== NEXUS & OSMOS AI ASSISTANT ==================== -->
+    <script>
+    (function() {
+        // ==================== DUAL AI ASSISTANT (FIXED & COOL) ====================
+        let currentMode = 'nexus';
+        let osmosEngine = null;
+        let modelLoading = false;
+        let conversations = { nexus: [], osmos: [] };
+        let isDragging = false;
+        let dragOffsetX, dragOffsetY;
 
-    // --- Helper to extract Puter message ---
-    function extractPuterMessage(raw) {
-        if (typeof raw === 'string') {
-            try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
-        }
-        return raw?.message?.content || raw?.content || JSON.stringify(raw);
-    }
-
-    // --- Create widget with fixed positioning and cool icons ---
-    function createWidget() {
-        const container = document.createElement('div');
-        container.id = 'nexus-container';
-        container.innerHTML = `
-            <style>
-                #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-                .nexus-bubble {
-                    position: fixed;
-                    bottom: 30px;
-                    right: 30px;
-                    width: 70px;
-                    height: 70px;
-                    border-radius: 50%;
-                    background: linear-gradient(145deg, #2c7cb0, #1b4c72);
-                    color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-                    z-index: 10000;
-                    transition: 0.3s;
-                    border: 3px solid #ffd966;
-                }
-                .nexus-bubble:hover {
-                    transform: scale(1.1) rotate(5deg);
-                }
-                .nexus-bubble i {
-                    font-size: 2.8rem;
-                    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-                }
-                .nexus-bubble .tooltip {
-                    position: absolute;
-                    top: -35px;
-                    background: #0a2942;
-                    color: white;
-                    padding: 6px 16px;
-                    border-radius: 30px;
-                    font-size: 0.9rem;
-                    opacity: 0;
-                    transition: opacity 0.3s;
-                    pointer-events: none;
-                    white-space: nowrap;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                }
-                .nexus-bubble:hover .tooltip {
-                    opacity: 1;
-                }
-                .nexus-panel {
-                    position: fixed;
-                    bottom: 120px;      /* higher than before to avoid browser UI */
-                    right: 30px;
-                    width: 420px;
-                    background: #ffffff;
-                    border-radius: 24px;
-                    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-                    display: none;
-                    flex-direction: column;
-                    z-index: 10001;
-                    overflow: hidden;
-                    border: 1px solid #e6f0fa;
-                    resize: both;
-                    min-width: 300px;
-                    min-height: 480px;
-                    max-width: 600px;
-                    max-height: 700px;
-                    backdrop-filter: blur(5px);
-                }
-                .nexus-panel-header {
-                    background: #0a2942;
-                    color: white;
-                    padding: 16px 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    cursor: move;
-                    user-select: none;
-                }
-                .nexus-panel-header h3 {
-                    margin: 0;
-                    font-size: 1.3rem;
-                    font-weight: 600;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
-                .nexus-panel-header h3 i {
-                    color: #ffd966;
-                    font-size: 1.5rem;
-                }
-                .nexus-header-buttons {
-                    display: flex;
-                    gap: 12px;
-                }
-                .nexus-header-btn {
-                    background: rgba(255,255,255,0.15);
-                    border: none;
-                    color: white;
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 50%;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: 0.2s;
-                }
-                .nexus-header-btn:hover {
-                    background: rgba(255,255,255,0.3);
-                }
-                .nexus-mode-selector {
-                    display: flex;
-                    gap: 10px;
-                    padding: 15px 20px;
-                    background: #f0f7ff;
-                    border-bottom: 1px solid #dde5ed;
-                }
-                .mode-btn {
-                    flex: 1;
-                    padding: 12px;
-                    border: 2px solid #d0e0f0;
-                    background: white;
-                    border-radius: 40px;
-                    cursor: pointer;
-                    font-weight: 600;
-                    color: #1e4b6e;
-                    transition: 0.2s;
-                    text-align: center;
-                    font-size: 0.9rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 6px;
-                }
-                .mode-btn i { font-size: 1.2rem; }
-                .mode-btn.active {
-                    background: #2c7cb0;
-                    color: white;
-                    border-color: #2c7cb0;
-                    box-shadow: 0 4px 10px rgba(44,124,176,0.3);
-                }
-                .nexus-messages {
-                    flex: 1;
-                    overflow-y: auto;
-                    padding: 20px;
-                    background: #f9fcff;
-                    min-height: 250px;
-                }
-                .message {
-                    margin-bottom: 18px;
-                    display: flex;
-                    flex-direction: column;
-                }
-                .message.user {
-                    align-items: flex-end;
-                }
-                .message.assistant {
-                    align-items: flex-start;
-                }
-                .message-bubble {
-                    max-width: 85%;
-                    padding: 12px 16px;
-                    border-radius: 20px;
-                    background: white;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                    color: #0a2942;
-                    word-wrap: break-word;
-                    line-height: 1.5;
-                    font-size: 0.95rem;
-                }
-                .user .message-bubble {
-                    background: #2c7cb0;
-                    color: white;
-                }
-                .assistant .message-bubble {
-                    background: white;
-                    border: 1px solid #e6f0fa;
-                }
-                .assistant-label {
-                    font-size: 0.7rem;
-                    color: #7a8c9e;
-                    margin-top: 6px;
-                    margin-left: 8px;
-                }
-                .feedback {
-                    display: flex;
-                    gap: 12px;
-                    margin-top: 6px;
-                    font-size: 0.85rem;
-                }
-                .feedback button {
-                    background: none;
-                    border: none;
-                    cursor: pointer;
-                    color: #a0b8cc;
-                    font-size: 1rem;
-                }
-                .feedback button:hover { color: #2c7cb0; }
-                .nexus-input-area {
-                    padding: 16px 20px;
-                    border-top: 1px solid #e0ecf5;
-                    display: flex;
-                    gap: 10px;
-                    background: white;
-                }
-                .nexus-input-area textarea {
-                    flex: 1;
-                    padding: 12px 16px;
-                    border: 1px solid #d0e0f0;
-                    border-radius: 30px;
-                    resize: none;
-                    font-family: inherit;
-                    font-size: 0.95rem;
-                    outline: none;
-                    transition: 0.2s;
-                }
-                .nexus-input-area textarea:focus {
-                    border-color: #2c7cb0;
-                }
-                .nexus-input-area button {
-                    background: #2c7cb0;
-                    color: white;
-                    border: none;
-                    border-radius: 30px;
-                    width: 48px;
-                    height: 48px;
-                    cursor: pointer;
-                    font-size: 1.2rem;
-                    transition: 0.2s;
-                    box-shadow: 0 4px 8px rgba(44,124,176,0.3);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .nexus-input-area button:hover {
-                    background: #1b4c72;
-                }
-                .nexus-input-area button:disabled {
-                    background: #a0b8cc;
-                    box-shadow: none;
-                    cursor: not-allowed;
-                }
-                .flashcard-btn {
-                    background: #ffd966;
-                    border: none;
-                    border-radius: 30px;
-                    padding: 12px;
-                    margin: 0 20px 20px 20px;
-                    cursor: pointer;
-                    color: #0a2942;
-                    font-weight: 600;
-                    transition: 0.2s;
-                    box-shadow: 0 4px 8px rgba(255,217,102,0.3);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 8px;
-                }
-                .flashcard-btn:hover {
-                    background: #f0c04a;
-                }
-                .selection-popup {
-                    position: absolute;
-                    background: white;
-                    border-radius: 40px;
-                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-                    display: none;
-                    z-index: 10002;
-                    overflow: hidden;
-                    border: 1px solid #e6f0fa;
-                    font-size: 0.9rem;
-                    white-space: nowrap;
-                }
-                .selection-option {
-                    padding: 10px 20px;
-                    cursor: pointer;
-                    text-align: center;
-                    font-weight: 600;
-                    transition: 0.2s;
-                    border-bottom: 1px solid #eef6ff;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-                .selection-option:last-child {
-                    border-bottom: none;
-                }
-                .selection-option.nexus {
-                    background: #2c7cb0;
-                    color: white;
-                }
-                .selection-option.osmos {
-                    background: #27ae60;
-                    color: white;
-                }
-                .selection-option:hover {
-                    opacity: 0.9;
-                }
-                @media (max-width: 600px) {
-                    .nexus-panel { width: 300px; right: 10px; }
-                }
-            </style>
-        `;
-
-        // --- Bubble with stethoscope (Font Awesome) ---
-        const bubble = document.createElement('div');
-        bubble.className = 'nexus-bubble';
-        bubble.innerHTML = '<i class="fas fa-stethoscope"></i><span class="tooltip">Ask Nexus</span>';
-        bubble.onclick = () => {
-            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
-        };
-        container.appendChild(bubble);
-
-        // --- Panel ---
-        const panel = document.createElement('div');
-        panel.className = 'nexus-panel';
-        panel.innerHTML = `
-            <div class="nexus-panel-header">
-                <h3><i class="fas fa-stethoscope"></i> Nexus & Osmos</h3>
-                <div class="nexus-header-buttons">
-                    <button class="nexus-header-btn" id="nexus-minimize"><i class="fas fa-minus"></i></button>
-                    <button class="nexus-header-btn" id="nexus-close"><i class="fas fa-times"></i></button>
-                </div>
-            </div>
-            <div class="nexus-mode-selector">
-                <button class="mode-btn" id="mode-nexus"><i class="fas fa-cloud"></i> Nexus (Cloud)</button>
-                <button class="mode-btn" id="mode-osmos"><i class="fas fa-microchip"></i> Osmos (Local)</button>
-            </div>
-            <div class="nexus-messages" id="nexus-messages"></div>
-            <div class="nexus-input-area">
-                <textarea id="nexus-input" placeholder="Ask a medical question..." rows="2"></textarea>
-                <button id="nexus-send"><i class="fas fa-paper-plane"></i></button>
-            </div>
-            <button class="flashcard-btn" id="nexus-flashcard"><i class="fas fa-save"></i> Save Flashcard</button>
-        `;
-        container.appendChild(panel);
-
-        // --- Selection popup (two options) ---
-        const popup = document.createElement('div');
-        popup.className = 'selection-popup';
-        popup.innerHTML = `
-            <div class="selection-option nexus" id="ask-nexus"><i class="fas fa-cloud"></i> Ask Nexus</div>
-            <div class="selection-option osmos" id="ask-osmos"><i class="fas fa-microchip"></i> Ask Osmos</div>
-        `;
-        popup.onclick = (e) => {
-            const target = e.target.closest('.selection-option');
-            if (!target) return;
-            const selectedText = popup.getAttribute('data-text') || '';
-            document.getElementById('nexus-input').value = selectedText;
-            if (target.id === 'ask-nexus') {
-                currentMode = 'nexus';
-                panel.style.display = 'flex';
-                popup.style.display = 'none';
-                sendMessage();
-            } else if (target.id === 'ask-osmos') {
-                currentMode = 'osmos';
-                panel.style.display = 'flex';
-                popup.style.display = 'none';
-                sendMessage();
+        function extractPuterMessage(raw) {
+            if (typeof raw === 'string') {
+                try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
             }
-            updateModeButtons();
-        };
-        container.appendChild(popup);
+            return raw?.message?.content || raw?.content || JSON.stringify(raw);
+        }
 
-        document.body.appendChild(container);
-        return { panel, popup };
-    }
-
-    // --- Dragging logic ---
-    function makeDraggable(header, panel) {
-        header.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.nexus-header-btn')) return;
-            isDragging = true;
-            const rect = panel.getBoundingClientRect();
-            dragOffsetX = e.clientX - rect.left;
-            dragOffsetY = e.clientY - rect.top;
-            panel.style.cursor = 'grabbing';
-            e.preventDefault();
-        });
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            panel.style.left = (e.clientX - dragOffsetX) + 'px';
-            panel.style.top = (e.clientY - dragOffsetY) + 'px';
-            panel.style.bottom = 'auto';
-            panel.style.right = 'auto';
-        });
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            panel.style.cursor = 'default';
-        });
-    }
-
-    // --- Render messages ---
-    function renderMessages() {
-        const msgsDiv = document.getElementById('nexus-messages');
-        if (!msgsDiv) return;
-        const conv = conversations[currentMode];
-        msgsDiv.innerHTML = conv.map((msg, idx) => {
-            const isUser = msg.role === 'user';
-            const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
-            return `
-                <div class="message ${msg.role}">
-                    <div class="message-bubble">${content.replace(/\n/g, '<br>')}</div>
-                    ${!isUser ? `
-                        <div class="assistant-label">via ${currentMode === 'nexus' ? 'Nexus (Cloud)' : 'Osmos (Local)'}</div>
-                        <div class="feedback">
-                            <button onclick="window.nexusFeedback('${currentMode}', ${idx}, 'up')"><i class="fas fa-thumbs-up"></i></button>
-                            <button onclick="window.nexusFeedback('${currentMode}', ${idx}, 'down')"><i class="fas fa-thumbs-down"></i></button>
-                        </div>
-                    ` : ''}
-                </div>
+        function createWidget() {
+            const container = document.createElement('div');
+            container.id = 'nexus-container';
+            container.innerHTML = `
+                <style>
+                    #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+                    .nexus-bubble {
+                        position: fixed;
+                        bottom: 30px;
+                        right: 30px;
+                        width: 70px;
+                        height: 70px;
+                        border-radius: 50%;
+                        background: linear-gradient(145deg, #2c7cb0, #1b4c72);
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+                        z-index: 10000;
+                        transition: 0.3s;
+                        border: 3px solid #ffd966;
+                    }
+                    .nexus-bubble:hover {
+                        transform: scale(1.1) rotate(5deg);
+                    }
+                    .nexus-bubble i {
+                        font-size: 2.8rem;
+                        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+                    }
+                    .nexus-bubble .tooltip {
+                        position: absolute;
+                        top: -35px;
+                        background: #0a2942;
+                        color: white;
+                        padding: 6px 16px;
+                        border-radius: 30px;
+                        font-size: 0.9rem;
+                        opacity: 0;
+                        transition: opacity 0.3s;
+                        pointer-events: none;
+                        white-space: nowrap;
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    }
+                    .nexus-bubble:hover .tooltip {
+                        opacity: 1;
+                    }
+                    .nexus-panel {
+                        position: fixed;
+                        bottom: 120px;
+                        right: 30px;
+                        width: 420px;
+                        background: #ffffff;
+                        border-radius: 24px;
+                        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                        display: none;
+                        flex-direction: column;
+                        z-index: 10001;
+                        overflow: hidden;
+                        border: 1px solid #e6f0fa;
+                        resize: both;
+                        min-width: 300px;
+                        min-height: 480px;
+                        max-width: 600px;
+                        max-height: 700px;
+                        backdrop-filter: blur(5px);
+                    }
+                    .nexus-panel-header {
+                        background: #0a2942;
+                        color: white;
+                        padding: 16px 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        cursor: move;
+                        user-select: none;
+                    }
+                    .nexus-panel-header h3 {
+                        margin: 0;
+                        font-size: 1.3rem;
+                        font-weight: 600;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    .nexus-panel-header h3 i {
+                        color: #ffd966;
+                        font-size: 1.5rem;
+                    }
+                    .nexus-header-buttons {
+                        display: flex;
+                        gap: 12px;
+                    }
+                    .nexus-header-btn {
+                        background: rgba(255,255,255,0.15);
+                        border: none;
+                        color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50%;
+                        font-size: 1rem;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: 0.2s;
+                    }
+                    .nexus-header-btn:hover {
+                        background: rgba(255,255,255,0.3);
+                    }
+                    .nexus-mode-selector {
+                        display: flex;
+                        gap: 10px;
+                        padding: 15px 20px;
+                        background: #f0f7ff;
+                        border-bottom: 1px solid #dde5ed;
+                    }
+                    .mode-btn {
+                        flex: 1;
+                        padding: 12px;
+                        border: 2px solid #d0e0f0;
+                        background: white;
+                        border-radius: 40px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        color: #1e4b6e;
+                        transition: 0.2s;
+                        text-align: center;
+                        font-size: 0.9rem;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 6px;
+                    }
+                    .mode-btn i { font-size: 1.2rem; }
+                    .mode-btn.active {
+                        background: #2c7cb0;
+                        color: white;
+                        border-color: #2c7cb0;
+                        box-shadow: 0 4px 10px rgba(44,124,176,0.3);
+                    }
+                    .nexus-messages {
+                        flex: 1;
+                        overflow-y: auto;
+                        padding: 20px;
+                        background: #f9fcff;
+                        min-height: 250px;
+                    }
+                    .message {
+                        margin-bottom: 18px;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    .message.user {
+                        align-items: flex-end;
+                    }
+                    .message.assistant {
+                        align-items: flex-start;
+                    }
+                    .message-bubble {
+                        max-width: 85%;
+                        padding: 12px 16px;
+                        border-radius: 20px;
+                        background: white;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                        color: #0a2942;
+                        word-wrap: break-word;
+                        line-height: 1.5;
+                        font-size: 0.95rem;
+                    }
+                    .user .message-bubble {
+                        background: #2c7cb0;
+                        color: white;
+                    }
+                    .assistant .message-bubble {
+                        background: white;
+                        border: 1px solid #e6f0fa;
+                    }
+                    .assistant-label {
+                        font-size: 0.7rem;
+                        color: #7a8c9e;
+                        margin-top: 6px;
+                        margin-left: 8px;
+                    }
+                    .feedback {
+                        display: flex;
+                        gap: 12px;
+                        margin-top: 6px;
+                        font-size: 0.85rem;
+                    }
+                    .feedback button {
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        color: #a0b8cc;
+                        font-size: 1rem;
+                    }
+                    .feedback button:hover { color: #2c7cb0; }
+                    .nexus-input-area {
+                        padding: 16px 20px;
+                        border-top: 1px solid #e0ecf5;
+                        display: flex;
+                        gap: 10px;
+                        background: white;
+                    }
+                    .nexus-input-area textarea {
+                        flex: 1;
+                        padding: 12px 16px;
+                        border: 1px solid #d0e0f0;
+                        border-radius: 30px;
+                        resize: none;
+                        font-family: inherit;
+                        font-size: 0.95rem;
+                        outline: none;
+                        transition: 0.2s;
+                    }
+                    .nexus-input-area textarea:focus {
+                        border-color: #2c7cb0;
+                    }
+                    .nexus-input-area button {
+                        background: #2c7cb0;
+                        color: white;
+                        border: none;
+                        border-radius: 30px;
+                        width: 48px;
+                        height: 48px;
+                        cursor: pointer;
+                        font-size: 1.2rem;
+                        transition: 0.2s;
+                        box-shadow: 0 4px 8px rgba(44,124,176,0.3);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .nexus-input-area button:hover {
+                        background: #1b4c72;
+                    }
+                    .nexus-input-area button:disabled {
+                        background: #a0b8cc;
+                        box-shadow: none;
+                        cursor: not-allowed;
+                    }
+                    .flashcard-btn {
+                        background: #ffd966;
+                        border: none;
+                        border-radius: 30px;
+                        padding: 12px;
+                        margin: 0 20px 20px 20px;
+                        cursor: pointer;
+                        color: #0a2942;
+                        font-weight: 600;
+                        transition: 0.2s;
+                        box-shadow: 0 4px 8px rgba(255,217,102,0.3);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                    }
+                    .flashcard-btn:hover {
+                        background: #f0c04a;
+                    }
+                    .selection-popup {
+                        position: absolute;
+                        background: white;
+                        border-radius: 40px;
+                        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+                        display: none;
+                        z-index: 10002;
+                        overflow: hidden;
+                        border: 1px solid #e6f0fa;
+                        font-size: 0.9rem;
+                        white-space: nowrap;
+                    }
+                    .selection-option {
+                        padding: 10px 20px;
+                        cursor: pointer;
+                        text-align: center;
+                        font-weight: 600;
+                        transition: 0.2s;
+                        border-bottom: 1px solid #eef6ff;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+                    .selection-option:last-child {
+                        border-bottom: none;
+                    }
+                    .selection-option.nexus {
+                        background: #2c7cb0;
+                        color: white;
+                    }
+                    .selection-option.osmos {
+                        background: #27ae60;
+                        color: white;
+                    }
+                    .selection-option:hover {
+                        opacity: 0.9;
+                    }
+                    @media (max-width: 600px) {
+                        .nexus-panel { width: 300px; right: 10px; }
+                    }
+                </style>
             `;
-        }).join('');
-        msgsDiv.scrollTop = msgsDiv.scrollHeight;
-    }
 
-    window.nexusFeedback = function(mode, idx, type) {
-        const msg = conversations[mode][idx];
-        if (!msg) return;
-        let stored = JSON.parse(localStorage.getItem('nexus_feedback') || '[]');
-        stored.push({ mode, message: msg.content, feedback: type, timestamp: Date.now() });
-        localStorage.setItem('nexus_feedback', JSON.stringify(stored));
-        alert('Feedback saved!');
-    };
+            const bubble = document.createElement('div');
+            bubble.className = 'nexus-bubble';
+            bubble.innerHTML = '<i class="fas fa-stethoscope"></i><span class="tooltip">Ask AI</span>';
+            bubble.onclick = () => {
+                panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+            };
+            container.appendChild(bubble);
 
-    function updateModeButtons() {
-        const nexusBtn = document.getElementById('mode-nexus');
-        const osmosBtn = document.getElementById('mode-osmos');
-        if (!nexusBtn || !osmosBtn) return;
-        if (currentMode === 'nexus') {
-            nexusBtn.classList.add('active');
-            osmosBtn.classList.remove('active');
-        } else {
-            nexusBtn.classList.remove('active');
-            osmosBtn.classList.add('active');
+            const panel = document.createElement('div');
+            panel.className = 'nexus-panel';
+            panel.innerHTML = `
+                <div class="nexus-panel-header">
+                    <h3><i class="fas fa-stethoscope"></i> Nexus & Osmos</h3>
+                    <div class="nexus-header-buttons">
+                        <button class="nexus-header-btn" id="nexus-minimize"><i class="fas fa-minus"></i></button>
+                        <button class="nexus-header-btn" id="nexus-close"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="nexus-mode-selector">
+                    <button class="mode-btn" id="mode-nexus"><i class="fas fa-cloud"></i> Nexus (Cloud)</button>
+                    <button class="mode-btn" id="mode-osmos"><i class="fas fa-microchip"></i> Osmos (Local)</button>
+                </div>
+                <div class="nexus-messages" id="nexus-messages"></div>
+                <div class="nexus-input-area">
+                    <textarea id="nexus-input" placeholder="Ask a medical question..." rows="2"></textarea>
+                    <button id="nexus-send"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <button class="flashcard-btn" id="nexus-flashcard"><i class="fas fa-save"></i> Save Flashcard</button>
+            `;
+            container.appendChild(panel);
+
+            const popup = document.createElement('div');
+            popup.className = 'selection-popup';
+            popup.innerHTML = `
+                <div class="selection-option nexus" id="ask-nexus"><i class="fas fa-cloud"></i> Ask Nexus</div>
+                <div class="selection-option osmos" id="ask-osmos"><i class="fas fa-microchip"></i> Ask Osmos</div>
+            `;
+            popup.onclick = (e) => {
+                const target = e.target.closest('.selection-option');
+                if (!target) return;
+                const selectedText = popup.getAttribute('data-text') || '';
+                document.getElementById('nexus-input').value = selectedText;
+                if (target.id === 'ask-nexus') {
+                    currentMode = 'nexus';
+                    panel.style.display = 'flex';
+                    popup.style.display = 'none';
+                    sendMessage();
+                } else if (target.id === 'ask-osmos') {
+                    currentMode = 'osmos';
+                    panel.style.display = 'flex';
+                    popup.style.display = 'none';
+                    sendMessage();
+                }
+                updateModeButtons();
+            };
+            container.appendChild(popup);
+
+            document.body.appendChild(container);
+            return { panel, popup };
         }
-        renderMessages();
-    }
 
-    // --- Osmos loader with better feedback ---
-    async function loadOsmosModel() {
-        if (osmosEngine || modelLoading) return;
-        if (!window.webllm) {
-            addAssistantMessage('Osmos requires WebGPU. For now, please use Nexus. You can enable WebGPU in Chrome://flags.', 'osmos');
-            return;
+        function makeDraggable(header, panel) {
+            header.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.nexus-header-btn')) return;
+                isDragging = true;
+                const rect = panel.getBoundingClientRect();
+                dragOffsetX = e.clientX - rect.left;
+                dragOffsetY = e.clientY - rect.top;
+                panel.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                panel.style.left = (e.clientX - dragOffsetX) + 'px';
+                panel.style.top = (e.clientY - dragOffsetY) + 'px';
+                panel.style.bottom = 'auto';
+                panel.style.right = 'auto';
+            });
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                panel.style.cursor = 'default';
+            });
         }
-        modelLoading = true;
-        addAssistantMessage('⏳ Downloading Osmos AI model (first time only, ~2GB). Please wait...', 'osmos');
-        try {
-            osmosEngine = await webllm.CreateMLCEngine(
-                "Phi-3-mini-4k-instruct-q4f16_1-MLC",
-                { initProgressCallback: (rpt) => console.log(`Osmos: ${Math.round(rpt.progress*100)}%`) }
-            );
-            addAssistantMessage('✅ Osmos is ready! You can now ask medical questions.', 'osmos');
-        } catch (e) {
-            console.error(e);
-            addAssistantMessage('❌ Osmos failed to load. Please use Nexus.', 'osmos');
-        } finally {
-            modelLoading = false;
+
+        function renderMessages() {
+            const msgsDiv = document.getElementById('nexus-messages');
+            if (!msgsDiv) return;
+            const conv = conversations[currentMode];
+            msgsDiv.innerHTML = conv.map((msg, idx) => {
+                const isUser = msg.role === 'user';
+                const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
+                return `
+                    <div class="message ${msg.role}">
+                        <div class="message-bubble">${content.replace(/\n/g, '<br>')}</div>
+                        ${!isUser ? `
+                            <div class="assistant-label">via ${currentMode === 'nexus' ? 'Nexus (Cloud)' : 'Osmos (Local)'}</div>
+                            <div class="feedback">
+                                <button onclick="window.nexusFeedback('${currentMode}', ${idx}, 'up')"><i class="fas fa-thumbs-up"></i></button>
+                                <button onclick="window.nexusFeedback('${currentMode}', ${idx}, 'down')"><i class="fas fa-thumbs-down"></i></button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+            msgsDiv.scrollTop = msgsDiv.scrollHeight;
         }
-    }
 
-    function addAssistantMessage(content, mode = currentMode) {
-        conversations[mode].push({ role: 'assistant', content });
-        if (mode === currentMode) renderMessages();
-    }
+        window.nexusFeedback = function(mode, idx, type) {
+            const msg = conversations[mode][idx];
+            if (!msg) return;
+            let stored = JSON.parse(localStorage.getItem('nexus_feedback') || '[]');
+            stored.push({ mode, message: msg.content, feedback: type, timestamp: Date.now() });
+            localStorage.setItem('nexus_feedback', JSON.stringify(stored));
+            alert('Feedback saved!');
+        };
 
-    // --- Send message ---
-    async function sendMessage() {
-        const input = document.getElementById('nexus-input');
-        const text = input.value.trim();
-        if (!text) return;
+        function updateModeButtons() {
+            const nexusBtn = document.getElementById('mode-nexus');
+            const osmosBtn = document.getElementById('mode-osmos');
+            if (!nexusBtn || !osmosBtn) return;
+            if (currentMode === 'nexus') {
+                nexusBtn.classList.add('active');
+                osmosBtn.classList.remove('active');
+            } else {
+                nexusBtn.classList.remove('active');
+                osmosBtn.classList.add('active');
+            }
+            renderMessages();
+        }
 
-        conversations[currentMode].push({ role: 'user', content: text });
-        renderMessages();
-        input.value = '';
+        async function loadOsmosModel() {
+            if (osmosEngine || modelLoading) return;
+            if (!window.webllm) {
+                addAssistantMessage('Osmos requires WebGPU. For now, please use Nexus. You can enable WebGPU in Chrome://flags.', 'osmos');
+                return;
+            }
+            modelLoading = true;
+            addAssistantMessage('⏳ Downloading Osmos AI model (first time only, ~2GB). Please wait...', 'osmos');
+            try {
+                osmosEngine = await webllm.CreateMLCEngine(
+                    "Phi-3-mini-4k-instruct-q4f16_1-MLC",
+                    { initProgressCallback: (rpt) => console.log(`Osmos: ${Math.round(rpt.progress*100)}%`) }
+                );
+                addAssistantMessage('✅ Osmos is ready! You can now ask medical questions.', 'osmos');
+            } catch (e) {
+                console.error(e);
+                addAssistantMessage('❌ Osmos failed to load. Please use Nexus.', 'osmos');
+            } finally {
+                modelLoading = false;
+            }
+        }
 
-        const sendBtn = document.getElementById('nexus-send');
-        sendBtn.disabled = true;
+        function addAssistantMessage(content, mode = currentMode) {
+            conversations[mode].push({ role: 'assistant', content });
+            if (mode === currentMode) renderMessages();
+        }
 
-        // Thinking placeholder
-        conversations[currentMode].push({ role: 'assistant', content: '...' });
-        renderMessages();
+        async function sendMessage() {
+            const input = document.getElementById('nexus-input');
+            const text = input.value.trim();
+            if (!text) return;
 
-        if (currentMode === 'nexus') {
-            if (window.puter?.ai) {
-                try {
-                    const raw = await puter.ai.chat(text, { model: 'google/gemini-2.0-flash-lite-001' });
-                    const clean = extractPuterMessage(raw);
-                    conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: clean };
-                } catch (e) {
-                    conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: 'Nexus error: ' + e.message };
+            conversations[currentMode].push({ role: 'user', content: text });
+            renderMessages();
+            input.value = '';
+
+            const sendBtn = document.getElementById('nexus-send');
+            sendBtn.disabled = true;
+
+            conversations[currentMode].push({ role: 'assistant', content: '...' });
+            renderMessages();
+
+            if (currentMode === 'nexus') {
+                if (window.puter?.ai) {
+                    try {
+                        const raw = await puter.ai.chat(text, { model: 'google/gemini-2.0-flash-lite-001' });
+                        const clean = extractPuterMessage(raw);
+                        conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: clean };
+                    } catch (e) {
+                        conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: 'Nexus error: ' + e.message };
+                    }
+                } else {
+                    conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: 'Nexus not available. Check Puter script.' };
                 }
             } else {
-                conversations.nexus[conversations.nexus.length-1] = { role: 'assistant', content: 'Nexus not available. Check Puter script.' };
-            }
-        } else {
-            if (!osmosEngine) {
-                await loadOsmosModel();
                 if (!osmosEngine) {
-                    conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: 'Osmos not ready. Try Nexus.' };
-                    sendBtn.disabled = false;
-                    renderMessages();
-                    return;
-                }
-            }
-            try {
-                const reply = await osmosEngine.chat.completions.create({
-                    messages: [
-                        { role: "system", content: "You are a helpful medical assistant. Provide concise, accurate educational answers." },
-                        { role: "user", content: text }
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 500
-                });
-                conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: reply.choices[0].message.content };
-            } catch (e) {
-                conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: 'Osmos error: ' + e.message };
-            }
-        }
-
-        renderMessages();
-        sendBtn.disabled = false;
-    }
-
-    // --- Flashcard ---
-    function generateFlashcard() {
-        const conv = conversations[currentMode];
-        if (conv.length < 2) { alert('Need a Q&A first.'); return; }
-        const lastQA = conv.slice(-2);
-        const card = {
-            mode: currentMode,
-            question: lastQA[0].content,
-            answer: lastQA[1].content,
-            timestamp: Date.now()
-        };
-        let cards = JSON.parse(localStorage.getItem('nexus_flashcards') || '[]');
-        cards.push(card);
-        localStorage.setItem('nexus_flashcards', JSON.stringify(cards));
-        alert('Flashcard saved!');
-    }
-
-    // --- Selection detection (inside iframe) ---
-    function setupSelectionDetection(iframeId, popup) {
-        const iframe = document.getElementById(iframeId);
-        if (!iframe) return;
-        setInterval(() => {
-            try {
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                const sel = doc.getSelection();
-                const txt = sel.toString().trim();
-                if (txt) {
-                    const range = sel.getRangeAt(0);
-                    const rect = range.getBoundingClientRect();
-                    if (rect && rect.width > 0) {
-                        const iframeRect = iframe.getBoundingClientRect();
-                        const popHeight = popup.offsetHeight || 70;
-                        popup.style.display = 'block';
-                        popup.style.left = (iframeRect.left + rect.left + window.scrollX + 20) + 'px';
-                        popup.style.top = (iframeRect.top + rect.top + window.scrollY - popHeight - 15) + 'px';
-                        popup.setAttribute('data-text', txt);
+                    await loadOsmosModel();
+                    if (!osmosEngine) {
+                        conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: 'Osmos not ready. Try Nexus.' };
+                        sendBtn.disabled = false;
+                        renderMessages();
                         return;
                     }
                 }
-                popup.style.display = 'none';
-            } catch { popup.style.display = 'none'; }
-        }, 600);
-    }
-
-    // --- Initialize ---
-    function init() {
-        const { panel, popup } = createWidget();
-        const header = panel.querySelector('.nexus-panel-header');
-        makeDraggable(header, panel);
-
-        document.getElementById('mode-nexus').onclick = () => {
-            currentMode = 'nexus';
-            updateModeButtons();
-        };
-        document.getElementById('mode-osmos').onclick = () => {
-            currentMode = 'osmos';
-            updateModeButtons();
-            loadOsmosModel(); // preload
-        };
-        document.getElementById('nexus-send').onclick = sendMessage;
-        document.getElementById('nexus-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
+                try {
+                    const reply = await osmosEngine.chat.completions.create({
+                        messages: [
+                            { role: "system", content: "You are a helpful medical assistant. Provide concise, accurate educational answers." },
+                            { role: "user", content: text }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 500
+                    });
+                    conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: reply.choices[0].message.content };
+                } catch (e) {
+                    conversations.osmos[conversations.osmos.length-1] = { role: 'assistant', content: 'Osmos error: ' + e.message };
+                }
             }
-        });
-        document.getElementById('nexus-flashcard').onclick = generateFlashcard;
-        document.getElementById('nexus-minimize').onclick = () => { panel.style.display = 'none'; };
-        document.getElementById('nexus-close').onclick = () => { panel.style.display = 'none'; };
 
-        updateModeButtons();
-        setupSelectionDetection('bookFrame', popup);
+            renderMessages();
+            sendBtn.disabled = false;
+        }
 
-        // Cool welcome messages
-        conversations.nexus.push({ role: 'assistant', content: '👋 Hi, I’m Nexus! Ask me anything about medicine – I’m here to help you ace your studies.' });
-        conversations.osmos.push({ role: 'assistant', content: '🧠 Hello! I’m Osmos, your local AI. I work offline but need a modern browser with WebGPU.' });
-        renderMessages();
-    }
+        function generateFlashcard() {
+            const conv = conversations[currentMode];
+            if (conv.length < 2) { alert('Need a Q&A first.'); return; }
+            const lastQA = conv.slice(-2);
+            const card = {
+                mode: currentMode,
+                question: lastQA[0].content,
+                answer: lastQA[1].content,
+                timestamp: Date.now()
+            };
+            let cards = JSON.parse(localStorage.getItem('nexus_flashcards') || '[]');
+            cards.push(card);
+            localStorage.setItem('nexus_flashcards', JSON.stringify(cards));
+            alert('Flashcard saved!');
+        }
 
-    init();
-})();
-</script>
+        function setupSelectionDetection(iframeId, popup) {
+            const iframe = document.getElementById(iframeId);
+            if (!iframe) return;
+            setInterval(() => {
+                try {
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    const sel = doc.getSelection();
+                    const txt = sel.toString().trim();
+                    if (txt) {
+                        const range = sel.getRangeAt(0);
+                        const rect = range.getBoundingClientRect();
+                        if (rect && rect.width > 0) {
+                            const iframeRect = iframe.getBoundingClientRect();
+                            const popHeight = popup.offsetHeight || 70;
+                            popup.style.display = 'block';
+                            popup.style.left = (iframeRect.left + rect.left + window.scrollX + 20) + 'px';
+                            popup.style.top = (iframeRect.top + rect.top + window.scrollY - popHeight - 15) + 'px';
+                            popup.setAttribute('data-text', txt);
+                            return;
+                        }
+                    }
+                    popup.style.display = 'none';
+                } catch { popup.style.display = 'none'; }
+            }, 600);
+        }
+
+        function init() {
+            const { panel, popup } = createWidget();
+            const header = panel.querySelector('.nexus-panel-header');
+            makeDraggable(header, panel);
+
+            document.getElementById('mode-nexus').onclick = () => {
+                currentMode = 'nexus';
+                updateModeButtons();
+            };
+            document.getElementById('mode-osmos').onclick = () => {
+                currentMode = 'osmos';
+                updateModeButtons();
+                loadOsmosModel();
+            };
+            document.getElementById('nexus-send').onclick = sendMessage;
+            document.getElementById('nexus-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            document.getElementById('nexus-flashcard').onclick = generateFlashcard;
+            document.getElementById('nexus-minimize').onclick = () => { panel.style.display = 'none'; };
+            document.getElementById('nexus-close').onclick = () => { panel.style.display = 'none'; };
+
+            updateModeButtons();
+            setupSelectionDetection('bookFrame', popup);
+
+            conversations.nexus.push({ role: 'assistant', content: '👋 Hi, I’m Nexus! Ask me anything about medicine – I’m here to help you ace your studies.' });
+            conversations.osmos.push({ role: 'assistant', content: '🧠 Hello! I’m Osmos, your local AI. I work offline but need a modern browser with WebGPU.' });
+            renderMessages();
+        }
+
+        init();
+    })();
+    </script>
 </body>
 </html>
