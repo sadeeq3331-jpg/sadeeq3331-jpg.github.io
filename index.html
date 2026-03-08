@@ -336,19 +336,32 @@
         let books = [];
         let db = null;
 
-        // ==================== LOAD BOOKS WITH CACHE ====================
-        (function loadBooks() {
-            const cached = localStorage.getItem('medlib_books');
-            if (cached) {
-                try {
-                    books = JSON.parse(cached);
-                    console.log('Books loaded from cache');
-                } catch (e) {
-                    console.warn('Cache parse failed, will reload');
-                }
-            }
-            if (!books || books.length === 0) {
-                
+       // ==================== LOAD BOOKS FROM JSON WITH CACHE ====================
+(async function loadBooks() {
+    const cached = localStorage.getItem('medlib_books');
+    if (cached) {
+        try {
+            books = JSON.parse(cached);
+            console.log('Books loaded from cache');
+            // Books are ready, now render the homepage
+            if (typeof renderHome === 'function') renderHome();
+            return;
+        } catch (e) {
+            console.warn('Cache parse failed, will fetch');
+        }
+    }
+    try {
+        const response = await fetch('books.json');
+        if (!response.ok) throw new Error('Failed to fetch books.json');
+        books = await response.json();
+        localStorage.setItem('medlib_books', JSON.stringify(books));
+        console.log('Books fetched and cached');
+        renderHome();
+    } catch (e) {
+        console.error('Error loading books', e);
+        // Fallback: maybe show an error message
+    }
+})();
         // ==================== INITIALIZE FIREBASE ====================
         function initFirebase() {
             if (typeof firebase !== 'undefined' && !db) {
@@ -1085,7 +1098,12 @@
         renderMessages();
     }
 
-    init();
+    // Wait until the page is idle or after 2 seconds
+if ('requestIdleCallback' in window) {
+    requestIdleCallback(init, { timeout: 2000 });
+} else {
+    setTimeout(init, 2000);
+}
 })();
 </script>
 </body>
