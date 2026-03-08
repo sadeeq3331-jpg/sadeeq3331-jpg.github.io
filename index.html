@@ -752,11 +752,11 @@
             mainPanel.classList.toggle('shifted');
         });
     </script>
-    <!-- ==================== NEXUS AI ASSISTANT (WITH SELECTION POPUP) ==================== -->
+    <!-- ==================== NEXUS AI ASSISTANT (EMOJI ICONS) ==================== -->
 <script>
 (function() {
     // ================================================================
-    // NEXUS – Intelligent Medical Assistant with full conversation features
+    // NEXUS – Intelligent Medical Assistant (emoji icons, no Font Awesome)
     // ================================================================
     
     // ---------- Configuration ----------
@@ -900,10 +900,10 @@
             const active = c.id === currentConvId ? 'active' : '';
             html += `<div class="conv-tab ${active}" data-id="${c.id}">
                 <span class="conv-name" ondblblur="renameConversation(${c.id}, this.innerText)" contenteditable="false">${c.name}</span>
-                <button class="delete-conv" onclick="deleteConversation(${c.id})"><i class="fas fa-times"></i></button>
+                <button class="delete-conv" onclick="deleteConversation(${c.id})">🗑️</button>
             </div>`;
         });
-        html += `<button class="new-conv-btn" onclick="newConversation()"><i class="fas fa-plus"></i> New</button>`;
+        html += `<button class="new-conv-btn" onclick="newConversation()">➕ New</button>`;
         tabs.innerHTML = html;
         document.querySelectorAll('.conv-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
@@ -929,7 +929,7 @@
         conv.messages.forEach((msg, idx) => {
             const isUser = msg.role === 'user';
             const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const avatar = isUser ? '<i class="fas fa-user-circle"></i>' : '<i class="fas fa-robot"></i>';
+            const avatar = isUser ? '👤' : '🤖';
             const content = isUser ? msg.content : stripTables(msg.content);
             html += `
                 <div class="message ${msg.role}">
@@ -939,8 +939,8 @@
                         <div class="message-footer">
                             <span class="timestamp">${time}</span>
                             ${!isUser ? `
-                                <button class="copy-btn" onclick="copyMessage('${msg.content.replace(/'/g, "\\'")}')"><i class="fas fa-copy"></i></button>
-                                <button class="delete-btn" onclick="deleteMessage(${idx})"><i class="fas fa-trash-alt"></i></button>
+                                <button class="copy-btn" onclick="copyMessage('${msg.content.replace(/'/g, "\\'")}')">📋</button>
+                                <button class="delete-btn" onclick="deleteMessage(${idx})">🗑️</button>
                             ` : ''}
                         </div>
                     </div>
@@ -950,7 +950,7 @@
         if (isWaiting) {
             html += `
                 <div class="message assistant typing">
-                    <div class="avatar"><i class="fas fa-robot"></i></div>
+                    <div class="avatar">🤖</div>
                     <div class="bubble-wrapper">
                         <div class="message-bubble typing-indicator"><span>.</span><span>.</span><span>.</span></div>
                     </div>
@@ -998,10 +998,10 @@
                     color: white; display: flex; align-items: center; justify-content: center;
                     cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.3); z-index: 10000;
                     transition: 0.3s; border: 3px solid #ffd966; animation: pulse 2s infinite;
+                    font-size: 2.8rem; line-height: 1;
                 }
                 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(44,124,176,0.7); } 70% { box-shadow: 0 0 0 15px rgba(44,124,176,0); } 100% { box-shadow: 0 0 0 0 rgba(44,124,176,0); } }
                 .nexus-bubble:hover { transform: scale(1.1) rotate(5deg); }
-                .nexus-bubble i { font-size: 2.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
                 .nexus-bubble .tooltip {
                     position: absolute; top: -35px; background: #0a2942; color: white;
                     padding: 6px 16px; border-radius: 30px; font-size: 0.9rem; opacity: 0;
@@ -1023,12 +1023,11 @@
                     user-select: none;
                 }
                 .nexus-panel-header h3 { margin:0; font-size:1.3rem; display:flex; align-items:center; gap:10px; }
-                .nexus-panel-header h3 i { color:#ffd966; font-size:1.5rem; }
                 .nexus-header-buttons { display:flex; gap:12px; }
                 .nexus-header-btn {
                     background: rgba(255,255,255,0.15); border:none; color:white; width:32px; height:32px;
-                    border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
-                    transition:0.2s;
+                    border-radius:50%; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+                    transition:0.2s; line-height:1;
                 }
                 .nexus-header-btn:hover { background:rgba(255,255,255,0.3); }
                 .conversation-tabs {
@@ -1042,7 +1041,7 @@
                 }
                 .conv-tab.active { background:#2c7cb0; color:white; border-color:#2c7cb0; }
                 .conv-tab .conv-name { max-width:120px; overflow:hidden; text-overflow:ellipsis; }
-                .conv-tab .delete-conv { background:transparent; border:none; color:inherit; cursor:pointer; font-size:1rem; }
+                .conv-tab .delete-conv { background:transparent; border:none; color:inherit; cursor:pointer; font-size:1.1rem; }
                 .new-conv-btn {
                     background:transparent; border:1px dashed #2c7cb0; border-radius:30px; padding:5px 10px;
                     color:#2c7cb0; font-size:0.9rem; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:5px;
@@ -1052,7 +1051,7 @@
                 .message.user { flex-direction:row-reverse; }
                 .avatar {
                     width:36px; height:36px; border-radius:50%; background:#e6f0fa;
-                    display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#2c7cb0;
+                    display:flex; align-items:center; justify-content:center; font-size:1.5rem; line-height:1;
                 }
                 .user .avatar { background:#2c7cb0; color:white; }
                 .bubble-wrapper { max-width:80%; }
@@ -1063,7 +1062,7 @@
                 .user .message-bubble { background:#2c7cb0; color:white; }
                 .message-footer { display:flex; align-items:center; gap:10px; margin-top:5px; font-size:0.8rem; color:#8a9cb0; }
                 .timestamp { font-size:0.7rem; }
-                .copy-btn, .delete-btn { background:none; border:none; cursor:pointer; color:#8a9cb0; font-size:0.8rem; }
+                .copy-btn, .delete-btn { background:none; border:none; cursor:pointer; color:#8a9cb0; font-size:1rem; padding:0 3px; }
                 .copy-btn:hover, .delete-btn:hover { color:#2c7cb0; }
                 .typing .message-bubble { background:#e6f0fa; display:flex; gap:4px; padding:16px; }
                 .typing-indicator span { animation:blink 1.4s infinite; font-size:1.5rem; line-height:0.5; }
@@ -1080,8 +1079,8 @@
                 .nexus-input-area textarea:focus { border-color:#2c7cb0; }
                 .nexus-input-area button {
                     background:#2c7cb0; color:white; border:none; border-radius:30px; width:48px; height:48px;
-                    cursor:pointer; font-size:1.2rem; transition:0.2s; box-shadow:0 4px 8px rgba(44,124,176,0.3);
-                    display:flex; align-items:center; justify-content:center;
+                    cursor:pointer; font-size:1.5rem; transition:0.2s; box-shadow:0 4px 8px rgba(44,124,176,0.3);
+                    display:flex; align-items:center; justify-content:center; line-height:1;
                 }
                 .nexus-input-area button:hover { background:#1b4c72; }
                 .nexus-input-area button:disabled { background:#a0b8cc; box-shadow:none; cursor:not-allowed; }
@@ -1100,31 +1099,30 @@
                     pointer-events: auto;
                     white-space: nowrap;
                 }
-                .selection-popup i { margin-right: 5px; }
                 .selection-popup:hover { background: #1b4c72; }
                 @media (max-width:600px) { .nexus-panel { width:300px; right:10px; } }
             </style>
             <div class="nexus-bubble">
-                <i class="fas fa-stethoscope"></i>
+                🩺
                 <span class="tooltip">Ask Nexus</span>
             </div>
             <div class="selection-popup" id="selection-popup">
-                <i class="fas fa-robot"></i> Ask Nexus
+                🤖 Ask Nexus
             </div>
             <div class="nexus-panel">
                 <div class="nexus-panel-header">
-                    <h3><i class="fas fa-stethoscope"></i> Nexus</h3>
+                    <h3>🩺 Nexus</h3>
                     <div class="nexus-header-buttons">
-                        <button class="nexus-header-btn" id="nexus-export"><i class="fas fa-download"></i></button>
-                        <button class="nexus-header-btn" id="nexus-minimize"><i class="fas fa-minus"></i></button>
-                        <button class="nexus-header-btn" id="nexus-close"><i class="fas fa-times"></i></button>
+                        <button class="nexus-header-btn" id="nexus-export">📥</button>
+                        <button class="nexus-header-btn" id="nexus-minimize">−</button>
+                        <button class="nexus-header-btn" id="nexus-close">✕</button>
                     </div>
                 </div>
                 <div class="conversation-tabs" id="nexus-tabs"></div>
                 <div class="nexus-messages" id="nexus-messages"></div>
                 <div class="nexus-input-area">
                     <textarea id="nexus-input" placeholder="Ask a medical question..." rows="2" maxlength="1000"></textarea>
-                    <button id="nexus-send"><i class="fas fa-paper-plane"></i></button>
+                    <button id="nexus-send">➤</button>
                 </div>
             </div>
         `;
