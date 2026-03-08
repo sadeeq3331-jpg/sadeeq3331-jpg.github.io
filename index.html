@@ -285,16 +285,13 @@
             </ul>
         </div>
         <div class="cat-section">
-            <h3>📝 Question Banks</h3>
-            <ul class="cat-items">
-                <li class="cat-item"><a onclick="window.filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
-            </ul>
-        </div>
-        <div class="cat-section">
-            <ul class="cat-items">
-                <li class="cat-item"><a onclick="window.showAllBooks();"><i class="fas fa-books"></i> All Textbooks</a></li>
-            </ul>
-        </div>
+    <h3>📝 Question Banks</h3>
+    <ul class="cat-items">
+        <li class="cat-item"><a onclick="window.filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
+        <li class="cat-item"><a href="USMLE Step 1 · 500+ MCQ Bank.html" target="_blank"><i class="fas fa-question-circle"></i> USMLE Step 1 (500+)</a></li>
+        <li class="cat-item"><a href="USMLE Step 2 CK · 500+ MCQ Bank.html" target="_blank"><i class="fas fa-question-circle"></i> USMLE Step 2 CK (500+)</a></li>
+    </ul>
+</div>
     </div>
 
     <!-- Book Viewer -->
@@ -357,6 +354,8 @@
                 books = [
         // === BASIC SCIENCES ===
         // Biochemistry & Mol Bio
+        { id: 1000, title: "USMLE Step 1 · 500+ MCQ Bank", author: "Abubakar Sadeeq", category: "Question Bank", subcat: "USMLE", pages: 500, filename: "USMLE Step 1 · 500+ MCQ Bank.html" },
+        { id: 1001, title: "USMLE Step 2 CK · 500+ MCQ Bank", author: "Abubakar Sadeeq", category: "Question Bank", subcat: "USMLE", pages: 500, filename: "USMLE Step 2 CK · 500+ MCQ Bank.html" }
         { id:1, title:"Biochemistry & Molecular Biology – Physiology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Physiology", pages:420, filename:"Biochemistry & Molecular Biology · Physiology.html" },
         { id:2, title:"Biochemistry & Molecular Biology – Pathology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pathology", pages:410, filename:"Biochemistry & Molecular Biology Pathology.html" },
         { id:3, title:"Biochemistry & Molecular Biology – Pharmacology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pharmacology", pages:430, filename:"Biochemistry & Molecular Biology Pharmacology.html" },
