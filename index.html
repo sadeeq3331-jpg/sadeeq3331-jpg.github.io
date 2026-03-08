@@ -752,8 +752,7 @@
             mainPanel.classList.toggle('shifted');
         });
     </script>
-
-  <!-- ==================== NEXUS AI ASSISTANT (PROFESSIONAL) ==================== -->
+    <!-- ==================== NEXUS AI ASSISTANT (WITH SELECTION POPUP) ==================== -->
 <script>
 (function() {
     // ================================================================
@@ -963,9 +962,9 @@
     }
 
     // ---------- Send message ----------
-    async function sendMessage() {
+    async function sendMessage(initialText = null) {
         const input = document.getElementById('nexus-input');
-        const text = input.value.trim();
+        const text = initialText || input.value.trim();
         if (!text || isWaiting) return;
 
         addMessage('user', text);
@@ -992,13 +991,15 @@
         container.innerHTML = `
             <style>
                 #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+                /* Bubble with glow */
                 .nexus-bubble {
                     position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px;
                     border-radius: 50%; background: linear-gradient(145deg, #2c7cb0, #1b4c72);
                     color: white; display: flex; align-items: center; justify-content: center;
                     cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.3); z-index: 10000;
-                    transition: 0.3s; border: 3px solid #ffd966;
+                    transition: 0.3s; border: 3px solid #ffd966; animation: pulse 2s infinite;
                 }
+                @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(44,124,176,0.7); } 70% { box-shadow: 0 0 0 15px rgba(44,124,176,0); } 100% { box-shadow: 0 0 0 0 rgba(44,124,176,0); } }
                 .nexus-bubble:hover { transform: scale(1.1) rotate(5deg); }
                 .nexus-bubble i { font-size: 2.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
                 .nexus-bubble .tooltip {
@@ -1008,6 +1009,7 @@
                     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
                 }
                 .nexus-bubble:hover .tooltip { opacity: 1; }
+                /* Panel (same as before) */
                 .nexus-panel {
                     position: fixed; bottom: 120px; right: 30px; width: 450px;
                     background: #ffffff; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
@@ -1083,12 +1085,31 @@
                 }
                 .nexus-input-area button:hover { background:#1b4c72; }
                 .nexus-input-area button:disabled { background:#a0b8cc; box-shadow:none; cursor:not-allowed; }
-                .export-btn { background:transparent; border:none; color:#2c7cb0; font-size:1rem; cursor:pointer; margin:0 10px; }
+                /* Selection popup */
+                .selection-popup {
+                    position: absolute;
+                    background: #2c7cb0;
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 40px;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                    display: none;
+                    z-index: 10002;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    pointer-events: auto;
+                    white-space: nowrap;
+                }
+                .selection-popup i { margin-right: 5px; }
+                .selection-popup:hover { background: #1b4c72; }
                 @media (max-width:600px) { .nexus-panel { width:300px; right:10px; } }
             </style>
             <div class="nexus-bubble">
                 <i class="fas fa-stethoscope"></i>
                 <span class="tooltip">Ask Nexus</span>
+            </div>
+            <div class="selection-popup" id="selection-popup">
+                <i class="fas fa-robot"></i> Ask Nexus
             </div>
             <div class="nexus-panel">
                 <div class="nexus-panel-header">
@@ -1117,11 +1138,10 @@
             panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
         };
 
-        // Export button
         document.getElementById('nexus-export').onclick = exportConversation;
         document.getElementById('nexus-minimize').onclick = () => { panel.style.display = 'none'; };
         document.getElementById('nexus-close').onclick = () => { panel.style.display = 'none'; };
-        document.getElementById('nexus-send').onclick = sendMessage;
+        document.getElementById('nexus-send').onclick = () => sendMessage();
         document.getElementById('nexus-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1129,7 +1149,7 @@
             }
         });
 
-        return panel;
+        return { panel, popup: container.querySelector('#selection-popup') };
     }
 
     // ---------- Dragging ----------
@@ -1159,10 +1179,40 @@
         });
     }
 
+    // ---------- Selection detection ----------
+    function setupSelectionDetection(iframeId, popup) {
+        const iframe = document.getElementById(iframeId);
+        if (!iframe) return;
+
+        function checkSelection() {
+            try {
+                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                const sel = doc.getSelection();
+                const text = sel.toString().trim();
+                if (text) {
+                    const range = sel.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    if (rect && rect.width > 0) {
+                        const iframeRect = iframe.getBoundingClientRect();
+                        popup.style.display = 'block';
+                        popup.style.left = (iframeRect.left + rect.left + window.scrollX + (rect.width/2) - 50) + 'px';
+                        popup.style.top = (iframeRect.top + rect.top + window.scrollY - 45) + 'px';
+                        popup.setAttribute('data-text', text);
+                        return;
+                    }
+                }
+                popup.style.display = 'none';
+            } catch (e) {
+                popup.style.display = 'none';
+            }
+        }
+        setInterval(checkSelection, 500);
+    }
+
     // ---------- Initialize ----------
     function init() {
         loadConversations();
-        const panel = createWidget();
+        const { panel, popup } = createWidget();
         const header = panel.querySelector('.nexus-panel-header');
         makeDraggable(header, panel);
 
@@ -1173,6 +1223,19 @@
         window.copyMessage = copyMessage;
         window.deleteMessage = deleteMessage;
         window.exportConversation = exportConversation;
+
+        // Selection popup click
+        popup.onclick = () => {
+            const text = popup.getAttribute('data-text');
+            if (text) {
+                document.getElementById('nexus-input').value = text;
+                panel.style.display = 'flex';
+                popup.style.display = 'none';
+                sendMessage(text);
+            }
+        };
+
+        setupSelectionDetection('bookFrame', popup);
 
         renderTabs();
         renderMessages();
