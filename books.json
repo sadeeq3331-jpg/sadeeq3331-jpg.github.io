@@ -6,8 +6,6 @@
                 books = [
         // === BASIC SCIENCES ===
         // Biochemistry & Mol Bio
-        { id: 1000, title: "USMLE Step 1 · 500+ MCQ Bank", author: "Abubakar Sadeeq", category: "Question Bank", subcat: "USMLE", pages: 500, filename: "USMLE Step 1 · 500+ MCQ Bank.html" },
-        { id: 1001, title: "USMLE Step 2 CK · 500+ MCQ Bank", author: "Abubakar Sadeeq", category: "Question Bank", subcat: "USMLE", pages: 500, filename: "USMLE Step 2 CK · 500+ MCQ Bank.html" }
         { id:1, title:"Biochemistry & Molecular Biology – Physiology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Physiology", pages:420, filename:"Biochemistry & Molecular Biology · Physiology.html" },
         { id:2, title:"Biochemistry & Molecular Biology – Pathology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pathology", pages:410, filename:"Biochemistry & Molecular Biology Pathology.html" },
         { id:3, title:"Biochemistry & Molecular Biology – Pharmacology", author:"Abubakar Sadeeq", category:"Biochemistry", subcat:"Pharmacology", pages:430, filename:"Biochemistry & Molecular Biology Pharmacology.html" },
