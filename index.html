@@ -343,8 +343,8 @@
         try {
             books = JSON.parse(cached);
             console.log('Books loaded from cache');
-            // Books are ready, now render the homepage
-            if (typeof renderHome === 'function') renderHome();
+            renderHome();
+            document.getElementById('loading-overlay').style.display = 'none'; 
             return;
         } catch (e) {
             console.warn('Cache parse failed, will fetch');
@@ -357,9 +357,10 @@
         localStorage.setItem('medlib_books', JSON.stringify(books));
         console.log('Books fetched and cached');
         renderHome();
+        document.getElementById('loading-overlay').style.display = 'none';
     } catch (e) {
         console.error('Error loading books', e);
-        // Fallback: maybe show an error message
+        document.getElementById('loading-overlay').style.display = 'none'; 
     }
 })();
         // ==================== INITIALIZE FIREBASE ====================
@@ -597,12 +598,6 @@
             html += '</div>';
             main.innerHTML = html;
         }
-
-        (async function start() {
-            await renderHome();
-            document.getElementById('loading-overlay').style.display = 'none';
-        })();
-
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
         const mainPanel = document.getElementById('mainPanel');
