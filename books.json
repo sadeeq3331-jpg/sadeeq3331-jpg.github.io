@@ -162,24 +162,10 @@
         { id:127, title:"Nutrition & Metabolism – Nutritional Disorders", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Pathology", pages:380, filename:"Nutrition & Metabolism · Pathology (Nutritional Disorders).html" },
         { id:128, title:"Nutrition & Metabolism – Pharmacology", author:"Abubakar Sadeeq", category:"Nutrition", subcat:"Pharmacology", pages:360, filename:"Nutrition & Metabolism · Pharmacology.html" },
         { id:129, title:"Nutrition & Metabolism – MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"Nutrition", pages:65, filename:"Nutrition & Metabolism · MCQ Bank.html" }
-{
-  "id": 1000,
-  "title": "USMLE Step 1 · 500+ MCQ Bank",
-  "author": "Abubakar Sadeeq",
-  "category": "Question Bank",
-  "subcat": "USMLE Step 1",
-  "pages": 500,
-  "filename": "USMLE Step 1 · 500+ MCQ Bank.html"
-},
-{
-  "id": 1001,
-  "title": "USMLE Step 2 CK · 500+ MCQ Bank",
-  "author": "Abubakar Sadeeq",
-  "category": "Question Bank",
-  "subcat": "USMLE Step 2 CK",
-  "pages": 500,
-  "filename": "USMLE Step 2 CK · 500+ MCQ Bank.html"
-}
+        { id:1000, title:"USMLE Step 1 · 500+ MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"USMLE Step 1", pages:500, filename:"USMLE Step 1 · 500+ MCQ Bank.html" },
+        { id:1001, title:"USMLE Step 2 CK · 500+ MCQ Bank", author:"Abubakar Sadeeq", category:"Question Bank", subcat:"USMLE Step 2 CK", pages:500, filename:"USMLE Step 2 CK · 500+ MCQ Bank.html" }
+
+        
     ];
 
                 localStorage.setItem('medlib_books', JSON.stringify(books));
