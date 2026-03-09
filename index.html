@@ -286,8 +286,8 @@
             <h3>📝 Question Banks</h3>
             <ul class="cat-items">
                 <li class="cat-item"><a onclick="window.filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
-                <li class="cat-item"><a href="USMLE Step 1 · 500+ MCQ Bank.html" target="_blank"><i class="fas fa-question-circle"></i> USMLE Step 1 (500+)</a></li>
-                <li class="cat-item"><a href="USMLE Step 2 CK · 500+ MCQ Bank.html" target="_blank"><i class="fas fa-question-circle"></i> USMLE Step 2 CK (500+)</a></li>
+                <li class="cat-item"><a onclick="openBook('USMLE Step 1 · 500+ MCQ Bank.html', 1000)"><i class="fas fa-question-circle"></i> USMLE Step 1 (500+)</a></li>
+<li class="cat-item"><a onclick="openBook('USMLE Step 2 CK · 500+ MCQ Bank.html', 1001)"><i class="fas fa-question-circle"></i> USMLE Step 2 CK (500+)</a></li>
             </ul>
         </div>
         <div class="cat-section">
@@ -343,7 +343,7 @@
     <script defer src="https://js.puter.com/v2/"></script>
     
     <!-- Main application script (loads books, renders homepage) -->
-    <script defer>
+    <script>
         // ==================== MAIN APP ====================
         let books = [];
 
