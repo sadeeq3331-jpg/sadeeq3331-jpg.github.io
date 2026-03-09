@@ -437,20 +437,22 @@
         }
 
         async function displayBooks(bookList, title) {
-            const main = document.getElementById('mainContent');
-            if (!main) return;
-            let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
-            html += '<div class="book-grid">';
-            for (const book of bookList) {
-                let count = 0;
-                if (window.getReaderCount) {
-                    count = await window.getReaderCount(book.id);
-                }
-                html += createBookCard(book, count);
-            }
-            html += '</div>';
-            main.innerHTML = html;
-        }
+    const main = document.getElementById('mainContent');
+    if (!main) return;
+
+    // 1. Get all reader counts in parallel
+    const countPromises = bookList.map(book => window.getReaderCount(book.id));
+    const counts = await Promise.all(countPromises);
+
+    // 2. Build HTML using the pre‑fetched counts
+    let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
+    html += '<div class="book-grid">';
+    bookList.forEach((book, index) => {
+        html += createBookCard(book, counts[index]);
+    });
+    html += '</div>';
+    main.innerHTML = html;
+}
 
         function createBookCard(book, count) {
             return `
