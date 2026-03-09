@@ -14,7 +14,7 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
     <style>
-        /* ========== COMPLETE CSS (from your last working version) ========== */
+        /* ========== COMPLETE CSS (your original design) ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; display:flex; flex-direction:column; min-height:100vh; }
         .top-bar {
@@ -145,7 +145,7 @@
             position: relative;
             background-size: cover;
             background-position: center;
-            background-color: #e0e7ff; /* placeholder */
+            background-color: #e0e7ff;
         }
         .category-card:hover {
             transform: scale(1.02);
@@ -286,8 +286,8 @@
             <h3>📝 Question Banks</h3>
             <ul class="cat-items">
                 <li class="cat-item"><a onclick="window.filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
-                <li class="cat-item"><a onclick="openBook('USMLE Step 1 · 500+ MCQ Bank.html', 1000)"><i class="fas fa-question-circle"></i> USMLE Step 1 (500+)</a></li>
-<li class="cat-item"><a onclick="openBook('USMLE Step 2 CK · 500+ MCQ Bank.html', 1001)"><i class="fas fa-question-circle"></i> USMLE Step 2 CK (500+)</a></li>
+                <li class="cat-item"><a onclick="openBook('USMLE Step 1 · 500+ MCQ Bank.html', 130)"><i class="fas fa-question-circle"></i> USMLE Step 1 (500+)</a></li>
+                <li class="cat-item"><a onclick="openBook('USMLE Step 2 CK · 500+ MCQ Bank.html', 131)"><i class="fas fa-question-circle"></i> USMLE Step 2 CK (500+)</a></li>
             </ul>
         </div>
         <div class="cat-section">
@@ -313,10 +313,6 @@
                     <input type="text" id="searchInput" placeholder="Search by title, author, or subject..." autocomplete="off">
                     <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
                 </div>
-                <div style="margin-top: 20px;">
-                    <a href="USMLE Step 1 · 500+ MCQ Bank.html" class="btn" style="margin-right:10px;">📘 Step 1 QBank</a>
-                    <a href="USMLE Step 2 CK · 500+ MCQ Bank.html" class="btn">📗 Step 2 QBank</a>
-                </div>
             </div>
         </section>
 
@@ -332,7 +328,7 @@
     </div>
 
     <!-- ==================== SCRIPTS ==================== -->
-    <!-- Firebase SDK (must load first) -->
+    <!-- Firebase SDK (compat) -->
     <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
@@ -342,7 +338,10 @@
     <!-- Puter (for Nexus) -->
     <script defer src="https://js.puter.com/v2/"></script>
     
-    <!-- Main application script (loads books, renders homepage) -->
+    <!-- Nexus AI Assistant -->
+    <script defer src="nexus.js"></script>
+
+    <!-- Main application script (no defer to ensure it runs after firebase-config) -->
     <script>
         // ==================== MAIN APP ====================
         let books = [];
@@ -410,7 +409,9 @@
             frame.src = filename;
             viewer.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            await window.incrementReaderCount(bookId); // from firebase-config.js
+            if (window.incrementReaderCount) {
+                await window.incrementReaderCount(bookId);
+            }
         };
 
         window.closeViewer = function() {
@@ -441,7 +442,10 @@
             let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
             html += '<div class="book-grid">';
             for (const book of bookList) {
-                const count = await window.getReaderCount(book.id);
+                let count = 0;
+                if (window.getReaderCount) {
+                    count = await window.getReaderCount(book.id);
+                }
                 html += createBookCard(book, count);
             }
             html += '</div>';
@@ -520,7 +524,10 @@
             let html = `<div class="section-title"><h2><i class="fas fa-star" style="color:#ffd966;"></i> Featured Titles</h2><span class="view-all" onclick="showAllBooks()">View All</span></div>`;
             html += '<div class="book-grid">';
             for (const book of featured) {
-                const count = await window.getReaderCount(book.id);
+                let count = 0;
+                if (window.getReaderCount) {
+                    count = await window.getReaderCount(book.id);
+                }
                 html += createBookCard(book, count);
             }
             html += '</div>';
@@ -551,8 +558,5 @@
             mainPanel.classList.toggle('shifted');
         });
     </script>
-
-    <!-- Nexus AI Assistant -->
-    <script defer src="nexus.js"></script>
 </body>
 </html>
