@@ -217,17 +217,33 @@
         renderMessages();
 
         try {
-            if (!window.puter?.ai) throw new Error('Puter AI not available');
-            const raw = await puter.ai.chat(text, { model: 'google/gemini-2.0-flash-lite-001' });
-            const clean = extractPuterMessage(raw);
-            isWaiting = false;
-            addMessage('assistant', clean);
-        } catch (e) {
-            isWaiting = false;
-            addMessage('assistant', 'Nexus error: ' + e.message);
-        }
-    }
+            if (window.puter?.ai) {
+    try {
+        // Medical system prompt - tells Nexus to ONLY answer medical questions
+        const medicalPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
 
+For ANY non-medical question (programming, general knowledge, entertainment, etc.), respond with: "I'm a medical assistant and can only answer questions related to medicine and healthcare. Please ask a medical question."
+
+Guidelines:
+- Provide accurate, evidence-based medical information
+- Include relevant clinical context when appropriate
+- If a term has both medical and non-medical meanings, always interpret it in the medical context
+- Example: "GLUT" should be answered as "Glucose Transporter" (medical), not "OpenGL Utility Toolkit" (programming)
+- Be educational and clear for medical students
+
+Question: ${text}`;
+
+        const raw = await puter.ai.chat(medicalPrompt, { 
+            model: 'google/gemini-2.0-flash-lite-001' 
+        });
+        const clean = extractPuterMessage(raw);
+        isWaiting = false;
+        addMessage('assistant', clean);
+    } catch (e) {
+        isWaiting = false;
+        addMessage('assistant', 'Nexus error: ' + e.message);
+    }
+}
     // ---------- Create widget ----------
     function createWidget() {
         const container = document.createElement('div');
