@@ -1,6 +1,7 @@
+// nexus.js – Medical AI Assistant with Pronunciation
 (function() {
     // ================================================================
-    // NEXUS – Intelligent Medical Assistant (emoji icons, no Font Awesome)
+    // NEXUS – Intelligent Medical Assistant (Medical Only + Pronunciation)
     // ================================================================
     
     // ---------- Configuration ----------
@@ -11,6 +12,10 @@
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
+
+    // Pronunciation state
+    let usSpeed = 1.0;      // 1 = normal, 0.5 = slow
+    let ukSpeed = 1.0;
 
     // ---------- Helper: extract clean text from Puter response ----------
     function extractPuterMessage(raw) {
@@ -205,7 +210,33 @@
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
     }
 
-    // ---------- Send message ----------
+    // ---------- Pronunciation function ----------
+    function speak(text, accent, speed) {
+        if (!window.speechSynthesis) {
+            alert('Speech synthesis not supported in your browser.');
+            return;
+        }
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = speed; // 1 = normal, 0.5 = slow
+        utterance.pitch = 1;
+        
+        // Select voice based on accent
+        const voices = window.speechSynthesis.getVoices();
+        if (accent === 'US') {
+            const voice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) || 
+                         voices.find(v => v.lang === 'en-US');
+            if (voice) utterance.voice = voice;
+        } else if (accent === 'UK') {
+            const voice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Google')) || 
+                         voices.find(v => v.lang === 'en-GB');
+            if (voice) utterance.voice = voice;
+        }
+        window.speechSynthesis.cancel(); // stop any ongoing speech
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // ---------- Send message with medical prompt ----------
     async function sendMessage(initialText = null) {
         const input = document.getElementById('nexus-input');
         const text = initialText || input.value.trim();
@@ -217,41 +248,43 @@
         renderMessages();
 
         try {
-            if (window.puter?.ai) {
-    try {
-        // Medical system prompt - tells Nexus to ONLY answer medical questions
-        const medicalPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
+            if (!window.puter?.ai) throw new Error('Puter AI not available');
+            
+            // Medical system prompt
+            const medicalPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
 
 For ANY non-medical question (programming, general knowledge, entertainment, etc.), respond with: "I'm a medical assistant and can only answer questions related to medicine and healthcare. Please ask a medical question."
 
 Guidelines:
 - Provide accurate, evidence-based medical information
 - Include relevant clinical context when appropriate
-- If a term has both medical and non-medical meanings, always interpret it in the medical context
-- Example: "GLUT" should be answered as "Glucose Transporter" (medical), not "OpenGL Utility Toolkit" (programming)
+- If a term has both medical and non-medical meanings, always interpret it in the medical context (e.g., "GLUT" = Glucose Transporter, not OpenGL)
 - Be educational and clear for medical students
+- Use proper medical terminology but explain when necessary
+- If uncertain, acknowledge limitations
 
 Question: ${text}`;
 
-        const raw = await puter.ai.chat(medicalPrompt, { 
-            model: 'google/gemini-2.0-flash-lite-001' 
-        });
-        const clean = extractPuterMessage(raw);
-        isWaiting = false;
-        addMessage('assistant', clean);
-    } catch (e) {
-        isWaiting = false;
-        addMessage('assistant', 'Nexus error: ' + e.message);
+            const raw = await puter.ai.chat(medicalPrompt, { 
+                model: 'google/gemini-2.0-flash-lite-001' 
+            });
+            const clean = extractPuterMessage(raw);
+            isWaiting = false;
+            addMessage('assistant', clean);
+        } catch (e) {
+            isWaiting = false;
+            addMessage('assistant', 'Nexus error: ' + e.message);
+        }
     }
-}
-    // ---------- Create widget ----------
+
+    // ---------- Create widget with pronunciation buttons ----------
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
         container.innerHTML = `
             <style>
                 #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-                /* Bubble with glow */
+                /* Bubble */
                 .nexus-bubble {
                     position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px;
                     border-radius: 50%; background: linear-gradient(145deg, #2c7cb0, #1b4c72);
@@ -269,7 +302,7 @@ Question: ${text}`;
                     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
                 }
                 .nexus-bubble:hover .tooltip { opacity: 1; }
-                /* Panel (same as before) */
+                /* Panel */
                 .nexus-panel {
                     position: fixed; bottom: 120px; right: 30px; width: 450px;
                     background: #ffffff; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
@@ -306,7 +339,9 @@ Question: ${text}`;
                     background:transparent; border:1px dashed #2c7cb0; border-radius:30px; padding:5px 10px;
                     color:#2c7cb0; font-size:0.9rem; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:5px;
                 }
-                .nexus-messages { flex:1; overflow-y:auto; padding:20px; background:#f9fcff; min-height:250px; }
+                .nexus-messages {
+                    flex:1; overflow-y:auto; padding:20px; background:#f9fcff; min-height:250px;
+                }
                 .message { display:flex; gap:12px; margin-bottom:20px; }
                 .message.user { flex-direction:row-reverse; }
                 .avatar {
@@ -320,7 +355,9 @@ Question: ${text}`;
                     box-shadow:0 2px 8px rgba(0,0,0,0.08); color:#0a2942; word-wrap:break-word; line-height:1.5; font-size:0.95rem;
                 }
                 .user .message-bubble { background:#2c7cb0; color:white; }
-                .message-footer { display:flex; align-items:center; gap:10px; margin-top:5px; font-size:0.8rem; color:#8a9cb0; }
+                .message-footer {
+                    display: flex; align-items: center; gap: 10px; margin-top: 5px; font-size: 0.8rem; color: #8a9cb0;
+                }
                 .timestamp { font-size:0.7rem; }
                 .copy-btn, .delete-btn { background:none; border:none; cursor:pointer; color:#8a9cb0; font-size:1rem; padding:0 3px; }
                 .copy-btn:hover, .delete-btn:hover { color:#2c7cb0; }
@@ -344,22 +381,52 @@ Question: ${text}`;
                 }
                 .nexus-input-area button:hover { background:#1b4c72; }
                 .nexus-input-area button:disabled { background:#a0b8cc; box-shadow:none; cursor:not-allowed; }
-                /* Selection popup */
+                /* Selection popup with pronunciation buttons */
                 .selection-popup {
                     position: absolute;
-                    background: #2c7cb0;
-                    color: white;
-                    padding: 8px 16px;
+                    background: white;
                     border-radius: 40px;
-                    font-size: 0.9rem;
-                    cursor: pointer;
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
                     display: none;
                     z-index: 10002;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                    pointer-events: auto;
+                    overflow: hidden;
+                    border: 1px solid #e6f0fa;
+                    font-size: 0.9rem;
                     white-space: nowrap;
                 }
-                .selection-popup:hover { background: #1b4c72; }
+                .selection-option {
+                    padding: 10px 20px;
+                    cursor: pointer;
+                    text-align: center;
+                    font-weight: 600;
+                    transition: 0.2s;
+                    border-bottom: 1px solid #eef6ff;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .selection-option:last-child {
+                    border-bottom: none;
+                }
+                .selection-option.nexus {
+                    background: #2c7cb0;
+                    color: white;
+                }
+                .selection-option.us {
+                    background: #1dbf73;
+                    color: white;
+                }
+                .selection-option.uk {
+                    background: #ff6b6b;
+                    color: white;
+                }
+                .selection-option:hover {
+                    opacity: 0.9;
+                }
+                .speed-indicator {
+                    font-size: 0.7rem;
+                    margin-left: 4px;
+                }
                 @media (max-width:600px) { .nexus-panel { width:300px; right:10px; } }
             </style>
             <div class="nexus-bubble">
@@ -367,7 +434,9 @@ Question: ${text}`;
                 <span class="tooltip">Ask Nexus</span>
             </div>
             <div class="selection-popup" id="selection-popup">
-                🤖 Ask Nexus
+                <div class="selection-option nexus" id="ask-nexus">🤖 Ask Nexus</div>
+                <div class="selection-option us" id="speak-us">🔊 US <span class="speed-indicator" id="us-speed">1x</span></div>
+                <div class="selection-option uk" id="speak-uk">🔊 UK <span class="speed-indicator" id="uk-speed">1x</span></div>
             </div>
             <div class="nexus-panel">
                 <div class="nexus-panel-header">
@@ -437,7 +506,7 @@ Question: ${text}`;
         });
     }
 
-    // ---------- Selection detection ----------
+    // ---------- Selection detection with pronunciation ----------
     function setupSelectionDetection(iframeId, popup) {
         const iframe = document.getElementById(iframeId);
         if (!iframe) return;
@@ -453,8 +522,8 @@ Question: ${text}`;
                     if (rect && rect.width > 0) {
                         const iframeRect = iframe.getBoundingClientRect();
                         popup.style.display = 'block';
-                        popup.style.left = (iframeRect.left + rect.left + window.scrollX + (rect.width/2) - 50) + 'px';
-                        popup.style.top = (iframeRect.top + rect.top + window.scrollY - 45) + 'px';
+                        popup.style.left = (iframeRect.left + rect.left + window.scrollX + (rect.width/2) - 100) + 'px';
+                        popup.style.top = (iframeRect.top + rect.top + window.scrollY - 55) + 'px';
                         popup.setAttribute('data-text', text);
                         return;
                     }
@@ -482,8 +551,14 @@ Question: ${text}`;
         window.deleteMessage = deleteMessage;
         window.exportConversation = exportConversation;
 
-        // Selection popup click
-        popup.onclick = () => {
+        // Selection popup actions
+        const askNexusBtn = document.getElementById('ask-nexus');
+        const speakUsBtn = document.getElementById('speak-us');
+        const speakUkBtn = document.getElementById('speak-uk');
+        const usSpeedSpan = document.getElementById('us-speed');
+        const ukSpeedSpan = document.getElementById('uk-speed');
+
+        askNexusBtn.onclick = () => {
             const text = popup.getAttribute('data-text');
             if (text) {
                 document.getElementById('nexus-input').value = text;
@@ -493,16 +568,37 @@ Question: ${text}`;
             }
         };
 
+        speakUsBtn.onclick = () => {
+            const text = popup.getAttribute('data-text');
+            if (text) {
+                // Toggle speed: normal -> slow -> normal
+                usSpeed = (usSpeed === 1.0) ? 0.5 : 1.0;
+                usSpeedSpan.innerText = usSpeed === 1.0 ? '1x' : '½x';
+                speak(text, 'US', usSpeed);
+            }
+            popup.style.display = 'none';
+        };
+
+        speakUkBtn.onclick = () => {
+            const text = popup.getAttribute('data-text');
+            if (text) {
+                ukSpeed = (ukSpeed === 1.0) ? 0.5 : 1.0;
+                ukSpeedSpan.innerText = ukSpeed === 1.0 ? '1x' : '½x';
+                speak(text, 'UK', ukSpeed);
+            }
+            popup.style.display = 'none';
+        };
+
+        // Load voices (some browsers need a little time)
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices(); // triggers loading
+        }
+
         setupSelectionDetection('bookFrame', popup);
 
         renderTabs();
         renderMessages();
     }
 
-    // Wait until the page is idle or after 2 seconds
-if ('requestIdleCallback' in window) {
-    requestIdleCallback(init, { timeout: 2000 });
-} else {
-    setTimeout(init, 2000);
-}
+    init();
 })();
