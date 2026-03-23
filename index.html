@@ -14,7 +14,6 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
     <style>
-        /* ========== COMPLETE CSS (your original design) ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; display:flex; flex-direction:column; min-height:100vh; }
         .top-bar {
@@ -309,6 +308,10 @@
             <div class="hero-content">
                 <h1>Free Medical Textbooks & MCQ Banks</h1>
                 <p>Access 150+ comprehensive resources – organized by medical school curriculum</p>
+                <!-- NEW: Original intro text (adds unique content, helps AdSense) -->
+                <div style="max-width:700px; margin:0 auto 1.5rem auto; background:rgba(255,255,255,0.15); border-radius:20px; padding:1rem;">
+                    <p style="margin:0; font-size:1rem;">📚 <strong>Free medical textbooks</strong> for students and professionals. 150+ books, 1000+ USMLE questions, interactive study tools – all completely free.</p>
+                </div>
                 <div class="search-bar">
                     <input type="text" id="searchInput" placeholder="Search by title, author, or subject..." autocomplete="off">
                     <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
@@ -319,7 +322,8 @@
         <main class="main-content" id="mainContent"></main>
 
         <footer class="footer">
-            <p>© 2026 MedLib · Free Medical Textbook Library. Created by Abubakar Sadeeq. All resources freely available for medical education.</p>
+            <p>© 2026 MedLib · Free Medical Textbook Library. Created by Abubakar Sadeeq.</p>
+            <p><a href="about.html">About</a> | <a href="privacy-policy.html">Privacy Policy</a> | <a href="contact.html">Contact</a></p>
         </footer>
     </div>
 
@@ -437,22 +441,20 @@
         }
 
         async function displayBooks(bookList, title) {
-    const main = document.getElementById('mainContent');
-    if (!main) return;
-
-    // 1. Get all reader counts in parallel
-    const countPromises = bookList.map(book => window.getReaderCount(book.id));
-    const counts = await Promise.all(countPromises);
-
-    // 2. Build HTML using the pre‑fetched counts
-    let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
-    html += '<div class="book-grid">';
-    bookList.forEach((book, index) => {
-        html += createBookCard(book, counts[index]);
-    });
-    html += '</div>';
-    main.innerHTML = html;
-}
+            const main = document.getElementById('mainContent');
+            if (!main) return;
+            let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
+            html += '<div class="book-grid">';
+            for (const book of bookList) {
+                let count = 0;
+                if (window.getReaderCount) {
+                    count = await window.getReaderCount(book.id);
+                }
+                html += createBookCard(book, count);
+            }
+            html += '</div>';
+            main.innerHTML = html;
+        }
 
         function createBookCard(book, count) {
             return `
@@ -523,7 +525,7 @@
             const main = document.getElementById('mainContent');
             if (!main) return;
 
-            // Remove the Featured Titles section completely, only show categories
+            // Only show categories (no featured titles)
             const uniqueCategories = [...new Set(books.map(b => b.category))].filter(c => c !== 'Question Bank');
             let html = `<div class="section-title" style="margin-top:3rem;"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
             html += '<div class="categories">';
