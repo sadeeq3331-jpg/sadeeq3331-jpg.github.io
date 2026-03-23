@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact MedLib · Free Medical Textbook Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#f5f9ff; font-family:'Inter', sans-serif; color:#1f2937; line-height:1.6; }
+        .container { max-width:1000px; margin:0 auto; padding:2rem 1.5rem; }
+        .top-bar {
+            background:linear-gradient(135deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
+            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
+            border-bottom:4px solid #ffd966;
+        }
+        .top-bar i { font-size:2rem; color:#ffd966; }
+        .top-bar h1 { font-weight:700; font-size:1.8rem; }
+        .top-bar a { color:white; text-decoration:none; margin-left:auto; }
+        .content { background:white; border-radius:30px; padding:2rem; box-shadow:0 15px 30px -10px rgba(0,0,0,0.1); margin:2rem auto; }
+        h2 { color:#0a2942; margin:1rem 0 0.5rem; font-size:1.8rem; }
+        p { margin-bottom:1rem; }
+        .contact-info { display:flex; gap:2rem; margin:1.5rem 0; flex-wrap:wrap; }
+        .contact-card { background:#f8fafd; border-radius:20px; padding:1.5rem; flex:1; text-align:center; border:1px solid #e0eaf5; }
+        .contact-card i { font-size:2rem; color:#2c7cb0; margin-bottom:1rem; }
+        .contact-card h3 { font-size:1.2rem; margin-bottom:0.5rem; }
+        .footer { background:#0a2942; color:white; text-align:center; padding:1.5rem; margin-top:2rem; }
+        .footer a { color:#ffd966; text-decoration:none; margin:0 10px; }
+        .form-group { margin-bottom:1.5rem; }
+        input, textarea { width:100%; padding:12px; border:1px solid #d0e0f0; border-radius:30px; font-family:inherit; }
+        button { background:#2c7cb0; color:white; border:none; padding:12px 30px; border-radius:40px; cursor:pointer; font-weight:600; }
+        button:hover { background:#1b4c72; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <i class="fas fa-book-medical"></i>
+        <h1>MedLib</h1>
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+    </div>
+    <div class="container">
+        <div class="content">
+            <h2>Contact Us</h2>
+            <p>We'd love to hear from you! Whether you have a question, suggestion, or just want to say hello, feel free to reach out.</p>
+
+            <div class="contact-info">
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>Email</h3>
+                    <p><a href="sadeeq3331@gmail.com">sadeeq3331@gmail.com</a></p>
+                    <small>We reply within 2‑3 business days</small>
+                </div>
+                <div class="contact-card">
+                    <i class="fab fa-github"></i>
+                    <h3>GitHub</h3>
+                    <p><a href="https://github.com/sadeeq3331-jpg" target="_blank">sadeeq3331-jpg</a></p>
+                    <small>Report issues or contribute</small>
+                </div>
+                <div class="contact-card">
+                    <i class="fab fa-youtube"></i>
+                    <h3>YouTube</h3>
+                    <p><a href="https://www.youtube.com/@MedLib" target="_blank">MedLib Channel</a></p>
+                    <small>Video tutorials and updates</small>
+                </div>
+            </div>
+
+            <h3>Send a Message</h3>
+            <form action="#" method="post">
+                <div class="form-group">
+                    <input type="text" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Your email" required>
+                </div>
+                <div class="form-group">
+                    <textarea rows="5" placeholder="Your message" required></textarea>
+                </div>
+                <button type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+            </form>
+            <p style="margin-top:1rem; font-size:0.9rem;">Note: This is a static demo; form submission currently sends an email to sadeeq3331@gmail.com (you'll need to set up a server‑side handler for real emails). For now, please use the email address directly.</p>
+        </div>
+    </div>
+    <div class="footer">
+        <p>© 2026 MedLib · Free Medical Textbook Library</p>
+        <p><a href="about.html">About</a> | <a href="privacy-policy.html">Privacy Policy</a> | <a href="contact.html">Contact</a></p>
+    </div>
+</body>
+</html>
