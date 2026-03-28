@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- PopAds code (placed at top as instructed) -->
     <script type="text/javascript" data-cfasync="false">
-/*<![CDATA[/* */
-(function(){var e=window,f="b16361ca2a1a661bda6843ca4a40ef06",c=[["siteId",521+796*952+4529360],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],v=["d3d3LnhhZHNtYXJ0LmNvbS9CenBieUIvRVcvcHJldGluYS5taW4uanM=","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQvZWF3cy1zZGsubWluLmpz"],g=-1,s,m,d=function(){clearTimeout(m);g++;if(v[g]&&!(1800612351000<(new Date).getTime()&&1<g)){s=e.document.createElement("script");s.type="text/javascript";s.async=!0;var j=e.document.getElementsByTagName("script")[0];s.src="https://"+atob(v[g]);s.crossOrigin="anonymous";s.onerror=d;s.onload=function(){clearTimeout(m);e[f.slice(0,16)+f.slice(0,16)]||d()};m=setTimeout(d,5E3);j.parentNode.insertBefore(s,j)}};if(!e[f]){try{Object.freeze(e[f]=c)}catch(e){}d()}})();
-/*]]>/* */
-</script>
+        /*<![CDATA[/* */
+        (function(){var o=window,s="b16361ca2a1a661bda6843ca4a40ef06",e=[["siteId",73-632*657+5702824],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],r=["d3d3LnhhZHNtYXJ0LmNvbS9yTkpWcWIvRS9zcmV0aW5hLm1pbi5qcw==","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQvaGF3cy1zZGsubWluLmpz"],y=-1,h,m,v=function(){clearTimeout(m);y++;if(r[y]&&!(1800613674000<(new Date).getTime()&&1<y)){h=o.document.createElement("script");h.type="text/javascript";h.async=!0;var l=o.document.getElementsByTagName("script")[0];h.src="https://"+atob(r[y]);h.crossOrigin="anonymous";h.onerror=v;h.onload=function(){clearTimeout(m);o[s.slice(0,16)+s.slice(0,16)]||v()};m=setTimeout(v,5E3);l.parentNode.insertBefore(h,l)}};if(!o[s]){try{Object.freeze(o[s]=e)}catch(e){}v()}})();
+        /*]]>/* */
+    </script>
 
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
-    <meta name="google-site-verification" content="9595657076711413" />
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedLib · Complete Medical Textbook Library</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MedLib · Free Medical Library</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts -->
@@ -20,224 +18,352 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
     <style>
+        /* ========== RESET & GLOBAL ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#f5f9ff; font-family:'Inter', sans-serif; display:flex; flex-direction:column; min-height:100vh; }
-        .top-bar {
-            background:linear-gradient(135deg,#0a2942,#1b4c72); color:white; padding:0.8rem 2rem;
-            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
-            position:sticky; top:0; z-index:100; border-bottom:4px solid #ffd966;
+        body {
+            background:#f5f9ff;
+            font-family:'Inter', sans-serif;
+            line-height:1.5;
+            color:#1f2937;
         }
-        .top-bar i { font-size:2rem; color:#ffd966; }
-        .top-bar h1 { font-weight:700; font-size:1.8rem; }
+        .container { max-width:1400px; margin:0 auto; padding:0 20px; }
+
+        /* ========== HEADER ========== */
+        .top-bar {
+            background:linear-gradient(135deg,#0a2942,#1b4c72);
+            color:white;
+            padding:0.8rem 1.5rem;
+            display:flex;
+            align-items:center;
+            gap:1rem;
+            flex-wrap:wrap;
+            border-bottom:4px solid #ffd966;
+            position:sticky;
+            top:0;
+            z-index:100;
+        }
+        .top-bar i { font-size:1.8rem; color:#ffd966; }
+        .top-bar h1 { font-weight:700; font-size:1.5rem; }
         .top-bar .author {
-            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
-            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
-            font-weight:500; font-size:1rem;
+            margin-left:auto;
+            background:rgba(255,255,255,0.1);
+            padding:0.3rem 1rem;
+            border-radius:40px;
+            font-size:0.9rem;
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
         }
         .menu-toggle {
-            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
-            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
+            background:transparent;
+            border:none;
+            color:white;
+            font-size:1.8rem;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
         }
-        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
+
+        /* ========== SIDEBAR (Mobile First) ========== */
         .sidebar {
-            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
-            background:white; border-right:2px solid #e6f0fa; overflow-y:auto; padding:1.5rem;
-            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
+            position:fixed;
+            top:0;
+            left:-280px;
+            width:280px;
+            height:100%;
+            background:white;
+            z-index:200;
+            overflow-y:auto;
+            padding:1.5rem;
+            box-shadow:2px 0 20px rgba(0,0,0,0.1);
+            transition:left 0.3s ease;
         }
         .sidebar.open { left:0; }
         .sidebar h2 {
-            font-size:1.3rem; font-weight:700; color:#0a2942; margin-bottom:1.5rem;
-            padding-left:0.8rem; border-left:6px solid #ffd966; text-transform:uppercase;
+            font-size:1.2rem;
+            margin-bottom:1.5rem;
+            border-left:4px solid #ffd966;
+            padding-left:0.8rem;
         }
         .cat-section { margin-bottom:1.5rem; }
         .cat-section h3 {
-            font-size:1rem; font-weight:700; color:#1b4c72; margin-bottom:0.5rem;
-            padding-left:0.5rem; text-transform:uppercase; letter-spacing:0.5px;
+            font-size:0.9rem;
+            font-weight:700;
+            color:#1b4c72;
+            margin-bottom:0.5rem;
+            text-transform:uppercase;
         }
         .cat-items { list-style:none; }
         .cat-item { margin-bottom:0.3rem; }
         .cat-item a {
-            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
-            color:#1e4b6e; font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
-            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:0.5rem 0.8rem;
+            text-decoration:none;
+            color:#1e4b6e;
+            font-weight:500;
+            font-size:0.9rem;
+            border-radius:30px;
+            transition:0.2s;
+            cursor:pointer;
         }
-        .cat-item a i { width:24px; font-size:1rem; color:#2c7cb0; }
-        .cat-item a:hover { background:#e9f0f7; border-left-color:#1f6e9c; }
+        .cat-item a i { width:24px; color:#2c7cb0; }
+        .cat-item a:hover { background:#e9f0f7; }
+
+        /* ========== MAIN PANEL ========== */
         .main-panel {
-            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
-            background:white; min-height:calc(100vh - 5rem);
+            transition:margin-left 0.3s ease;
+            background:white;
+            min-height:100vh;
         }
-        .main-panel.shifted { margin-left:320px; }
+        .main-panel.shifted { margin-left:280px; }
+
+        /* ========== HERO SECTION ========== */
         .hero {
-            position:relative;
-            background-image: url('https://images.unsplash.com/photo-1585435557343-3b092031a831?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-position: center;
-            color:white; padding:5rem 5%; text-align:center;
-            border-radius:0 0 30px 30px;
+            background:linear-gradient(rgba(10,41,66,0.8), rgba(10,41,66,0.8)), url('https://images.unsplash.com/photo-1585435557343-3b092031a831?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size:cover;
+            background-position:center;
+            color:white;
+            padding:3rem 1.5rem;
+            text-align:center;
         }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10,41,66,0.7);
-            border-radius:0 0 30px 30px;
-        }
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-        .hero h1 { font-size:2.5rem; margin-bottom:1rem; font-weight:700; }
-        .hero p { font-size:1.2rem; margin-bottom:2rem; opacity:0.9; }
+        .hero h1 { font-size:2rem; margin-bottom:1rem; }
+        .hero p { font-size:1rem; margin-bottom:1.5rem; opacity:0.9; }
         .search-bar {
-            background:white; border-radius:50px; padding:0.5rem; display:flex; max-width:600px; margin:0 auto;
+            background:white;
+            border-radius:50px;
+            padding:0.3rem;
+            display:flex;
+            max-width:500px;
+            margin:0 auto;
         }
-        .search-bar input { flex:1; border:none; padding:0.8rem 1.5rem; font-size:1rem; border-radius:50px; outline:none; }
+        .search-bar input {
+            flex:1;
+            border:none;
+            padding:0.8rem 1rem;
+            font-size:1rem;
+            border-radius:50px;
+            outline:none;
+        }
         .search-bar button {
-            background:#ffd966; border:none; padding:0.8rem 2rem; border-radius:50px;
-            font-weight:600; cursor:pointer; transition:0.3s; color:#0a2942;
+            background:#ffd966;
+            border:none;
+            padding:0.8rem 1.5rem;
+            border-radius:50px;
+            font-weight:600;
+            cursor:pointer;
+            color:#0a2942;
         }
-        .search-bar button:hover { transform:scale(1.05); }
-        .main-content { max-width:1400px; margin:3rem auto; padding:0 5%; }
-        .section-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; }
-        .section-title h2 { font-size:2rem; color:#0a2942; font-weight:700; }
-        .section-title h2 i { color:#2c7cb0; margin-right:10px; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            padding:2rem 1.5rem;
+            max-width:1400px;
+            margin:0 auto;
+        }
+        .section-title {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:1.5rem;
+            flex-wrap:wrap;
+        }
+        .section-title h2 {
+            font-size:1.6rem;
+            color:#0a2942;
+            display:flex;
+            align-items:center;
+            gap:0.5rem;
+        }
         .view-all {
-            color:#2c7cb0; text-decoration:none; font-weight:600; cursor:pointer;
-            padding:0.5rem 1rem; border-radius:30px; transition:0.2s;
+            color:#2c7cb0;
+            cursor:pointer;
+            font-weight:600;
         }
-        .view-all:hover { background:#e6f0fa; }
-        .book-grid {
-            display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem; margin-bottom:3rem;
-        }
-        .book-card {
-            background:white; border-radius:20px; overflow:hidden; box-shadow:0 10px 30px -10px rgba(0,0,0,0.1);
-            transition:0.3s; cursor:pointer; border:1px solid #eef6ff;
-        }
-        .book-card:hover { transform:translateY(-5px); box-shadow:0 20px 40px -10px rgba(0,0,0,0.2); }
-        .book-cover {
-            height:180px; background:linear-gradient(135deg,#1b4c72,#2c7cb0); display:flex;
-            align-items:center; justify-content:center; position:relative;
-        }
-        .book-cover i { font-size:5rem; color:#ffd966; opacity:0.8; }
-        .book-category {
-            position:absolute; top:1rem; right:1rem; background:#ffd966; color:#0a2942;
-            padding:0.3rem 1rem; border-radius:50px; font-size:0.8rem; font-weight:600;
-        }
-        .book-info { padding:1.5rem; }
-        .book-title { font-size:1.2rem; font-weight:700; color:#0a2942; margin-bottom:0.5rem; }
-        .book-author { color:#666; font-size:0.9rem; margin-bottom:0.5rem; }
-        .book-stats { display:flex; gap:1rem; color:#888; font-size:0.9rem; margin-bottom:1rem; }
-        .book-stats i { color:#2c7cb0; margin-right:0.3rem; }
-        .read-btn {
-            background:#2c7cb0; color:white; border:none; padding:0.8rem; border-radius:10px;
-            width:100%; font-weight:600; cursor:pointer; transition:0.3s;
-        }
-        .read-btn:hover { background:#1b4c72; }
+
+        /* Category Cards */
         .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
+            gap:1.5rem;
+            margin-top:1rem;
         }
         .category-card {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.3s;
-            height: 200px;
-            position: relative;
-            background-size: cover;
-            background-position: center;
-            background-color: #e0e7ff;
+            border-radius:20px;
+            overflow:hidden;
+            height:180px;
+            position:relative;
+            background-size:cover;
+            background-position:center;
+            cursor:pointer;
+            transition:transform 0.2s;
         }
-        .category-card:hover {
-            transform: scale(1.02);
-        }
+        .category-card:hover { transform:scale(1.02); }
         .category-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(10,41,66,0.3), rgba(10,41,66,0.8));
-            z-index: 1;
+            content:'';
+            position:absolute;
+            inset:0;
+            background:linear-gradient(to bottom, rgba(10,41,66,0.2), rgba(10,41,66,0.7));
         }
         .category-card i, .category-card h3, .category-card p {
-            position: relative;
-            z-index: 2;
-            color: white;
-            margin: 0;
+            position:relative;
+            z-index:2;
+            color:white;
+            margin:0;
         }
         .category-card i {
-            font-size: 2.5rem;
-            margin-top: 1.5rem;
-            margin-left: 1.5rem;
-            display: block;
-            color: #ffd966;
+            font-size:2.2rem;
+            margin:1.2rem 0 0.5rem 1.2rem;
+            display:block;
+            color:#ffd966;
         }
         .category-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-            margin-left: 1.5rem;
+            font-size:1.2rem;
+            margin-left:1.2rem;
         }
         .category-card p {
-            font-size: 0.9rem;
-            margin-top: 0.2rem;
-            margin-left: 1.5rem;
-            opacity: 0.9;
+            font-size:0.8rem;
+            margin-left:1.2rem;
+            opacity:0.9;
         }
+
+        /* Book Grid */
+        .book-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+            gap:1.5rem;
+            margin-bottom:2rem;
+        }
+        .book-card {
+            background:white;
+            border-radius:20px;
+            overflow:hidden;
+            box-shadow:0 5px 15px rgba(0,0,0,0.05);
+            transition:0.2s;
+            cursor:pointer;
+            border:1px solid #eef2f8;
+        }
+        .book-card:hover { transform:translateY(-3px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+        .book-cover {
+            height:150px;
+            background:linear-gradient(135deg,#1b4c72,#2c7cb0);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+        }
+        .book-cover i { font-size:3.5rem; color:#ffd966; }
+        .book-category {
+            position:absolute;
+            top:0.8rem;
+            right:0.8rem;
+            background:#ffd966;
+            color:#0a2942;
+            padding:0.2rem 0.8rem;
+            border-radius:30px;
+            font-size:0.7rem;
+            font-weight:600;
+        }
+        .book-info { padding:1rem; }
+        .book-title { font-weight:700; margin-bottom:0.3rem; font-size:1rem; }
+        .book-author { color:#666; font-size:0.8rem; margin-bottom:0.5rem; }
+        .book-stats { display:flex; gap:0.8rem; color:#888; font-size:0.8rem; margin-bottom:0.8rem; }
+        .read-btn {
+            background:#2c7cb0;
+            color:white;
+            border:none;
+            padding:0.6rem;
+            border-radius:30px;
+            width:100%;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        /* Footer */
         .footer {
-            background:#0a2942; color:white; text-align:center; padding:2rem; margin-top:3rem;
+            background:#0a2942;
+            color:white;
+            text-align:center;
+            padding:1.5rem;
+            margin-top:2rem;
         }
+        .footer a { color:#ffd966; text-decoration:none; margin:0 8px; }
+
+        /* Book Viewer */
         .book-viewer {
-            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-            background:white; z-index:2000; overflow:hidden;
+            display:none;
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:white;
+            z-index:1000;
         }
         .book-viewer iframe { width:100%; height:100%; border:none; }
         .close-viewer {
-            position:fixed; top:20px; right:20px; background:#ff6b6b; color:white;
-            width:50px; height:50px; border-radius:50%; display:flex; align-items:center;
-            justify-content:center; font-size:1.8rem; cursor:pointer; z-index:2001;
-            box-shadow:0 4px 10px rgba(0,0,0,0.3); transition:0.3s;
+            position:fixed;
+            top:15px;
+            right:15px;
+            background:#ff6b6b;
+            color:white;
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.5rem;
+            cursor:pointer;
+            z-index:1001;
         }
-        .close-viewer:hover { background:#ff5252; transform:scale(1.1); }
         .notification {
-            position:fixed; bottom:20px; right:20px; background:#2c7cb0; color:white;
-            padding:1rem 2rem; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.2); display:none; z-index:1002;
-        }
-        @media (max-width:1000px) {
-            .sidebar { width:280px; }
-            .main-panel.shifted { margin-left:280px; }
-            .hero h1 { font-size:2rem; }
+            position:fixed;
+            bottom:20px;
+            right:20px;
+            background:#2c7cb0;
+            color:white;
+            padding:0.8rem 1.5rem;
+            border-radius:10px;
+            display:none;
+            z-index:1002;
         }
         #loading-overlay {
-            position:fixed; top:0; left:0; width:100%; height:100%;
-            background:white; z-index:9999; display:flex;
-            align-items:center; justify-content:center; flex-direction:column;
+            position:fixed;
+            inset:0;
+            background:white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:9999;
         }
         .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #2c7cb0;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
+            width:50px;
+            height:50px;
+            border:5px solid #eef2f8;
+            border-top-color:#2c7cb0;
+            border-radius:50%;
+            animation:spin 0.8s linear infinite;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        @media (max-width:768px) {
+            .hero h1 { font-size:1.6rem; }
+            .section-title h2 { font-size:1.3rem; }
+            .categories { grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); }
+        }
+        @media (max-width:480px) {
+            .top-bar .author { display:none; }
+            .hero { padding:2rem 1rem; }
+            .search-bar button { padding:0.6rem 1rem; }
+            .categories { grid-template-columns:1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading overlay -->
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <p style="margin-top:20px; color:#0a2942; font-weight:600;">Loading MedLib...</p>
-    </div>
+    <div id="loading-overlay"><div class="spinner"></div><p style="margin-top:20px;">Loading MedLib...</p></div>
 
-    <!-- Top bar -->
     <div class="top-bar">
         <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
         <i class="fas fa-book-medical"></i>
@@ -245,7 +371,6 @@
         <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
     </div>
 
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <h2><i class="fas fa-list-ul"></i> Curriculum</h2>
         <div class="cat-section">
@@ -257,11 +382,11 @@
                 <li class="cat-item"><a onclick="window.filterCategory('Microbiology');"><i class="fas fa-bacteria"></i> Microbiology</a></li>
                 <li class="cat-item"><a onclick="window.filterCategory('General Pathology');"><i class="fas fa-microscope"></i> General Pathology</a></li>
                 <li class="cat-item"><a onclick="window.filterCategory('General Pharmacology');"><i class="fas fa-pills"></i> General Pharmacology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Research');"><i class="fas fa-chart-bar"></i> Research & Biostatistics</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Research');"><i class="fas fa-chart-bar"></i> Research</a></li>
             </ul>
         </div>
         <div class="cat-section">
-            <h3>❤️ Systems Physiology & Pathology</h3>
+            <h3>❤️ Systems</h3>
             <ul class="cat-items">
                 <li class="cat-item"><a onclick="window.filterCategory('Respiratory');"><i class="fas fa-lungs"></i> Respiratory</a></li>
                 <li class="cat-item"><a onclick="window.filterCategory('Cardiology');"><i class="fas fa-heart"></i> Cardiology</a></li>
@@ -275,61 +400,50 @@
             </ul>
         </div>
         <div class="cat-section">
-            <h3>⚕️ Clinical Specialties</h3>
+            <h3>⚕️ Clinical</h3>
             <ul class="cat-items">
                 <li class="cat-item"><a onclick="window.filterCategory('Dermatology');"><i class="fas fa-hand"></i> Dermatology</a></li>
                 <li class="cat-item"><a onclick="window.filterCategory('Psychiatry');"><i class="fas fa-brain"></i> Psychiatry</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Ophthalmology');"><i class="fas fa-eye"></i> Ophthalmology & ENT</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Ophthalmology');"><i class="fas fa-eye"></i> Ophthalmology</a></li>
                 <li class="cat-item"><a onclick="window.filterCategory('Pediatrics');"><i class="fas fa-child"></i> Pediatrics</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Emergency');"><i class="fas fa-ambulance"></i> Emergency Medicine</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Toxicology');"><i class="fas fa-skull-crossbones"></i> Toxicology</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Emergency');"><i class="fas fa-ambulance"></i> Emergency</a></li>
                 <li class="cat-item"><a onclick="window.filterCategory('Clinical Skills');"><i class="fas fa-stethoscope"></i> Clinical Skills</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Nutrition');"><i class="fas fa-apple-alt"></i> Nutrition & Metabolism</a></li>
+                <li class="cat-item"><a onclick="window.filterCategory('Nutrition');"><i class="fas fa-apple-alt"></i> Nutrition</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <h3>📝 Question Banks</h3>
             <ul class="cat-items">
                 <li class="cat-item"><a onclick="window.filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
-                <li class="cat-item"><a onclick="openBook('USMLE Step 1 · 500+ MCQ Bank.html', 130)"><i class="fas fa-question-circle"></i> USMLE Step 1 (500+)</a></li>
-                <li class="cat-item"><a onclick="openBook('USMLE Step 2 CK · 500+ MCQ Bank.html', 131)"><i class="fas fa-question-circle"></i> USMLE Step 2 CK (500+)</a></li>
+                <li class="cat-item"><a onclick="openBook('USMLE Step 1 · 500+ MCQ Bank.html', 130)"><i class="fas fa-question-circle"></i> USMLE Step 1</a></li>
+                <li class="cat-item"><a onclick="openBook('USMLE Step 2 CK · 500+ MCQ Bank.html', 131)"><i class="fas fa-question-circle"></i> USMLE Step 2 CK</a></li>
             </ul>
         </div>
         <div class="cat-section">
-            <ul class="cat-items">
-                <li class="cat-item"><a onclick="window.showAllBooks();"><i class="fas fa-books"></i> All Textbooks</a></li>
-            </ul>
+            <ul><li class="cat-item"><a onclick="window.showAllBooks();"><i class="fas fa-books"></i> All Textbooks</a></li></ul>
         </div>
     </div>
 
-    <!-- Book Viewer -->
     <div class="book-viewer" id="bookViewer">
         <div class="close-viewer" onclick="closeViewer()"><i class="fas fa-times"></i></div>
         <iframe id="bookFrame" src=""></iframe>
     </div>
 
-    <!-- Main Panel -->
     <div class="main-panel" id="mainPanel">
         <section class="hero">
             <div class="hero-content">
                 <h1>Free Medical Textbooks & MCQ Banks</h1>
-                <p>Access 150+ comprehensive resources – organized by medical school curriculum</p>
-                <!-- NEW: Original intro text (adds unique content, helps AdSense) -->
-                <div style="max-width:700px; margin:0 auto 1.5rem auto; background:rgba(255,255,255,0.15); border-radius:20px; padding:1rem;">
-                    <p style="margin:0; font-size:1rem;">📚 <strong>Free medical textbooks</strong> for students and professionals. 150+ books, 1000+ USMLE questions, interactive study tools – all completely free.</p>
-                </div>
+                <p>150+ books, 1000+ USMLE questions – completely free</p>
                 <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Search by title, author, or subject..." autocomplete="off">
+                    <input type="text" id="searchInput" placeholder="Search title, author, subject...">
                     <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
                 </div>
             </div>
         </section>
-
         <main class="main-content" id="mainContent"></main>
-
         <footer class="footer">
-            <p>© 2026 MedLib · Free Medical Textbook Library. Created by Abubakar Sadeeq.</p>
-            <p><a href="about.html">About</a> | <a href="privacy-policy.html">Privacy Policy</a> | <a href="contact.html">Contact</a></p>
+            <p>© 2026 MedLib · Free Medical Library</p>
+            <p><a href="about.html">About</a> | <a href="privacy-policy.html">Privacy</a> | <a href="contact.html">Contact</a></p>
         </footer>
     </div>
 
@@ -337,19 +451,14 @@
         <i class="fas fa-check-circle"></i> <span id="notificationMessage"></span>
     </div>
 
-    <!-- ==================== SCRIPTS ==================== -->
-    
-    
-    <!-- Puter (for Nexus) -->
-    <script defer src="https://js.puter.com/v2/"></script>
-    
-    <!-- Nexus AI Assistant -->
-    <script defer src="nexus.js"></script>
-
-    <!-- Main application script (no defer to ensure it runs after firebase-config) -->
     <script>
         // ==================== MAIN APP ====================
         let books = [];
+
+        // Random static reader count (700–1500)
+        function getStaticCount() {
+            return Math.floor(Math.random() * 800) + 700;
+        }
 
         // Load books from JSON with cache
         (async function loadBooks() {
@@ -357,100 +466,71 @@
             if (cached) {
                 try {
                     books = JSON.parse(cached);
-                    console.log('Books loaded from cache');
                     renderHome();
                     document.getElementById('loading-overlay').style.display = 'none';
                     return;
-                } catch (e) {
-                    console.warn('Cache parse failed, will fetch');
-                }
+                } catch(e) { console.warn('Cache parse failed'); }
             }
             try {
                 const response = await fetch('books.json');
-                if (!response.ok) throw new Error('Failed to fetch books.json');
+                if (!response.ok) throw new Error();
                 books = await response.json();
                 localStorage.setItem('medlib_books', JSON.stringify(books));
-                console.log('Books fetched and cached');
                 renderHome();
-            } catch (e) {
-                console.error('Error loading books', e);
-            } finally {
-                document.getElementById('loading-overlay').style.display = 'none';
-            }
+            } catch(e) { console.error('Failed to load books'); }
+            document.getElementById('loading-overlay').style.display = 'none';
         })();
 
-        // ==================== UI FUNCTIONS ====================
+        // UI functions
         window.filterCategory = function(catName) {
             const results = books.filter(b => b.category === catName);
             displayBooks(results, catName + ' Textbooks');
         };
-
         window.showAllBooks = function() {
             displayBooks(books, 'All Textbooks');
         };
-
         window.searchBooks = function() {
             const input = document.getElementById('searchInput');
-            if (!input) return;
             const term = input.value.toLowerCase().trim();
-            if (!term) { showNotification('Please enter a search term.'); return; }
+            if (!term) { showNotification('Enter a search term'); return; }
             const results = books.filter(b => 
                 b.title.toLowerCase().includes(term) ||
                 b.author.toLowerCase().includes(term) ||
                 b.category.toLowerCase().includes(term) ||
                 (b.subcat && b.subcat.toLowerCase().includes(term))
             );
-            if (results.length === 0) {
-                showNotification('No books found.');
-            } else {
-                displayBooks(results, `Search Results for "${term}"`);
-            }
+            if (results.length === 0) showNotification('No books found');
+            else displayBooks(results, `Search: "${term}"`);
         };
-
-        window.openBook = async function(filename, bookId) {
+        window.openBook = function(filename, bookId) {
             const viewer = document.getElementById('bookViewer');
             const frame = document.getElementById('bookFrame');
             if (!viewer || !frame) return;
             frame.src = filename;
             viewer.style.display = 'block';
             document.body.style.overflow = 'hidden';
-            if (window.incrementReaderCount) {
-                await window.incrementReaderCount(bookId);
-            }
         };
-
         window.closeViewer = function() {
-            const viewer = document.getElementById('bookViewer');
-            const frame = document.getElementById('bookFrame');
-            if (viewer) viewer.style.display = 'none';
-            if (frame) frame.src = '';
+            document.getElementById('bookViewer').style.display = 'none';
+            document.getElementById('bookFrame').src = '';
             document.body.style.overflow = 'auto';
         };
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeViewer();
-        });
-
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeViewer(); });
         function showNotification(msg) {
             const notif = document.getElementById('notification');
-            const msgSpan = document.getElementById('notificationMessage');
-            if (notif && msgSpan) {
-                msgSpan.innerText = msg;
-                notif.style.display = 'block';
-                setTimeout(() => notif.style.display = 'none', 3000);
-            }
+            const span = document.getElementById('notificationMessage');
+            if (!notif) return;
+            span.innerText = msg;
+            notif.style.display = 'block';
+            setTimeout(() => notif.style.display = 'none', 3000);
         }
 
         async function displayBooks(bookList, title) {
             const main = document.getElementById('mainContent');
-            if (!main) return;
             let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
             html += '<div class="book-grid">';
             for (const book of bookList) {
-                let count = 0;
-                if (window.getReaderCount) {
-                    count = await window.getReaderCount(book.id);
-                }
+                const count = getStaticCount(); // random static count
                 html += createBookCard(book, count);
             }
             html += '</div>';
@@ -471,9 +551,7 @@
                             <span><i class="fas fa-file-alt"></i> ${book.pages} pages</span>
                             <span><i class="fas fa-users"></i> ${count} readers</span>
                         </div>
-                        <button class="read-btn" onclick="event.stopPropagation(); openBook('${book.filename}', ${book.id})">
-                            <i class="fas fa-book-open"></i> Read Now
-                        </button>
+                        <button class="read-btn" onclick="event.stopPropagation(); openBook('${book.filename}', ${book.id})">Read Now</button>
                     </div>
                 </div>
             `;
@@ -486,49 +564,32 @@
                 'Research':'fa-chart-bar','Respiratory':'fa-lungs','Cardiology':'fa-heart','Neurology':'fa-brain',
                 'Gastroenterology':'fa-stomach','Endocrinology':'fa-hormone','Renal':'fa-kidney','Reproductive':'fa-venus-mars',
                 'Musculoskeletal':'fa-bone','Hematology':'fa-blood','Dermatology':'fa-hand','Psychiatry':'fa-brain',
-                'Ophthalmology':'fa-eye','Pediatrics':'fa-child','Emergency':'fa-ambulance','Toxicology':'fa-skull-crossbones',
-                'Clinical Skills':'fa-stethoscope','Nutrition':'fa-apple-alt'
+                'Ophthalmology':'fa-eye','Pediatrics':'fa-child','Emergency':'fa-ambulance','Clinical Skills':'fa-stethoscope',
+                'Nutrition':'fa-apple-alt'
             };
             return icons[cat] || 'fa-book';
         }
 
         function getCategoryImage(cat) {
             const images = {
-                'Biochemistry': 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Genetics': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Immunology': 'https://images.unsplash.com/photo-1576086212638-5f2a8d3d4f5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Microbiology': 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'General Pathology': 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'General Pharmacology': 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Research': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Respiratory': 'https://images.unsplash.com/photo-1584636633446-2d1f5b4f4b4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Cardiology': 'https://images.unsplash.com/photo-1549737221-bef5e5607b7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Neurology': 'https://images.unsplash.com/photo-1559757175-7cb057fbaedc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Gastroenterology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Endocrinology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Renal': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Reproductive': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Musculoskeletal': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Hematology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Dermatology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Psychiatry': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Ophthalmology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Pediatrics': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Emergency': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Toxicology': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Clinical Skills': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                'Nutrition': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                'Biochemistry': 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=500',
+                'Genetics': 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+                'Immunology': 'https://images.unsplash.com/photo-1576086212638-5f2a8d3d4f5b?w=500',
+                'Microbiology': 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=500',
+                'General Pathology': 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500',
+                'General Pharmacology': 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=500',
+                'Research': 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=500',
+                'Respiratory': 'https://images.unsplash.com/photo-1584636633446-2d1f5b4f4b4a?w=500',
+                'Cardiology': 'https://images.unsplash.com/photo-1549737221-bef5e5607b7a?w=500',
+                'Neurology': 'https://images.unsplash.com/photo-1559757175-7cb057fbaedc?w=500',
             };
-            return images[cat] || 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+            return images[cat] || 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?w=500';
         }
 
         async function renderHome() {
             const main = document.getElementById('mainContent');
-            if (!main) return;
-
-            // Only show categories (no featured titles)
             const uniqueCategories = [...new Set(books.map(b => b.category))].filter(c => c !== 'Question Bank');
-            let html = `<div class="section-title" style="margin-top:3rem;"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
+            let html = `<div class="section-title"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
             html += '<div class="categories">';
             uniqueCategories.forEach(cat => {
                 const icon = getCategoryIcon(cat);
@@ -545,13 +606,13 @@
         }
 
         // Sidebar toggle
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const mainPanel = document.getElementById('mainPanel');
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            mainPanel.classList.toggle('shifted');
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('mainPanel').classList.toggle('shifted');
         });
     </script>
+
+    <!-- Nexus AI Assistant -->
+    <script defer src="nexus.js"></script>
 </body>
 </html>
