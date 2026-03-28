@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- PopAds code (placed at top as instructed) -->
+    <!-- PopAds code (wrapped in a try/catch so it won't crash the page if blocked) -->
     <script type="text/javascript" data-cfasync="false">
-        /*<![CDATA[/* */
-        (function(){var o=window,s="b16361ca2a1a661bda6843ca4a40ef06",e=[["siteId",73-632*657+5702824],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],r=["d3d3LnhhZHNtYXJ0LmNvbS9yTkpWcWIvRS9zcmV0aW5hLm1pbi5qcw==","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQvaGF3cy1zZGsubWluLmpz"],y=-1,h,m,v=function(){clearTimeout(m);y++;if(r[y]&&!(1800613674000<(new Date).getTime()&&1<y)){h=o.document.createElement("script");h.type="text/javascript";h.async=!0;var l=o.document.getElementsByTagName("script")[0];h.src="https://"+atob(r[y]);h.crossOrigin="anonymous";h.onerror=v;h.onload=function(){clearTimeout(m);o[s.slice(0,16)+s.slice(0,16)]||v()};m=setTimeout(v,5E3);l.parentNode.insertBefore(h,l)}};if(!o[s]){try{Object.freeze(o[s]=e)}catch(e){}v()}})();
-        /*]]>/* */
+        try {
+            (function(){var o=window,s="b16361ca2a1a661bda6843ca4a40ef06",e=[["siteId",73-632*657+5702824],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],r=["d3d3LnhhZHNtYXJ0LmNvbS9yTkpWcWIvRS9zcmV0aW5hLm1pbi5qcw==","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQvaGF3cy1zZGsubWluLmpz"],y=-1,h,m,v=function(){clearTimeout(m);y++;if(r[y]&&!(1800613674000<(new Date).getTime()&&1<y)){h=o.document.createElement("script");h.type="text/javascript";h.async=!0;var l=o.document.getElementsByTagName("script")[0];h.src="https://"+atob(r[y]);h.crossOrigin="anonymous";h.onerror=v;h.onload=function(){clearTimeout(m);o[s.slice(0,16)+s.slice(0,16)]||v()};m=setTimeout(v,5E3);l.parentNode.insertBefore(h,l)}};if(!o[s]){try{Object.freeze(o[s]=e)}catch(e){}v()}})();
+        } catch(e) { console.warn("PopAds script error", e); }
     </script>
 
     <meta charset="UTF-8">
@@ -376,51 +376,51 @@
         <div class="cat-section">
             <h3>📘 Basic Sciences</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="window.filterCategory('Biochemistry');"><i class="fas fa-flask"></i> Biochemistry</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Genetics');"><i class="fas fa-dna"></i> Genetics</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Immunology');"><i class="fas fa-shield-alt"></i> Immunology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Microbiology');"><i class="fas fa-bacteria"></i> Microbiology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('General Pathology');"><i class="fas fa-microscope"></i> General Pathology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('General Pharmacology');"><i class="fas fa-pills"></i> General Pharmacology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Research');"><i class="fas fa-chart-bar"></i> Research</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Biochemistry')"><i class="fas fa-flask"></i> Biochemistry</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Genetics')"><i class="fas fa-dna"></i> Genetics</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Immunology')"><i class="fas fa-shield-alt"></i> Immunology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Microbiology')"><i class="fas fa-bacteria"></i> Microbiology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('General Pathology')"><i class="fas fa-microscope"></i> General Pathology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('General Pharmacology')"><i class="fas fa-pills"></i> General Pharmacology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Research')"><i class="fas fa-chart-bar"></i> Research</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <h3>❤️ Systems</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="window.filterCategory('Respiratory');"><i class="fas fa-lungs"></i> Respiratory</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Cardiology');"><i class="fas fa-heart"></i> Cardiology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Neurology');"><i class="fas fa-brain"></i> Neurology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Gastroenterology');"><i class="fas fa-stomach"></i> Gastroenterology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Endocrinology');"><i class="fas fa-hormone"></i> Endocrinology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Renal');"><i class="fas fa-kidney"></i> Renal</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Reproductive');"><i class="fas fa-venus-mars"></i> Reproductive</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Musculoskeletal');"><i class="fas fa-bone"></i> Musculoskeletal</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Hematology');"><i class="fas fa-blood"></i> Hematology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Respiratory')"><i class="fas fa-lungs"></i> Respiratory</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Cardiology')"><i class="fas fa-heart"></i> Cardiology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Neurology')"><i class="fas fa-brain"></i> Neurology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Gastroenterology')"><i class="fas fa-stomach"></i> Gastroenterology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Endocrinology')"><i class="fas fa-hormone"></i> Endocrinology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Renal')"><i class="fas fa-kidney"></i> Renal</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Reproductive')"><i class="fas fa-venus-mars"></i> Reproductive</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Musculoskeletal')"><i class="fas fa-bone"></i> Musculoskeletal</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Hematology')"><i class="fas fa-blood"></i> Hematology</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <h3>⚕️ Clinical</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="window.filterCategory('Dermatology');"><i class="fas fa-hand"></i> Dermatology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Psychiatry');"><i class="fas fa-brain"></i> Psychiatry</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Ophthalmology');"><i class="fas fa-eye"></i> Ophthalmology</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Pediatrics');"><i class="fas fa-child"></i> Pediatrics</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Emergency');"><i class="fas fa-ambulance"></i> Emergency</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Clinical Skills');"><i class="fas fa-stethoscope"></i> Clinical Skills</a></li>
-                <li class="cat-item"><a onclick="window.filterCategory('Nutrition');"><i class="fas fa-apple-alt"></i> Nutrition</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Dermatology')"><i class="fas fa-hand"></i> Dermatology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Psychiatry')"><i class="fas fa-brain"></i> Psychiatry</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Ophthalmology')"><i class="fas fa-eye"></i> Ophthalmology</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Pediatrics')"><i class="fas fa-child"></i> Pediatrics</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Emergency')"><i class="fas fa-ambulance"></i> Emergency</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Clinical Skills')"><i class="fas fa-stethoscope"></i> Clinical Skills</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Nutrition')"><i class="fas fa-apple-alt"></i> Nutrition</a></li>
             </ul>
         </div>
         <div class="cat-section">
             <h3>📝 Question Banks</h3>
             <ul class="cat-items">
-                <li class="cat-item"><a onclick="window.filterCategory('Question Bank');"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
+                <li class="cat-item"><a onclick="selectCategory('Question Bank')"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
                 <li class="cat-item"><a onclick="openBook('USMLE Step 1 · 500+ MCQ Bank.html', 130)"><i class="fas fa-question-circle"></i> USMLE Step 1</a></li>
                 <li class="cat-item"><a onclick="openBook('USMLE Step 2 CK · 500+ MCQ Bank.html', 131)"><i class="fas fa-question-circle"></i> USMLE Step 2 CK</a></li>
             </ul>
         </div>
         <div class="cat-section">
-            <ul><li class="cat-item"><a onclick="window.showAllBooks();"><i class="fas fa-books"></i> All Textbooks</a></li></ul>
+            <ul><li class="cat-item"><a onclick="showAllBooks()"><i class="fas fa-books"></i> All Textbooks</a></li></ul>
         </div>
     </div>
 
@@ -481,13 +481,27 @@
             document.getElementById('loading-overlay').style.display = 'none';
         })();
 
-        // UI functions
+        // Helper: close sidebar and then execute action
+        function closeSidebarAndDo(action) {
+            const sidebar = document.getElementById('sidebar');
+            const mainPanel = document.getElementById('mainPanel');
+            sidebar.classList.remove('open');
+            mainPanel.classList.remove('shifted');
+            setTimeout(() => action(), 50); // slight delay to allow animation
+        }
+
+        // Wrapper for category selection that closes sidebar
+        function selectCategory(catName) {
+            closeSidebarAndDo(() => filterCategory(catName));
+        }
+
+        // UI functions (exposed globally)
         window.filterCategory = function(catName) {
             const results = books.filter(b => b.category === catName);
             displayBooks(results, catName + ' Textbooks');
         };
         window.showAllBooks = function() {
-            displayBooks(books, 'All Textbooks');
+            closeSidebarAndDo(() => displayBooks(books, 'All Textbooks'));
         };
         window.searchBooks = function() {
             const input = document.getElementById('searchInput');
@@ -530,7 +544,7 @@
             let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
             html += '<div class="book-grid">';
             for (const book of bookList) {
-                const count = getStaticCount(); // random static count
+                const count = getStaticCount();
                 html += createBookCard(book, count);
             }
             html += '</div>';
@@ -565,7 +579,7 @@
                 'Gastroenterology':'fa-stomach','Endocrinology':'fa-hormone','Renal':'fa-kidney','Reproductive':'fa-venus-mars',
                 'Musculoskeletal':'fa-bone','Hematology':'fa-blood','Dermatology':'fa-hand','Psychiatry':'fa-brain',
                 'Ophthalmology':'fa-eye','Pediatrics':'fa-child','Emergency':'fa-ambulance','Clinical Skills':'fa-stethoscope',
-                'Nutrition':'fa-apple-alt'
+                'Nutrition':'fa-apple-alt','Question Bank':'fa-question-circle'
             };
             return icons[cat] || 'fa-book';
         }
@@ -582,20 +596,25 @@
                 'Respiratory': 'https://images.unsplash.com/photo-1584636633446-2d1f5b4f4b4a?w=500',
                 'Cardiology': 'https://images.unsplash.com/photo-1549737221-bef5e5607b7a?w=500',
                 'Neurology': 'https://images.unsplash.com/photo-1559757175-7cb057fbaedc?w=500',
+                'Question Bank': 'https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=500' // medical books/library
             };
+            // Default fallback for any missing category
             return images[cat] || 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?w=500';
         }
 
         async function renderHome() {
             const main = document.getElementById('mainContent');
-            const uniqueCategories = [...new Set(books.map(b => b.category))].filter(c => c !== 'Question Bank');
+            // Get all unique categories including "Question Bank"
+            const allCategories = [...new Set(books.map(b => b.category))];
+            // Sort alphabetically, but you can order manually if preferred
+            allCategories.sort();
             let html = `<div class="section-title"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
             html += '<div class="categories">';
-            uniqueCategories.forEach(cat => {
+            allCategories.forEach(cat => {
                 const icon = getCategoryIcon(cat);
                 const count = books.filter(b => b.category === cat).length;
                 const imgUrl = getCategoryImage(cat);
-                html += `<div class="category-card" style="background-image: url('${imgUrl}');" onclick="filterCategory('${cat}')">
+                html += `<div class="category-card" style="background-image: url('${imgUrl}');" onclick="selectCategory('${cat}')">
                             <i class="fas ${icon}"></i>
                             <h3>${cat}</h3>
                             <p>${count} books</p>
@@ -607,8 +626,10 @@
 
         // Sidebar toggle
         document.getElementById('menuToggle').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('mainPanel').classList.toggle('shifted');
+            const sidebar = document.getElementById('sidebar');
+            const mainPanel = document.getElementById('mainPanel');
+            sidebar.classList.toggle('open');
+            mainPanel.classList.toggle('shifted');
         });
     </script>
 
