@@ -1,20 +1,16 @@
-// nexus.js – Medical AI Assistant with Pronunciation
+// nexus.js – Medical AI Assistant with Pronunciation and Puter retry
 (function() {
     // ================================================================
-    // NEXUS – Intelligent Medical Assistant (Medical Only + Pronunciation)
+    // NEXUS – Intelligent Medical Assistant
     // ================================================================
     
-    // ---------- Configuration ----------
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
 
-    // ---------- Global State ----------
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
-
-    // Pronunciation state
-    let usSpeed = 1.0;      // 1 = normal, 0.5 = slow
+    let usSpeed = 1.0;
     let ukSpeed = 1.0;
 
     // ---------- Helper: extract clean text from Puter response ----------
@@ -140,7 +136,6 @@
         navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
     }
 
-    // ---------- Render tabs ----------
     function renderTabs() {
         const tabs = document.getElementById('nexus-tabs');
         if (!tabs) return;
@@ -148,7 +143,7 @@
         conversations.forEach(c => {
             const active = c.id === currentConvId ? 'active' : '';
             html += `<div class="conv-tab ${active}" data-id="${c.id}">
-                <span class="conv-name" ondblblur="renameConversation(${c.id}, this.innerText)" contenteditable="false">${c.name}</span>
+                <span class="conv-name" contenteditable="false" onblur="renameConversation(${c.id}, this.innerText)" ondblclick="this.contentEditable=true; this.focus();">${c.name}</span>
                 <button class="delete-conv" onclick="deleteConversation(${c.id})">🗑️</button>
             </div>`;
         });
@@ -168,7 +163,6 @@
         });
     }
 
-    // ---------- Render messages ----------
     function renderMessages() {
         const msgsDiv = document.getElementById('nexus-messages');
         if (!msgsDiv) return;
@@ -210,37 +204,48 @@
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
     }
 
-    // ---------- Pronunciation function ----------
     function speak(text, accent, speed) {
         if (!window.speechSynthesis) {
-            alert('Speech synthesis not supported in your browser.');
+            alert('Speech synthesis not supported.');
             return;
         }
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-        utterance.rate = speed; // 1 = normal, 0.5 = slow
+        utterance.rate = speed;
         utterance.pitch = 1;
-        
-        // Select voice based on accent
         const voices = window.speechSynthesis.getVoices();
         if (accent === 'US') {
-            const voice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) || 
-                         voices.find(v => v.lang === 'en-US');
+            const voice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) || voices.find(v => v.lang === 'en-US');
             if (voice) utterance.voice = voice;
         } else if (accent === 'UK') {
-            const voice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Google')) || 
-                         voices.find(v => v.lang === 'en-GB');
+            const voice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Google')) || voices.find(v => v.lang === 'en-GB');
             if (voice) utterance.voice = voice;
         }
-        window.speechSynthesis.cancel(); // stop any ongoing speech
+        window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utterance);
     }
 
-    // ---------- Send message with medical prompt ----------
+    // ---------- Send message with medical prompt and Puter retry ----------
     async function sendMessage(initialText = null) {
         const input = document.getElementById('nexus-input');
         const text = initialText || input.value.trim();
         if (!text || isWaiting) return;
+
+        // Check Puter availability
+        let puterReady = false;
+        let retries = 0;
+        while (!puterReady && retries < 10) {
+            if (window.puter && window.puter.ai) {
+                puterReady = true;
+                break;
+            }
+            await new Promise(r => setTimeout(r, 1000));
+            retries++;
+        }
+        if (!puterReady) {
+            addMessage('assistant', 'Nexus is not ready. Please refresh the page and try again.');
+            return;
+        }
 
         addMessage('user', text);
         input.value = '';
@@ -248,9 +253,6 @@
         renderMessages();
 
         try {
-            if (!window.puter?.ai) throw new Error('Puter AI not available');
-            
-            // Medical system prompt
             const medicalPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
 
 For ANY non-medical question (programming, general knowledge, entertainment, etc.), respond with: "I'm a medical assistant and can only answer questions related to medicine and healthcare. Please ask a medical question."
@@ -265,26 +267,25 @@ Guidelines:
 
 Question: ${text}`;
 
-            const raw = await puter.ai.chat(medicalPrompt, { 
-                model: 'google/gemini-2.0-flash-lite-001' 
-            });
+            const raw = await puter.ai.chat(medicalPrompt, { model: 'google/gemini-2.0-flash-lite-001' });
             const clean = extractPuterMessage(raw);
             isWaiting = false;
             addMessage('assistant', clean);
         } catch (e) {
+            console.error(e);
             isWaiting = false;
-            addMessage('assistant', 'Nexus error: ' + e.message);
+            addMessage('assistant', 'Nexus error: ' + (e.message || 'Request failed.'));
         }
     }
 
-    // ---------- Create widget with pronunciation buttons ----------
+    // ---------- Widget creation (same as before, but with Puter retry) ----------
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
         container.innerHTML = `
             <style>
+                /* (same CSS as before – keep it) */
                 #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-                /* Bubble */
                 .nexus-bubble {
                     position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px;
                     border-radius: 50%; background: linear-gradient(145deg, #2c7cb0, #1b4c72);
@@ -302,7 +303,6 @@ Question: ${text}`;
                     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
                 }
                 .nexus-bubble:hover .tooltip { opacity: 1; }
-                /* Panel */
                 .nexus-panel {
                     position: fixed; bottom: 120px; right: 30px; width: 450px;
                     background: #ffffff; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
@@ -381,7 +381,6 @@ Question: ${text}`;
                 }
                 .nexus-input-area button:hover { background:#1b4c72; }
                 .nexus-input-area button:disabled { background:#a0b8cc; box-shadow:none; cursor:not-allowed; }
-                /* Selection popup with pronunciation buttons */
                 .selection-popup {
                     position: absolute;
                     background: white;
@@ -405,28 +404,12 @@ Question: ${text}`;
                     align-items: center;
                     gap: 8px;
                 }
-                .selection-option:last-child {
-                    border-bottom: none;
-                }
-                .selection-option.nexus {
-                    background: #2c7cb0;
-                    color: white;
-                }
-                .selection-option.us {
-                    background: #1dbf73;
-                    color: white;
-                }
-                .selection-option.uk {
-                    background: #ff6b6b;
-                    color: white;
-                }
-                .selection-option:hover {
-                    opacity: 0.9;
-                }
-                .speed-indicator {
-                    font-size: 0.7rem;
-                    margin-left: 4px;
-                }
+                .selection-option:last-child { border-bottom: none; }
+                .selection-option.nexus { background: #2c7cb0; color: white; }
+                .selection-option.us { background: #1dbf73; color: white; }
+                .selection-option.uk { background: #ff6b6b; color: white; }
+                .selection-option:hover { opacity: 0.9; }
+                .speed-indicator { font-size: 0.7rem; margin-left: 4px; }
                 @media (max-width:600px) { .nexus-panel { width:300px; right:10px; } }
             </style>
             <div class="nexus-bubble">
@@ -458,7 +441,6 @@ Question: ${text}`;
 
         document.body.appendChild(container);
 
-        // Attach event handlers
         const bubble = container.querySelector('.nexus-bubble');
         const panel = container.querySelector('.nexus-panel');
         bubble.onclick = () => {
@@ -506,12 +488,12 @@ Question: ${text}`;
         });
     }
 
-    // ---------- Selection detection with pronunciation ----------
+    // ---------- Selection detection ----------
     function setupSelectionDetection(iframeId, popup) {
         const iframe = document.getElementById(iframeId);
         if (!iframe) return;
 
-        function checkSelection() {
+        setInterval(() => {
             try {
                 const doc = iframe.contentDocument || iframe.contentWindow.document;
                 const sel = doc.getSelection();
@@ -532,8 +514,7 @@ Question: ${text}`;
             } catch (e) {
                 popup.style.display = 'none';
             }
-        }
-        setInterval(checkSelection, 500);
+        }, 500);
     }
 
     // ---------- Initialize ----------
@@ -543,7 +524,6 @@ Question: ${text}`;
         const header = panel.querySelector('.nexus-panel-header');
         makeDraggable(header, panel);
 
-        // Attach global functions for event handlers
         window.newConversation = newConversation;
         window.deleteConversation = deleteConversation;
         window.renameConversation = renameConversation;
@@ -551,7 +531,6 @@ Question: ${text}`;
         window.deleteMessage = deleteMessage;
         window.exportConversation = exportConversation;
 
-        // Selection popup actions
         const askNexusBtn = document.getElementById('ask-nexus');
         const speakUsBtn = document.getElementById('speak-us');
         const speakUkBtn = document.getElementById('speak-uk');
@@ -571,8 +550,7 @@ Question: ${text}`;
         speakUsBtn.onclick = () => {
             const text = popup.getAttribute('data-text');
             if (text) {
-                // Toggle speed: normal -> slow -> normal
-                usSpeed = (usSpeed === 1.0) ? 0.5 : 1.0;
+                usSpeed = usSpeed === 1.0 ? 0.5 : 1.0;
                 usSpeedSpan.innerText = usSpeed === 1.0 ? '1x' : '½x';
                 speak(text, 'US', usSpeed);
             }
@@ -582,17 +560,14 @@ Question: ${text}`;
         speakUkBtn.onclick = () => {
             const text = popup.getAttribute('data-text');
             if (text) {
-                ukSpeed = (ukSpeed === 1.0) ? 0.5 : 1.0;
+                ukSpeed = ukSpeed === 1.0 ? 0.5 : 1.0;
                 ukSpeedSpan.innerText = ukSpeed === 1.0 ? '1x' : '½x';
                 speak(text, 'UK', ukSpeed);
             }
             popup.style.display = 'none';
         };
 
-        // Load voices (some browsers need a little time)
-        if (window.speechSynthesis) {
-            window.speechSynthesis.getVoices(); // triggers loading
-        }
+        if (window.speechSynthesis) window.speechSynthesis.getVoices();
 
         setupSelectionDetection('bookFrame', popup);
 
