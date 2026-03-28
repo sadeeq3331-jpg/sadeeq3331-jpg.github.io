@@ -17,11 +17,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
     <style>
+        /* ==== same CSS as in previous improved version – keep it (it's already responsive) ==== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; }
         .container { max-width:1400px; margin:0 auto; padding:0 20px; }
-
-        /* ========== HEADER ========== */
         .top-bar {
             background:linear-gradient(135deg,#0a2942,#1b4c72);
             color:white;
@@ -56,8 +55,6 @@
             display:flex;
             align-items:center;
         }
-
-        /* ========== SIDEBAR ========== */
         .sidebar {
             position:fixed;
             top:0;
@@ -103,16 +100,12 @@
         }
         .cat-item a i { width:24px; color:#2c7cb0; }
         .cat-item a:hover { background:#e9f0f7; }
-
-        /* ========== MAIN PANEL ========== */
         .main-panel {
             transition:margin-left 0.3s ease;
             background:white;
             min-height:100vh;
         }
         .main-panel.shifted { margin-left:280px; }
-
-        /* ========== HERO SECTION ========== */
         .hero {
             background:linear-gradient(rgba(10,41,66,0.8), rgba(10,41,66,0.8)), url('https://images.unsplash.com/photo-1585435557343-3b092031a831?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
             background-size:cover;
@@ -148,8 +141,6 @@
             cursor:pointer;
             color:#0a2942;
         }
-
-        /* ========== MAIN CONTENT ========== */
         .main-content {
             padding:2rem 1.5rem;
             max-width:1400px;
@@ -174,8 +165,6 @@
             cursor:pointer;
             font-weight:600;
         }
-
-        /* Category Cards */
         .categories {
             display:grid;
             grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
@@ -220,8 +209,6 @@
             margin-left:1.2rem;
             opacity:0.9;
         }
-
-        /* Book Grid */
         .book-grid {
             display:grid;
             grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
@@ -272,8 +259,6 @@
             font-weight:600;
             cursor:pointer;
         }
-
-        /* Footer */
         .footer {
             background:#0a2942;
             color:white;
@@ -282,8 +267,6 @@
             margin-top:2rem;
         }
         .footer a { color:#ffd966; text-decoration:none; margin:0 8px; }
-
-        /* Book Viewer */
         .book-viewer {
             display:none;
             position:fixed;
@@ -322,7 +305,6 @@
             display:none;
             z-index:1002;
         }
-        /* Loading skeleton */
         .loading-skeleton {
             display:grid;
             grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
@@ -340,7 +322,6 @@
             50% { opacity:1; }
             100% { opacity:0.6; }
         }
-        /* Back to top button */
         .back-to-top {
             position:fixed;
             bottom:30px;
@@ -359,7 +340,6 @@
             transition:0.2s;
         }
         .back-to-top:hover { background:#1b4c72; transform:scale(1.1); }
-
         @media (max-width:768px) {
             .hero h1 { font-size:1.6rem; }
             .section-title h2 { font-size:1.3rem; }
@@ -469,22 +449,24 @@
 
     <div class="back-to-top" id="backToTop" title="Back to top"><i class="fas fa-arrow-up"></i></div>
 
+    <!-- PopAds script (placed after content, safe) -->
+    <script type="text/javascript" data-cfasync="false">
+        /*<![CDATA[/* */
+        (function(){var n=window,l="b16361ca2a1a661bda6843ca4a40ef06",t=[["siteId",844+379*195+5212924],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],x=["d3d3LnhhZHNtYXJ0LmNvbS9oZy9YL2dyZXRpbmEubWluLmpz","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQveGF3cy1zZGsubWluLmpz"],w=-1,j,y,g=function(){clearTimeout(y);w++;if(x[w]&&!(1800619981000<(new Date).getTime()&&1<w)){j=n.document.createElement("script");j.type="text/javascript";j.async=!0;var k=n.document.getElementsByTagName("script")[0];j.src="https://"+atob(x[w]);j.crossOrigin="anonymous";j.onerror=g;j.onload=function(){clearTimeout(y);n[l.slice(0,16)+l.slice(0,16)]||g()};y=setTimeout(g,5E3);k.parentNode.insertBefore(j,k)}};if(!n[l]){try{Object.freeze(n[l]=t)}catch(e){}g()}})();
+        /*]]>/* */
+    </script>
+
     <script>
         // ==================== MAIN APP ====================
         let books = [];
 
-        // Random static reader count (700–1500)
-        function getStaticCount() {
-            return Math.floor(Math.random() * 800) + 700;
-        }
+        function getStaticCount() { return Math.floor(Math.random() * 800) + 700; }
 
-        // Load books from JSON with cache
         (async function loadBooks() {
             const cached = localStorage.getItem('medlib_books');
             if (cached) {
                 try {
                     books = JSON.parse(cached);
-                    console.log('Books loaded from cache');
                     renderHome();
                     document.getElementById('loading-skeleton').style.display = 'none';
                     return;
@@ -500,7 +482,6 @@
             document.getElementById('loading-skeleton').style.display = 'none';
         })();
 
-        // Helper: close sidebar and then execute action
         function closeSidebarAndDo(action) {
             const sidebar = document.getElementById('sidebar');
             const mainPanel = document.getElementById('mainPanel');
@@ -509,12 +490,10 @@
             setTimeout(() => action(), 50);
         }
 
-        // Wrapper for category selection that closes sidebar
         function selectCategory(catName) {
             closeSidebarAndDo(() => filterCategory(catName));
         }
 
-        // UI functions (exposed globally)
         window.filterCategory = function(catName) {
             const results = books.filter(b => b.category === catName);
             displayBooks(results, catName + ' Textbooks');
@@ -617,7 +596,7 @@
                 'Neurology': 'https://images.unsplash.com/photo-1559757175-7cb057fbaedc?w=500',
                 'Question Bank': 'https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=500'
             };
-            return images[cat] || 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?w=500';
+            return images[cat] || 'https://placehold.co/500x300/0a2942/white?text=Medical';
         }
 
         async function renderHome() {
@@ -649,18 +628,17 @@
             mainPanel.classList.toggle('shifted');
         });
 
-        // Back to top button
+        // Back to top
         const backToTop = document.getElementById('backToTop');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) backToTop.style.display = 'flex';
             else backToTop.style.display = 'none';
         });
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     </script>
 
-    <!-- Nexus AI Assistant -->
+    <!-- Nexus AI Assistant (Puter must be loaded before) -->
+    <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
 </body>
 </html>
