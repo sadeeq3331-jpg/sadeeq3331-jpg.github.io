@@ -14,13 +14,70 @@
     <title>MedLib · Free Medical Library</title>
     <link rel="canonical" href="https://medlib.top">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalWebPage",
+      "name": "MedLib – Free Medical Library",
+      "description": "Free medical textbooks and USMLE practice questions for students and professionals.",
+      "url": "https://medlib.top",
+      "provider": {
+        "@type": "Organization",
+        "name": "MedLib",
+        "url": "https://medlib.top",
+        "logo": "https://medlib.top/favicon.ico"
+      },
+      "educationalUse": "study",
+      "audience": {
+        "@type": "Audience",
+        "name": "Medical Students"
+      }
+    }
+    </script>
+
     <style>
-        /* ==== same CSS as in previous improved version – keep it (it's already responsive) ==== */
+        /* ========== RESET & GLOBAL ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; }
+        body {
+            background:#f5f9ff;
+            font-family:'Inter', sans-serif;
+            line-height:1.5;
+            color:#1f2937;
+            transition: background 0.3s, color 0.3s;
+        }
+        /* Night mode */
+        body.dark {
+            background: #1a1a2e;
+            color: #e0e0e0;
+        }
+        body.dark .top-bar,
+        body.dark .footer,
+        body.dark .hero::before { background-color: #0f0f1f; }
+        body.dark .top-bar { background: linear-gradient(135deg, #0a0a1a, #1a1a2e); }
+        body.dark .sidebar,
+        body.dark .book-card,
+        body.dark .main-panel,
+        body.dark .notification,
+        body.dark .category-card::before { background: #25253a; color: #e0e0e0; }
+        body.dark .book-card { border-color: #3a3a55; }
+        body.dark .book-title,
+        body.dark .category-card h3 { color: #ffd966; }
+        body.dark .book-author,
+        body.dark .book-stats,
+        body.dark .footer a { color: #b0b0cc; }
+
         .container { max-width:1400px; margin:0 auto; padding:0 20px; }
+
+        /* ========== HEADER ========== */
         .top-bar {
             background:linear-gradient(135deg,#0a2942,#1b4c72);
             color:white;
@@ -55,6 +112,24 @@
             display:flex;
             align-items:center;
         }
+        /* Night mode toggle button */
+        .theme-toggle {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            font-size:1.4rem;
+            cursor: pointer;
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition:0.2s;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.3); }
+
+        /* ========== SIDEBAR ========== */
         .sidebar {
             position:fixed;
             top:0;
@@ -100,13 +175,21 @@
         }
         .cat-item a i { width:24px; color:#2c7cb0; }
         .cat-item a:hover { background:#e9f0f7; }
+        body.dark .cat-item a { color:#b0b0cc; }
+        body.dark .cat-item a i { color:#ffd966; }
+        body.dark .cat-item a:hover { background:#3a3a55; }
+
+        /* ========== MAIN PANEL ========== */
         .main-panel {
             transition:margin-left 0.3s ease;
             background:white;
             min-height:100vh;
         }
         .main-panel.shifted { margin-left:280px; }
+
+        /* ========== HERO SECTION ========== */
         .hero {
+            position:relative;
             background:linear-gradient(rgba(10,41,66,0.8), rgba(10,41,66,0.8)), url('https://images.unsplash.com/photo-1585435557343-3b092031a831?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
             background-size:cover;
             background-position:center;
@@ -141,6 +224,10 @@
             cursor:pointer;
             color:#0a2942;
         }
+        body.dark .search-bar input { background:#2d2d44; color:white; }
+        body.dark .search-bar button { background:#ffd966; color:#0a2942; }
+
+        /* ========== MAIN CONTENT ========== */
         .main-content {
             padding:2rem 1.5rem;
             max-width:1400px;
@@ -160,18 +247,24 @@
             align-items:center;
             gap:0.5rem;
         }
+        body.dark .section-title h2 { color:#ffd966; }
         .view-all {
             color:#2c7cb0;
             cursor:pointer;
             font-weight:600;
         }
-        .categories {
+
+        /* Category Cards */
+        .categories, .recent-section, .favorites-section, .blog-section {
+            margin:2rem 0;
+        }
+        .recent-grid, .favorites-grid, .blog-grid {
             display:grid;
             grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));
             gap:1.5rem;
             margin-top:1rem;
         }
-        .category-card {
+        .category-card, .recent-card, .favorite-card, .blog-card {
             border-radius:20px;
             overflow:hidden;
             height:180px;
@@ -181,34 +274,39 @@
             cursor:pointer;
             transition:transform 0.2s;
         }
-        .category-card:hover { transform:scale(1.02); }
-        .category-card::before {
+        .category-card:hover, .recent-card:hover, .favorite-card:hover, .blog-card:hover { transform:scale(1.02); }
+        .category-card::before, .recent-card::before, .favorite-card::before, .blog-card::before {
             content:'';
             position:absolute;
             inset:0;
             background:linear-gradient(to bottom, rgba(10,41,66,0.2), rgba(10,41,66,0.7));
         }
-        .category-card i, .category-card h3, .category-card p {
+        .category-card i, .category-card h3, .category-card p,
+        .recent-card i, .recent-card h3, .recent-card p,
+        .favorite-card i, .favorite-card h3, .favorite-card p,
+        .blog-card i, .blog-card h3, .blog-card p {
             position:relative;
             z-index:2;
             color:white;
             margin:0;
         }
-        .category-card i {
+        .category-card i, .recent-card i, .favorite-card i, .blog-card i {
             font-size:2.2rem;
             margin:1.2rem 0 0.5rem 1.2rem;
             display:block;
             color:#ffd966;
         }
-        .category-card h3 {
+        .category-card h3, .recent-card h3, .favorite-card h3, .blog-card h3 {
             font-size:1.2rem;
             margin-left:1.2rem;
         }
-        .category-card p {
+        .category-card p, .recent-card p, .favorite-card p, .blog-card p {
             font-size:0.8rem;
             margin-left:1.2rem;
             opacity:0.9;
         }
+
+        /* Book Grid */
         .book-grid {
             display:grid;
             grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
@@ -223,6 +321,7 @@
             transition:0.2s;
             cursor:pointer;
             border:1px solid #eef2f8;
+            position:relative;
         }
         .book-card:hover { transform:translateY(-3px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
         .book-cover {
@@ -246,7 +345,17 @@
             font-weight:600;
         }
         .book-info { padding:1rem; }
-        .book-title { font-weight:700; margin-bottom:0.3rem; font-size:1rem; }
+        .book-title { font-weight:700; margin-bottom:0.3rem; font-size:1rem; display:flex; justify-content:space-between; align-items:center; }
+        .book-title .book-actions { display:flex; gap:8px; }
+        .book-actions button {
+            background:none;
+            border:none;
+            cursor:pointer;
+            font-size:1rem;
+            color:#888;
+            transition:0.2s;
+        }
+        .book-actions button:hover { color:#2c7cb0; transform:scale(1.1); }
         .book-author { color:#666; font-size:0.8rem; margin-bottom:0.5rem; }
         .book-stats { display:flex; gap:0.8rem; color:#888; font-size:0.8rem; margin-bottom:0.8rem; }
         .read-btn {
@@ -258,7 +367,27 @@
             width:100%;
             font-weight:600;
             cursor:pointer;
+            margin-top:0.5rem;
         }
+        .amazon-btn {
+            background:#ff9900;
+            color:white;
+            border:none;
+            padding:0.4rem 0.8rem;
+            border-radius:20px;
+            font-size:0.8rem;
+            font-weight:600;
+            cursor:pointer;
+            margin-top:0.3rem;
+            width:100%;
+            transition:0.2s;
+        }
+        .amazon-btn:hover { background:#e68a00; }
+        body.dark .book-card { background:#25253a; border-color:#3a3a55; }
+        body.dark .book-title { color:#ffd966; }
+        body.dark .book-author, body.dark .book-stats { color:#b0b0cc; }
+
+        /* Footer */
         .footer {
             background:#0a2942;
             color:white;
@@ -267,6 +396,9 @@
             margin-top:2rem;
         }
         .footer a { color:#ffd966; text-decoration:none; margin:0 8px; }
+        body.dark .footer { background:#0f0f1f; }
+
+        /* Book Viewer */
         .book-viewer {
             display:none;
             position:fixed;
@@ -343,18 +475,19 @@
         @media (max-width:768px) {
             .hero h1 { font-size:1.6rem; }
             .section-title h2 { font-size:1.3rem; }
-            .categories { grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); }
+            .categories, .recent-grid, .favorites-grid, .blog-grid { grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); }
         }
         @media (max-width:480px) {
             .top-bar .author { display:none; }
             .hero { padding:2rem 1rem; }
             .search-bar button { padding:0.6rem 1rem; }
-            .categories { grid-template-columns:1fr; }
+            .categories, .recent-grid, .favorites-grid, .blog-grid { grid-template-columns:1fr; }
+            .book-actions button { font-size:1.1rem; } /* larger tap target */
         }
     </style>
 </head>
 <body>
-    <!-- Loading skeleton (shown until books load) -->
+    <!-- Loading skeleton -->
     <div id="loading-skeleton" class="loading-skeleton" style="padding:2rem 1.5rem;">
         <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
         <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
@@ -365,6 +498,7 @@
         <i class="fas fa-book-medical"></i>
         <h1>MedLib</h1>
         <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
     </div>
 
     <div class="sidebar" id="sidebar">
@@ -459,14 +593,161 @@
     <script>
         // ==================== MAIN APP ====================
         let books = [];
+        let recentBooks = [];   // store ids of recently opened
+        let favorites = [];     // store ids of favorited books
+        const AMAZON_TAG = 'medlib0a-20'; // replace with your own affiliate ID
 
         function getStaticCount() { return Math.floor(Math.random() * 800) + 700; }
 
+        // Load recent & favorites from localStorage
+        function loadUserData() {
+            const storedRecent = localStorage.getItem('medlib_recent');
+            if (storedRecent) recentBooks = JSON.parse(storedRecent);
+            const storedFav = localStorage.getItem('medlib_favorites');
+            if (storedFav) favorites = JSON.parse(storedFav);
+        }
+        function saveRecent() { localStorage.setItem('medlib_recent', JSON.stringify(recentBooks)); }
+        function saveFavorites() { localStorage.setItem('medlib_favorites', JSON.stringify(favorites)); }
+
+        function addToRecent(bookId) {
+            // remove if already exists
+            recentBooks = recentBooks.filter(id => id !== bookId);
+            recentBooks.unshift(bookId);
+            if (recentBooks.length > 5) recentBooks.pop();
+            saveRecent();
+            renderRecent();
+        }
+
+        function toggleFavorite(bookId) {
+            if (favorites.includes(bookId)) {
+                favorites = favorites.filter(id => id !== bookId);
+            } else {
+                favorites.push(bookId);
+            }
+            saveFavorites();
+            renderFavorites();
+            // also refresh book cards to show correct star
+            if (document.querySelector('.book-grid')) renderCurrentBooks();
+        }
+
+        function isFavorite(bookId) { return favorites.includes(bookId); }
+
+        function shareBook(title, filename) {
+            const url = `${window.location.origin}/${filename}`;
+            if (navigator.share) {
+                navigator.share({ title: title, url: url }).catch(() => copyToClipboard(url));
+            } else {
+                copyToClipboard(url);
+            }
+        }
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => showNotification('Link copied!')).catch(() => showNotification('Could not copy'));
+        }
+
+        function showNotification(msg) {
+            const notif = document.getElementById('notification');
+            const span = document.getElementById('notificationMessage');
+            if (!notif) return;
+            span.innerText = msg;
+            notif.style.display = 'block';
+            setTimeout(() => notif.style.display = 'none', 3000);
+        }
+
+        // Render recent books section
+        function renderRecent() {
+            const recentContainer = document.getElementById('recent-section');
+            if (!recentContainer) return;
+            if (recentBooks.length === 0) {
+                recentContainer.style.display = 'none';
+                return;
+            }
+            recentContainer.style.display = 'block';
+            const recentBooksData = recentBooks.map(id => books.find(b => b.id === id)).filter(b => b);
+            let html = `<div class="section-title"><h2><i class="fas fa-history"></i> Recently Viewed</h2></div><div class="recent-grid">`;
+            recentBooksData.forEach(book => {
+                html += `<div class="recent-card" onclick="openBook('${book.filename}', ${book.id})" style="background-image: url('${getCategoryImage(book.category)}');">
+                            <i class="fas ${getCategoryIcon(book.category)}"></i>
+                            <h3>${book.title}</h3>
+                            <p>${book.category}</p>
+                        </div>`;
+            });
+            html += '</div>';
+            recentContainer.innerHTML = html;
+        }
+
+        function renderFavorites() {
+            const favContainer = document.getElementById('favorites-section');
+            if (!favContainer) return;
+            if (favorites.length === 0) {
+                favContainer.style.display = 'none';
+                return;
+            }
+            favContainer.style.display = 'block';
+            const favBooks = favorites.map(id => books.find(b => b.id === id)).filter(b => b);
+            let html = `<div class="section-title"><h2><i class="fas fa-star"></i> Your Favorites</h2></div><div class="favorites-grid">`;
+            favBooks.forEach(book => {
+                html += `<div class="favorite-card" onclick="openBook('${book.filename}', ${book.id})" style="background-image: url('${getCategoryImage(book.category)}');">
+                            <i class="fas ${getCategoryIcon(book.category)}"></i>
+                            <h3>${book.title}</h3>
+                            <p>${book.category}</p>
+                        </div>`;
+            });
+            html += '</div>';
+            favContainer.innerHTML = html;
+        }
+
+        function renderCurrentBooks() {
+            const main = document.getElementById('mainContent');
+            if (!main) return;
+            const allCategories = [...new Set(books.map(b => b.category))];
+            allCategories.sort();
+            let html = `<div class="section-title"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
+            html += '<div class="categories">';
+            allCategories.forEach(cat => {
+                const icon = getCategoryIcon(cat);
+                const count = books.filter(b => b.category === cat).length;
+                const imgUrl = getCategoryImage(cat);
+                html += `<div class="category-card" style="background-image: url('${imgUrl}');" onclick="selectCategory('${cat}')">
+                            <i class="fas ${icon}"></i>
+                            <h3>${cat}</h3>
+                            <p>${count} books</p>
+                        </div>`;
+            });
+            html += '</div>';
+
+            // Blog / Study Tips section (placeholder)
+            html += `<div class="blog-section" style="margin-top:3rem;">
+                        <div class="section-title"><h2><i class="fas fa-blog"></i> Study Tips & Articles</h2></div>
+                        <div class="blog-grid">
+                            <div class="blog-card" style="background-image: url('https://images.unsplash.com/photo-1513258496099-48168024aec0?w=500');" onclick="window.open('blog/how-to-study-for-usmle.html','_blank')">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <h3>How to Ace USMLE Step 1</h3>
+                                <p>Study strategies from top scorers</p>
+                            </div>
+                            <div class="blog-card" style="background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=500');" onclick="window.open('blog/biochemistry-mnemonics.html','_blank')">
+                                <i class="fas fa-dna"></i>
+                                <h3>Biochemistry Mnemonics</h3>
+                                <p>Remember pathways easily</p>
+                            </div>
+                            <div class="blog-card" style="background-image: url('https://images.unsplash.com/photo-1579684453423-843a6c5d8b1a?w=500');" onclick="window.open('blog/cardiology-review.html','_blank')">
+                                <i class="fas fa-heart"></i>
+                                <h3>Cardiology Quick Review</h3>
+                                <p>High‑yield topics for clerkship</p>
+                            </div>
+                        </div>
+                    </div>`;
+
+            main.innerHTML = html;
+        }
+
+        // Load books from JSON with cache
         (async function loadBooks() {
+            loadUserData();
             const cached = localStorage.getItem('medlib_books');
             if (cached) {
                 try {
                     books = JSON.parse(cached);
+                    console.log('Books loaded from cache');
                     renderHome();
                     document.getElementById('loading-skeleton').style.display = 'none';
                     return;
@@ -514,13 +795,14 @@
             if (results.length === 0) showNotification('No books found');
             else displayBooks(results, `Search: "${term}"`);
         };
-        window.openBook = function(filename, bookId) {
+        window.openBook = async function(filename, bookId) {
             const viewer = document.getElementById('bookViewer');
             const frame = document.getElementById('bookFrame');
             if (!viewer || !frame) return;
             frame.src = filename;
             viewer.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            addToRecent(bookId);
         };
         window.closeViewer = function() {
             document.getElementById('bookViewer').style.display = 'none';
@@ -528,14 +810,6 @@
             document.body.style.overflow = 'auto';
         };
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeViewer(); });
-        function showNotification(msg) {
-            const notif = document.getElementById('notification');
-            const span = document.getElementById('notificationMessage');
-            if (!notif) return;
-            span.innerText = msg;
-            notif.style.display = 'block';
-            setTimeout(() => notif.style.display = 'none', 3000);
-        }
 
         async function displayBooks(bookList, title) {
             const main = document.getElementById('mainContent');
@@ -550,20 +824,29 @@
         }
 
         function createBookCard(book, count) {
+            const favClass = isFavorite(book.id) ? 'fas fa-star' : 'far fa-star';
+            const favColor = isFavorite(book.id) ? '#ffd966' : '#888';
             return `
-                <div class="book-card" onclick="openBook('${book.filename}', ${book.id})">
-                    <div class="book-cover">
+                <div class="book-card" data-id="${book.id}">
+                    <div class="book-cover" onclick="openBook('${book.filename}', ${book.id})">
                         <i class="fas fa-book"></i>
                         <span class="book-category">${book.category}</span>
                     </div>
                     <div class="book-info">
-                        <div class="book-title">${book.title}</div>
+                        <div class="book-title">
+                            ${book.title}
+                            <div class="book-actions">
+                                <button onclick="event.stopPropagation(); toggleFavorite(${book.id})" style="color:${favColor}"><i class="${favClass}"></i></button>
+                                <button onclick="event.stopPropagation(); shareBook('${book.title.replace(/'/g, "\\'")}', '${book.filename}')"><i class="fas fa-share-alt"></i></button>
+                            </div>
+                        </div>
                         <div class="book-author">by ${book.author}</div>
                         <div class="book-stats">
                             <span><i class="fas fa-file-alt"></i> ${book.pages} pages</span>
                             <span><i class="fas fa-users"></i> ${count} readers</span>
                         </div>
                         <button class="read-btn" onclick="event.stopPropagation(); openBook('${book.filename}', ${book.id})">Read Now</button>
+                        <button class="amazon-btn" onclick="event.stopPropagation(); window.open('https://www.amazon.com/s?k=${encodeURIComponent(book.title)}&tag=${AMAZON_TAG}', '_blank')"><i class="fab fa-amazon"></i> Buy on Amazon</button>
                     </div>
                 </div>
             `;
@@ -601,22 +884,19 @@
 
         async function renderHome() {
             const main = document.getElementById('mainContent');
-            const allCategories = [...new Set(books.map(b => b.category))];
-            allCategories.sort();
-            let html = `<div class="section-title"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
-            html += '<div class="categories">';
-            allCategories.forEach(cat => {
-                const icon = getCategoryIcon(cat);
-                const count = books.filter(b => b.category === cat).length;
-                const imgUrl = getCategoryImage(cat);
-                html += `<div class="category-card" style="background-image: url('${imgUrl}');" onclick="selectCategory('${cat}')">
-                            <i class="fas ${icon}"></i>
-                            <h3>${cat}</h3>
-                            <p>${count} books</p>
-                        </div>`;
-            });
-            html += '</div>';
-            main.innerHTML = html;
+            renderCurrentBooks();
+
+            // Add recent and favorites sections after categories
+            const recentDiv = document.createElement('div');
+            recentDiv.id = 'recent-section';
+            recentDiv.className = 'recent-section';
+            const favDiv = document.createElement('div');
+            favDiv.id = 'favorites-section';
+            favDiv.className = 'favorites-section';
+            main.appendChild(recentDiv);
+            main.appendChild(favDiv);
+            renderRecent();
+            renderFavorites();
         }
 
         // Sidebar toggle
@@ -635,6 +915,15 @@
             else backToTop.style.display = 'none';
         });
         backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Night mode toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') document.body.classList.add('dark');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        });
     </script>
 
     <!-- Nexus AI Assistant (Puter must be loaded before) -->
