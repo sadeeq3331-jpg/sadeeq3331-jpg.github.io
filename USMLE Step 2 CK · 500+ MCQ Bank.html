@@ -502,5 +502,78 @@
     document.getElementById('nextBtn').addEventListener('click', () => { if (currentIndex < shuffled.length-1) { currentIndex++; render(); } });
     render();
 </script>
+    <script>
+(function() {
+    // ========== Keyboard navigation for MCQ banks ==========
+    // This script works for the standard MCQ bank layout.
+    // It looks for "Next" and "Previous" buttons and triggers them on left/right arrow keys.
+
+    const nextBtn = document.querySelector('#nextBtn, .next-btn, button:contains("Next")');
+    const prevBtn = document.querySelector('#prevBtn, .prev-btn, button:contains("Previous")');
+
+    // If the buttons are not found by ID, try by text content
+    const allButtons = document.querySelectorAll('button');
+    let nextButton = null;
+    let prevButton = null;
+    for (let btn of allButtons) {
+        const txt = btn.innerText.toLowerCase();
+        if (txt.includes('next')) nextButton = btn;
+        if (txt.includes('previous')) prevButton = btn;
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            if (nextButton) nextButton.click();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            if (prevButton) prevButton.click();
+        }
+    });
+
+    // Add a floating "Back to MedLib" button
+    const backBtn = document.createElement('div');
+    backBtn.innerHTML = '<i class="fas fa-home"></i> Back to MedLib';
+    backBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: #2c7cb0;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 40px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: 0.2s;
+        border: none;
+    `;
+    backBtn.onclick = () => {
+        window.location.href = '/';  // goes to main MedLib page
+    };
+    document.body.appendChild(backBtn);
+
+    // Add a small keyboard hint
+    const hint = document.createElement('div');
+    hint.innerHTML = '← / → : Previous / Next question';
+    hint.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.6);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-family: 'Inter', sans-serif;
+        z-index: 9998;
+        pointer-events: none;
+    `;
+    document.body.appendChild(hint);
+})();
+</script>
 </body>
 </html>
