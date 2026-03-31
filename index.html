@@ -14,7 +14,6 @@
     <title>MedLib · Free Medical Library</title>
     <link rel="canonical" href="https://medlib.top">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
-    <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap">
@@ -550,7 +549,7 @@
         let books = [];
         let recentBooks = [];
         let favorites = [];
-        let bookmarks = [];    // each: { bookId, title, url, scrollPos? we'll keep simple: { bookId, title, url, note? } }
+        let bookmarks = [];
         const BOOKMARKS_KEY = 'medlib_bookmarks';
 
         function getStaticCount() { return Math.floor(Math.random() * 800) + 700; }
@@ -629,9 +628,8 @@
         }
 
         function shareBook(title, filename) {
-            const url = `${window.location.origin}/${filename}`;
-            const fullUrl = `${window.location.origin}/#book=${encodeURIComponent(filename)}`;
-            navigator.clipboard.writeText(fullUrl).then(() => showNotification('Book link copied!'));
+            const url = `${window.location.origin}/#book=${encodeURIComponent(filename)}`;
+            navigator.clipboard.writeText(url).then(() => showNotification('Book link copied!'));
         }
 
         function shareCategory(catName) {
@@ -668,7 +666,6 @@
             closeSidebarAndDo(() => filterCategory(catName));
         }
 
-        // ---------- Hash routing ----------
         function loadFromHash() {
             const hash = window.location.hash.slice(1);
             if (hash.startsWith('cat=')) {
@@ -709,7 +706,6 @@
             }
         };
 
-        // Book viewer with history and progress bar
         let currentViewerBookId = null;
         let progressInterval = null;
 
@@ -723,7 +719,6 @@
             addToRecent(bookId);
             currentViewerBookId = bookId;
 
-            // Progress bar: listen to scroll inside iframe
             if (progressInterval) clearInterval(progressInterval);
             progressInterval = setInterval(() => {
                 try {
@@ -737,7 +732,6 @@
                 } catch(e) {}
             }, 200);
 
-            // Push history state for back button
             history.pushState({ viewerOpen: true, bookId, filename }, '', window.location.href);
         };
 
@@ -755,7 +749,6 @@
             if (event.state && event.state.viewerOpen) {
                 closeViewer();
             } else {
-                // If no state but viewer is open, close it
                 if (document.getElementById('bookViewer').style.display === 'block') {
                     closeViewer();
                 }
@@ -774,7 +767,6 @@
             }
         });
 
-        // Sidebar swipe gestures
         let touchStartX = 0;
         let touchEndX = 0;
         document.addEventListener('touchstart', (e) => {
@@ -792,7 +784,6 @@
             }
         });
 
-        // Render functions (same as before but with book link button)
         async function displayBooks(bookList, title) {
             const main = document.getElementById('mainContent');
             let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="location.reload()">Back to Home</span></div>`;
@@ -877,7 +868,6 @@
             return images[cat] || 'https://placehold.co/500x300/0a2942/white?text=Medical';
         }
 
-        // Analytics: top 5 most‑opened books (based on recentBooks counts)
         function renderAnalytics() {
             const container = document.getElementById('analytics-section');
             if (!container) return;
@@ -889,20 +879,126 @@
             for (let [id, count] of sorted) {
                 const book = books.find(b => b.id == id);
                 if (book) {
-                    const c = getStaticCount(); // just for display
-                    html += createBookCard(book, count); // use count as readers
+                    html += createBookCard(book, count);
                 }
             }
             html += '</div>';
             container.innerHTML = html;
         }
 
-        function renderRecent() { /* same as before */ }
-        function renderFavorites() { /* same as before */ }
-        function renderCurrentBooks() { /* same as before */ }
-        async function renderHome() { /* same as before but with extra sections */ }
+        function renderRecent() {
+            const container = document.getElementById('recent-section');
+            if (!container) return;
+            if (recentBooks.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'block';
+            const recentData = recentBooks.map(id => books.find(b => b.id === id)).filter(b => b);
+            let html = `<div class="section-title"><h2><i class="fas fa-history"></i> Recently Viewed</h2></div><div class="recent-grid">`;
+            recentData.forEach(book => {
+                html += `<div class="recent-card" onclick="openBook('${book.filename}', ${book.id})" style="background-image: url('${getCategoryImage(book.category)}');">
+                            <i class="fas ${getCategoryIcon(book.category)}"></i>
+                            <h3>${book.title}</h3>
+                            <p>${book.category}</p>
+                        </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
 
-        // Load books and start
+        function renderFavorites() {
+            const container = document.getElementById('favorites-section');
+            if (!container) return;
+            if (favorites.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'block';
+            const favData = favorites.map(id => books.find(b => b.id === id)).filter(b => b);
+            let html = `<div class="section-title"><h2><i class="fas fa-star"></i> Your Favorites</h2></div><div class="favorites-grid">`;
+            favData.forEach(book => {
+                html += `<div class="favorite-card" onclick="openBook('${book.filename}', ${book.id})" style="background-image: url('${getCategoryImage(book.category)}');">
+                            <i class="fas ${getCategoryIcon(book.category)}"></i>
+                            <h3>${book.title}</h3>
+                            <p>${book.category}</p>
+                        </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderCurrentBooks() {
+            const main = document.getElementById('mainContent');
+            if (!main) return;
+            const allCategories = [...new Set(books.map(b => b.category))];
+            allCategories.sort();
+            let html = `<div class="section-title"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
+            html += '<div class="categories">';
+            allCategories.forEach(cat => {
+                const icon = getCategoryIcon(cat);
+                const count = books.filter(b => b.category === cat).length;
+                const imgUrl = getCategoryImage(cat);
+                html += `<div class="category-card" style="background-image: url('${imgUrl}');" onclick="selectCategory('${cat}')">
+                            <i class="fas ${icon}"></i>
+                            <h3>${cat}</h3>
+                            <p>${count} books</p>
+                        </div>`;
+            });
+            html += '</div>';
+
+            // Blog section (placeholder)
+            html += `<div class="blog-section" style="margin-top:3rem;">
+                        <div class="section-title"><h2><i class="fas fa-blog"></i> Study Tips & Articles</h2></div>
+                        <div class="blog-grid">
+                            <div class="blog-card" style="background-image: url('https://images.unsplash.com/photo-1513258496099-48168024aec0?w=500');" onclick="window.open('blog/how-to-study-for-usmle.html','_blank')">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <h3>How to Ace USMLE Step 1</h3>
+                                <p>Study strategies from top scorers</p>
+                            </div>
+                            <div class="blog-card" style="background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=500');" onclick="window.open('blog/biochemistry-mnemonics.html','_blank')">
+                                <i class="fas fa-dna"></i>
+                                <h3>Biochemistry Mnemonics</h3>
+                                <p>Remember pathways easily</p>
+                            </div>
+                            <div class="blog-card" style="background-image: url('https://images.unsplash.com/photo-1579684453423-843a6c5d8b1a?w=500');" onclick="window.open('blog/cardiology-review.html','_blank')">
+                                <i class="fas fa-heart"></i>
+                                <h3>Cardiology Quick Review</h3>
+                                <p>High‑yield topics for clerkship</p>
+                            </div>
+                        </div>
+                    </div>`;
+
+            main.innerHTML = html;
+        }
+
+        async function renderHome() {
+            const main = document.getElementById('mainContent');
+            if (!main) return;
+            renderCurrentBooks();
+
+            const recentDiv = document.createElement('div');
+            recentDiv.id = 'recent-section';
+            recentDiv.className = 'recent-section';
+            const favDiv = document.createElement('div');
+            favDiv.id = 'favorites-section';
+            favDiv.className = 'favorites-section';
+            const bookmarksDiv = document.createElement('div');
+            bookmarksDiv.id = 'bookmarks-section';
+            bookmarksDiv.className = 'bookmarks-section';
+            const analyticsDiv = document.createElement('div');
+            analyticsDiv.id = 'analytics-section';
+            analyticsDiv.className = 'analytics-section';
+            main.appendChild(recentDiv);
+            main.appendChild(favDiv);
+            main.appendChild(bookmarksDiv);
+            main.appendChild(analyticsDiv);
+            renderRecent();
+            renderFavorites();
+            renderBookmarks();
+            renderAnalytics();
+        }
+
         (async function loadBooks() {
             loadUserData();
             const cached = localStorage.getItem('medlib_books');
@@ -926,7 +1022,6 @@
             loadFromHash();
         })();
 
-        // Sidebar toggle
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
         const mainPanel = document.getElementById('mainPanel');
@@ -935,7 +1030,6 @@
             mainPanel.classList.toggle('shifted');
         });
 
-        // Back to top
         const backToTop = document.getElementById('backToTop');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) backToTop.style.display = 'flex';
@@ -943,7 +1037,6 @@
         });
         backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-        // Night mode toggle
         const themeToggle = document.getElementById('themeToggle');
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') document.body.classList.add('dark');
@@ -953,7 +1046,6 @@
         });
     </script>
 
-    <!-- Nexus AI Assistant (loaded after Puter) -->
     <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
 </body>
