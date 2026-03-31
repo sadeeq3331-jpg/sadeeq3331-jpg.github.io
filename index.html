@@ -31,7 +31,7 @@
     </script>
 
     <style>
-        /* ========== COMPLETE CSS ========== */
+        /* ========== COMPLETE CSS (same as before, no changes needed) ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; transition:background .3s,color .3s; }
         body.dark { background:#1a1a2e; color:#e0e0e0; }
@@ -98,7 +98,7 @@
         }
         .theme-toggle:focus-visible{outline:2px solid #ffd966}
 
-        /* ========== SIDEBAR (with swipe) ========== */
+        /* ========== SIDEBAR ========== */
         .sidebar {
             position:fixed;
             top:0;
@@ -506,7 +506,7 @@
             </ul>
         </div>
         <div class="cat-section">
-            <ul><li class="cat-item"><a onclick="showAllBooks()" tabindex="0" role="button"><i class="fas fa-books"></i> All Textbooks</a></li></ul>
+            <ul><li class="cat-item"><a onclick="goToHome()" tabindex="0" role="button"><i class="fas fa-home"></i> Home</a></li></ul>
         </div>
         <div class="cat-section">
             <ul><li class="cat-item"><a href="https://forms.gle/YOUR_FORM_LINK" target="_blank" rel="noopener"><i class="fas fa-plus-circle"></i> Suggest a Book</a></li></ul>
@@ -647,6 +647,7 @@
             }
         }
 
+        // ---------- Sidebar and navigation ----------
         function closeSidebar() {
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('mainPanel').classList.remove('shifted');
@@ -663,33 +664,31 @@
         }
 
         function selectCategory(catName) {
-            closeSidebarAndDo(() => filterCategory(catName));
+            closeSidebarAndDo(() => {
+                // Update hash to trigger category view
+                window.location.hash = 'cat=' + encodeURIComponent(catName);
+                filterCategory(catName);
+            });
         }
 
-        function loadFromHash() {
-            const hash = window.location.hash.slice(1);
-            if (hash.startsWith('cat=')) {
-                const cat = decodeURIComponent(hash.substring(4));
-                filterCategory(cat);
-            } else if (hash.startsWith('book=')) {
-                const filename = decodeURIComponent(hash.substring(5));
-                const book = books.find(b => b.filename === filename);
-                if (book) openBook(book.filename, book.id);
-            }
+        // Go to home (category grid)
+        function goToHome() {
+            closeSidebar();
+            window.location.hash = '';
+            renderHome();
         }
 
-        window.filterCategory = function(catName) {
+        // ---------- Category filtering and display ----------
+        function filterCategory(catName) {
             const results = books.filter(b => b.category === catName);
             displayBooks(results, catName + ' Textbooks');
-            window.location.hash = 'cat=' + encodeURIComponent(catName);
-        };
+        }
 
-        window.showAllBooks = function() {
-            closeSidebarAndDo(() => displayBooks(books, 'All Textbooks'));
-            window.location.hash = '';
-        };
+        function showAllBooks() {
+            displayBooks(books, 'All Textbooks');
+        }
 
-        window.searchBooks = function() {
+        function searchBooks() {
             const input = document.getElementById('searchInput');
             const term = input.value.toLowerCase().trim();
             if (!term) { showNotification('Enter a search term'); return; }
@@ -704,12 +703,14 @@
                 displayBooks(results, `Search: "${term}"`);
                 window.location.hash = '';
             }
-        };
+        }
 
+        // ---------- Book viewer with history ----------
         let currentViewerBookId = null;
         let progressInterval = null;
+        let viewerActive = false;
 
-        window.openBook = async function(filename, bookId) {
+        function openBook(filename, bookId) {
             const viewer = document.getElementById('bookViewer');
             const frame = document.getElementById('bookFrame');
             if (!viewer || !frame) return;
@@ -718,6 +719,7 @@
             document.body.style.overflow = 'hidden';
             addToRecent(bookId);
             currentViewerBookId = bookId;
+            viewerActive = true;
 
             if (progressInterval) clearInterval(progressInterval);
             progressInterval = setInterval(() => {
@@ -732,10 +734,11 @@
                 } catch(e) {}
             }, 200);
 
+            // Push a state that marks the viewer as open
             history.pushState({ viewerOpen: true, bookId, filename }, '', window.location.href);
-        };
+        }
 
-        window.closeViewer = function() {
+        function closeViewer() {
             const viewer = document.getElementById('bookViewer');
             const frame = document.getElementById('bookFrame');
             if (viewer) viewer.style.display = 'none';
@@ -743,50 +746,37 @@
             document.body.style.overflow = 'auto';
             if (progressInterval) clearInterval(progressInterval);
             currentViewerBookId = null;
-        };
+            viewerActive = false;
+        }
 
+        // Handle back button: close viewer if open, else let browser navigate normally
         window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.viewerOpen) {
+            if (viewerActive) {
                 closeViewer();
-            } else {
-                if (document.getElementById('bookViewer').style.display === 'block') {
-                    closeViewer();
-                }
+                // Replace the popped state with a clean one to prevent going back further
+                history.replaceState({}, '', window.location.href);
+                event.preventDefault();
+                return;
+            }
+            // If viewer is not open, let browser handle hash change or page navigation
+            // But we also need to handle hash changes for categories
+        });
+
+        // Listen to hash changes for category navigation
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.slice(1);
+            if (hash.startsWith('cat=')) {
+                const cat = decodeURIComponent(hash.substring(4));
+                filterCategory(cat);
+            } else if (hash === '') {
+                renderHome();
             }
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeViewer();
-            if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
-                e.preventDefault();
-                showNotification('Shortcuts: Esc = close viewer, Ctrl+K = focus search, ? = this help');
-            }
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                document.getElementById('searchInput').focus();
-            }
-        });
-
-        let touchStartX = 0;
-        let touchEndX = 0;
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-        document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            const sidebar = document.getElementById('sidebar');
-            if (touchStartX < 50 && touchEndX > 150 && !sidebar.classList.contains('open')) {
-                sidebar.classList.add('open');
-                document.getElementById('mainPanel').classList.add('shifted');
-            } else if (touchStartX > 250 && touchEndX < 100 && sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-                document.getElementById('mainPanel').classList.remove('shifted');
-            }
-        });
-
+        // ---------- Display functions ----------
         async function displayBooks(bookList, title) {
             const main = document.getElementById('mainContent');
-            let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="showAllBooks()">Back to Home</span></div>`;
+            let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="goToHome()">Back to Home</span></div>`;
             html += '<div class="book-grid">';
             for (const book of bookList) {
                 const count = getStaticCount();
@@ -868,6 +858,7 @@
             return images[cat] || 'https://placehold.co/500x300/0a2942/white?text=Medical';
         }
 
+        // ---------- Render home (category grid) ----------
         function renderAnalytics() {
             const container = document.getElementById('analytics-section');
             if (!container) return;
@@ -947,7 +938,7 @@
             });
             html += '</div>';
 
-            // Blog section (placeholder)
+            // Blog section
             html += `<div class="blog-section" style="margin-top:3rem;">
                         <div class="section-title"><h2><i class="fas fa-blog"></i> Study Tips & Articles</h2></div>
                         <div class="blog-grid">
@@ -999,15 +990,62 @@
             renderAnalytics();
         }
 
+        // ---------- Outside click for sidebar ----------
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('menuToggle');
+            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
+                closeSidebar();
+            }
+        });
+
+        // ---------- Keyboard shortcuts ----------
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeViewer();
+            if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                showNotification('Shortcuts: Esc = close viewer, Ctrl+K = focus search, ? = this help');
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        // ---------- Swipe gestures ----------
+        let touchStartX = 0;
+        let touchEndX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const sidebar = document.getElementById('sidebar');
+            if (touchStartX < 50 && touchEndX > 150 && !sidebar.classList.contains('open')) {
+                sidebar.classList.add('open');
+                document.getElementById('mainPanel').classList.add('shifted');
+            } else if (touchStartX > 250 && touchEndX < 100 && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                document.getElementById('mainPanel').classList.remove('shifted');
+            }
+        });
+
+        // ---------- Load books and initialize ----------
         (async function loadBooks() {
             loadUserData();
             const cached = localStorage.getItem('medlib_books');
             if (cached) {
                 try {
                     books = JSON.parse(cached);
-                    renderHome();
+                    // Check hash on load
+                    const hash = window.location.hash.slice(1);
+                    if (hash.startsWith('cat=')) {
+                        const cat = decodeURIComponent(hash.substring(4));
+                        filterCategory(cat);
+                    } else {
+                        renderHome();
+                    }
                     document.getElementById('loading-skeleton').style.display = 'none';
-                    loadFromHash();
                     return;
                 } catch(e) { console.warn('Cache parse failed'); }
             }
@@ -1016,12 +1054,18 @@
                 if (!response.ok) throw new Error();
                 books = await response.json();
                 localStorage.setItem('medlib_books', JSON.stringify(books));
-                renderHome();
+                const hash = window.location.hash.slice(1);
+                if (hash.startsWith('cat=')) {
+                    const cat = decodeURIComponent(hash.substring(4));
+                    filterCategory(cat);
+                } else {
+                    renderHome();
+                }
             } catch(e) { console.error('Failed to load books'); }
             document.getElementById('loading-skeleton').style.display = 'none';
-            loadFromHash();
         })();
 
+        // ---------- Sidebar toggle ----------
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
         const mainPanel = document.getElementById('mainPanel');
@@ -1030,6 +1074,7 @@
             mainPanel.classList.toggle('shifted');
         });
 
+        // ---------- Back to top ----------
         const backToTop = document.getElementById('backToTop');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) backToTop.style.display = 'flex';
@@ -1037,6 +1082,7 @@
         });
         backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
+        // ---------- Dark mode toggle ----------
         const themeToggle = document.getElementById('themeToggle');
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') document.body.classList.add('dark');
@@ -1044,6 +1090,21 @@
             document.body.classList.toggle('dark');
             localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
         });
+
+        // Expose global functions for inline onclick
+        window.selectCategory = selectCategory;
+        window.filterCategory = filterCategory;
+        window.showAllBooks = showAllBooks;
+        window.searchBooks = searchBooks;
+        window.openBook = openBook;
+        window.closeViewer = closeViewer;
+        window.goToHome = goToHome;
+        window.toggleFavorite = toggleFavorite;
+        window.addBookmark = addBookmark;
+        window.removeBookmark = removeBookmark;
+        window.shareBook = shareBook;
+        window.getStaticCount = getStaticCount;
+        window.createBookCard = createBookCard;
     </script>
 
     <script defer src="https://js.puter.com/v2/"></script>
