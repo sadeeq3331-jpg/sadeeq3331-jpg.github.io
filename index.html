@@ -23,15 +23,9 @@
 
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
-    <!-- PopAds code -->
-    <script type="text/javascript" data-cfasync="false">
-/*<![CDATA[/* */
-(function(){var u=window,d="cd6ee060ba724175f3699c4800b65757",g=[["siteId",68+926+672+404-854+5287373],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],h=["d3d3LnhhZHNtYXJ0LmNvbS91YW1hemV1aS5taW4uY3Nz","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQvbmFyL3V0d2l4Lm1pbi5qcw=="],o=-1,c,q,t=function(){clearTimeout(q);o++;if(h[o]&&!(1800956605000<(new Date).getTime()&&1<o)){c=u.document.createElement("script");c.type="text/javascript";c.async=!0;var l=u.document.getElementsByTagName("script")[0];c.src="https://"+atob(h[o]);c.crossOrigin="anonymous";c.onerror=t;c.onload=function(){clearTimeout(q);u[d.slice(0,16)+d.slice(0,16)]||t()};q=setTimeout(t,5E3);l.parentNode.insertBefore(c,l)}};if(!u[d]){try{Object.freeze(u[d]=g)}catch(e){}t()}})();
-/*]]>/* */
-</script>
 
     <style>
-        /* ========== COMPLETE CSS (same as before, no changes needed) ========== */
+        /* ========== COMPLETE CSS (unchanged) ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; transition:background .3s,color .3s; }
         body.dark { background:#1a1a2e; color:#e0e0e0; }
@@ -429,6 +423,13 @@
             z-index:99;
             pointer-events:none;
         }
+        /* Nexus bubble mobile fix */
+        .nexus-bubble {
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            z-index: 10000 !important;
+            cursor: pointer;
+        }
         @media (max-width:768px) {
             .hero h1{font-size:1.6rem}
             .section-title h2{font-size:1.3rem}
@@ -501,8 +502,8 @@
             <h3>📝 Question Banks</h3>
             <ul class="cat-items">
                 <li class="cat-item"><a onclick="selectCategory('Question Bank')" tabindex="0" role="button"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
-                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 1 · 500+ MCQ Bank.html', 130)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 1</a></li>
-                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 2 CK · 500+ MCQ Bank.html', 131)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 2 CK</a></li>
+                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 1 · 500+ MCQ Bank.html', 1060)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 1</a></li>
+                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 2 CK · 500+ MCQ Bank.html', 1061)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 2 CK</a></li>
             </ul>
         </div>
         <div class="cat-section">
@@ -647,7 +648,6 @@
             }
         }
 
-        // ---------- Sidebar and navigation ----------
         function closeSidebar() {
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('mainPanel').classList.remove('shifted');
@@ -665,20 +665,17 @@
 
         function selectCategory(catName) {
             closeSidebarAndDo(() => {
-                // Update hash to trigger category view
                 window.location.hash = 'cat=' + encodeURIComponent(catName);
                 filterCategory(catName);
             });
         }
 
-        // Go to home (category grid)
         function goToHome() {
             closeSidebar();
             window.location.hash = '';
             renderHome();
         }
 
-        // ---------- Category filtering and display ----------
         function filterCategory(catName) {
             const results = books.filter(b => b.category === catName);
             displayBooks(results, catName + ' Textbooks');
@@ -705,7 +702,6 @@
             }
         }
 
-        // ---------- Book viewer with history ----------
         let currentViewerBookId = null;
         let progressInterval = null;
         let viewerActive = false;
@@ -734,7 +730,6 @@
                 } catch(e) {}
             }, 200);
 
-            // Push a state that marks the viewer as open
             history.pushState({ viewerOpen: true, bookId, filename }, '', window.location.href);
         }
 
@@ -749,20 +744,15 @@
             viewerActive = false;
         }
 
-        // Handle back button: close viewer if open, else let browser navigate normally
         window.addEventListener('popstate', function(event) {
             if (viewerActive) {
                 closeViewer();
-                // Replace the popped state with a clean one to prevent going back further
                 history.replaceState({}, '', window.location.href);
                 event.preventDefault();
                 return;
             }
-            // If viewer is not open, let browser handle hash change or page navigation
-            // But we also need to handle hash changes for categories
         });
 
-        // Listen to hash changes for category navigation
         window.addEventListener('hashchange', function() {
             const hash = window.location.hash.slice(1);
             if (hash.startsWith('cat=')) {
@@ -773,7 +763,6 @@
             }
         });
 
-        // ---------- Display functions ----------
         async function displayBooks(bookList, title) {
             const main = document.getElementById('mainContent');
             let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="goToHome()">Back to Home</span></div>`;
@@ -858,7 +847,6 @@
             return images[cat] || 'https://placehold.co/500x300/0a2942/white?text=Medical';
         }
 
-        // ---------- Render home (category grid) ----------
         function renderAnalytics() {
             const container = document.getElementById('analytics-section');
             if (!container) return;
@@ -937,8 +925,6 @@
                         </div>`;
             });
             html += '</div>';
-
-            // Blog section
             html += `<div class="blog-section" style="margin-top:3rem;">
                         <div class="section-title"><h2><i class="fas fa-blog"></i> Study Tips & Articles</h2></div>
                         <div class="blog-grid">
@@ -959,13 +945,11 @@
                             </div>
                         </div>
                     </div>`;
-
             main.innerHTML = html;
         }
 
         async function renderHome() {
             const main = document.getElementById('mainContent');
-            if (!main) return;
             renderCurrentBooks();
 
             const recentDiv = document.createElement('div');
@@ -988,9 +972,33 @@
             renderFavorites();
             renderBookmarks();
             renderAnalytics();
+
+            // Append the long "About MedLib" section at the very bottom
+            const aboutSection = document.createElement('div');
+            aboutSection.id = 'about-medlib-bottom';
+            aboutSection.style.cssText = 'max-width: 1200px; margin: 3rem auto 0; padding: 2rem; background: #f9fcff; border-radius: 24px; border: 1px solid #e6f0fa;';
+            aboutSection.innerHTML = `
+                <h2 style="color: #0a2942; margin-bottom: 1rem;">📚 About MedLib – Free Medical Textbook Library</h2>
+                <p><strong>MedLib</strong> is a completely free, open‑access medical education platform created by <strong>Abubakar Sadeeq</strong>. It provides medical students, residents, and healthcare professionals with a comprehensive collection of textbooks, interactive MCQ banks, and an AI‑powered study assistant – all without any cost or registration.</p>
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">📖 What You'll Find Here</h3>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li><strong>150+ Medical Textbooks</strong> – Covering basic sciences, organ systems, and clinical specialties.</li>
+                    <li><strong>500+ USMLE Step 1 MCQs</strong> – High‑yield questions with detailed explanations.</li>
+                    <li><strong>500+ USMLE Step 2 CK MCQs</strong> – Clinical vignettes for clerkship preparation.</li>
+                    <li><strong>Interactive Book Viewer</strong> – Clean, responsive viewer with table of contents.</li>
+                    <li><strong>Nexus AI Assistant</strong> – Evidence‑based medical chatbot with pronunciation (US/UK).</li>
+                    <li><strong>Study Tools</strong> – Favourites, bookmarks, recently viewed, export.</li>
+                </ul>
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">👨‍⚕️ Who Is MedLib For?</h3>
+                <p>Medical students preparing for USMLE Step 1 & 2, residents, and educators – all free.</p>
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">💡 Why Free?</h3>
+                <p>Medical education should be accessible. MedLib removes financial barriers. Supported by minimal, non‑intrusive advertising.</p>
+                <p><strong>Start exploring by clicking any category below – or use the search bar to find specific topics.</strong></p>
+            `;
+            main.appendChild(aboutSection);
         }
 
-        // ---------- Outside click for sidebar ----------
+        // Outside click to close sidebar
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.getElementById('menuToggle');
@@ -999,7 +1007,6 @@
             }
         });
 
-        // ---------- Keyboard shortcuts ----------
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeViewer();
             if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
@@ -1012,7 +1019,6 @@
             }
         });
 
-        // ---------- Swipe gestures ----------
         let touchStartX = 0;
         let touchEndX = 0;
         document.addEventListener('touchstart', (e) => {
@@ -1030,14 +1036,13 @@
             }
         });
 
-        // ---------- Load books and initialize ----------
-        (async function loadBooks() {
+        // ========== SINGLE JSON LOADER (books.json contains everything) ==========
+        async function loadAllResources() {
             loadUserData();
             const cached = localStorage.getItem('medlib_books');
             if (cached) {
                 try {
                     books = JSON.parse(cached);
-                    // Check hash on load
                     const hash = window.location.hash.slice(1);
                     if (hash.startsWith('cat=')) {
                         const cat = decodeURIComponent(hash.substring(4));
@@ -1051,7 +1056,7 @@
             }
             try {
                 const response = await fetch('books.json');
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error('books.json not found');
                 books = await response.json();
                 localStorage.setItem('medlib_books', JSON.stringify(books));
                 const hash = window.location.hash.slice(1);
@@ -1061,11 +1066,15 @@
                 } else {
                     renderHome();
                 }
-            } catch(e) { console.error('Failed to load books'); }
+            } catch(e) {
+                console.error('Error loading books', e);
+                document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json exists.</div>';
+            }
             document.getElementById('loading-skeleton').style.display = 'none';
-        })();
+        }
 
-        // ---------- Sidebar toggle ----------
+        loadAllResources();
+
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
         const mainPanel = document.getElementById('mainPanel');
@@ -1074,7 +1083,6 @@
             mainPanel.classList.toggle('shifted');
         });
 
-        // ---------- Back to top ----------
         const backToTop = document.getElementById('backToTop');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) backToTop.style.display = 'flex';
@@ -1082,7 +1090,6 @@
         });
         backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-        // ---------- Dark mode toggle ----------
         const themeToggle = document.getElementById('themeToggle');
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') document.body.classList.add('dark');
@@ -1107,6 +1114,7 @@
         window.createBookCard = createBookCard;
     </script>
 
+    <!-- Nexus AI Assistant -->
     <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
 </body>
