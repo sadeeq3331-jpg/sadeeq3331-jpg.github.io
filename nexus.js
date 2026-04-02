@@ -1,13 +1,10 @@
-// nexus.js – Full-Featured Medical AI Assistant (Selection Popup + Pronunciation)
+// nexus.js – Medical AI Assistant (Fully Functional)
 (function() {
-    // ================================================================
-    // NEXUS – Intelligent Medical Assistant
-    // ================================================================
-    
+    // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
 
-    // ---------- State ----------
+    // ========== State ==========
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
@@ -22,7 +19,7 @@
     let panelDarkMode = false;
     let personality = 'detailed';
 
-    // ---------- Helpers ----------
+    // ========== Helper: Extract Puter message ==========
     function extractPuterMessage(raw) {
         if (typeof raw === 'string') {
             try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
@@ -30,6 +27,7 @@
         return raw?.message?.content || raw?.content || JSON.stringify(raw);
     }
 
+    // ========== Helper: Strip markdown tables ==========
     function stripTables(text) {
         if (!text) return text;
         return text.split('\n').filter(line => {
@@ -38,7 +36,7 @@
         }).join('\n');
     }
 
-    // ---------- Load / Save ----------
+    // ========== Conversation persistence ==========
     function loadConversations() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -62,18 +60,9 @@
         const storedPinned = localStorage.getItem('nexus_pinned');
         if (storedPinned) pinnedMessages = JSON.parse(storedPinned);
     }
-
-    function saveConversations() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
-    }
-
-    function savePinned() {
-        localStorage.setItem('nexus_pinned', JSON.stringify(pinnedMessages));
-    }
-
-    function getCurrentConv() {
-        return conversations.find(c => c.id === currentConvId);
-    }
+    function saveConversations() { localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations)); }
+    function savePinned() { localStorage.setItem('nexus_pinned', JSON.stringify(pinnedMessages)); }
+    function getCurrentConv() { return conversations.find(c => c.id === currentConvId); }
 
     function addMessage(role, content) {
         const conv = getCurrentConv();
@@ -83,16 +72,6 @@
         renderMessages();
         updateStats();
     }
-
-    function replaceLastMessage(content) {
-        const conv = getCurrentConv();
-        if (!conv || !conv.messages.length) return;
-        conv.messages[conv.messages.length - 1] = { role: 'assistant', content, timestamp: Date.now() };
-        saveConversations();
-        renderMessages();
-        updateStats();
-    }
-
     function deleteMessage(index) {
         const conv = getCurrentConv();
         if (!conv) return;
@@ -101,7 +80,6 @@
         renderMessages();
         updateStats();
     }
-
     function editUserMessage(index, newContent) {
         if (!newContent) return;
         const conv = getCurrentConv();
@@ -114,7 +92,6 @@
         renderMessages();
         sendMessage(newContent);
     }
-
     function togglePinMessage(idx) {
         const conv = getCurrentConv();
         const msg = conv.messages[idx];
@@ -129,11 +106,7 @@
         renderPinnedSection();
         renderMessages();
     }
-
-    function isPinned(idx) {
-        return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx);
-    }
-
+    function isPinned(idx) { return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx); }
     function renderPinnedSection() {
         const container = document.getElementById('nexus-pinned');
         if (!container) return;
@@ -150,7 +123,6 @@
         });
         container.innerHTML = html;
     }
-
     function updateStats() {
         const conv = getCurrentConv();
         if (!conv) return;
@@ -159,59 +131,44 @@
         const statsSpan = document.getElementById('nexus-stats');
         if (statsSpan) statsSpan.innerText = `${msgCount} msgs · ~${wordCount} words`;
     }
-
     function filterMessages() {
         const input = document.getElementById('nexus-search');
         if (input) currentSearch = input.value.trim().toLowerCase();
         renderMessages();
     }
-
     function exportAsPDF() {
         const conv = getCurrentConv();
         if (!conv) return;
         const win = window.open('', '_blank');
-        let html = `<html><head><title>MedLib Nexus Chat</title><style>body{font-family:sans-serif; margin:2rem;} .message{margin-bottom:1rem;} .user{color:#2c7cb0;} .assistant{color:#0a2942;}</style></head><body>`;
-        html += `<h1>Conversation: ${conv.name}</h1>`;
-        conv.messages.forEach(msg => {
-            html += `<div class="message ${msg.role}"><strong>${msg.role === 'user' ? 'You' : 'Nexus'}:</strong> ${msg.content.replace(/\n/g, '<br>')}</div>`;
+        let html = `<html><head><title>MedLib Nexus Chat</title><style>body{font-family:sans-serif; margin:2rem;}</style></head><body><h1>Conversation: ${conv.name}</h1>`;
+        conv.messages.forEach(m => {
+            html += `<div><strong>${m.role === 'user' ? 'You' : 'Nexus'}:</strong> ${m.content.replace(/\n/g, '<br>')}</div><hr>`;
         });
         html += `</body></html>`;
         win.document.write(html);
         win.document.close();
         win.print();
     }
-
     function shareConversation() {
         const conv = getCurrentConv();
         if (!conv) return;
         let text = `MedLib Nexus Conversation: ${conv.name}\n\n`;
-        conv.messages.forEach(msg => {
-            text += `${msg.role === 'user' ? 'You' : 'Nexus'}: ${msg.content}\n\n`;
+        conv.messages.forEach(m => {
+            text += `${m.role === 'user' ? 'You' : 'Nexus'}: ${m.content}\n\n`;
         });
-        navigator.clipboard.writeText(text).then(() => alert('Conversation copied to clipboard!'));
+        navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
     }
-
     function setFontSize(delta) {
         fontSize = Math.min(32, Math.max(12, fontSize + delta));
-        document.querySelectorAll('.message-bubble').forEach(el => {
-            el.style.fontSize = fontSize + 'px';
-        });
+        document.querySelectorAll('.message-bubble').forEach(el => el.style.fontSize = fontSize + 'px');
     }
-
     function togglePanelDarkMode() {
         panelDarkMode = !panelDarkMode;
         const panel = document.querySelector('.nexus-panel');
-        if (panel) {
-            if (panelDarkMode) panel.classList.add('dark');
-            else panel.classList.remove('dark');
-        }
+        if (panel) panelDarkMode ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
-
     function speakMessage(text) {
-        if (!window.speechSynthesis) {
-            alert('Speech synthesis not supported');
-            return;
-        }
+        if (!window.speechSynthesis) { alert('Speech not supported'); return; }
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
         utterance.rate = 1.0;
@@ -219,17 +176,146 @@
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utterance);
     }
+    function startVoiceInput() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) { alert('Speech recognition not supported'); return; }
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.start();
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            const input = document.getElementById('nexus-input');
+            if (input) input.value = transcript;
+            sendMessage(transcript);
+        };
+        recognition.onerror = () => alert('Could not recognize speech');
+    }
+    function copyMessage(text) {
+        navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
+    }
+    function newConversation() {
+        const id = Date.now();
+        conversations.push({
+            id,
+            name: 'Chat ' + (conversations.length + 1),
+            messages: [{ role: 'assistant', content: '👋 Hi, I’m Nexus! Ask me anything about medicine.', timestamp: Date.now() }]
+        });
+        currentConvId = id;
+        saveConversations();
+        renderTabs();
+        renderMessages();
+    }
+    function deleteConversation(id) {
+        const idx = conversations.findIndex(c => c.id === id);
+        if (idx === -1) return;
+        conversations.splice(idx, 1);
+        if (!conversations.length) newConversation();
+        else if (currentConvId === id) currentConvId = conversations[0].id;
+        saveConversations();
+        renderTabs();
+        renderMessages();
+    }
+    function renameConversation(id, newName) {
+        const conv = conversations.find(c => c.id === id);
+        if (conv) { conv.name = newName; saveConversations(); renderTabs(); }
+    }
+    function exportConversation() {
+        const conv = getCurrentConv();
+        if (!conv) return;
+        let text = `Conversation: ${conv.name}\nExported: ${new Date().toLocaleString()}\n\n`;
+        conv.messages.forEach(m => {
+            const role = m.role === 'user' ? 'You' : 'Nexus';
+            const time = new Date(m.timestamp).toLocaleTimeString();
+            text += `[${role}] (${time}):\n${m.content}\n\n`;
+        });
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `nexus-${conv.name.replace(/\s+/g, '_')}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+    function renderTabs() {
+        const tabs = document.getElementById('nexus-tabs');
+        if (!tabs) return;
+        let html = '';
+        conversations.forEach(c => {
+            const active = c.id === currentConvId ? 'active' : '';
+            html += `<div class="conv-tab ${active}" data-id="${c.id}">
+                <span class="conv-name" contenteditable="false" onblur="renameConversation(${c.id}, this.innerText)" ondblclick="this.contentEditable=true; this.focus();">${c.name}</span>
+                <button class="delete-conv" onclick="deleteConversation(${c.id})">🗑️</button>
+            </div>`;
+        });
+        html += `<button class="new-conv-btn" onclick="newConversation()">➕ New</button>`;
+        tabs.innerHTML = html;
+        document.querySelectorAll('.conv-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') return;
+                const id = Number(tab.dataset.id);
+                if (currentConvId !== id) {
+                    currentConvId = id;
+                    saveConversations();
+                    renderTabs();
+                    renderMessages();
+                }
+            });
+        });
+    }
+    function renderMessages() {
+        const msgsDiv = document.getElementById('nexus-messages');
+        if (!msgsDiv) return;
+        const conv = getCurrentConv();
+        if (!conv) return;
+        let filtered = conv.messages;
+        if (currentSearch) filtered = conv.messages.filter(m => m.content.toLowerCase().includes(currentSearch));
+        let html = '';
+        filtered.forEach((msg, idx) => {
+            const originalIdx = conv.messages.indexOf(msg);
+            const isUser = msg.role === 'user';
+            const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const avatar = isUser ? '👤' : '🤖';
+            const content = isUser ? msg.content : stripTables(msg.content);
+            const pinned = isPinned(originalIdx);
+            html += `
+                <div class="message ${msg.role}" data-idx="${originalIdx}">
+                    <div class="avatar">${avatar}</div>
+                    <div class="bubble-wrapper">
+                        <div class="message-bubble" style="font-size:${fontSize}px">${content.replace(/\n/g, '<br>')}</div>
+                        <div class="message-footer">
+                            <span class="timestamp">${time}</span>
+                            ${!isUser ? `
+                                <button class="pin-btn" onclick="togglePinMessage(${originalIdx})" title="Pin">${pinned ? '📌' : '📍'}</button>
+                                <button class="speak-btn" onclick="speakMessage('${msg.content.replace(/'/g, "\\'")}')" title="Read aloud">🔊</button>
+                                <button class="copy-btn" onclick="copyMessage('${msg.content.replace(/'/g, "\\'")}')">📋</button>
+                                <button class="delete-btn" onclick="deleteMessage(${originalIdx})">🗑️</button>
+                            ` : `
+                                <button class="edit-btn" onclick="editUserMessage(${originalIdx}, prompt('Edit your message:', '${msg.content.replace(/'/g, "\\'")}'))" title="Edit">✏️</button>
+                                <button class="delete-btn" onclick="deleteMessage(${originalIdx})">🗑️</button>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        if (isWaiting) {
+            html += `<div class="message assistant typing"><div class="avatar">🤖</div><div class="bubble-wrapper"><div class="message-bubble typing-indicator"><span>.</span><span>.</span><span>.</span></div></div></div>`;
+        }
+        msgsDiv.innerHTML = html;
+        msgsDiv.scrollTop = msgsDiv.scrollHeight;
+        updateStats();
+        renderPinnedSection();
+    }
 
-    // ---------- Pronunciation ----------
+    // ========== Pronunciation voices ==========
     function loadVoices() {
         if (!window.speechSynthesis) return;
         const voices = window.speechSynthesis.getVoices();
         if (voices.length) selectVoices(voices);
-        window.speechSynthesis.onvoiceschanged = () => {
-            selectVoices(window.speechSynthesis.getVoices());
-        };
+        window.speechSynthesis.onvoiceschanged = () => selectVoices(window.speechSynthesis.getVoices());
     }
-
     function selectVoices(voices) {
         usVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) ||
                   voices.find(v => v.lang === 'en-US' && v.name.includes('Natural')) ||
@@ -239,12 +325,8 @@
                   voices.find(v => v.lang === 'en-GB');
         voicesLoaded = true;
     }
-
     function speak(text, accent, speed) {
-        if (!window.speechSynthesis) {
-            alert('Speech synthesis not supported.');
-            return;
-        }
+        if (!window.speechSynthesis) { alert('Speech not supported'); return; }
         if (!voicesLoaded) loadVoices();
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
@@ -256,25 +338,22 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    // ---------- Send Message (with Puter retry) ----------
+    // ========== Send message (with Puter retry) ==========
     async function sendMessage(initialText = null) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
         if (!text || isWaiting) return;
 
+        // Wait for Puter
         let puterReady = false;
         for (let i = 0; i < 5; i++) {
-            if (window.puter && window.puter.ai) {
-                puterReady = true;
-                break;
-            }
+            if (window.puter && window.puter.ai) { puterReady = true; break; }
             await new Promise(r => setTimeout(r, 1000));
         }
         if (!puterReady) {
             addMessage('assistant', 'Nexus is not ready. Please refresh the page and try again.');
             return;
         }
-
         if (input) input.value = '';
         addMessage('user', text);
         isWaiting = true;
@@ -307,199 +386,16 @@ Question: ${text}`;
             isWaiting = false;
             addMessage('assistant', clean);
         } catch (e) {
-            console.error(e);
             isWaiting = false;
-            addMessage('assistant', 'Nexus error: ' + (e.message || 'Request failed.'));
+            addMessage('assistant', 'Nexus error: ' + e.message);
         }
     }
 
-    // ---------- Conversation Management ----------
-    function newConversation() {
-        const id = Date.now();
-        conversations.push({
-            id,
-            name: 'Chat ' + (conversations.length + 1),
-            messages: [{ role: 'assistant', content: '👋 Hi, I’m Nexus! Ask me anything about medicine.', timestamp: Date.now() }]
-        });
-        currentConvId = id;
-        saveConversations();
-        renderTabs();
-        renderMessages();
-    }
-
-    function deleteConversation(id) {
-        const idx = conversations.findIndex(c => c.id === id);
-        if (idx === -1) return;
-        conversations.splice(idx, 1);
-        if (!conversations.length) newConversation();
-        else if (currentConvId === id) currentConvId = conversations[0].id;
-        saveConversations();
-        renderTabs();
-        renderMessages();
-    }
-
-    function renameConversation(id, newName) {
-        const conv = conversations.find(c => c.id === id);
-        if (conv) { conv.name = newName; saveConversations(); renderTabs(); }
-    }
-
-    function exportConversation() {
-        const conv = getCurrentConv();
-        if (!conv) return;
-        let text = `Conversation: ${conv.name}\nExported: ${new Date().toLocaleString()}\n\n`;
-        conv.messages.forEach(m => {
-            const role = m.role === 'user' ? 'You' : 'Nexus';
-            const time = new Date(m.timestamp).toLocaleTimeString();
-            text += `[${role}] (${time}):\n${m.content}\n\n`;
-        });
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `nexus-${conv.name.replace(/\s+/g, '_')}.txt`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    function copyMessage(text) {
-        navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
-    }
-
-    // ---------- UI Rendering ----------
-    function renderTabs() {
-        const tabs = document.getElementById('nexus-tabs');
-        if (!tabs) return;
-        let html = '';
-        conversations.forEach(c => {
-            const active = c.id === currentConvId ? 'active' : '';
-            html += `<div class="conv-tab ${active}" data-id="${c.id}">
-                <span class="conv-name" contenteditable="false" onblur="renameConversation(${c.id}, this.innerText)" ondblclick="this.contentEditable=true; this.focus();">${c.name}</span>
-                <button class="delete-conv" onclick="deleteConversation(${c.id})">🗑️</button>
-            </div>`;
-        });
-        html += `<button class="new-conv-btn" onclick="newConversation()">➕ New</button>`;
-        tabs.innerHTML = html;
-        document.querySelectorAll('.conv-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') return;
-                const id = Number(tab.dataset.id);
-                if (currentConvId !== id) {
-                    currentConvId = id;
-                    saveConversations();
-                    renderTabs();
-                    renderMessages();
-                }
-            });
-        });
-    }
-
-    function renderMessages() {
-        const msgsDiv = document.getElementById('nexus-messages');
-        if (!msgsDiv) return;
-        const conv = getCurrentConv();
-        if (!conv) return;
-        let filtered = conv.messages;
-        if (currentSearch) {
-            filtered = conv.messages.filter(m => m.content.toLowerCase().includes(currentSearch));
-        }
-        let html = '';
-        filtered.forEach((msg, idx) => {
-            const originalIdx = conv.messages.indexOf(msg);
-            const isUser = msg.role === 'user';
-            const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const avatar = isUser ? '👤' : '🤖';
-            const content = isUser ? msg.content : stripTables(msg.content);
-            const pinned = isPinned(originalIdx);
-            html += `
-                <div class="message ${msg.role}" data-idx="${originalIdx}">
-                    <div class="avatar">${avatar}</div>
-                    <div class="bubble-wrapper">
-                        <div class="message-bubble" style="font-size:${fontSize}px">${content.replace(/\n/g, '<br>')}</div>
-                        <div class="message-footer">
-                            <span class="timestamp">${time}</span>
-                            ${!isUser ? `
-                                <button class="pin-btn" onclick="togglePinMessage(${originalIdx})" title="Pin this answer">${pinned ? '📌' : '📍'}</button>
-                                <button class="speak-btn" onclick="speakMessage('${msg.content.replace(/'/g, "\\'")}')" title="Read aloud">🔊</button>
-                                <button class="copy-btn" onclick="copyMessage('${msg.content.replace(/'/g, "\\'")}')">📋</button>
-                                <button class="delete-btn" onclick="deleteMessage(${originalIdx})">🗑️</button>
-                            ` : `
-                                <button class="edit-btn" onclick="editUserMessage(${originalIdx}, prompt('Edit your message:', '${msg.content.replace(/'/g, "\\'")}'))" title="Edit">✏️</button>
-                                <button class="delete-btn" onclick="deleteMessage(${originalIdx})">🗑️</button>
-                            `}
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        if (isWaiting) {
-            html += `<div class="message assistant typing"><div class="avatar">🤖</div><div class="bubble-wrapper"><div class="message-bubble typing-indicator"><span>.</span><span>.</span><span>.</span></div></div></div>`;
-        }
-        msgsDiv.innerHTML = html;
-        msgsDiv.scrollTop = msgsDiv.scrollHeight;
-        updateStats();
-        renderPinnedSection();
-    }
-
-    // ---------- Selection Popup & Draggable Bubble ----------
-    let selectionPopup = null;
-    let isDraggingBubble = false;
-    let bubbleDragOffsetX = 0, bubbleDragOffsetY = 0;
-
-    function createSelectionPopup() {
-        const popup = document.createElement('div');
-        popup.id = 'nexus-selection-popup';
-        popup.className = 'nexus-selection-popup';
-        popup.innerHTML = `
-            <div class="popup-option" id="popup-ask">🤖 Ask Nexus</div>
-            <div class="popup-option" id="popup-us">🔊 US <span class="speed-indicator" id="popup-us-speed">1x</span></div>
-            <div class="popup-option" id="popup-uk">🔊 UK <span class="speed-indicator" id="popup-uk-speed">1x</span></div>
-        `;
-        document.body.appendChild(popup);
-
-        // Ask Nexus
-        document.getElementById('popup-ask').onclick = () => {
-            const text = popup.getAttribute('data-text');
-            if (text) {
-                const input = document.getElementById('nexus-input');
-                if (input) input.value = text;
-                const panel = document.querySelector('.nexus-panel');
-                if (panel) panel.style.display = 'flex';
-                popup.style.display = 'none';
-                sendMessage(text);
-            }
-        };
-        // US pronunciation
-        document.getElementById('popup-us').onclick = () => {
-            const text = popup.getAttribute('data-text');
-            if (text) {
-                usSpeed = usSpeed === 1.0 ? 0.5 : 1.0;
-                const speedSpan = document.getElementById('popup-us-speed');
-                if (speedSpan) speedSpan.innerText = usSpeed === 1.0 ? '1x' : '½x';
-                speak(text, 'US', usSpeed);
-            }
-            popup.style.display = 'none';
-        };
-        // UK pronunciation
-        document.getElementById('popup-uk').onclick = () => {
-            const text = popup.getAttribute('data-text');
-            if (text) {
-                ukSpeed = ukSpeed === 1.0 ? 0.5 : 1.0;
-                const speedSpan = document.getElementById('popup-uk-speed');
-                if (speedSpan) speedSpan.innerText = ukSpeed === 1.0 ? '1x' : '½x';
-                speak(text, 'UK', ukSpeed);
-            }
-            popup.style.display = 'none';
-        };
-        return popup;
-    }
-
-    function setupSelectionDetection() {
-        const iframe = document.getElementById('bookFrame');
+    // ========== Selection popup (highlight text in iframe) ==========
+    function setupSelectionDetection(iframeId, popup) {
+        const iframe = document.getElementById(iframeId);
         if (!iframe) return;
-        const popup = selectionPopup || createSelectionPopup();
-        selectionPopup = popup;
-
-        function checkSelection() {
+        setInterval(() => {
             try {
                 const doc = iframe.contentDocument || iframe.contentWindow.document;
                 const sel = doc.getSelection();
@@ -510,7 +406,7 @@ Question: ${text}`;
                     if (rect && rect.width > 0) {
                         const iframeRect = iframe.getBoundingClientRect();
                         popup.style.display = 'flex';
-                        popup.style.left = (iframeRect.left + rect.left + window.scrollX + rect.width/2 - 70) + 'px';
+                        popup.style.left = (iframeRect.left + rect.left + window.scrollX + 20) + 'px';
                         popup.style.top = (iframeRect.top + rect.top + window.scrollY - 50) + 'px';
                         popup.setAttribute('data-text', text);
                         return;
@@ -520,109 +416,37 @@ Question: ${text}`;
             } catch (e) {
                 popup.style.display = 'none';
             }
-        }
-        setInterval(checkSelection, 500);
+        }, 500);
     }
 
-    // ---------- Widget Creation (with draggable bubble) ----------
+    // ========== Create widget UI ==========
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
         container.innerHTML = `
             <style>
                 #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-                /* Floating Bubble (Draggable) */
                 .nexus-bubble {
-                    position: fixed;
-                    bottom: 30px;
-                    right: 30px;
-                    width: 70px;
-                    height: 70px;
-                    border-radius: 50%;
-                    background: linear-gradient(145deg, #2c7cb0, #1b4c72);
-                    color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: grab;
-                    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-                    z-index: 10000;
-                    transition: transform 0.2s;
-                    border: 3px solid #ffd966;
-                    font-size: 2.8rem;
-                    line-height: 1;
-                    user-select: none;
+                    position: fixed; bottom: 30px; right: 30px; width: 70px; height: 70px;
+                    border-radius: 50%; background: linear-gradient(145deg, #2c7cb0, #1b4c72);
+                    color: white; display: flex; align-items: center; justify-content: center;
+                    cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.3); z-index: 10000;
+                    transition: 0.3s; border: 3px solid #ffd966; font-size: 2.8rem; line-height: 1;
+                    touch-action: manipulation; pointer-events: auto;
                 }
-                .nexus-bubble:active { cursor: grabbing; }
                 .nexus-bubble:hover { transform: scale(1.05); }
                 .nexus-bubble .tooltip {
-                    position: absolute;
-                    top: -35px;
-                    background: #0a2942;
-                    color: white;
-                    padding: 6px 16px;
-                    border-radius: 30px;
-                    font-size: 0.9rem;
-                    opacity: 0;
-                    transition: opacity 0.3s;
-                    pointer-events: none;
-                    white-space: nowrap;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    position: absolute; top: -35px; background: #0a2942; color: white;
+                    padding: 6px 16px; border-radius: 30px; font-size: 0.9rem; opacity: 0;
+                    transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
                 }
                 .nexus-bubble:hover .tooltip { opacity: 1; }
-
-                /* Selection Popup */
-                .nexus-selection-popup {
-                    position: absolute;
-                    background: white;
-                    border-radius: 40px;
-                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-                    display: none;
-                    z-index: 10002;
-                    overflow: hidden;
-                    border: 1px solid #e6f0fa;
-                    font-size: 0.9rem;
-                    white-space: nowrap;
-                    flex-direction: column;
-                }
-                .popup-option {
-                    padding: 10px 20px;
-                    cursor: pointer;
-                    text-align: center;
-                    font-weight: 600;
-                    transition: 0.2s;
-                    border-bottom: 1px solid #eef6ff;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-                .popup-option:last-child { border-bottom: none; }
-                .popup-option:first-child { background: #2c7cb0; color: white; }
-                .popup-option:nth-child(2) { background: #1dbf73; color: white; }
-                .popup-option:nth-child(3) { background: #ff6b6b; color: white; }
-                .popup-option:hover { opacity: 0.9; }
-                .speed-indicator { font-size: 0.7rem; margin-left: 4px; }
-
-                /* Panel styles (same as before) */
                 .nexus-panel {
-                    position: fixed;
-                    bottom: 120px;
-                    right: 30px;
-                    width: 500px;
-                    background: white;
-                    border-radius: 24px;
-                    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-                    display: none;
-                    flex-direction: column;
-                    z-index: 10001;
-                    overflow: hidden;
-                    border: 1px solid #e6f0fa;
-                    resize: both;
-                    min-width: 300px;
-                    min-height: 500px;
-                    max-width: 700px;
-                    max-height: 700px;
-                    transition: background 0.2s;
+                    position: fixed; bottom: 120px; right: 30px; width: 500px;
+                    background: white; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                    display: none; flex-direction: column; z-index: 10001; overflow: hidden;
+                    border: 1px solid #e6f0fa; resize: both; min-width: 300px; min-height: 500px;
+                    max-width: 700px; max-height: 700px; transition: background 0.2s;
                 }
                 .nexus-panel.dark { background: #1e1e2e; color: #e0e0e0; }
                 .nexus-panel.dark .nexus-panel-header { background: #0f0f1f; }
@@ -632,8 +456,8 @@ Question: ${text}`;
                 .nexus-panel.dark .user .message-bubble { background: #2c7cb0; }
                 .nexus-panel-header {
                     background: #0a2942; color: white; padding: 12px 20px;
-                    display: flex; align-items: center; justify-content: space-between;
-                    cursor: move; user-select: none;
+                    display: flex; align-items: center; justify-content: space-between; cursor: move;
+                    user-select: none;
                 }
                 .nexus-panel-header h3 { margin:0; font-size:1.3rem; display:flex; align-items:center; gap:10px; }
                 .nexus-header-buttons { display: flex; gap: 12px; align-items: center; }
@@ -684,18 +508,56 @@ Question: ${text}`;
                 button:hover { color: #2c7cb0; }
                 .typing .message-bubble { background: #e6f0fa; display: flex; gap: 4px; padding: 16px; }
                 .typing-indicator span { animation: blink 1.4s infinite; font-size: 1.5rem; line-height: 0.5; }
-                @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
+                @keyframes blink { 0% { opacity:0.2; } 20% { opacity:1; } 100% { opacity:0.2; } }
                 .nexus-input-area { padding: 16px 20px; border-top: 1px solid #e0ecf5; display: flex; gap: 8px; background: white; align-items: center; flex-wrap: wrap; }
                 .nexus-input-area textarea { flex: 1; padding: 12px 16px; border: 1px solid #d0e0f0; border-radius: 30px; resize: none; font-family: inherit; font-size: 0.95rem; outline: none; min-width: 150px; }
                 .nexus-input-area button { background: #2c7cb0; color: white; border: none; border-radius: 30px; width: 48px; height: 48px; font-size: 1.2rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 8px rgba(44,124,176,0.3); display: inline-flex; align-items: center; justify-content: center; }
                 .nexus-input-area button:disabled { background: #a0b8cc; cursor: not-allowed; }
+                .nexus-input-area button:last-child { background: #555; box-shadow: none; }
                 .suggestions { display: flex; gap: 8px; padding: 0 20px 8px; flex-wrap: wrap; }
                 .suggestion-chip { background: #e6f0fa; border-radius: 40px; padding: 6px 12px; font-size: 0.8rem; cursor: pointer; color: #1e4b6e; transition: 0.2s; }
                 .suggestion-chip:hover { background: #cde0f0; transform: scale(1.02); }
                 .nexus-stats { font-size: 0.7rem; color: #8a9cb0; padding: 0 20px 8px; text-align: right; }
+                .selection-popup {
+                    position: absolute;
+                    background: white;
+                    border-radius: 40px;
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+                    display: none;
+                    z-index: 10002;
+                    overflow: hidden;
+                    border: 1px solid #e6f0fa;
+                    font-size: 0.9rem;
+                    white-space: nowrap;
+                }
+                .selection-option {
+                    padding: 10px 20px;
+                    cursor: pointer;
+                    text-align: center;
+                    font-weight: 600;
+                    transition: 0.2s;
+                    border-bottom: 1px solid #eef6ff;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .selection-option:last-child { border-bottom: none; }
+                .selection-option.nexus { background: #2c7cb0; color: white; }
+                .selection-option.us { background: #1dbf73; color: white; }
+                .selection-option.uk { background: #ff6b6b; color: white; }
+                .selection-option:hover { opacity: 0.9; }
+                .speed-indicator { font-size: 0.7rem; margin-left: 4px; }
                 @media (max-width:600px) { .nexus-panel { width: 300px; right: 10px; } }
             </style>
-            <div class="nexus-bubble" id="nexus-draggable-bubble">🩺<span class="tooltip">Ask Nexus</span></div>
+            <div class="nexus-bubble">
+                🩺
+                <span class="tooltip">Ask Nexus</span>
+            </div>
+            <div class="selection-popup" id="selection-popup">
+                <div class="selection-option nexus" id="ask-nexus">🤖 Ask Nexus</div>
+                <div class="selection-option us" id="speak-us">🔊 US <span class="speed-indicator" id="us-speed">1x</span></div>
+                <div class="selection-option uk" id="speak-uk">🔊 UK <span class="speed-indicator" id="uk-speed">1x</span></div>
+            </div>
             <div class="nexus-panel">
                 <div class="nexus-panel-header">
                     <h3>🩺 Nexus</h3>
@@ -725,6 +587,7 @@ Question: ${text}`;
                 <div class="nexus-input-area">
                     <textarea id="nexus-input" placeholder="Ask a medical question..." rows="2" maxlength="1000"></textarea>
                     <button id="nexus-send">➤</button>
+                    <button id="nexus-mic" style="background:#555; box-shadow:none;">🎤</button>
                     <button id="nexus-share" style="background:#555; box-shadow:none;">🔗</button>
                 </div>
                 <div class="nexus-stats" id="nexus-stats"></div>
@@ -732,68 +595,11 @@ Question: ${text}`;
         `;
         document.body.appendChild(container);
 
-        const bubble = container.querySelector('.nexus-bubble');
         const panel = container.querySelector('.nexus-panel');
+        const bubble = container.querySelector('.nexus-bubble');
+        bubble.onclick = () => { panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; };
 
-        // Make bubble draggable
-        let dragActive = false;
-        let startX = 0, startY = 0, startLeft = 0, startTop = 0;
-        bubble.addEventListener('mousedown', (e) => {
-            if (e.button !== 0) return;
-            dragActive = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            const rect = bubble.getBoundingClientRect();
-            startLeft = rect.left;
-            startTop = rect.top;
-            bubble.style.cursor = 'grabbing';
-            e.preventDefault();
-        });
-        window.addEventListener('mousemove', (e) => {
-            if (!dragActive) return;
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            bubble.style.left = (startLeft + dx) + 'px';
-            bubble.style.top = (startTop + dy) + 'px';
-            bubble.style.right = 'auto';
-            bubble.style.bottom = 'auto';
-        });
-        window.addEventListener('mouseup', () => {
-            dragActive = false;
-            bubble.style.cursor = 'grab';
-        });
-        // Touch support
-        bubble.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            dragActive = true;
-            startX = touch.clientX;
-            startY = touch.clientY;
-            const rect = bubble.getBoundingClientRect();
-            startLeft = rect.left;
-            startTop = rect.top;
-            bubble.style.cursor = 'grabbing';
-            e.preventDefault();
-        });
-        window.addEventListener('touchmove', (e) => {
-            if (!dragActive) return;
-            const touch = e.touches[0];
-            const dx = touch.clientX - startX;
-            const dy = touch.clientY - startY;
-            bubble.style.left = (startLeft + dx) + 'px';
-            bubble.style.top = (startTop + dy) + 'px';
-            bubble.style.right = 'auto';
-            bubble.style.bottom = 'auto';
-        });
-        window.addEventListener('touchend', () => {
-            dragActive = false;
-            bubble.style.cursor = 'grab';
-        });
-
-        bubble.onclick = () => {
-            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
-        };
-
-        // Wire UI
+        // Wire buttons
         document.getElementById('nexus-font-minus').onclick = () => setFontSize(-2);
         document.getElementById('nexus-font-plus').onclick = () => setFontSize(2);
         document.getElementById('nexus-dark-toggle').onclick = togglePanelDarkMode;
@@ -802,6 +608,7 @@ Question: ${text}`;
         document.getElementById('nexus-minimize').onclick = () => panel.style.display = 'none';
         document.getElementById('nexus-close').onclick = () => panel.style.display = 'none';
         document.getElementById('nexus-send').onclick = () => sendMessage();
+        document.getElementById('nexus-mic').onclick = startVoiceInput;
         document.getElementById('nexus-share').onclick = shareConversation;
         const textarea = document.getElementById('nexus-input');
         if (textarea) {
@@ -813,7 +620,6 @@ Question: ${text}`;
             });
         }
         document.getElementById('nexus-search').addEventListener('input', filterMessages);
-
         document.querySelectorAll('.suggestion-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 const q = chip.getAttribute('data-question');
@@ -825,76 +631,65 @@ Question: ${text}`;
             });
         });
 
-        return panel;
+        return { panel, popup: container.querySelector('#selection-popup') };
     }
 
-    // ---------- Dragging for Panel ----------
-    let isDraggingPanel = false;
-    let panelDragOffsetX = 0, panelDragOffsetY = 0;
-
+    // ========== Dragging ==========
+    let isDragging = false;
+    let dragOffsetX = 0, dragOffsetY = 0;
     function makeDraggable(header, panel) {
         header.addEventListener('mousedown', (e) => {
             if (e.target.closest('.nexus-header-btn') || e.target.closest('.header-control')) return;
-            isDraggingPanel = true;
+            isDragging = true;
             const rect = panel.getBoundingClientRect();
-            panelDragOffsetX = e.clientX - rect.left;
-            panelDragOffsetY = e.clientY - rect.top;
+            dragOffsetX = e.clientX - rect.left;
+            dragOffsetY = e.clientY - rect.top;
             panel.style.cursor = 'grabbing';
             e.preventDefault();
         });
         document.addEventListener('mousemove', (e) => {
-            if (!isDraggingPanel) return;
-            panel.style.left = (e.clientX - panelDragOffsetX) + 'px';
-            panel.style.top = (e.clientY - panelDragOffsetY) + 'px';
+            if (!isDragging) return;
+            panel.style.left = (e.clientX - dragOffsetX) + 'px';
+            panel.style.top = (e.clientY - dragOffsetY) + 'px';
             panel.style.bottom = 'auto';
             panel.style.right = 'auto';
         });
         document.addEventListener('mouseup', () => {
-            isDraggingPanel = false;
+            isDragging = false;
             panel.style.cursor = 'default';
         });
-        // Touch support
+        // touch support
         header.addEventListener('touchstart', (e) => {
             if (e.target.closest('.nexus-header-btn') || e.target.closest('.header-control')) return;
             const touch = e.touches[0];
-            isDraggingPanel = true;
+            isDragging = true;
             const rect = panel.getBoundingClientRect();
-            panelDragOffsetX = touch.clientX - rect.left;
-            panelDragOffsetY = touch.clientY - rect.top;
+            dragOffsetX = touch.clientX - rect.left;
+            dragOffsetY = touch.clientY - rect.top;
             panel.style.cursor = 'grabbing';
             e.preventDefault();
         });
         document.addEventListener('touchmove', (e) => {
-            if (!isDraggingPanel) return;
+            if (!isDragging) return;
             const touch = e.touches[0];
-            panel.style.left = (touch.clientX - panelDragOffsetX) + 'px';
-            panel.style.top = (touch.clientY - panelDragOffsetY) + 'px';
+            panel.style.left = (touch.clientX - dragOffsetX) + 'px';
+            panel.style.top = (touch.clientY - dragOffsetY) + 'px';
             panel.style.bottom = 'auto';
             panel.style.right = 'auto';
         });
         document.addEventListener('touchend', () => {
-            isDraggingPanel = false;
+            isDragging = false;
             panel.style.cursor = 'default';
         });
     }
-    /* Nexus bubble mobile fix */
-.nexus-bubble {
-    touch-action: manipulation;
-    pointer-events: auto !important;
-    z-index: 10000 !important;
-    cursor: pointer;
-}
 
-    // ---------- Initialize ----------
+    // ========== Initialize ==========
     function init() {
         loadConversations();
-        const panel = createWidget();
+        const { panel, popup } = createWidget();
         const header = panel.querySelector('.nexus-panel-header');
         makeDraggable(header, panel);
-        // Create selection popup
-        selectionPopup = createSelectionPopup();
-        setupSelectionDetection();
-        // Expose global functions for inline callbacks
+
         window.togglePinMessage = togglePinMessage;
         window.editUserMessage = editUserMessage;
         window.deleteMessage = deleteMessage;
@@ -908,10 +703,45 @@ Question: ${text}`;
         window.deleteConversation = deleteConversation;
         window.newConversation = newConversation;
         window.exportConversation = exportConversation;
+
+        const askNexusBtn = document.getElementById('ask-nexus');
+        const speakUsBtn = document.getElementById('speak-us');
+        const speakUkBtn = document.getElementById('speak-uk');
+        const usSpeedSpan = document.getElementById('us-speed');
+        const ukSpeedSpan = document.getElementById('uk-speed');
+
+        askNexusBtn.onclick = () => {
+            const text = popup.getAttribute('data-text');
+            if (text) {
+                const input = document.getElementById('nexus-input');
+                if (input) input.value = text;
+                panel.style.display = 'flex';
+                popup.style.display = 'none';
+                sendMessage(text);
+            }
+        };
+        speakUsBtn.onclick = () => {
+            const text = popup.getAttribute('data-text');
+            if (text) {
+                usSpeed = usSpeed === 1.0 ? 0.5 : 1.0;
+                usSpeedSpan.innerText = usSpeed === 1.0 ? '1x' : '½x';
+                speak(text, 'US', usSpeed);
+            }
+            popup.style.display = 'none';
+        };
+        speakUkBtn.onclick = () => {
+            const text = popup.getAttribute('data-text');
+            if (text) {
+                ukSpeed = ukSpeed === 1.0 ? 0.5 : 1.0;
+                ukSpeedSpan.innerText = ukSpeed === 1.0 ? '1x' : '½x';
+                speak(text, 'UK', ukSpeed);
+            }
+            popup.style.display = 'none';
+        };
+        if (window.speechSynthesis) loadVoices();
+        setupSelectionDetection('bookFrame', popup);
         renderTabs();
         renderMessages();
-        loadVoices();
     }
-
     init();
 })();
