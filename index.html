@@ -25,7 +25,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
 
     <style>
-        /* ========== COMPLETE CSS (same as your working version) ========== */
+        /* ========== COMPLETE CSS (unchanged) ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; transition:background .3s,color .3s; }
         body.dark { background:#1a1a2e; color:#e0e0e0; }
@@ -423,6 +423,13 @@
             z-index:99;
             pointer-events:none;
         }
+        /* Nexus bubble mobile fix */
+        .nexus-bubble {
+            touch-action: manipulation;
+            pointer-events: auto !important;
+            z-index: 10000 !important;
+            cursor: pointer;
+        }
         @media (max-width:768px) {
             .hero h1{font-size:1.6rem}
             .section-title h2{font-size:1.3rem}
@@ -495,8 +502,8 @@
             <h3>📝 Question Banks</h3>
             <ul class="cat-items">
                 <li class="cat-item"><a onclick="selectCategory('Question Bank')" tabindex="0" role="button"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
-                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 1 · 500+ MCQ Bank.html', 130)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 1</a></li>
-                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 2 CK · 500+ MCQ Bank.html', 131)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 2 CK</a></li>
+                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 1 · 500+ MCQ Bank.html', 1060)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 1</a></li>
+                <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 2 CK · 500+ MCQ Bank.html', 1061)" tabindex="0" role="button"><i class="fas fa-question-circle"></i> USMLE Step 2 CK</a></li>
             </ul>
         </div>
         <div class="cat-section">
@@ -1029,14 +1036,13 @@
             }
         });
 
+        // ========== SINGLE JSON LOADER (books.json contains everything) ==========
         async function loadAllResources() {
             loadUserData();
-            const cachedBooks = localStorage.getItem('medlib_books');
-            const cachedMcqs = localStorage.getItem('medlib_mcqs');
-            
-            if (cachedBooks && cachedMcqs) {
+            const cached = localStorage.getItem('medlib_books');
+            if (cached) {
                 try {
-                    books = [...JSON.parse(cachedBooks), ...JSON.parse(cachedMcqs)];
+                    books = JSON.parse(cached);
                     const hash = window.location.hash.slice(1);
                     if (hash.startsWith('cat=')) {
                         const cat = decodeURIComponent(hash.substring(4));
@@ -1048,18 +1054,11 @@
                     return;
                 } catch(e) { console.warn('Cache parse failed'); }
             }
-            
             try {
-                const [booksRes, mcqsRes] = await Promise.all([
-                    fetch('books.json'),
-                    fetch('mcqs.json')
-                ]);
-                if (!booksRes.ok || !mcqsRes.ok) throw new Error('One of the JSON files is missing');
-                const textbooks = await booksRes.json();
-                const questionBanks = await mcqsRes.json();
-                books = [...textbooks, ...questionBanks];
-                localStorage.setItem('medlib_books', JSON.stringify(textbooks));
-                localStorage.setItem('medlib_mcqs', JSON.stringify(questionBanks));
+                const response = await fetch('books.json');
+                if (!response.ok) throw new Error('books.json not found');
+                books = await response.json();
+                localStorage.setItem('medlib_books', JSON.stringify(books));
                 const hash = window.location.hash.slice(1);
                 if (hash.startsWith('cat=')) {
                     const cat = decodeURIComponent(hash.substring(4));
@@ -1068,8 +1067,8 @@
                     renderHome();
                 }
             } catch(e) {
-                console.error('Error loading resources', e);
-                document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json and mcqs.json exist.</div>';
+                console.error('Error loading books', e);
+                document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json exists.</div>';
             }
             document.getElementById('loading-skeleton').style.display = 'none';
         }
@@ -1115,7 +1114,7 @@
         window.createBookCard = createBookCard;
     </script>
 
-    <!-- Nexus AI Assistant (fixed for mobile) -->
+    <!-- Nexus AI Assistant -->
     <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
 </body>
