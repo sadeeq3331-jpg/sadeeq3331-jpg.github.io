@@ -877,6 +877,13 @@ Question: ${text}`;
             panel.style.cursor = 'default';
         });
     }
+    /* Nexus bubble mobile fix */
+.nexus-bubble {
+    touch-action: manipulation;
+    pointer-events: auto !important;
+    z-index: 10000 !important;
+    cursor: pointer;
+}
 
     // ---------- Initialize ----------
     function init() {
