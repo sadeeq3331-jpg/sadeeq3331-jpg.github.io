@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
 
-    <!-- Google AdSense (keep) -->
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
-    
-    <!-- PopAds – COMMENTED OUT for AdSense review (uncomment after approval) -->
+
+    <!-- PopAds code (commented out for review – uncomment after approval) -->
     <!--
     <script type="text/javascript" data-cfasync="false">
         /*<![CDATA[/* */
@@ -533,42 +533,7 @@
                 </div>
             </div>
         </section>
-        <main class="main-content" id="mainContent">
-            <!-- ORIGINAL CONTENT SECTION (for AdSense) -->
-            <div class="original-content-section" style="background: #f9fcff; border-radius: 24px; padding: 2rem; margin-bottom: 2rem; border: 1px solid #e6f0fa;">
-                <h2 style="color: #0a2942; margin-bottom: 1rem;">📚 About MedLib – Free Medical Textbook Library</h2>
-                <p style="margin-bottom: 1rem;">MedLib is a completely free, open‑access medical education platform created by <strong>Abubakar Sadeeq</strong>. It provides medical students, residents, and healthcare professionals with a comprehensive collection of textbooks, interactive MCQ banks, and an AI‑powered study assistant – all without any cost or registration.</p>
-                
-                <h3 style="color: #0a2942; margin: 1rem 0 0.5rem;">📖 What You'll Find Here</h3>
-                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
-                    <li><strong>150+ Medical Textbooks</strong> – Covering basic sciences (Biochemistry, Genetics, Immunology, Microbiology, General Pathology, Pharmacology, Research), organ systems (Cardiology, Respiratory, Neurology, Gastroenterology, Endocrinology, Renal, Reproductive, Musculoskeletal, Hematology), and clinical specialties (Dermatology, Psychiatry, Ophthalmology, Pediatrics, Emergency Medicine, Toxicology, Clinical Skills, Nutrition).</li>
-                    <li><strong>500+ USMLE Step 1 MCQs</strong> – High‑yield questions with detailed explanations, formatted in the new USMLE block style (20 questions per 30‑minute block).</li>
-                    <li><strong>500+ USMLE Step 2 CK MCQs</strong> – Clinical vignettes that test diagnosis, management, and next steps – ideal for clerkship preparation.</li>
-                    <li><strong>Interactive Book Viewer</strong> – Every textbook opens in a clean, responsive viewer with a collapsible table of contents, search, and reading progress bar.</li>
-                    <li><strong>Nexus AI Assistant</strong> – An intelligent medical chatbot that answers questions based on evidence‑based medicine. Highlight any text in a book and ask Nexus for explanations, pronunciation (US/UK), or further context.</li>
-                    <li><strong>Study Tools</strong> – Save favourites, bookmark books, track recently viewed, export conversations as PDF or text, and use dark mode for comfortable reading.</li>
-                </ul>
-                
-                <h3 style="color: #0a2942; margin: 1rem 0 0.5rem;">👨‍⚕️ Who Is MedLib For?</h3>
-                <p>MedLib is designed for medical students preparing for USMLE Step 1 and Step 2 CK, residents looking for quick references, and educators seeking free teaching resources. All content is curated to align with standard medical school curricula and USMLE content outlines.</p>
-                
-                <h3 style="color: #0a2942; margin: 1rem 0 0.5rem;">💡 Why Free?</h3>
-                <p>Medical education should be accessible to everyone. The high cost of textbooks often creates barriers. MedLib removes those barriers by offering a complete library of resources at no cost. The site is supported by minimal, non‑intrusive advertising (Google AdSense) – but all educational content remains free forever.</p>
-                
-                <h3 style="color: #0a2942; margin: 1rem 0 0.5rem;">🔧 Technical Features</h3>
-                <ul style="margin-left: 1.5rem;">
-                    <li>Fully responsive – works on desktop, tablet, and mobile.</li>
-                    <li>Dark mode toggle for comfortable night reading.</li>
-                    <li>Keyboard shortcuts: <kbd>?</kbd> for help, <kbd>Esc</kbd> to close book viewer, <kbd>Ctrl+K</kbd> to focus search.</li>
-                    <li>Sidebar with subject categories and swipe gesture on mobile.</li>
-                    <li>Reader counters (static, randomised between 700‑1500) to simulate popularity.</li>
-                </ul>
-                
-                <p style="margin-top: 1rem;">All textbooks are original compilations by Abubakar Sadeeq, using peer‑reviewed sources and structured for easy learning. New resources are added regularly. If you'd like to suggest a book, use the "Suggest a Book" link in the sidebar.</p>
-                <p><strong>Start exploring by clicking any category below – or use the search bar to find specific topics.</strong></p>
-            </div>
-            <!-- Dynamic content (categories, recent, favorites, etc.) will be injected here -->
-        </main>
+        <main class="main-content" id="mainContent"></main>
         <footer class="footer">
             <p>© 2026 MedLib · Free Medical Library</p>
             <p><a href="about.html">About</a> | <a href="privacy-policy.html">Privacy</a> | <a href="contact.html">Contact</a> | <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank">Suggest a Book</a></p>
@@ -582,8 +547,9 @@
     <div class="back-to-top" id="backToTop" title="Back to top" aria-label="Back to top"><i class="fas fa-arrow-up" aria-hidden="true"></i></div>
     <div class="keyboard-hint" id="keyboardHint">Press ? for shortcuts</div>
 
+    <!-- LONG ABOUT SECTION (AT THE BOTTOM) – WILL BE APPENDED BY JAVASCRIPT -->
     <script>
-        // ==================== MAIN APP (unchanged from your working version) ====================
+        // ==================== MAIN APP ====================
         let books = [];
         let recentBooks = [];
         let favorites = [];
@@ -802,11 +768,7 @@
 
         async function displayBooks(bookList, title) {
             const main = document.getElementById('mainContent');
-            // Keep the static text section if it exists
-            const staticSection = main.querySelector('.original-content-section');
-            let html = '';
-            if (staticSection) html = staticSection.outerHTML;
-            html += `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="goToHome()">Back to Home</span></div>`;
+            let html = `<div class="section-title"><h2><i class="fas fa-book-open"></i> ${title}</h2><span class="view-all" onclick="goToHome()">Back to Home</span></div>`;
             html += '<div class="book-grid">';
             for (const book of bookList) {
                 const count = getStaticCount();
@@ -986,22 +948,13 @@
                             </div>
                         </div>
                     </div>`;
-            // Append the dynamic sections (recent, favorites, bookmarks, analytics) after this
-            // They will be added by renderHome
-            const staticSection = main.querySelector('.original-content-section');
-            if (staticSection) {
-                // preserve static section
-                main.innerHTML = staticSection.outerHTML + html;
-            } else {
-                main.innerHTML = html;
-            }
+            main.innerHTML = html;
         }
 
         async function renderHome() {
             const main = document.getElementById('mainContent');
             renderCurrentBooks();
 
-            // Add dynamic sections after the categories and blog
             const recentDiv = document.createElement('div');
             recentDiv.id = 'recent-section';
             recentDiv.className = 'recent-section';
@@ -1022,6 +975,44 @@
             renderFavorites();
             renderBookmarks();
             renderAnalytics();
+
+            // Append the long "About MedLib" section at the very bottom (after all dynamic content)
+            const aboutSection = document.createElement('div');
+            aboutSection.id = 'about-medlib-bottom';
+            aboutSection.style.cssText = 'max-width: 1200px; margin: 3rem auto 0; padding: 2rem; background: #f9fcff; border-radius: 24px; border: 1px solid #e6f0fa;';
+            aboutSection.innerHTML = `
+                <h2 style="color: #0a2942; margin-bottom: 1rem;">📚 About MedLib – Free Medical Textbook Library</h2>
+                <p><strong>MedLib</strong> is a completely free, open‑access medical education platform created by <strong>Abubakar Sadeeq</strong>. It provides medical students, residents, and healthcare professionals with a comprehensive collection of textbooks, interactive MCQ banks, and an AI‑powered study assistant – all without any cost or registration.</p>
+                
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">📖 What You'll Find Here</h3>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li><strong>150+ Medical Textbooks</strong> – Covering basic sciences (Biochemistry, Genetics, Immunology, Microbiology, General Pathology, Pharmacology, Research), organ systems (Cardiology, Respiratory, Neurology, Gastroenterology, Endocrinology, Renal, Reproductive, Musculoskeletal, Hematology), and clinical specialties (Dermatology, Psychiatry, Ophthalmology, Pediatrics, Emergency Medicine, Toxicology, Clinical Skills, Nutrition).</li>
+                    <li><strong>500+ USMLE Step 1 MCQs</strong> – High‑yield questions with detailed explanations, formatted in the new USMLE block style (20 questions per 30‑minute block).</li>
+                    <li><strong>500+ USMLE Step 2 CK MCQs</strong> – Clinical vignettes that test diagnosis, management, and next steps – ideal for clerkship preparation.</li>
+                    <li><strong>Interactive Book Viewer</strong> – Every textbook opens in a clean, responsive viewer with a collapsible table of contents, search, and reading progress bar.</li>
+                    <li><strong>Nexus AI Assistant</strong> – An intelligent medical chatbot that answers questions based on evidence‑based medicine. Highlight any text in a book and ask Nexus for explanations, pronunciation (US/UK), or further context.</li>
+                    <li><strong>Study Tools</strong> – Save favourites, bookmark books, track recently viewed, export conversations as PDF or text, and use dark mode for comfortable reading.</li>
+                </ul>
+                
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">👨‍⚕️ Who Is MedLib For?</h3>
+                <p>MedLib is designed for medical students preparing for USMLE Step 1 and Step 2 CK, residents looking for quick references, and educators seeking free teaching resources. All content is curated to align with standard medical school curricula and USMLE content outlines.</p>
+                
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">💡 Why Free?</h3>
+                <p>Medical education should be accessible to everyone. The high cost of textbooks often creates barriers. MedLib removes those barriers by offering a complete library of resources at no cost. The site is supported by minimal, non‑intrusive advertising (Google AdSense) – but all educational content remains free forever.</p>
+                
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">🔧 Technical Features</h3>
+                <ul style="margin-left: 1.5rem;">
+                    <li>Fully responsive – works on desktop, tablet, and mobile.</li>
+                    <li>Dark mode toggle for comfortable night reading.</li>
+                    <li>Keyboard shortcuts: <kbd>?</kbd> for help, <kbd>Esc</kbd> to close book viewer, <kbd>Ctrl+K</kbd> to focus search.</li>
+                    <li>Sidebar with subject categories and swipe gesture on mobile.</li>
+                    <li>Reader counters (static, randomised between 700‑1500) to simulate popularity.</li>
+                </ul>
+                
+                <p style="margin-top: 1rem;">All textbooks are original compilations by Abubakar Sadeeq, using peer‑reviewed sources and structured for easy learning. New resources are added regularly. If you'd like to suggest a book, use the "Suggest a Book" link in the sidebar.</p>
+                <p><strong>Start exploring by clicking any category below – or use the search bar to find specific topics.</strong></p>
+            `;
+            main.appendChild(aboutSection);
         }
 
         // Outside click to close sidebar
@@ -1062,12 +1053,14 @@
             }
         });
 
-        (async function loadBooks() {
+        async function loadAllResources() {
             loadUserData();
-            const cached = localStorage.getItem('medlib_books');
-            if (cached) {
+            const cachedBooks = localStorage.getItem('medlib_books');
+            const cachedMcqs = localStorage.getItem('medlib_mcqs');
+            
+            if (cachedBooks && cachedMcqs) {
                 try {
-                    books = JSON.parse(cached);
+                    books = [...JSON.parse(cachedBooks), ...JSON.parse(cachedMcqs)];
                     const hash = window.location.hash.slice(1);
                     if (hash.startsWith('cat=')) {
                         const cat = decodeURIComponent(hash.substring(4));
@@ -1079,11 +1072,18 @@
                     return;
                 } catch(e) { console.warn('Cache parse failed'); }
             }
+            
             try {
-                const response = await fetch('books.json');
-                if (!response.ok) throw new Error();
-                books = await response.json();
-                localStorage.setItem('medlib_books', JSON.stringify(books));
+                const [booksRes, mcqsRes] = await Promise.all([
+                    fetch('books.json'),
+                    fetch('mcqs.json')
+                ]);
+                if (!booksRes.ok || !mcqsRes.ok) throw new Error('Failed to fetch');
+                const textbooks = await booksRes.json();
+                const questionBanks = await mcqsRes.json();
+                books = [...textbooks, ...questionBanks];
+                localStorage.setItem('medlib_books', JSON.stringify(textbooks));
+                localStorage.setItem('medlib_mcqs', JSON.stringify(questionBanks));
                 const hash = window.location.hash.slice(1);
                 if (hash.startsWith('cat=')) {
                     const cat = decodeURIComponent(hash.substring(4));
@@ -1091,9 +1091,13 @@
                 } else {
                     renderHome();
                 }
-            } catch(e) { console.error('Failed to load books'); }
+            } catch(e) {
+                console.error('Error loading resources', e);
+            }
             document.getElementById('loading-skeleton').style.display = 'none';
-        })();
+        }
+
+        loadAllResources();
 
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
