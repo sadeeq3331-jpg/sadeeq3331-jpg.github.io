@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -975,50 +974,29 @@
             renderAnalytics();
 
             // Append the long "About MedLib" section at the very bottom
-          <div class="about-medlib-detailed" style="max-width: 1200px; margin: 3rem auto 0; padding: 2rem; background: #f9fcff; border-radius: 24px; border: 1px solid #e6f0fa;">
-    <h2 style="color: #0a2942; margin-bottom: 1rem;">📚 About MedLib – The World's Largest Free Medical Textbook Library</h2>
-    <p><strong>MedLib</strong> is a completely free, open‑access medical education platform created by <strong>Abubakar Sadeeq</strong>. It provides medical students, residents, and healthcare professionals with a comprehensive collection of textbooks, interactive MCQ banks, and an AI‑powered study assistant – all without any cost or registration. The platform is designed to remove financial barriers to medical education and to support learners worldwide.</p>
-
-    <h3>📖 What You'll Find Inside MedLib</h3>
-    <p>MedLib contains over 150 textbooks and 60+ MCQ banks, covering the entire medical school curriculum. The content is organised into three main areas:</p>
-    <ul>
-        <li><strong>Basic Sciences</strong> – Biochemistry, Genetics, Immunology, Microbiology, General Pathology, Pharmacology, Research Methodology.</li>
-        <li><strong>Organ Systems</strong> – Cardiology, Respiratory, Neurology, Gastroenterology, Endocrinology, Renal, Reproductive, Musculoskeletal, Hematology.</li>
-        <li><strong>Clinical Specialties</strong> – Dermatology, Psychiatry, Ophthalmology, Pediatrics, Emergency Medicine, Toxicology, Clinical Skills, Nutrition.</li>
-        <li><strong>USMLE Question Banks</strong> – 500+ Step 1 questions and 500+ Step 2 CK questions with detailed explanations.</li>
-    </ul>
-    <p>Each textbook is presented in an interactive HTML format with a collapsible table of contents, in‑page search, and a reading progress bar. The MCQ banks offer instant feedback and are formatted in the new USMLE block style (20 questions per 30‑minute block).</p>
-
-    <h3>🤖 Nexus AI Assistant</h3>
-    <p>Nexus is an intelligent medical chatbot powered by Google's Gemini model. It can answer any medical question, explain complex concepts, and even pronounce difficult terms in US or UK English with adjustable speed. Simply highlight any text in a book and click "Ask Nexus". The assistant also generates flashcards, saves conversations, and provides evidence‑based answers.</p>
-
-    <h3>👨‍⚕️ Who Is MedLib For?</h3>
-    <p>MedLib is designed for medical students preparing for USMLE Step 1 and Step 2 CK, residents looking for quick references, and educators seeking free teaching resources. All content is aligned with standard US medical school curricula and the USMLE content outline.</p>
-
-    <h3>💡 Why Is MedLib Free?</h3>
-    <p>The high cost of textbooks creates an unfair barrier to education. MedLib was created to remove that barrier. The platform is funded solely by minimal, non‑intrusive advertising (Google AdSense). No subscription, no paywalls, no hidden fees – all educational content remains free forever.</p>
-
-    <h3>🔧 Technical Features</h3>
-    <ul>
-        <li>Fully responsive – works on desktop, tablet, and mobile.</li>
-        <li>Dark mode toggle for comfortable night reading.</li>
-        <li>Keyboard shortcuts: <kbd>?</kbd> for help, <kbd>Esc</kbd> to close book viewer, <kbd>Ctrl+K</kbd> to focus search.</li>
-        <li>Sidebar with subject categories and swipe gesture on mobile.</li>
-        <li>Static reader counters (700–1500) to simulate popularity without Firebase lag.</li>
-        <li>Bookmarks, favourites, recently viewed, and conversation export.</li>
-    </ul>
-
-    <h3>📈 Future Plans</h3>
-    <p>We are constantly expanding MedLib. Future additions include: more textbooks in emerging fields (genomics, personalised medicine), USMLE Step 3 question banks, video lectures, interactive diagrams, and a mobile app. Your feedback is invaluable – use the contact page to send suggestions.</p>
-
-    <h3>🌍 Our Mission</h3>
-    <p>To democratise medical education by providing a comprehensive, free, and user‑friendly digital library for medical students and professionals worldwide. MedLib is a project of passion, not profit – and we intend to keep it that way.</p>
-
-    <h3>📧 Get in Touch</h3>
-    <p>If you have questions, suggestions, or just want to say hello, reach out via email at <a href="mailto:medlib@example.com">medlib@example.com</a> or through the <a href="contact.html">contact form</a>. You can also follow us on GitHub for updates.</p>
-
-    <p><strong>Start exploring now – and remember, all knowledge here is free forever.</strong></p>
-</div>
+            const aboutSection = document.createElement('div');
+            aboutSection.id = 'about-medlib-bottom';
+            aboutSection.style.cssText = 'max-width: 1200px; margin: 3rem auto 0; padding: 2rem; background: #f9fcff; border-radius: 24px; border: 1px solid #e6f0fa;';
+            aboutSection.innerHTML = `
+                <h2 style="color: #0a2942; margin-bottom: 1rem;">📚 About MedLib – Free Medical Textbook Library</h2>
+                <p><strong>MedLib</strong> is a completely free, open‑access medical education platform created by <strong>Abubakar Sadeeq</strong>. It provides medical students, residents, and healthcare professionals with a comprehensive collection of textbooks, interactive MCQ banks, and an AI‑powered study assistant – all without any cost or registration.</p>
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">📖 What You'll Find Here</h3>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li><strong>150+ Medical Textbooks</strong> – Covering basic sciences, organ systems, and clinical specialties.</li>
+                    <li><strong>500+ USMLE Step 1 MCQs</strong> – High‑yield questions with detailed explanations.</li>
+                    <li><strong>500+ USMLE Step 2 CK MCQs</strong> – Clinical vignettes for clerkship preparation.</li>
+                    <li><strong>Interactive Book Viewer</strong> – Clean, responsive viewer with table of contents.</li>
+                    <li><strong>Nexus AI Assistant</strong> – Evidence‑based medical chatbot with pronunciation (US/UK).</li>
+                    <li><strong>Study Tools</strong> – Favourites, bookmarks, recently viewed, export.</li>
+                </ul>
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">👨‍⚕️ Who Is MedLib For?</h3>
+                <p>Medical students preparing for USMLE Step 1 & 2, residents, and educators – all free.</p>
+                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">💡 Why Free?</h3>
+                <p>Medical education should be accessible. MedLib removes financial barriers. Supported by minimal, non‑intrusive advertising.</p>
+                <p><strong>Start exploring by clicking any category below – or use the search bar to find specific topics.</strong></p>
+            `;
+            main.appendChild(aboutSection);
+        }
 
         // Outside click to close sidebar
         document.addEventListener('click', function(e) {
