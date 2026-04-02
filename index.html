@@ -24,17 +24,8 @@
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
 
-    <!-- PopAds code (commented out for review – uncomment after approval) -->
-    <!--
-    <script type="text/javascript" data-cfasync="false">
-        /*<![CDATA[/* */
-        (function(){var n=window,l="b16361ca2a1a661bda6843ca4a40ef06",t=[["siteId",844+379*195+5212924],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],x=["d3d3LnhhZHNtYXJ0LmNvbS9oZy9YL2dyZXRpbmEubWluLmpz","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQveGF3cy1zZGsubWluLmpz"],w=-1,j,y,g=function(){clearTimeout(y);w++;if(x[w]&&!(1800619981000<(new Date).getTime()&&1<w)){j=n.document.createElement("script");j.type="text/javascript";j.async=!0;var k=n.document.getElementsByTagName("script")[0];j.src="https://"+atob(x[w]);j.crossOrigin="anonymous";j.onerror=g;j.onload=function(){clearTimeout(y);n[l.slice(0,16)+l.slice(0,16)]||g()};y=setTimeout(g,5E3);k.parentNode.insertBefore(j,k)}};if(!n[l]){try{Object.freeze(n[l]=t)}catch(e){}g()}})();
-        /*]]>/* */
-    </script>
-    -->
-
     <style>
-        /* ========== COMPLETE CSS (unchanged from your working version) ========== */
+        /* ========== COMPLETE CSS (same as your working version) ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; transition:background .3s,color .3s; }
         body.dark { background:#1a1a2e; color:#e0e0e0; }
@@ -547,7 +538,6 @@
     <div class="back-to-top" id="backToTop" title="Back to top" aria-label="Back to top"><i class="fas fa-arrow-up" aria-hidden="true"></i></div>
     <div class="keyboard-hint" id="keyboardHint">Press ? for shortcuts</div>
 
-    <!-- LONG ABOUT SECTION (AT THE BOTTOM) – WILL BE APPENDED BY JAVASCRIPT -->
     <script>
         // ==================== MAIN APP ====================
         let books = [];
@@ -976,40 +966,26 @@
             renderBookmarks();
             renderAnalytics();
 
-            // Append the long "About MedLib" section at the very bottom (after all dynamic content)
+            // Append the long "About MedLib" section at the very bottom
             const aboutSection = document.createElement('div');
             aboutSection.id = 'about-medlib-bottom';
             aboutSection.style.cssText = 'max-width: 1200px; margin: 3rem auto 0; padding: 2rem; background: #f9fcff; border-radius: 24px; border: 1px solid #e6f0fa;';
             aboutSection.innerHTML = `
                 <h2 style="color: #0a2942; margin-bottom: 1rem;">📚 About MedLib – Free Medical Textbook Library</h2>
                 <p><strong>MedLib</strong> is a completely free, open‑access medical education platform created by <strong>Abubakar Sadeeq</strong>. It provides medical students, residents, and healthcare professionals with a comprehensive collection of textbooks, interactive MCQ banks, and an AI‑powered study assistant – all without any cost or registration.</p>
-                
                 <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">📖 What You'll Find Here</h3>
                 <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
-                    <li><strong>150+ Medical Textbooks</strong> – Covering basic sciences (Biochemistry, Genetics, Immunology, Microbiology, General Pathology, Pharmacology, Research), organ systems (Cardiology, Respiratory, Neurology, Gastroenterology, Endocrinology, Renal, Reproductive, Musculoskeletal, Hematology), and clinical specialties (Dermatology, Psychiatry, Ophthalmology, Pediatrics, Emergency Medicine, Toxicology, Clinical Skills, Nutrition).</li>
-                    <li><strong>500+ USMLE Step 1 MCQs</strong> – High‑yield questions with detailed explanations, formatted in the new USMLE block style (20 questions per 30‑minute block).</li>
-                    <li><strong>500+ USMLE Step 2 CK MCQs</strong> – Clinical vignettes that test diagnosis, management, and next steps – ideal for clerkship preparation.</li>
-                    <li><strong>Interactive Book Viewer</strong> – Every textbook opens in a clean, responsive viewer with a collapsible table of contents, search, and reading progress bar.</li>
-                    <li><strong>Nexus AI Assistant</strong> – An intelligent medical chatbot that answers questions based on evidence‑based medicine. Highlight any text in a book and ask Nexus for explanations, pronunciation (US/UK), or further context.</li>
-                    <li><strong>Study Tools</strong> – Save favourites, bookmark books, track recently viewed, export conversations as PDF or text, and use dark mode for comfortable reading.</li>
+                    <li><strong>150+ Medical Textbooks</strong> – Covering basic sciences, organ systems, and clinical specialties.</li>
+                    <li><strong>500+ USMLE Step 1 MCQs</strong> – High‑yield questions with detailed explanations.</li>
+                    <li><strong>500+ USMLE Step 2 CK MCQs</strong> – Clinical vignettes for clerkship preparation.</li>
+                    <li><strong>Interactive Book Viewer</strong> – Clean, responsive viewer with table of contents.</li>
+                    <li><strong>Nexus AI Assistant</strong> – Evidence‑based medical chatbot with pronunciation (US/UK).</li>
+                    <li><strong>Study Tools</strong> – Favourites, bookmarks, recently viewed, export.</li>
                 </ul>
-                
                 <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">👨‍⚕️ Who Is MedLib For?</h3>
-                <p>MedLib is designed for medical students preparing for USMLE Step 1 and Step 2 CK, residents looking for quick references, and educators seeking free teaching resources. All content is curated to align with standard medical school curricula and USMLE content outlines.</p>
-                
+                <p>Medical students preparing for USMLE Step 1 & 2, residents, and educators – all free.</p>
                 <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">💡 Why Free?</h3>
-                <p>Medical education should be accessible to everyone. The high cost of textbooks often creates barriers. MedLib removes those barriers by offering a complete library of resources at no cost. The site is supported by minimal, non‑intrusive advertising (Google AdSense) – but all educational content remains free forever.</p>
-                
-                <h3 style="color: #0a2942; margin: 1.5rem 0 0.5rem;">🔧 Technical Features</h3>
-                <ul style="margin-left: 1.5rem;">
-                    <li>Fully responsive – works on desktop, tablet, and mobile.</li>
-                    <li>Dark mode toggle for comfortable night reading.</li>
-                    <li>Keyboard shortcuts: <kbd>?</kbd> for help, <kbd>Esc</kbd> to close book viewer, <kbd>Ctrl+K</kbd> to focus search.</li>
-                    <li>Sidebar with subject categories and swipe gesture on mobile.</li>
-                    <li>Reader counters (static, randomised between 700‑1500) to simulate popularity.</li>
-                </ul>
-                
-                <p style="margin-top: 1rem;">All textbooks are original compilations by Abubakar Sadeeq, using peer‑reviewed sources and structured for easy learning. New resources are added regularly. If you'd like to suggest a book, use the "Suggest a Book" link in the sidebar.</p>
+                <p>Medical education should be accessible. MedLib removes financial barriers. Supported by minimal, non‑intrusive advertising.</p>
                 <p><strong>Start exploring by clicking any category below – or use the search bar to find specific topics.</strong></p>
             `;
             main.appendChild(aboutSection);
@@ -1078,7 +1054,7 @@
                     fetch('books.json'),
                     fetch('mcqs.json')
                 ]);
-                if (!booksRes.ok || !mcqsRes.ok) throw new Error('Failed to fetch');
+                if (!booksRes.ok || !mcqsRes.ok) throw new Error('One of the JSON files is missing');
                 const textbooks = await booksRes.json();
                 const questionBanks = await mcqsRes.json();
                 books = [...textbooks, ...questionBanks];
@@ -1093,6 +1069,7 @@
                 }
             } catch(e) {
                 console.error('Error loading resources', e);
+                document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json and mcqs.json exist.</div>';
             }
             document.getElementById('loading-skeleton').style.display = 'none';
         }
@@ -1138,6 +1115,7 @@
         window.createBookCard = createBookCard;
     </script>
 
+    <!-- Nexus AI Assistant (fixed for mobile) -->
     <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
 </body>
