@@ -1,4 +1,4 @@
-// pronunciation.js – Standalone pronunciation tool
+// pronunciation.js – Standalone pronunciation with US/UK voices
 (function() {
     let usSpeed = 1.0;
     let ukSpeed = 1.0;
@@ -13,12 +13,8 @@
         window.speechSynthesis.onvoiceschanged = () => selectVoices(window.speechSynthesis.getVoices());
     }
     function selectVoices(voices) {
-        usVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) ||
-                  voices.find(v => v.lang === 'en-US' && v.name.includes('Natural')) ||
-                  voices.find(v => v.lang === 'en-US');
-        ukVoice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Google')) ||
-                  voices.find(v => v.lang === 'en-GB' && v.name.includes('Natural')) ||
-                  voices.find(v => v.lang === 'en-GB');
+        usVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural'))) || voices.find(v => v.lang === 'en-US');
+        ukVoice = voices.find(v => v.lang === 'en-GB' && (v.name.includes('Google') || v.name.includes('Natural'))) || voices.find(v => v.lang === 'en-GB');
         voicesLoaded = true;
     }
     function speak(text, accent, speed) {
