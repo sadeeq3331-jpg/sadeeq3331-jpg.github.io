@@ -1,4 +1,4 @@
-// selection-popup.js – Handles text selection and popup actions
+// selection-popup.js – Handles text selection in iframe and shows floating buttons
 (function() {
     let popup = null;
     let iframe = null;
@@ -37,11 +37,10 @@
         if (!iframe) return;
         popup = createPopup();
 
-        // Attach button events (once)
+        // Attach button events
         document.getElementById('popup-ask-nexus').onclick = () => {
             const text = popup.getAttribute('data-text');
             if (text) {
-                // Send to Nexus chat
                 const input = document.getElementById('nexus-input');
                 if (input) input.value = text;
                 const panel = document.querySelector('.nexus-panel');
@@ -87,7 +86,7 @@
             hidePopup();
         };
 
-        // Start polling for selection changes
+        // Poll for selection changes
         if (checkInterval) clearInterval(checkInterval);
         checkInterval = setInterval(() => {
             try {
@@ -112,10 +111,10 @@
         }, 500);
     }
 
-    // Wait for iframe to load
+    // Wait for iframe to be ready
     const iframeCheck = setInterval(() => {
-        const iframe = document.getElementById('bookFrame');
-        if (iframe && iframe.contentDocument) {
+        const iframeEl = document.getElementById('bookFrame');
+        if (iframeEl && iframeEl.contentDocument) {
             clearInterval(iframeCheck);
             startListening();
         }
