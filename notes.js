@@ -1,8 +1,9 @@
-// notes.js – Highlight & save notes to Firestore
+// notes.js – Beautiful sticky notes for highlights
 (function() {
     let currentUser = null;
     let currentBookId = null;
     let annotations = {};
+    let activeNoteCard = null; // to close previous note
 
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
@@ -25,7 +26,8 @@
         await docRef.set({ annotations: annotations[currentBookId] || [] });
     }
 
-    function renderHighlights() {
+    // Remove all existing highlights
+    function clearHighlights() {
         const iframe = document.getElementById('bookFrame');
         if (!iframe || !iframe.contentDocument) return;
         const doc = iframe.contentDocument;
@@ -34,6 +36,15 @@
             parent.replaceChild(document.createTextNode(el.textContent), el);
             parent.normalize();
         });
+    }
+
+    // Apply highlights from annotations
+    function renderHighlights() {
+        const iframe = document.getElementById('bookFrame');
+        if (!iframe || !iframe.contentDocument) return;
+        const doc = iframe.contentDocument;
+        clearHighlights();
+
         const annos = annotations[currentBookId] || [];
         annos.forEach(anno => {
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
@@ -50,14 +61,7 @@
                     node.parentNode.replaceChild(span, node);
                     span.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const newNote = prompt('Edit your note:', span.getAttribute('data-note'));
-                        if (newNote !== null) {
-                            span.setAttribute('data-note', newNote);
-                            const id = span.getAttribute('data-id');
-                            const idx = annotations[currentBookId].findIndex(a => a.id == id);
-                            if (idx !== -1) annotations[currentBookId][idx].note = newNote;
-                            saveAnnotations();
-                        }
+                        showStickyNote(span, anno);
                     });
                     break;
                 }
@@ -65,6 +69,74 @@
         });
     }
 
+    // Create and show a sticky note card near the clicked highlight
+    function showStickyNote(element, anno) {
+        // Remove any existing note card
+        if (activeNoteCard && activeNoteCard.parentNode) activeNoteCard.parentNode.removeChild(activeNoteCard);
+        
+        const iframe = document.getElementById('bookFrame');
+        const iframeRect = iframe.getBoundingClientRect();
+        const rect = element.getBoundingClientRect();
+
+        // Create note card in the main document (not inside iframe, to avoid scrolling issues)
+        const card = document.createElement('div');
+        card.className = 'medlib-sticky-note';
+        card.innerHTML = `
+            <div class="note-header">
+                <span class="note-icon">📌</span>
+                <span class="note-title">Study Note</span>
+                <button class="note-edit" title="Edit note">✏️</button>
+                <button class="note-close">×</button>
+            </div>
+            <div class="note-content">${escapeHtml(anno.note)}</div>
+        `;
+        document.body.appendChild(card);
+
+        // Position near the highlighted text (offset to the right/top)
+        let left = iframeRect.left + rect.right + window.scrollX + 15;
+        let top = iframeRect.top + rect.top + window.scrollY;
+        // Ensure it stays within viewport
+        if (left + 280 > window.innerWidth) left = iframeRect.left + rect.left - 280;
+        if (top + 200 > window.innerHeight) top = window.innerHeight - 210;
+        card.style.left = Math.max(10, left) + 'px';
+        card.style.top = Math.max(10, top) + 'px';
+
+        // Edit button
+        const editBtn = card.querySelector('.note-edit');
+        editBtn.onclick = () => {
+            const newNote = prompt('Edit your note:', anno.note);
+            if (newNote !== null && newNote !== anno.note) {
+                anno.note = newNote;
+                const contentDiv = card.querySelector('.note-content');
+                contentDiv.innerText = newNote;
+                element.setAttribute('data-note', newNote);
+                saveAnnotations();
+            }
+        };
+
+        // Close button
+        const closeBtn = card.querySelector('.note-close');
+        closeBtn.onclick = () => {
+            if (card.parentNode) card.parentNode.removeChild(card);
+            activeNoteCard = null;
+        };
+
+        activeNoteCard = card;
+    }
+
+    // Helper to escape HTML
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Add a new annotation (called from selection popup)
     window.addAnnotation = async function(text) {
         if (!currentUser) { alert('Please sign in to add notes.'); return; }
         currentBookId = getCurrentBookId();
@@ -77,6 +149,7 @@
         renderHighlights();
     };
 
+    // When book changes, reload annotations
     const originalOpenBook = window.openBook;
     if (originalOpenBook) {
         window.openBook = async function(filename, bookId) {
