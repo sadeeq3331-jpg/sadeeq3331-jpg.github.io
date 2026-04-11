@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="description" content="Free medical textbook library with 150+ books and 1000+ USMLE practice questions. Study medicine for free.">
@@ -16,15 +14,14 @@
     <title>MedLib · Free Medical Library</title>
     <link rel="canonical" href="https://medlib.top">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap">
-    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
 
-        <style>
-        /* ========== COMPLETE CSS (unchanged) ========== */
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
+
+    <style>
+        /* ========== COMPLETE CSS ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; transition:background .3s,color .3s; }
         body.dark { background:#1a1a2e; color:#e0e0e0; }
@@ -36,7 +33,6 @@
         body.dark .book-author, body.dark .book-stats, body.dark .footer a { color:#b0b0cc; }
         .container { max-width:1400px; margin:0 auto; padding:0 20px; }
 
-        /* ========== HEADER ========== */
         .top-bar {
             background:linear-gradient(135deg,#0a2942,#1b4c72);
             color:white;
@@ -90,8 +86,6 @@
             transition:.2s;
         }
         .theme-toggle:focus-visible{outline:2px solid #ffd966}
-
-        /* ========== SIDEBAR ========== */
         .sidebar {
             position:fixed;
             top:0;
@@ -138,16 +132,12 @@
         .cat-item a i { width:24px; color:#2c7cb0; }
         .cat-item a:focus-visible{outline:2px solid #ffd966;outline-offset:2px}
         .cat-item a:hover { background:#e9f0f7; }
-
-        /* ========== MAIN PANEL ========== */
         .main-panel {
             transition:margin-left 0.3s ease;
             background:white;
             min-height:100vh;
         }
         .main-panel.shifted { margin-left:280px; }
-
-        /* ========== HERO SECTION ========== */
         .hero {
             position:relative;
             background:linear-gradient(rgba(10,41,66,0.8), rgba(10,41,66,0.8)), url('https://images.unsplash.com/photo-1585435557343-3b092031a831?w=1950');
@@ -190,8 +180,6 @@
         .section-title { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; }
         .section-title h2 { font-size:1.6rem; color:#0a2942; display:flex; align-items:center; gap:0.5rem; }
         .view-all { color:#2c7cb0; cursor:pointer; font-weight:600; }
-
-        /* Category Cards */
         .categories, .recent-section, .favorites-section, .blog-section, .bookmarks-section, .analytics-section { margin:2rem 0; }
         .recent-grid, .favorites-grid, .blog-grid, .bookmarks-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:1.5rem; margin-top:1rem; }
         .category-card, .recent-card, .favorite-card, .blog-card, .bookmark-card {
@@ -236,8 +224,6 @@
             margin-left:1.2rem;
             opacity:0.9;
         }
-
-        /* Book Grid */
         .book-grid {
             display:grid;
             grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
@@ -311,8 +297,6 @@
             transition:background .2s;
         }
         .read-btn:focus-visible{outline:2px solid #ffd966}
-
-        /* Footer */
         .footer {
             background:#0a2942;
             color:white;
@@ -321,8 +305,6 @@
             margin-top:2rem;
         }
         .footer a { color:#ffd966; text-decoration:none; margin:0 8px; }
-
-        /* Book Viewer */
         .book-viewer {
             display:none;
             position:fixed;
@@ -422,13 +404,6 @@
             z-index:99;
             pointer-events:none;
         }
-        /* Nexus bubble mobile fix */
-        .nexus-bubble {
-            touch-action: manipulation;
-            pointer-events: auto !important;
-            z-index: 10000 !important;
-            cursor: pointer;
-        }
         @media (max-width:768px) {
             .hero h1{font-size:1.6rem}
             .section-title h2{font-size:1.3rem}
@@ -454,6 +429,9 @@
         <i class="fas fa-book-medical" aria-hidden="true"></i>
         <h1>MedLib</h1>
         <div class="author"><i class="fas fa-stethoscope" aria-hidden="true"></i> Abubakar Sadeeq</div>
+        <span id="user-name" style="margin-left: 1rem;"></span>
+        <button id="google-login-btn" class="icon-btn" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:0.3rem 1rem; border-radius:40px;">🔐 Sign in</button>
+        <button id="logout-btn" class="icon-btn" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:0.3rem 1rem; border-radius:40px; display:none;">🚪 Sign out</button>
         <button class="theme-toggle" id="themeToggle" aria-label="Dark mode"><i class="fas fa-moon" aria-hidden="true"></i></button>
     </div>
 
@@ -544,6 +522,19 @@
     <div class="back-to-top" id="backToTop" title="Back to top" aria-label="Back to top"><i class="fas fa-arrow-up" aria-hidden="true"></i></div>
     <div class="keyboard-hint" id="keyboardHint">Press ? for shortcuts</div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase config & helper -->
+    <script src="firebase-config.js"></script>
+
+    <!-- Login & Sync -->
+    <script src="login.js"></script>
+    <script src="sync.js"></script>
+
+    <!-- Main App Script -->
     <script>
         // ==================== MAIN APP ====================
         let books = [];
@@ -574,19 +565,24 @@
             renderRecent();
         }
 
-        function toggleFavorite(bookId) {
+        // Updated toggleFavorite with sync
+        window.toggleFavorite = function(bookId) {
             if (favorites.includes(bookId)) {
                 favorites = favorites.filter(id => id !== bookId);
             } else {
                 favorites.push(bookId);
             }
             saveFavorites();
+            if (typeof window.syncFavoritesUpdate === 'function') {
+                window.syncFavoritesUpdate(favorites);
+            }
             renderFavorites();
             if (document.querySelector('.book-grid')) renderCurrentBooks();
-        }
+        };
 
         function isFavorite(bookId) { return favorites.includes(bookId); }
 
+        // Updated addBookmark with sync
         function addBookmark(bookId, title, url) {
             if (bookmarks.some(b => b.bookId === bookId)) {
                 showNotification('Already bookmarked!');
@@ -594,13 +590,20 @@
             }
             bookmarks.push({ bookId, title, url, timestamp: Date.now() });
             saveBookmarks();
+            if (typeof window.syncBookmarksUpdate === 'function') {
+                window.syncBookmarksUpdate(bookmarks);
+            }
             renderBookmarks();
             showNotification('Bookmarked!');
         }
 
+        // Updated removeBookmark with sync
         function removeBookmark(bookId) {
             bookmarks = bookmarks.filter(b => b.bookId !== bookId);
             saveBookmarks();
+            if (typeof window.syncBookmarksUpdate === 'function') {
+                window.syncBookmarksUpdate(bookmarks);
+            }
             renderBookmarks();
         }
 
@@ -714,6 +717,7 @@
             document.body.style.overflow = 'hidden';
             addToRecent(bookId);
             currentViewerBookId = bookId;
+            window.currentBookId = bookId; // for annotations
             viewerActive = true;
 
             if (progressInterval) clearInterval(progressInterval);
@@ -740,6 +744,7 @@
             document.body.style.overflow = 'auto';
             if (progressInterval) clearInterval(progressInterval);
             currentViewerBookId = null;
+            window.currentBookId = null;
             viewerActive = false;
         }
 
@@ -752,11 +757,33 @@
             }
         });
 
+        function loadFromHash() {
+            const hash = window.location.hash.slice(1);
+            if (hash.startsWith('cat=')) {
+                try {
+                    const cat = decodeURIComponent(hash.substring(4));
+                    filterCategory(cat);
+                } catch(e) {
+                    console.warn('Invalid hash, resetting');
+                    window.location.hash = '';
+                }
+            } else if (hash.startsWith('book=')) {
+                const filename = decodeURIComponent(hash.substring(5));
+                const book = books.find(b => b.filename === filename);
+                if (book) openBook(book.filename, book.id);
+            }
+        }
+
         window.addEventListener('hashchange', function() {
             const hash = window.location.hash.slice(1);
             if (hash.startsWith('cat=')) {
-                const cat = decodeURIComponent(hash.substring(4));
-                filterCategory(cat);
+                try {
+                    const cat = decodeURIComponent(hash.substring(4));
+                    filterCategory(cat);
+                } catch(e) {
+                    console.warn('Invalid hash, resetting');
+                    window.location.hash = '';
+                }
             } else if (hash === '') {
                 renderHome();
             }
@@ -972,7 +999,7 @@
             renderBookmarks();
             renderAnalytics();
 
-            // Append the long "About MedLib" section at the very bottom
+            // Append long about section
             const aboutSection = document.createElement('div');
             aboutSection.id = 'about-medlib-bottom';
             aboutSection.style.cssText = 'max-width: 1200px; margin: 3rem auto 0; padding: 2rem; background: #f9fcff; border-radius: 24px; border: 1px solid #e6f0fa;';
@@ -1035,20 +1062,14 @@
             }
         });
 
-        // ========== SINGLE JSON LOADER (books.json contains everything) ==========
         async function loadAllResources() {
             loadUserData();
             const cached = localStorage.getItem('medlib_books');
             if (cached) {
                 try {
                     books = JSON.parse(cached);
-                    const hash = window.location.hash.slice(1);
-                    if (hash.startsWith('cat=')) {
-                        const cat = decodeURIComponent(hash.substring(4));
-                        filterCategory(cat);
-                    } else {
-                        renderHome();
-                    }
+                    loadFromHash();
+                    renderHome();
                     document.getElementById('loading-skeleton').style.display = 'none';
                     return;
                 } catch(e) { console.warn('Cache parse failed'); }
@@ -1058,13 +1079,8 @@
                 if (!response.ok) throw new Error('books.json not found');
                 books = await response.json();
                 localStorage.setItem('medlib_books', JSON.stringify(books));
-                const hash = window.location.hash.slice(1);
-                if (hash.startsWith('cat=')) {
-                    const cat = decodeURIComponent(hash.substring(4));
-                    filterCategory(cat);
-                } else {
-                    renderHome();
-                }
+                loadFromHash();
+                renderHome();
             } catch(e) {
                 console.error('Error loading books', e);
                 document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json exists.</div>';
@@ -1097,7 +1113,7 @@
             localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
         });
 
-        // Expose global functions for inline onclick
+        // Expose functions globally
         window.selectCategory = selectCategory;
         window.filterCategory = filterCategory;
         window.showAllBooks = showAllBooks;
@@ -1112,6 +1128,10 @@
         window.getStaticCount = getStaticCount;
         window.createBookCard = createBookCard;
     </script>
+
+    <!-- Annotations & Pronunciation -->
+    <script src="annotations.js"></script>
+    <script src="pronunciation.js"></script>
 
     <!-- Nexus AI Assistant -->
     <script defer src="https://js.puter.com/v2/"></script>
