@@ -435,6 +435,60 @@
         .popup-btn:nth-child(4) { background: #8e44ad; color: white; }
         .popup-btn:hover { opacity: 0.9; }
         .speed-indicator { font-size: 0.7rem; margin-left: 4px; }
+        /* Sticky note card */
+        .medlib-sticky-note {
+            position: absolute;
+            width: 280px;
+            background: #fff9c4;
+            border-radius: 16px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+            font-family: 'Inter', sans-serif;
+            z-index: 10003;
+            overflow: hidden;
+            border: 1px solid #f7e05e;
+        }
+        .medlib-sticky-note .note-header {
+            background: #f7e05e;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e0c84a;
+        }
+        .medlib-sticky-note .note-icon {
+            font-size: 1.1rem;
+        }
+        .medlib-sticky-note .note-title {
+            flex: 1;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #4a3b1a;
+        }
+        .medlib-sticky-note .note-edit,
+        .medlib-sticky-note .note-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0 4px;
+            color: #4a3b1a;
+            transition: 0.2s;
+        }
+        .medlib-sticky-note .note-edit:hover,
+        .medlib-sticky-note .note-close:hover {
+            opacity: 0.7;
+            transform: scale(1.1);
+        }
+        .medlib-sticky-note .note-content {
+            padding: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #2d2b1f;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
         @media (max-width:768px) {
             .hero h1{font-size:1.6rem}
             .section-title h2{font-size:1.3rem}
@@ -447,58 +501,6 @@
             .categories,.recent-grid,.favorites-grid,.blog-grid{grid-template-columns:1fr}
             .book-actions button{font-size:1.1rem}
         }
-        /* Sticky note card */
-.medlib-sticky-note {
-    position: absolute;
-    width: 260px;
-    background: #fff9c4;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    font-family: 'Inter', sans-serif;
-    z-index: 10003;
-    overflow: hidden;
-    border: 1px solid #f0d78c;
-}
-.medlib-sticky-note .note-header {
-    background: #f7e05e;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 1px solid #e0c84a;
-}
-.medlib-sticky-note .note-icon {
-    font-size: 1rem;
-}
-.medlib-sticky-note .note-title {
-    flex: 1;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #4a3b1a;
-}
-.medlib-sticky-note .note-edit,
-.medlib-sticky-note .note-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 0 4px;
-    color: #4a3b1a;
-    transition: 0.2s;
-}
-.medlib-sticky-note .note-edit:hover,
-.medlib-sticky-note .note-close:hover {
-    opacity: 0.7;
-    transform: scale(1.1);
-}
-.medlib-sticky-note .note-content {
-    padding: 12px;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    color: #2d2b1f;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-}
     </style>
 </head>
 <body>
@@ -610,7 +612,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-    <!-- Firebase config -->
+    <!-- Firebase config (inline for simplicity) -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCCFB41XAQZ6S0IbBDLI-FjjjE_NlTBS14",
@@ -625,14 +627,160 @@
         const db = firebase.firestore();
     </script>
 
-    <!-- Feature scripts -->
+    <!-- Feature scripts (external files – ensure they exist) -->
     <script src="login.js"></script>
     <script src="sync.js"></script>
-    <script src="notes.js"></script>
     <script src="pronunciation.js"></script>
     <script src="selection-popup.js"></script>
 
-    <!-- Main app (inline for simplicity) -->
+    <!-- Notes with sticky notes (inline to guarantee latest version) -->
+    <script>
+        // notes.js – Persistent sticky notes
+        (function() {
+            let currentUser = null;
+            let currentBookId = null;
+            let annotations = {};
+            let activeNoteCard = null;
+
+            firebase.auth().onAuthStateChanged((user) => {
+                currentUser = user;
+                if (user && currentBookId) loadAnnotations();
+            });
+
+            function getCurrentBookId() { return window.currentBookId || null; }
+
+            async function loadAnnotations() {
+                if (!currentUser || !currentBookId) return;
+                const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(currentBookId));
+                const doc = await docRef.get();
+                annotations[currentBookId] = doc.exists ? doc.data().annotations || [] : [];
+                renderHighlights();
+            }
+
+            async function saveAnnotations() {
+                if (!currentUser || !currentBookId) return;
+                const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(currentBookId));
+                await docRef.set({ annotations: annotations[currentBookId] || [] });
+            }
+
+            function clearHighlights() {
+                const iframe = document.getElementById('bookFrame');
+                if (!iframe || !iframe.contentDocument) return;
+                const doc = iframe.contentDocument;
+                doc.querySelectorAll('.medlib-note-highlight').forEach(el => {
+                    const parent = el.parentNode;
+                    parent.replaceChild(document.createTextNode(el.textContent), el);
+                    parent.normalize();
+                });
+            }
+
+            function renderHighlights() {
+                const iframe = document.getElementById('bookFrame');
+                if (!iframe || !iframe.contentDocument) return;
+                const doc = iframe.contentDocument;
+                clearHighlights();
+
+                const annos = annotations[currentBookId] || [];
+                annos.forEach(anno => {
+                    const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
+                    let node;
+                    while (node = walker.nextNode()) {
+                        if (node.textContent.includes(anno.text)) {
+                            const span = doc.createElement('span');
+                            span.className = 'medlib-note-highlight';
+                            span.style.backgroundColor = '#ffeb3b';
+                            span.style.cursor = 'pointer';
+                            span.setAttribute('data-note', anno.note);
+                            span.setAttribute('data-id', anno.id);
+                            span.textContent = node.textContent;
+                            node.parentNode.replaceChild(span, node);
+                            span.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                showStickyNote(span, anno);
+                            });
+                            break;
+                        }
+                    }
+                });
+            }
+
+            function showStickyNote(element, anno) {
+                if (activeNoteCard && activeNoteCard.parentNode) activeNoteCard.parentNode.removeChild(activeNoteCard);
+                
+                const iframe = document.getElementById('bookFrame');
+                const iframeRect = iframe.getBoundingClientRect();
+                const rect = element.getBoundingClientRect();
+
+                const card = document.createElement('div');
+                card.className = 'medlib-sticky-note';
+                card.innerHTML = `
+                    <div class="note-header">
+                        <span class="note-icon">📌</span>
+                        <span class="note-title">Study Note</span>
+                        <button class="note-edit" title="Edit note">✏️</button>
+                        <button class="note-close">×</button>
+                    </div>
+                    <div class="note-content">${escapeHtml(anno.note)}</div>
+                `;
+                document.body.appendChild(card);
+
+                let left = iframeRect.left + rect.right + window.scrollX + 15;
+                let top = iframeRect.top + rect.top + window.scrollY;
+                if (left + 280 > window.innerWidth) left = iframeRect.left + rect.left - 280;
+                if (top + 200 > window.innerHeight) top = window.innerHeight - 210;
+                card.style.left = Math.max(10, left) + 'px';
+                card.style.top = Math.max(10, top) + 'px';
+
+                card.querySelector('.note-edit').onclick = () => {
+                    const newNote = prompt('Edit your note:', anno.note);
+                    if (newNote !== null && newNote !== anno.note) {
+                        anno.note = newNote;
+                        card.querySelector('.note-content').innerText = newNote;
+                        element.setAttribute('data-note', newNote);
+                        saveAnnotations();
+                    }
+                };
+                card.querySelector('.note-close').onclick = () => {
+                    if (card.parentNode) card.parentNode.removeChild(card);
+                    activeNoteCard = null;
+                };
+                activeNoteCard = card;
+            }
+
+            function escapeHtml(str) {
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+
+            window.addAnnotation = async function(text) {
+                if (!currentUser) { alert('Please sign in to add notes.'); return; }
+                currentBookId = getCurrentBookId();
+                if (!currentBookId) return;
+                const note = prompt('Enter your note for the selected text:');
+                if (!note) return;
+                if (!annotations[currentBookId]) annotations[currentBookId] = [];
+                annotations[currentBookId].push({ id: Date.now(), text, note });
+                await saveAnnotations();
+                renderHighlights();
+            };
+
+            const originalOpenBook = window.openBook;
+            if (originalOpenBook) {
+                window.openBook = async function(filename, bookId) {
+                    currentBookId = bookId;
+                    window.currentBookId = bookId;
+                    await originalOpenBook(filename, bookId);
+                    if (currentUser) await loadAnnotations();
+                };
+            }
+        })();
+    </script>
+
+    <!-- Main app (inline) -->
     <script>
         // ==================== MAIN APP ====================
         let books = [];
@@ -806,7 +954,7 @@
             document.body.style.overflow = 'hidden';
             addToRecent(bookId);
             currentViewerBookId = bookId;
-            window.currentBookId = bookId; // for annotations
+            window.currentBookId = bookId;
             viewerActive = true;
 
             if (progressInterval) clearInterval(progressInterval);
@@ -1088,7 +1236,6 @@
             renderBookmarks();
             renderAnalytics();
 
-            // Append long about section
             const aboutSection = document.createElement('div');
             aboutSection.id = 'about-medlib-bottom';
             aboutSection.style.cssText = 'max-width: 1200px; margin: 3rem auto 0; padding: 2rem; background: #f9fcff; border-radius: 24px; border: 1px solid #e6f0fa;';
@@ -1113,7 +1260,6 @@
             main.appendChild(aboutSection);
         }
 
-        // Outside click to close sidebar
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.getElementById('menuToggle');
@@ -1215,7 +1361,7 @@
         window.shareBook = shareBook;
         window.getStaticCount = getStaticCount;
         window.createBookCard = createBookCard;
-        window.sendMessage = null; // will be overridden by Nexus
+        window.sendMessage = null;
     </script>
 
     <!-- Nexus AI (chat only) -->
