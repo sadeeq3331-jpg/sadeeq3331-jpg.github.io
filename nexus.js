@@ -1,8 +1,10 @@
-// nexus.js – Chat panel only (selection popup is separate)
+// nexus.js – Medical AI Assistant with Firestore sync
 (function() {
+    // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
 
+    // ========== State ==========
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
@@ -12,6 +14,7 @@
     let panelDarkMode = false;
     let personality = 'detailed';
 
+    // ========== Helper Functions ==========
     function extractPuterMessage(raw) {
         if (typeof raw === 'string') {
             try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
@@ -27,6 +30,7 @@
         }).join('\n');
     }
 
+    // ========== Conversation Persistence (with Firestore sync) ==========
     function loadConversations() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -50,7 +54,27 @@
         const storedPinned = localStorage.getItem('nexus_pinned');
         if (storedPinned) pinnedMessages = JSON.parse(storedPinned);
     }
-    function saveConversations() { localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations)); }
+
+    function saveConversations() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
+        // Sync to Firestore if user is logged in and sync function exists
+        if (typeof window.syncConversationsUpdate === 'function') {
+            window.syncConversationsUpdate(conversations);
+        }
+    }
+
+    // Expose this function so sync-conversations.js can reload conversations from Firestore
+    window.reloadNexusConversations = function(newConvs) {
+        if (newConvs && newConvs.length) {
+            conversations = newConvs;
+            if (!currentConvId || !conversations.find(c => c.id === currentConvId)) {
+                currentConvId = conversations[0].id;
+            }
+            renderTabs();
+            renderMessages();
+        }
+    };
+
     function savePinned() { localStorage.setItem('nexus_pinned', JSON.stringify(pinnedMessages)); }
     function getCurrentConv() { return conversations.find(c => c.id === currentConvId); }
 
@@ -204,6 +228,7 @@
         URL.revokeObjectURL(url);
     }
 
+    // ========== Render UI ==========
     function renderTabs() {
         const tabs = document.getElementById('nexus-tabs');
         if (!tabs) return;
@@ -275,6 +300,7 @@
         renderPinnedSection();
     }
 
+    // ========== Send Message with Puter ==========
     async function sendMessage(initialText = null) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
@@ -326,6 +352,7 @@ Question: ${text}`;
         }
     }
 
+    // ========== Widget Creation ==========
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
@@ -651,7 +678,16 @@ Question: ${text}`;
         return panel;
     }
 
-    window.sendMessage = sendMessage; // expose for selection popup
+    // ========== Initialize ==========
+    function init() {
+        loadConversations();
+        createWidget();
+        renderTabs();
+        renderMessages();
+    }
+
+    // Expose functions for external use (selection popup, sync)
+    window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
         if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -665,11 +701,5 @@ Question: ${text}`;
     window.deleteMessage = deleteMessage;
     window.copyMessage = copyMessage;
 
-    function init() {
-        loadConversations();
-        createWidget();
-        renderTabs();
-        renderMessages();
-    }
     init();
 })();
