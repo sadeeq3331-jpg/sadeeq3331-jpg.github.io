@@ -1,4 +1,4 @@
-// nexus.js – Medical AI Assistant with Note‑taking
+// nexus.js – Chat panel only (selection popup is separate)
 (function() {
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
@@ -6,11 +6,6 @@
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
-    let usSpeed = 1.0;
-    let ukSpeed = 1.0;
-    let voicesLoaded = false;
-    let usVoice = null;
-    let ukVoice = null;
     let pinnedMessages = [];
     let currentSearch = '';
     let fontSize = 16;
@@ -162,15 +157,6 @@
         const panel = document.querySelector('.nexus-panel');
         if (panel) panelDarkMode ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
-    function speakMessage(text) {
-        if (!window.speechSynthesis) { alert('Speech not supported'); return; }
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 1.0;
-        utterance.pitch = 1;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-    }
     function copyMessage(text) {
         navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
     }
@@ -269,7 +255,6 @@
                             <span class="timestamp">${time}</span>
                             ${!isUser ? `
                                 <button class="pin-btn" onclick="togglePinMessage(${originalIdx})" title="Pin">${pinned ? '📌' : '📍'}</button>
-                                <button class="speak-btn" onclick="speakMessage('${msg.content.replace(/'/g, "\\'")}')" title="Read aloud">🔊</button>
                                 <button class="copy-btn" onclick="copyMessage('${msg.content.replace(/'/g, "\\'")}')">📋</button>
                                 <button class="delete-btn" onclick="deleteMessage(${originalIdx})">🗑️</button>
                             ` : `
@@ -288,30 +273,6 @@
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
         updateStats();
         renderPinnedSection();
-    }
-
-    function loadVoices() {
-        if (!window.speechSynthesis) return;
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length) selectVoices(voices);
-        window.speechSynthesis.onvoiceschanged = () => selectVoices(window.speechSynthesis.getVoices());
-    }
-    function selectVoices(voices) {
-        usVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural'))) || voices.find(v => v.lang === 'en-US');
-        ukVoice = voices.find(v => v.lang === 'en-GB' && (v.name.includes('Google') || v.name.includes('Natural'))) || voices.find(v => v.lang === 'en-GB');
-        voicesLoaded = true;
-    }
-    function speak(text, accent, speed) {
-        if (!window.speechSynthesis) { alert('Speech not supported'); return; }
-        if (!voicesLoaded) loadVoices();
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = accent === 'US' ? 'en-US' : 'en-GB';
-        utterance.rate = speed;
-        utterance.pitch = 1;
-        if (accent === 'US' && usVoice) utterance.voice = usVoice;
-        if (accent === 'UK' && ukVoice) utterance.voice = ukVoice;
-        window.speechSynthesis.speak(utterance);
     }
 
     async function sendMessage(initialText = null) {
@@ -363,33 +324,6 @@ Question: ${text}`;
             isWaiting = false;
             addMessage('assistant', 'Nexus error: ' + e.message);
         }
-    }
-
-    function setupSelectionDetection(iframeId, popup) {
-        const iframe = document.getElementById(iframeId);
-        if (!iframe) return;
-        setInterval(() => {
-            try {
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                const sel = doc.getSelection();
-                const text = sel.toString().trim();
-                if (text) {
-                    const range = sel.getRangeAt(0);
-                    const rect = range.getBoundingClientRect();
-                    if (rect && rect.width > 0) {
-                        const iframeRect = iframe.getBoundingClientRect();
-                        popup.style.display = 'flex';
-                        popup.style.left = (iframeRect.left + rect.left + window.scrollX + 20) + 'px';
-                        popup.style.top = (iframeRect.top + rect.top + window.scrollY - 50) + 'px';
-                        popup.setAttribute('data-text', text);
-                        return;
-                    }
-                }
-                popup.style.display = 'none';
-            } catch (e) {
-                popup.style.display = 'none';
-            }
-        }, 500);
     }
 
     function createWidget() {
@@ -634,36 +568,6 @@ Question: ${text}`;
                 }
                 .suggestion-chip:hover { background: #cde0f0; transform: scale(1.02); }
                 .nexus-stats { font-size: 0.7rem; color: #8a9cb0; padding: 0 20px 8px; text-align: right; }
-                .selection-popup {
-                    position: absolute;
-                    background: white;
-                    border-radius: 40px;
-                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-                    display: none;
-                    z-index: 10002;
-                    overflow: hidden;
-                    border: 1px solid #e6f0fa;
-                    font-size: 0.9rem;
-                    white-space: nowrap;
-                }
-                .selection-option {
-                    padding: 10px 20px;
-                    cursor: pointer;
-                    text-align: center;
-                    font-weight: 600;
-                    transition: 0.2s;
-                    border-bottom: 1px solid #eef6ff;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-                .selection-option:last-child { border-bottom: none; }
-                .selection-option.nexus { background: #2c7cb0; color: white; }
-                .selection-option.us { background: #1dbf73; color: white; }
-                .selection-option.uk { background: #ff6b6b; color: white; }
-                .selection-option.note { background: #8e44ad; color: white; }
-                .selection-option:hover { opacity: 0.9; }
-                .speed-indicator { font-size: 0.7rem; margin-left: 4px; }
                 @media (max-width: 600px) {
                     .nexus-panel { width: calc(100vw - 40px); right: 20px; bottom: 100px; }
                     .nexus-input-area button { width: 40px; height: 40px; }
@@ -673,12 +577,6 @@ Question: ${text}`;
             <div class="nexus-bubble">
                 🩺
                 <span class="tooltip">Ask Nexus</span>
-            </div>
-            <div class="selection-popup" id="selection-popup">
-                <div class="selection-option nexus" id="ask-nexus">🤖 Ask Nexus</div>
-                <div class="selection-option us" id="speak-us">🔊 US <span class="speed-indicator" id="us-speed">1x</span></div>
-                <div class="selection-option uk" id="speak-uk">🔊 UK <span class="speed-indicator" id="uk-speed">1x</span></div>
-                <div class="selection-option note" id="add-note">📝 Add Note</div>
             </div>
             <div class="nexus-panel">
                 <div class="nexus-panel-header">
@@ -750,76 +648,26 @@ Question: ${text}`;
             });
         });
 
-        return { panel, popup: container.querySelector('#selection-popup') };
+        return panel;
     }
+
+    window.sendMessage = sendMessage; // expose for selection popup
+    window.scrollToMessage = (idx) => {
+        const el = document.querySelector(`.message[data-idx="${idx}"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+    };
+    window.renameConversation = renameConversation;
+    window.deleteConversation = deleteConversation;
+    window.newConversation = newConversation;
+    window.exportConversation = exportConversation;
+    window.togglePinMessage = togglePinMessage;
+    window.editUserMessage = editUserMessage;
+    window.deleteMessage = deleteMessage;
+    window.copyMessage = copyMessage;
 
     function init() {
         loadConversations();
-        const { panel, popup } = createWidget();
-
-        window.togglePinMessage = togglePinMessage;
-        window.editUserMessage = editUserMessage;
-        window.deleteMessage = deleteMessage;
-        window.copyMessage = copyMessage;
-        window.speakMessage = speakMessage;
-        window.scrollToMessage = (idx) => {
-            const el = document.querySelector(`.message[data-idx="${idx}"]`);
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-        };
-        window.renameConversation = renameConversation;
-        window.deleteConversation = deleteConversation;
-        window.newConversation = newConversation;
-        window.exportConversation = exportConversation;
-
-        const askNexusBtn = document.getElementById('ask-nexus');
-        const speakUsBtn = document.getElementById('speak-us');
-        const speakUkBtn = document.getElementById('speak-uk');
-        const addNoteBtn = document.getElementById('add-note');
-        const usSpeedSpan = document.getElementById('us-speed');
-        const ukSpeedSpan = document.getElementById('uk-speed');
-
-        askNexusBtn.onclick = () => {
-            const text = popup.getAttribute('data-text');
-            if (text) {
-                const input = document.getElementById('nexus-input');
-                if (input) input.value = text;
-                panel.style.display = 'flex';
-                popup.style.display = 'none';
-                sendMessage(text);
-            }
-        };
-        speakUsBtn.onclick = () => {
-            const text = popup.getAttribute('data-text');
-            if (text) {
-                usSpeed = usSpeed === 1.0 ? 0.5 : 1.0;
-                usSpeedSpan.innerText = usSpeed === 1.0 ? '1x' : '½x';
-                speak(text, 'US', usSpeed);
-            }
-            popup.style.display = 'none';
-        };
-        speakUkBtn.onclick = () => {
-            const text = popup.getAttribute('data-text');
-            if (text) {
-                ukSpeed = ukSpeed === 1.0 ? 0.5 : 1.0;
-                ukSpeedSpan.innerText = ukSpeed === 1.0 ? '1x' : '½x';
-                speak(text, 'UK', ukSpeed);
-            }
-            popup.style.display = 'none';
-        };
-        addNoteBtn.onclick = () => {
-            const text = popup.getAttribute('data-text');
-            if (text) {
-                if (typeof window.addAnnotation === 'function') {
-                    window.addAnnotation(text);
-                } else {
-                    alert('Note feature not loaded. Please refresh or sign in.');
-                }
-            }
-            popup.style.display = 'none';
-        };
-
-        if (window.speechSynthesis) loadVoices();
-        setupSelectionDetection('bookFrame', popup);
+        createWidget();
         renderTabs();
         renderMessages();
     }
