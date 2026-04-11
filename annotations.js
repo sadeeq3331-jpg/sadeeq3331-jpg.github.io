@@ -1,60 +1,42 @@
-// annotations.js – Highlight & Notes (requires Firebase Auth)
+// annotations.js
 (function() {
     let currentUser = null;
     let currentBookId = null;
-    let annotations = {}; // key: bookId, value: array of annotations
+    let annotations = {};
 
-    // Listen to Firebase auth state
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
-        if (user) {
-            loadAnnotationsForCurrentBook();
-        }
+        if (user && currentBookId) loadAnnotations();
     });
 
-    function getCurrentBookId() {
-        // Get book ID from the iframe URL or global variable
-        return window.currentBookId || null;
+    function getCurrentBookId() { return window.currentBookId || null; }
+
+    async function loadAnnotations() {
+        if (!currentUser || !currentBookId) return;
+        const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(currentBookId));
+        const doc = await docRef.get();
+        if (doc.exists) annotations[currentBookId] = doc.data().annotations || [];
+        else annotations[currentBookId] = [];
+        renderHighlights();
     }
 
-    function loadAnnotationsForCurrentBook() {
-        if (!currentUser) return;
-        const bookId = getCurrentBookId();
-        if (!bookId) return;
-        const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(bookId));
-        docRef.get().then(doc => {
-            if (doc.exists) {
-                annotations[bookId] = doc.data().annotations || [];
-                renderHighlights();
-            } else {
-                annotations[bookId] = [];
-            }
-        });
-    }
-
-    function saveAnnotations() {
-        if (!currentUser) return;
-        const bookId = getCurrentBookId();
-        if (!bookId) return;
-        const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(bookId));
-        docRef.set({ annotations: annotations[bookId] || [] });
+    async function saveAnnotations() {
+        if (!currentUser || !currentBookId) return;
+        const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(currentBookId));
+        await docRef.set({ annotations: annotations[currentBookId] || [] });
     }
 
     function renderHighlights() {
         const iframe = document.getElementById('bookFrame');
         if (!iframe || !iframe.contentDocument) return;
         const doc = iframe.contentDocument;
-        // Remove existing highlights
         doc.querySelectorAll('.nexus-highlight').forEach(el => {
             const parent = el.parentNode;
             parent.replaceChild(document.createTextNode(el.textContent), el);
             parent.normalize();
         });
-        // Apply new highlights
-        const bookId = getCurrentBookId();
-        const annos = annotations[bookId] || [];
+        const annos = annotations[currentBookId] || [];
         annos.forEach(anno => {
-            // Simple text-based highlight (exact match). For production, use ranges.
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
             let node;
             while (node = walker.nextNode()) {
@@ -73,8 +55,8 @@
                         if (note !== null) {
                             span.setAttribute('data-note', note);
                             const id = span.getAttribute('data-id');
-                            const annoIndex = annotations[bookId].findIndex(a => a.id == id);
-                            if (annoIndex !== -1) annotations[bookId][annoIndex].note = note;
+                            const annoIndex = annotations[currentBookId].findIndex(a => a.id == id);
+                            if (annoIndex !== -1) annotations[currentBookId][annoIndex].note = note;
                             saveAnnotations();
                         }
                     });
@@ -86,15 +68,13 @@
 
     function addAnnotation(text, note) {
         if (!currentUser) { alert('Please sign in to add notes.'); return; }
-        const bookId = getCurrentBookId();
-        if (!bookId) return;
-        if (!annotations[bookId]) annotations[bookId] = [];
-        annotations[bookId].push({ id: Date.now(), text, note });
+        if (!currentBookId) return;
+        if (!annotations[currentBookId]) annotations[currentBookId] = [];
+        annotations[currentBookId].push({ id: Date.now(), text, note });
         saveAnnotations();
         renderHighlights();
     }
 
-    // Listen to selection in iframe
     function setupAnnotationSelection() {
         const iframe = document.getElementById('bookFrame');
         if (!iframe) return;
@@ -127,12 +107,11 @@
                     popup.style.display = 'block';
                     popup.style.left = rect.left + 'px';
                     popup.style.top = (rect.top - 30) + 'px';
-                } else if (popup) {
-                    popup.style.display = 'none';
-                }
+                } else if (popup) popup.style.display = 'none';
             });
         });
     }
 
+    window.currentBookId = null;
     setupAnnotationSelection();
 })();
