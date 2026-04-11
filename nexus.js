@@ -1,10 +1,8 @@
-// nexus.js – Clean, Responsive Medical AI Assistant (Fixed Panel)
+// nexus.js – Medical AI Assistant with Note‑taking
 (function() {
-    // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
 
-    // ========== State ==========
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
@@ -19,7 +17,6 @@
     let panelDarkMode = false;
     let personality = 'detailed';
 
-    // ========== Helper Functions ==========
     function extractPuterMessage(raw) {
         if (typeof raw === 'string') {
             try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
@@ -35,7 +32,6 @@
         }).join('\n');
     }
 
-    // ========== Conversation Persistence ==========
     function loadConversations() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -222,7 +218,6 @@
         URL.revokeObjectURL(url);
     }
 
-    // ========== Render UI ==========
     function renderTabs() {
         const tabs = document.getElementById('nexus-tabs');
         if (!tabs) return;
@@ -295,7 +290,6 @@
         renderPinnedSection();
     }
 
-    // ========== Pronunciation Voices ==========
     function loadVoices() {
         if (!window.speechSynthesis) return;
         const voices = window.speechSynthesis.getVoices();
@@ -320,7 +314,6 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    // ========== Send Message with Puter ==========
     async function sendMessage(initialText = null) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
@@ -372,7 +365,6 @@ Question: ${text}`;
         }
     }
 
-    // ========== Selection Popup (Highlight Text in Iframe) ==========
     function setupSelectionDetection(iframeId, popup) {
         const iframe = document.getElementById(iframeId);
         if (!iframe) return;
@@ -400,14 +392,12 @@ Question: ${text}`;
         }, 500);
     }
 
-    // ========== Widget Creation (Fixed Panel, Responsive) ==========
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
         container.innerHTML = `
             <style>
                 #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-                /* Floating Bubble (Draggable) */
                 .nexus-bubble {
                     position: fixed;
                     bottom: 30px;
@@ -444,7 +434,6 @@ Question: ${text}`;
                     white-space: nowrap;
                 }
                 .nexus-bubble:hover .tooltip { opacity: 1; }
-                /* Fixed Panel – responsive, no drag */
                 .nexus-panel {
                     position: fixed;
                     bottom: 120px;
@@ -672,6 +661,7 @@ Question: ${text}`;
                 .selection-option.nexus { background: #2c7cb0; color: white; }
                 .selection-option.us { background: #1dbf73; color: white; }
                 .selection-option.uk { background: #ff6b6b; color: white; }
+                .selection-option.note { background: #8e44ad; color: white; }
                 .selection-option:hover { opacity: 0.9; }
                 .speed-indicator { font-size: 0.7rem; margin-left: 4px; }
                 @media (max-width: 600px) {
@@ -688,6 +678,7 @@ Question: ${text}`;
                 <div class="selection-option nexus" id="ask-nexus">🤖 Ask Nexus</div>
                 <div class="selection-option us" id="speak-us">🔊 US <span class="speed-indicator" id="us-speed">1x</span></div>
                 <div class="selection-option uk" id="speak-uk">🔊 UK <span class="speed-indicator" id="uk-speed">1x</span></div>
+                <div class="selection-option note" id="add-note">📝 Add Note</div>
             </div>
             <div class="nexus-panel">
                 <div class="nexus-panel-header">
@@ -729,7 +720,6 @@ Question: ${text}`;
         const bubble = container.querySelector('.nexus-bubble');
         bubble.onclick = () => { panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; };
 
-        // Wire UI
         document.getElementById('nexus-font-minus').onclick = () => setFontSize(-2);
         document.getElementById('nexus-font-plus').onclick = () => setFontSize(2);
         document.getElementById('nexus-dark-toggle').onclick = togglePanelDarkMode;
@@ -763,12 +753,10 @@ Question: ${text}`;
         return { panel, popup: container.querySelector('#selection-popup') };
     }
 
-    // ========== Initialize ==========
     function init() {
         loadConversations();
         const { panel, popup } = createWidget();
 
-        // Expose global functions for inline callbacks
         window.togglePinMessage = togglePinMessage;
         window.editUserMessage = editUserMessage;
         window.deleteMessage = deleteMessage;
@@ -786,6 +774,7 @@ Question: ${text}`;
         const askNexusBtn = document.getElementById('ask-nexus');
         const speakUsBtn = document.getElementById('speak-us');
         const speakUkBtn = document.getElementById('speak-uk');
+        const addNoteBtn = document.getElementById('add-note');
         const usSpeedSpan = document.getElementById('us-speed');
         const ukSpeedSpan = document.getElementById('uk-speed');
 
@@ -817,6 +806,18 @@ Question: ${text}`;
             }
             popup.style.display = 'none';
         };
+        addNoteBtn.onclick = () => {
+            const text = popup.getAttribute('data-text');
+            if (text) {
+                if (typeof window.addAnnotation === 'function') {
+                    window.addAnnotation(text);
+                } else {
+                    alert('Note feature not loaded. Please refresh or sign in.');
+                }
+            }
+            popup.style.display = 'none';
+        };
+
         if (window.speechSynthesis) loadVoices();
         setupSelectionDetection('bookFrame', popup);
         renderTabs();
