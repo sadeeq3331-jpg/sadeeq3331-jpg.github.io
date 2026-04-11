@@ -21,7 +21,6 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
 
     <style>
-        /* ========== COMPLETE CSS ========== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#f5f9ff; font-family:'Inter', sans-serif; line-height:1.5; color:#1f2937; transition:background .3s,color .3s; }
         body.dark { background:#1a1a2e; color:#e0e0e0; }
@@ -404,6 +403,38 @@
             z-index:99;
             pointer-events:none;
         }
+        /* Selection popup styles */
+        .medlib-selection-popup {
+            position: absolute;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            display: none;
+            z-index: 10002;
+            overflow: hidden;
+            border: 1px solid #e6f0fa;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            flex-direction: column;
+        }
+        .popup-btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: 0.2s;
+            border-bottom: 1px solid #eef6ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .popup-btn:last-child { border-bottom: none; }
+        .popup-btn:first-child { background: #2c7cb0; color: white; }
+        .popup-btn:nth-child(2) { background: #1dbf73; color: white; }
+        .popup-btn:nth-child(3) { background: #ff6b6b; color: white; }
+        .popup-btn:nth-child(4) { background: #8e44ad; color: white; }
+        .popup-btn:hover { opacity: 0.9; }
+        .speed-indicator { font-size: 0.7rem; margin-left: 4px; }
         @media (max-width:768px) {
             .hero h1{font-size:1.6rem}
             .section-title h2{font-size:1.3rem}
@@ -527,14 +558,29 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-    <!-- Firebase config & helper -->
-    <script src="firebase-config.js"></script>
+    <!-- Firebase config -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCFB41XAQZ6S0IbBDLI-FjjjE_NlTBS14",
+            authDomain: "midlib-e3187.firebaseapp.com",
+            projectId: "midlib-e3187",
+            storageBucket: "midlib-e3187.firebasestorage.app",
+            messagingSenderId: "382363535690",
+            appId: "1:382363535690:web:eedfb3639a62faa9a519b3"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
 
-    <!-- Login & Sync -->
+    <!-- Feature scripts -->
     <script src="login.js"></script>
     <script src="sync.js"></script>
+    <script src="notes.js"></script>
+    <script src="pronunciation.js"></script>
+    <script src="selection-popup.js"></script>
 
-    <!-- Main App Script -->
+    <!-- Main app (inline for simplicity) -->
     <script>
         // ==================== MAIN APP ====================
         let books = [];
@@ -565,7 +611,6 @@
             renderRecent();
         }
 
-        // Updated toggleFavorite with sync
         window.toggleFavorite = function(bookId) {
             if (favorites.includes(bookId)) {
                 favorites = favorites.filter(id => id !== bookId);
@@ -573,16 +618,13 @@
                 favorites.push(bookId);
             }
             saveFavorites();
-            if (typeof window.syncFavoritesUpdate === 'function') {
-                window.syncFavoritesUpdate(favorites);
-            }
+            if (typeof window.syncFavoritesUpdate === 'function') window.syncFavoritesUpdate(favorites);
             renderFavorites();
             if (document.querySelector('.book-grid')) renderCurrentBooks();
         };
 
         function isFavorite(bookId) { return favorites.includes(bookId); }
 
-        // Updated addBookmark with sync
         function addBookmark(bookId, title, url) {
             if (bookmarks.some(b => b.bookId === bookId)) {
                 showNotification('Already bookmarked!');
@@ -590,20 +632,15 @@
             }
             bookmarks.push({ bookId, title, url, timestamp: Date.now() });
             saveBookmarks();
-            if (typeof window.syncBookmarksUpdate === 'function') {
-                window.syncBookmarksUpdate(bookmarks);
-            }
+            if (typeof window.syncBookmarksUpdate === 'function') window.syncBookmarksUpdate(bookmarks);
             renderBookmarks();
             showNotification('Bookmarked!');
         }
 
-        // Updated removeBookmark with sync
         function removeBookmark(bookId) {
             bookmarks = bookmarks.filter(b => b.bookId !== bookId);
             saveBookmarks();
-            if (typeof window.syncBookmarksUpdate === 'function') {
-                window.syncBookmarksUpdate(bookmarks);
-            }
+            if (typeof window.syncBookmarksUpdate === 'function') window.syncBookmarksUpdate(bookmarks);
             renderBookmarks();
         }
 
@@ -1113,7 +1150,6 @@
             localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
         });
 
-        // Expose functions globally
         window.selectCategory = selectCategory;
         window.filterCategory = filterCategory;
         window.showAllBooks = showAllBooks;
@@ -1127,13 +1163,10 @@
         window.shareBook = shareBook;
         window.getStaticCount = getStaticCount;
         window.createBookCard = createBookCard;
+        window.sendMessage = null; // will be overridden by Nexus
     </script>
 
-    <!-- Annotations & Pronunciation -->
-    <script src="annotations.js"></script>
-    <script src="pronunciation.js"></script>
-
-    <!-- Nexus AI Assistant -->
+    <!-- Nexus AI (chat only) -->
     <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
 </body>
