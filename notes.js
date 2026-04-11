@@ -2,7 +2,7 @@
 (function() {
     let currentUser = null;
     let currentBookId = null;
-    let annotations = {}; // key: bookId, value: array of { id, text, note }
+    let annotations = {};
 
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
@@ -15,8 +15,7 @@
         if (!currentUser || !currentBookId) return;
         const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(currentBookId));
         const doc = await docRef.get();
-        if (doc.exists) annotations[currentBookId] = doc.data().annotations || [];
-        else annotations[currentBookId] = [];
+        annotations[currentBookId] = doc.exists ? doc.data().annotations || [] : [];
         renderHighlights();
     }
 
@@ -30,7 +29,6 @@
         const iframe = document.getElementById('bookFrame');
         if (!iframe || !iframe.contentDocument) return;
         const doc = iframe.contentDocument;
-        // Remove existing highlights
         doc.querySelectorAll('.medlib-note-highlight').forEach(el => {
             const parent = el.parentNode;
             parent.replaceChild(document.createTextNode(el.textContent), el);
@@ -38,7 +36,6 @@
         });
         const annos = annotations[currentBookId] || [];
         annos.forEach(anno => {
-            // Simple text-based highlight (exact match). For production, use ranges.
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
             let node;
             while (node = walker.nextNode()) {
@@ -57,8 +54,8 @@
                         if (newNote !== null) {
                             span.setAttribute('data-note', newNote);
                             const id = span.getAttribute('data-id');
-                            const annoIndex = annotations[currentBookId].findIndex(a => a.id == id);
-                            if (annoIndex !== -1) annotations[currentBookId][annoIndex].note = newNote;
+                            const idx = annotations[currentBookId].findIndex(a => a.id == id);
+                            if (idx !== -1) annotations[currentBookId][idx].note = newNote;
                             saveAnnotations();
                         }
                     });
@@ -80,7 +77,6 @@
         renderHighlights();
     };
 
-    // When book changes, reload annotations
     const originalOpenBook = window.openBook;
     if (originalOpenBook) {
         window.openBook = async function(filename, bookId) {
