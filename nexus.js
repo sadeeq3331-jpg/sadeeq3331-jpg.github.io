@@ -1,8 +1,9 @@
-// nexus.js – Medical AI Assistant with Firestore sync
+// nexus.js – Medical AI Assistant with Firestore sync & full conversation history
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
+    const MAX_HISTORY_MESSAGES = 20;   // keep last N messages for context
 
     // ========== State ==========
     let conversations = [];
@@ -30,7 +31,7 @@
         }).join('\n');
     }
 
-    // ========== Conversation Persistence (with Firestore sync) ==========
+    // ========== Conversation Persistence ==========
     function loadConversations() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -57,13 +58,11 @@
 
     function saveConversations() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
-        // Sync to Firestore if user is logged in and sync function exists
         if (typeof window.syncConversationsUpdate === 'function') {
             window.syncConversationsUpdate(conversations);
         }
     }
 
-    // Expose this function so sync-conversations.js can reload conversations from Firestore
     window.reloadNexusConversations = function(newConvs) {
         if (newConvs && newConvs.length) {
             conversations = newConvs;
@@ -86,6 +85,7 @@
         renderMessages();
         updateStats();
     }
+
     function deleteMessage(index) {
         const conv = getCurrentConv();
         if (!conv) return;
@@ -94,6 +94,7 @@
         renderMessages();
         updateStats();
     }
+
     function editUserMessage(index, newContent) {
         if (!newContent) return;
         const conv = getCurrentConv();
@@ -104,8 +105,9 @@
         }
         saveConversations();
         renderMessages();
-        sendMessage(newContent);
+        sendMessage(newContent, true); // force regenerate with updated history
     }
+
     function togglePinMessage(idx) {
         const conv = getCurrentConv();
         const msg = conv.messages[idx];
@@ -120,7 +122,9 @@
         renderPinnedSection();
         renderMessages();
     }
+
     function isPinned(idx) { return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx); }
+
     function renderPinnedSection() {
         const container = document.getElementById('nexus-pinned');
         if (!container) return;
@@ -137,6 +141,7 @@
         });
         container.innerHTML = html;
     }
+
     function updateStats() {
         const conv = getCurrentConv();
         if (!conv) return;
@@ -145,11 +150,13 @@
         const statsSpan = document.getElementById('nexus-stats');
         if (statsSpan) statsSpan.innerText = `${msgCount} msgs · ~${wordCount} words`;
     }
+
     function filterMessages() {
         const input = document.getElementById('nexus-search');
         if (input) currentSearch = input.value.trim().toLowerCase();
         renderMessages();
     }
+
     function exportAsPDF() {
         const conv = getCurrentConv();
         if (!conv) return;
@@ -163,6 +170,7 @@
         win.document.close();
         win.print();
     }
+
     function shareConversation() {
         const conv = getCurrentConv();
         if (!conv) return;
@@ -172,18 +180,22 @@
         });
         navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
     }
+
     function setFontSize(delta) {
         fontSize = Math.min(32, Math.max(12, fontSize + delta));
         document.querySelectorAll('.message-bubble').forEach(el => el.style.fontSize = fontSize + 'px');
     }
+
     function togglePanelDarkMode() {
         panelDarkMode = !panelDarkMode;
         const panel = document.querySelector('.nexus-panel');
         if (panel) panelDarkMode ? panel.classList.add('dark') : panel.classList.remove('dark');
     }
+
     function copyMessage(text) {
         navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
     }
+
     function newConversation() {
         const id = Date.now();
         conversations.push({
@@ -196,6 +208,7 @@
         renderTabs();
         renderMessages();
     }
+
     function deleteConversation(id) {
         const idx = conversations.findIndex(c => c.id === id);
         if (idx === -1) return;
@@ -206,10 +219,12 @@
         renderTabs();
         renderMessages();
     }
+
     function renameConversation(id, newName) {
         const conv = conversations.find(c => c.id === id);
         if (conv) { conv.name = newName; saveConversations(); renderTabs(); }
     }
+
     function exportConversation() {
         const conv = getCurrentConv();
         if (!conv) return;
@@ -300,12 +315,13 @@
         renderPinnedSection();
     }
 
-    // ========== Send Message with Puter ==========
-    async function sendMessage(initialText = null) {
+    // ========== Send Message with Full History ==========
+    async function sendMessage(initialText = null, isRegenerate = false) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
         if (!text || isWaiting) return;
 
+        // Wait for Puter
         let puterReady = false;
         for (let i = 0; i < 5; i++) {
             if (window.puter && window.puter.ai) { puterReady = true; break; }
@@ -315,17 +331,19 @@
             addMessage('assistant', 'Nexus is not ready. Please refresh the page and try again.');
             return;
         }
+
         if (input) input.value = '';
-        addMessage('user', text);
+        if (!isRegenerate) addMessage('user', text);
         isWaiting = true;
         renderMessages();
 
+        // Build system instruction
         let personalityInstruction = '';
         if (personality === 'concise') personalityInstruction = 'Be concise and direct. Use bullet points when helpful.';
         else if (personality === 'usmle') personalityInstruction = 'Focus on high‑yield USMLE content. Emphasize mechanisms, clinical correlations, and exam tips.';
         else personalityInstruction = 'Provide thorough explanations with clinical context.';
 
-        const medicalPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
+        const systemPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
 
 For ANY non-medical question, respond with: "I'm a medical assistant and can only answer questions related to medicine and healthcare. Please ask a medical question."
 
@@ -337,12 +355,31 @@ Guidelines:
 - Use proper medical terminology but explain when necessary.
 - If uncertain, acknowledge limitations.
 
-${personalityInstruction}
+${personalityInstruction}`;
 
-Question: ${text}`;
+        // Get current conversation (already includes the new user message if not regenerate)
+        const conv = getCurrentConv();
+        if (!conv) {
+            isWaiting = false;
+            return;
+        }
+
+        // Build messages array: system + last N messages (excluding any pending assistant)
+        const history = [];
+        const messagesToInclude = conv.messages.slice(-MAX_HISTORY_MESSAGES);
+        for (const msg of messagesToInclude) {
+            // Skip if it's the assistant message that we are about to replace (only when regenerating)
+            if (isRegenerate && msg.role === 'assistant' && msg === conv.messages[conv.messages.length-1]) continue;
+            history.push({ role: msg.role, content: msg.content });
+        }
+
+        const chatMessages = [
+            { role: 'system', content: systemPrompt },
+            ...history
+        ];
 
         try {
-            const raw = await puter.ai.chat(medicalPrompt, { model: 'google/gemini-2.0-flash-lite-001' });
+            const raw = await puter.ai.chat(chatMessages, { model: 'google/gemini-2.0-flash-lite-001' });
             const clean = extractPuterMessage(raw);
             isWaiting = false;
             addMessage('assistant', clean);
@@ -352,19 +389,19 @@ Question: ${text}`;
         }
     }
 
-    // ========== Widget Creation ==========
+    // ========== Widget Creation with Fixed Layout ==========
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
         container.innerHTML = `
             <style>
-                #nexus-container * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+                #nexus-container * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
                 .nexus-bubble {
                     position: fixed;
-                    bottom: 30px;
-                    right: 30px;
-                    width: 70px;
-                    height: 70px;
+                    bottom: 25px;
+                    right: 25px;
+                    width: 64px;
+                    height: 64px;
                     border-radius: 50%;
                     background: linear-gradient(145deg, #2c7cb0, #1b4c72);
                     color: white;
@@ -372,52 +409,53 @@ Question: ${text}`;
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
-                    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
                     z-index: 10000;
-                    transition: 0.3s;
-                    border: 3px solid #ffd966;
-                    font-size: 2.8rem;
-                    line-height: 1;
+                    transition: 0.2s;
+                    border: 2px solid #ffd966;
+                    font-size: 2.4rem;
                     touch-action: manipulation;
                 }
                 .nexus-bubble:hover { transform: scale(1.05); }
                 .nexus-bubble .tooltip {
                     position: absolute;
-                    top: -35px;
+                    top: -32px;
                     background: #0a2942;
                     color: white;
-                    padding: 6px 16px;
+                    padding: 5px 14px;
                     border-radius: 30px;
-                    font-size: 0.9rem;
+                    font-size: 0.8rem;
                     opacity: 0;
-                    transition: opacity 0.3s;
+                    transition: opacity 0.2s;
                     pointer-events: none;
                     white-space: nowrap;
                 }
                 .nexus-bubble:hover .tooltip { opacity: 1; }
                 .nexus-panel {
                     position: fixed;
-                    bottom: 120px;
+                    bottom: 100px;
                     right: 20px;
-                    width: 460px;
+                    width: 480px;
                     max-width: calc(100vw - 40px);
+                    height: auto;
+                    max-height: min(85vh, 700px);
                     background: white;
-                    border-radius: 24px;
-                    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                    border-radius: 28px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
                     display: none;
                     flex-direction: column;
                     z-index: 10001;
                     overflow: hidden;
-                    border: 1px solid #e6f0fa;
-                    max-height: 80vh;
+                    border: 1px solid rgba(44,124,176,0.2);
                     transition: background 0.2s;
                 }
                 .nexus-panel.dark { background: #1e1e2e; color: #e0e0e0; }
-                .nexus-panel.dark .nexus-panel-header { background: #0f0f1f; }
+                .nexus-panel.dark .nexus-panel-header { background: #0f0f1f; border-bottom: 1px solid #2a2a3a; }
                 .nexus-panel.dark .conv-tab { background: #2a2a3a; color: white; border-color: #3a3a55; }
                 .nexus-panel.dark .nexus-messages { background: #1a1a2a; }
                 .nexus-panel.dark .message-bubble { background: #2d2d44; color: #e0e0e0; border-color: #3a3a55; }
                 .nexus-panel.dark .user .message-bubble { background: #2c7cb0; }
+                .nexus-panel.dark .suggestion-chip { background: #2a2a3a; color: #ccc; }
                 .nexus-panel-header {
                     background: #0a2942;
                     color: white;
@@ -425,24 +463,26 @@ Question: ${text}`;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 8px;
                 }
-                .nexus-panel-header h3 { margin:0; font-size:1.3rem; display:flex; align-items:center; gap:10px; }
-                .nexus-header-buttons { display: flex; gap: 12px; align-items: center; }
+                .nexus-panel-header h3 { margin:0; font-size:1.2rem; display:flex; align-items:center; gap:8px; }
+                .nexus-header-buttons { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
                 .nexus-header-btn, .header-control {
                     background: rgba(255,255,255,0.15);
                     border: none;
                     color: white;
                     width: 32px;
                     height: 32px;
-                    border-radius: 50%;
-                    font-size: 1.2rem;
+                    border-radius: 30px;
+                    font-size: 1rem;
                     cursor: pointer;
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
                     transition: 0.2s;
                 }
-                .header-control { width: auto; border-radius: 30px; padding: 0 12px; font-size: 0.9rem; gap: 5px; }
+                .header-control { width: auto; padding: 0 10px; gap: 4px; font-size: 0.8rem; }
                 .nexus-header-btn:hover, .header-control:hover { background: rgba(255,255,255,0.3); }
                 .conversation-tabs {
                     display: flex;
@@ -450,155 +490,161 @@ Question: ${text}`;
                     padding: 10px 10px 0 10px;
                     background: #f0f7ff;
                     border-bottom: 1px solid #d0e0f0;
-                    gap: 5px;
+                    gap: 6px;
                     align-items: center;
+                    scrollbar-width: thin;
                 }
                 .conv-tab {
                     background: white;
                     border: 1px solid #d0e0f0;
                     border-radius: 30px 30px 0 0;
-                    padding: 6px 12px;
+                    padding: 5px 10px;
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: 6px;
                     cursor: pointer;
                     white-space: nowrap;
-                    font-size: 0.9rem;
+                    font-size: 0.85rem;
                     border-bottom: none;
                 }
                 .conv-tab.active { background: #2c7cb0; color: white; border-color: #2c7cb0; }
-                .conv-tab .conv-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
-                .conv-tab .delete-conv { background: transparent; border: none; color: inherit; cursor: pointer; font-size: 1.1rem; }
+                .conv-tab .conv-name { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+                .conv-tab .delete-conv { background: transparent; border: none; color: inherit; cursor: pointer; font-size: 1rem; }
                 .new-conv-btn {
                     background: transparent;
                     border: 1px dashed #2c7cb0;
                     border-radius: 30px;
-                    padding: 5px 10px;
+                    padding: 4px 10px;
                     color: #2c7cb0;
-                    font-size: 0.9rem;
+                    font-size: 0.85rem;
                     cursor: pointer;
                     white-space: nowrap;
                     display: flex;
                     align-items: center;
-                    gap: 5px;
+                    gap: 4px;
                 }
-                .nexus-search-area { padding: 8px 20px; background: #f9fcff; border-bottom: 1px solid #e0ecf5; }
-                .nexus-search-area input { width: 100%; padding: 8px 12px; border: 1px solid #d0e0f0; border-radius: 30px; outline: none; font-size: 0.9rem; }
+                .nexus-search-area { padding: 8px 16px; background: #f9fcff; border-bottom: 1px solid #e0ecf5; }
+                .nexus-search-area input { width: 100%; padding: 8px 12px; border: 1px solid #d0e0f0; border-radius: 30px; outline: none; font-size: 0.85rem; }
                 .pinned-section {
-                    padding: 8px 20px;
+                    padding: 8px 16px;
                     background: #f0f7ff;
                     border-bottom: 1px solid #e0ecf5;
-                    font-size: 0.9rem;
-                    max-height: 150px;
+                    font-size: 0.85rem;
+                    max-height: 130px;
                     overflow-y: auto;
                     display: none;
                 }
-                .pinned-title { font-weight: 600; color: #0a2942; margin-bottom: 8px; }
+                .pinned-title { font-weight: 600; color: #0a2942; margin-bottom: 6px; }
                 .pinned-item { padding: 4px 0; cursor: pointer; color: #1e4b6e; border-bottom: 1px solid #e0ecf5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
                 .nexus-messages {
                     flex: 1;
                     overflow-y: auto;
-                    padding: 20px;
+                    padding: 16px;
                     background: #f9fcff;
-                    min-height: 250px;
+                    min-height: 200px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
                 }
-                .message { display: flex; gap: 12px; margin-bottom: 20px; }
+                .message { display: flex; gap: 10px; align-items: flex-start; }
                 .message.user { flex-direction: row-reverse; }
                 .avatar {
-                    width: 36px;
-                    height: 36px;
+                    width: 34px;
+                    height: 34px;
                     border-radius: 50%;
                     background: #e6f0fa;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 1.5rem;
+                    font-size: 1.3rem;
+                    flex-shrink: 0;
                 }
                 .user .avatar { background: #2c7cb0; color: white; }
                 .bubble-wrapper { max-width: 80%; }
                 .message-bubble {
-                    padding: 12px 16px;
+                    padding: 10px 14px;
                     border-radius: 20px;
                     background: white;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
                     color: #0a2942;
                     word-wrap: break-word;
-                    line-height: 1.5;
+                    line-height: 1.45;
                     font-size: 0.95rem;
                 }
                 .user .message-bubble { background: #2c7cb0; color: white; }
                 .message-footer {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
-                    margin-top: 5px;
-                    font-size: 0.8rem;
+                    gap: 8px;
+                    margin-top: 4px;
+                    font-size: 0.7rem;
                     color: #8a9cb0;
                 }
-                .timestamp { font-size: 0.7rem; }
-                button { background: none; border: none; cursor: pointer; color: #8a9cb0; font-size: 1rem; padding: 0 3px; }
+                .timestamp { font-size: 0.65rem; }
+                button { background: none; border: none; cursor: pointer; color: #8a9cb0; font-size: 0.9rem; padding: 2px 5px; }
                 button:hover { color: #2c7cb0; }
-                .typing .message-bubble { background: #e6f0fa; display: flex; gap: 4px; padding: 16px; }
-                .typing-indicator span { animation: blink 1.4s infinite; font-size: 1.5rem; line-height: 0.5; }
+                .typing .message-bubble { background: #e6f0fa; display: flex; gap: 4px; padding: 12px 16px; }
+                .typing-indicator span { animation: blink 1.4s infinite; font-size: 1.2rem; line-height: 0.5; }
                 @keyframes blink { 0% { opacity:0.2; } 20% { opacity:1; } 100% { opacity:0.2; } }
                 .nexus-input-area {
-                    padding: 16px 20px;
+                    padding: 12px 16px;
                     border-top: 1px solid #e0ecf5;
                     display: flex;
                     gap: 8px;
                     background: white;
-                    align-items: center;
-                    flex-wrap: wrap;
+                    align-items: flex-end;
                 }
                 .nexus-input-area textarea {
                     flex: 1;
-                    padding: 12px 16px;
+                    padding: 10px 14px;
                     border: 1px solid #d0e0f0;
-                    border-radius: 30px;
-                    resize: none;
+                    border-radius: 24px;
+                    resize: vertical;
                     font-family: inherit;
-                    font-size: 0.95rem;
+                    font-size: 0.9rem;
                     outline: none;
-                    min-width: 150px;
+                    min-height: 44px;
+                    max-height: 120px;
                 }
                 .nexus-input-area button {
                     background: #2c7cb0;
                     color: white;
                     border: none;
-                    border-radius: 30px;
-                    width: 48px;
-                    height: 48px;
+                    border-radius: 40px;
+                    width: 44px;
+                    height: 44px;
                     font-size: 1.2rem;
                     cursor: pointer;
                     transition: 0.2s;
-                    box-shadow: 0 4px 8px rgba(44,124,176,0.3);
+                    box-shadow: 0 2px 6px rgba(44,124,176,0.3);
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
                 }
                 .nexus-input-area button:disabled { background: #a0b8cc; cursor: not-allowed; }
-                .nexus-input-area button:last-child { background: #555; box-shadow: none; }
                 .suggestions {
                     display: flex;
                     gap: 8px;
-                    padding: 0 20px 8px;
+                    padding: 8px 16px 4px;
                     flex-wrap: wrap;
+                    border-top: 1px solid #e0ecf5;
+                    background: white;
                 }
                 .suggestion-chip {
                     background: #e6f0fa;
                     border-radius: 40px;
-                    padding: 6px 12px;
-                    font-size: 0.8rem;
+                    padding: 5px 12px;
+                    font-size: 0.75rem;
                     cursor: pointer;
                     color: #1e4b6e;
                     transition: 0.2s;
                 }
                 .suggestion-chip:hover { background: #cde0f0; transform: scale(1.02); }
-                .nexus-stats { font-size: 0.7rem; color: #8a9cb0; padding: 0 20px 8px; text-align: right; }
-                @media (max-width: 600px) {
-                    .nexus-panel { width: calc(100vw - 40px); right: 20px; bottom: 100px; }
-                    .nexus-input-area button { width: 40px; height: 40px; }
-                    .suggestion-chip { font-size: 0.7rem; }
+                .nexus-stats { font-size: 0.65rem; color: #8a9cb0; padding: 6px 16px 12px; text-align: right; }
+                @media (max-width: 560px) {
+                    .nexus-panel { width: calc(100vw - 30px); right: 15px; bottom: 85px; max-height: 80vh; }
+                    .nexus-bubble { bottom: 20px; right: 20px; width: 56px; height: 56px; font-size: 2rem; }
+                    .message-bubble { font-size: 0.85rem; }
                 }
             </style>
             <div class="nexus-bubble">
@@ -612,7 +658,7 @@ Question: ${text}`;
                         <button class="header-control" id="nexus-font-minus">A-</button>
                         <button class="header-control" id="nexus-font-plus">A+</button>
                         <button class="header-control" id="nexus-dark-toggle">🌓</button>
-                        <select id="nexus-personality" class="header-control" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:30px; padding:0 12px;">
+                        <select id="nexus-personality" class="header-control" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:30px; padding:0 10px;">
                             <option value="detailed">📘 Detailed</option>
                             <option value="concise">📝 Concise</option>
                             <option value="usmle">🎯 USMLE Focus</option>
@@ -632,7 +678,7 @@ Question: ${text}`;
                     <div class="suggestion-chip" data-question="How to treat hypertension?">🩺 Hypertension treatment</div>
                 </div>
                 <div class="nexus-input-area">
-                    <textarea id="nexus-input" placeholder="Ask a medical question..." rows="2" maxlength="1000"></textarea>
+                    <textarea id="nexus-input" placeholder="Ask a medical question..." rows="1" maxlength="1000"></textarea>
                     <button id="nexus-send">➤</button>
                     <button id="nexus-share" style="background:#555; box-shadow:none;">🔗</button>
                 </div>
@@ -654,6 +700,7 @@ Question: ${text}`;
         document.getElementById('nexus-close').onclick = () => panel.style.display = 'none';
         document.getElementById('nexus-send').onclick = () => sendMessage();
         document.getElementById('nexus-share').onclick = shareConversation;
+
         const textarea = document.getElementById('nexus-input');
         if (textarea) {
             textarea.addEventListener('keypress', (e) => {
@@ -661,6 +708,11 @@ Question: ${text}`;
                     e.preventDefault();
                     sendMessage();
                 }
+            });
+            // Auto-resize
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(120, this.scrollHeight) + 'px';
             });
         }
         document.getElementById('nexus-search').addEventListener('input', filterMessages);
@@ -686,11 +738,11 @@ Question: ${text}`;
         renderMessages();
     }
 
-    // Expose functions for external use (selection popup, sync)
+    // Expose functions
     window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     window.renameConversation = renameConversation;
     window.deleteConversation = deleteConversation;
