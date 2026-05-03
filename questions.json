@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "subject": "Cardiology",
+    "difficulty": 1,
+    "text": "Which of the following is the most common cause of heart failure with preserved ejection fraction (HFpEF)?",
+    "options": [
+      "A. Ischemic cardiomyopathy",
+      "B. Hypertension",
+      "C. Dilated cardiomyopathy",
+      "D. Myocarditis",
+      "E. Valvular aortic stenosis"
+    ],
+    "correct": "B",
+    "explanation": "Hypertension is the most common cause of HFpEF. It leads to left ventricular hypertrophy and diastolic dysfunction, causing elevated filling pressures with preserved ejection fraction (>50%). Ischemic and dilated cardiomyopathy typically cause HFrEF."
+  },
+  {
+    "id": 2,
+    "subject": "Biochemistry",
+    "difficulty": 2,
+    "text": "A 6‑year‑old boy presents with developmental delay, coarse facial features, and hepatosplenomegaly. A bone marrow biopsy shows foam cells. Which enzyme deficiency is most likely?",
+    "options": [
+      "A. β‑glucocerebrosidase",
+      "B. Hexosaminidase A",
+      "C. Sphingomyelinase",
+      "D. Arylsulfatase A",
+      "E. α‑galactosidase"
+    ],
+    "correct": "A",
+    "explanation": "Gaucher disease (type 2) is caused by β‑glucocerebrosidase deficiency. It presents with hepatosplenomegaly, foam cells, and neurological involvement. Hexosaminidase A → Tay‑Sachs; Sphingomyelinase → Niemann‑Pick; Arylsulfatase A → metachromatic leukodystrophy; α‑galactosidase → Fabry."
+  },
+  {
+    "id": 3,
+    "subject": "Neurology",
+    "difficulty": 3,
+    "text": "A 72‑year‑old man with a history of hypertension and diabetes presents with sudden right‑sided weakness and aphasia. CT head shows no hemorrhage. Which of the following is the most appropriate next step if he is within 3 hours of symptom onset?",
+    "options": [
+      "A. Aspirin 325 mg",
+      "B. Clopidogrel 300 mg",
+      "C. IV thrombolysis with alteplase",
+      "D. Mechanical thrombectomy",
+      "E. Warfarin 5 mg"
+    ],
+    "correct": "C",
+    "explanation": "For acute ischemic stroke within 4.5 hours (especially within 3 hours), IV alteplase (tPA) is standard if no contraindications. Mechanical thrombectomy is for large vessel occlusion up to 24 hours. Aspirin and clopidogrel are secondary prevention, not acute thrombolysis."
+  },
+  {
+    "id": 4,
+    "subject": "Pharmacology",
+    "difficulty": 2,
+    "text": "A patient with heart failure and reduced ejection fraction is started on a medication that inhibits the RAAS and is known to cause a persistent dry cough. Which drug is most likely responsible?",
+    "options": [
+      "A. Losartan",
+      "B. Enalapril",
+      "C. Valsartan",
+      "D. Spironolactone",
+      "E. Metoprolol"
+    ],
+    "correct": "B",
+    "explanation": "ACE inhibitors (e.g., enalapril) commonly cause a dry cough due to bradykinin accumulation. ARBs (losartan, valsartan) do not cause cough. Spironolactone is an aldosterone antagonist; metoprolol is a beta‑blocker."
+  },
+  {
+    "id": 5,
+    "subject": "Random",
+    "difficulty": 1,
+    "text": "Which of the following laboratory findings is characteristic of iron deficiency anemia?",
+    "options": [
+      "A. Low serum ferritin, high TIBC",
+      "B. High serum ferritin, low TIBC",
+      "C. Low serum ferritin, low TIBC",
+      "D. High serum ferritin, high TIBC",
+      "E. Normal ferritin, normal TIBC"
+    ],
+    "correct": "A",
+    "explanation": "Iron deficiency anemia: low ferritin (depleted iron stores) and high TIBC (increased transferrin). Anemia of chronic disease: high ferritin, low TIBC."
+  }
+]
