@@ -1,24 +1,21 @@
-// notes.js – Persistent sticky notes with reliable highlighting
+// notes.js – Persistent sticky notes with proper load order and retry
 (function() {
     let currentUser = null;
     let currentBookId = null;
     let annotations = {};
     let activeNoteCard = null;
 
-    // Listen to auth state changes
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
         console.log("Auth state changed, user:", user ? user.uid : "null");
-        if (user && currentBookId) {
-            loadAnnotations();
-        }
+        if (user && currentBookId) loadAnnotations();
     });
 
     function getCurrentBookId() { return window.currentBookId || currentBookId; }
 
     async function loadAnnotations() {
         const bookId = getCurrentBookId();
-        if (!currentUser || !bookId) { console.log("No user or bookId"); return; }
+        if (!currentUser || !bookId) return;
         console.log("Loading annotations for book", bookId);
         const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(bookId));
         const doc = await docRef.get();
@@ -60,7 +57,6 @@
         const doc = iframe.contentDocument;
 
         annos.forEach(anno => {
-            // Find all text nodes that contain the exact text
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
             let nodes = [];
             while (walker.nextNode()) nodes.push(walker.currentNode);
@@ -79,7 +75,7 @@
                     span.textContent = anno.text;
                     range.deleteContents();
                     range.insertNode(span);
-                    break; // only highlight the first occurrence for simplicity
+                    break;
                 }
             }
         });
@@ -137,6 +133,7 @@
             contentDiv.innerHTML = '';
             contentDiv.appendChild(textarea);
             textarea.focus();
+
             const saveBtn = document.createElement('button');
             saveBtn.innerText = 'Save';
             saveBtn.style.marginTop = '8px';
@@ -147,6 +144,7 @@
             saveBtn.style.color = 'white';
             saveBtn.style.cursor = 'pointer';
             contentDiv.appendChild(saveBtn);
+
             saveBtn.onclick = () => {
                 const newNote = textarea.value.trim();
                 if (newNote) {
@@ -199,30 +197,36 @@
         localStorage.setItem('medlib_last_book', bookId);
     };
 
-    // Override openBook to set currentBookId and trigger load after iframe loads
-    const originalOpenBook = window.openBook;
-    if (originalOpenBook) {
-        window.openBook = async function(filename, bookId) {
-            currentBookId = bookId;
-            window.currentBookId = bookId;
-            localStorage.setItem('medlib_last_book', bookId);
-            console.log("openBook called, bookId =", bookId);
-            await originalOpenBook(filename, bookId);
-            const iframe = document.getElementById('bookFrame');
-            if (iframe) {
-                if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-                    if (currentUser) loadAnnotations();
-                } else {
-                    iframe.onload = () => {
-                        console.log("Iframe loaded, loading annotations");
+    // Wait for window.openBook to be defined, then override it
+    function waitForOpenBook() {
+        if (typeof window.openBook === 'function') {
+            const originalOpenBook = window.openBook;
+            window.openBook = async function(filename, bookId) {
+                currentBookId = bookId;
+                window.currentBookId = bookId;
+                localStorage.setItem('medlib_last_book', bookId);
+                console.log("openBook called, bookId =", bookId);
+                await originalOpenBook(filename, bookId);
+                const iframe = document.getElementById('bookFrame');
+                if (iframe) {
+                    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
                         if (currentUser) loadAnnotations();
-                    };
+                    } else {
+                        iframe.onload = () => {
+                            console.log("Iframe loaded, loading annotations");
+                            if (currentUser) loadAnnotations();
+                        };
+                    }
                 }
-            }
-        };
+            };
+            console.log("Nexus notes: openBook overridden");
+        } else {
+            setTimeout(waitForOpenBook, 100);
+        }
     }
+    waitForOpenBook();
 
-    // On page load, restore the last opened book
+    // On page load, restore last opened book
     window.addEventListener('load', () => {
         const lastBook = localStorage.getItem('medlib_last_book');
         if (lastBook && !currentBookId && !window.currentBookId) {
