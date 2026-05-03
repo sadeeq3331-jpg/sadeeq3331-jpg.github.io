@@ -1,9 +1,11 @@
-// notes.js – Persistent sticky notes with proper load order and retry
+// notes.js – Persistent sticky notes with reliable iframe detection and multi‑retry
 (function() {
     let currentUser = null;
     let currentBookId = null;
     let annotations = {};
     let activeNoteCard = null;
+    let renderRetryCount = 0;
+    const MAX_RENDER_RETRIES = 20;
 
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
@@ -21,7 +23,7 @@
         const doc = await docRef.get();
         annotations[bookId] = doc.exists ? doc.data().annotations || [] : [];
         console.log("Annotations loaded:", annotations[bookId].length);
-        renderHighlights();
+        renderHighlights(true); // force render
     }
 
     async function saveAnnotations() {
@@ -43,24 +45,37 @@
         });
     }
 
-    function renderHighlights() {
+    function renderHighlights(force = false) {
         const iframe = document.getElementById('bookFrame');
-        if (!iframe || !iframe.contentDocument || iframe.contentDocument.readyState !== 'complete') {
-            console.warn("Iframe not ready, will retry in 500ms");
-            setTimeout(renderHighlights, 500);
+        if (!iframe) {
+            console.warn("Iframe not found, will retry in 500ms");
+            if (renderRetryCount < MAX_RENDER_RETRIES) {
+                setTimeout(() => renderHighlights(true), 500);
+                renderRetryCount++;
+            }
             return;
         }
+        const doc = iframe.contentDocument;
+        if (!doc || doc.readyState !== 'complete') {
+            console.warn("Iframe not ready, will retry in 500ms");
+            if (renderRetryCount < MAX_RENDER_RETRIES) {
+                setTimeout(() => renderHighlights(true), 500);
+                renderRetryCount++;
+            }
+            return;
+        }
+        renderRetryCount = 0;
         clearHighlights();
         const bookId = getCurrentBookId();
         const annos = annotations[bookId] || [];
         console.log("Rendering", annos.length, "highlights");
-        const doc = iframe.contentDocument;
+        if (annos.length === 0) return;
 
         annos.forEach(anno => {
+            // Try to find the exact text in the document
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
-            let nodes = [];
-            while (walker.nextNode()) nodes.push(walker.currentNode);
-            for (let node of nodes) {
+            let node;
+            while (node = walker.nextNode()) {
                 let index = node.textContent.indexOf(anno.text);
                 if (index !== -1) {
                     const range = doc.createRange();
@@ -75,7 +90,7 @@
                     span.textContent = anno.text;
                     range.deleteContents();
                     range.insertNode(span);
-                    break;
+                    break; // only first occurrence for simplicity
                 }
             }
         });
@@ -152,7 +167,7 @@
                     contentDiv.innerHTML = escapeHtml(newNote);
                     element.setAttribute('data-note', newNote);
                     saveAnnotations();
-                    renderHighlights();
+                    renderHighlights(true);
                 } else {
                     contentDiv.innerHTML = escapeHtml(anno.note);
                 }
@@ -164,7 +179,7 @@
         };
         activeNoteCard = card;
 
-        // Close when clicking outside
+        // Close when clicking outside (with small delay to avoid immediate close)
         const closeOutside = (e) => {
             if (!card.contains(e.target)) {
                 if (card.parentNode) card.parentNode.removeChild(card);
@@ -190,14 +205,16 @@
         if (!bookId) { alert('No book open. Please open a book first.'); return; }
         const note = prompt('Enter your note for the selected text:');
         if (!note) return;
+        // Normalize text: trim and collapse spaces? Keep original but trim
+        const cleanText = text.trim();
         if (!annotations[bookId]) annotations[bookId] = [];
-        annotations[bookId].push({ id: Date.now(), text, note });
+        annotations[bookId].push({ id: Date.now(), text: cleanText, note });
         await saveAnnotations();
-        renderHighlights();
+        renderHighlights(true);
         localStorage.setItem('medlib_last_book', bookId);
     };
 
-    // Wait for window.openBook to be defined, then override it
+    // Wait for window.openBook to exist, then override it
     function waitForOpenBook() {
         if (typeof window.openBook === 'function') {
             const originalOpenBook = window.openBook;
@@ -206,22 +223,25 @@
                 window.currentBookId = bookId;
                 localStorage.setItem('medlib_last_book', bookId);
                 console.log("openBook called, bookId =", bookId);
-                await originalOpenBook(filename, bookId);
                 const iframe = document.getElementById('bookFrame');
                 if (iframe) {
-                    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                    // Attach load event BEFORE setting src
+                    const onLoadHandler = () => {
+                        console.log("Iframe load event");
                         if (currentUser) loadAnnotations();
-                    } else {
-                        iframe.onload = () => {
-                            console.log("Iframe loaded, loading annotations");
-                            if (currentUser) loadAnnotations();
-                        };
+                    };
+                    iframe.addEventListener('load', onLoadHandler);
+                    // If iframe already loaded, trigger immediately
+                    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                        console.log("Iframe already complete, triggering load handler");
+                        onLoadHandler();
                     }
                 }
+                await originalOpenBook(filename, bookId);
             };
             console.log("Nexus notes: openBook overridden");
         } else {
-            setTimeout(waitForOpenBook, 100);
+            setTimeout(waitForOpenBook, 200);
         }
     }
     waitForOpenBook();
