@@ -1,46 +1,30 @@
-// notes.js – Persistent sticky notes with book restore and exact highlighting
+// notes.js – Persistent sticky notes with reliable highlighting
 (function() {
     let currentUser = null;
     let currentBookId = null;
     let annotations = {};
     let activeNoteCard = null;
 
+    // Listen to auth state changes
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
         console.log("Auth state changed, user:", user ? user.uid : "null");
-        // After sign-in, restore book if needed
-        if (user) {
-            const lastBook = localStorage.getItem('medlib_last_book');
-            if (lastBook && !currentBookId && !window.currentBookId) {
-                // Reopen the last book
-                const book = books.find(b => b.id == lastBook);
-                if (book) {
-                    window.openBook(book.filename, book.id);
-                }
-            }
+        if (user && currentBookId) {
+            loadAnnotations();
         }
     });
 
     function getCurrentBookId() { return window.currentBookId || currentBookId; }
 
     async function loadAnnotations() {
-        if (!currentUser) { console.log("No user, cannot load annotations"); return; }
         const bookId = getCurrentBookId();
-        if (!bookId) { console.log("No currentBookId, cannot load annotations"); return; }
+        if (!currentUser || !bookId) { console.log("No user or bookId"); return; }
         console.log("Loading annotations for book", bookId);
         const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(bookId));
         const doc = await docRef.get();
         annotations[bookId] = doc.exists ? doc.data().annotations || [] : [];
         console.log("Annotations loaded:", annotations[bookId].length);
-        const iframe = document.getElementById('bookFrame');
-        if (iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-            renderHighlights();
-        } else if (iframe) {
-            iframe.onload = () => renderHighlights();
-        } else {
-            console.warn("Iframe not found, will retry in 500ms");
-            setTimeout(() => renderHighlights(), 500);
-        }
+        renderHighlights();
     }
 
     async function saveAnnotations() {
@@ -48,7 +32,7 @@
         if (!currentUser || !bookId) return;
         const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(bookId));
         await docRef.set({ annotations: annotations[bookId] || [] });
-        console.log("Annotations saved for book", bookId);
+        console.log("Annotations saved");
     }
 
     function clearHighlights() {
@@ -64,25 +48,25 @@
 
     function renderHighlights() {
         const iframe = document.getElementById('bookFrame');
-        if (!iframe || !iframe.contentDocument) {
-            console.warn("Iframe not ready, cannot render highlights");
+        if (!iframe || !iframe.contentDocument || iframe.contentDocument.readyState !== 'complete') {
+            console.warn("Iframe not ready, will retry in 500ms");
+            setTimeout(renderHighlights, 500);
             return;
         }
-        const doc = iframe.contentDocument;
         clearHighlights();
-
         const bookId = getCurrentBookId();
         const annos = annotations[bookId] || [];
         console.log("Rendering", annos.length, "highlights");
+        const doc = iframe.contentDocument;
+
         annos.forEach(anno => {
-            // Try to find the exact text in the document
+            // Find all text nodes that contain the exact text
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
-            let node;
-            while (node = walker.nextNode()) {
-                // Find the exact occurrence of the selected text
+            let nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            for (let node of nodes) {
                 let index = node.textContent.indexOf(anno.text);
                 if (index !== -1) {
-                    // Split the text node at the selected range
                     const range = doc.createRange();
                     range.setStart(node, index);
                     range.setEnd(node, index + anno.text.length);
@@ -95,17 +79,14 @@
                     span.textContent = anno.text;
                     range.deleteContents();
                     range.insertNode(span);
-                    // Now we need to adjust for the remaining text nodes
-                    // But we break after first occurrence (simplification)
-                    break;
+                    break; // only highlight the first occurrence for simplicity
                 }
             }
         });
-        // Attach event listeners to all spans
-        const doc2 = iframe.contentDocument;
-        doc2.querySelectorAll('.medlib-note-highlight').forEach(span => {
+        // Re-attach click events
+        doc.querySelectorAll('.medlib-note-highlight').forEach(span => {
             const id = span.getAttribute('data-id');
-            const anno = annotations[bookId].find(a => a.id == id);
+            const anno = annos.find(a => a.id == id);
             if (anno) {
                 span.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -141,7 +122,6 @@
         card.style.left = Math.max(10, left) + 'px';
         card.style.top = Math.max(10, top) + 'px';
 
-        // Edit functionality
         const editBtn = card.querySelector('.note-edit');
         const contentDiv = card.querySelector('.note-content');
         editBtn.onclick = () => {
@@ -157,7 +137,6 @@
             contentDiv.innerHTML = '';
             contentDiv.appendChild(textarea);
             textarea.focus();
-
             const saveBtn = document.createElement('button');
             saveBtn.innerText = 'Save';
             saveBtn.style.marginTop = '8px';
@@ -168,7 +147,6 @@
             saveBtn.style.color = 'white';
             saveBtn.style.cursor = 'pointer';
             contentDiv.appendChild(saveBtn);
-
             saveBtn.onclick = () => {
                 const newNote = textarea.value.trim();
                 if (newNote) {
@@ -176,19 +154,19 @@
                     contentDiv.innerHTML = escapeHtml(newNote);
                     element.setAttribute('data-note', newNote);
                     saveAnnotations();
+                    renderHighlights();
                 } else {
                     contentDiv.innerHTML = escapeHtml(anno.note);
                 }
             };
         };
-
         card.querySelector('.note-close').onclick = () => {
             if (card.parentNode) card.parentNode.removeChild(card);
             activeNoteCard = null;
         };
         activeNoteCard = card;
 
-        // Click outside to close
+        // Close when clicking outside
         const closeOutside = (e) => {
             if (!card.contains(e.target)) {
                 if (card.parentNode) card.parentNode.removeChild(card);
@@ -205,8 +183,6 @@
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
         });
     }
 
@@ -220,17 +196,17 @@
         annotations[bookId].push({ id: Date.now(), text, note });
         await saveAnnotations();
         renderHighlights();
-        // Also store the last book ID in localStorage for persistence
         localStorage.setItem('medlib_last_book', bookId);
     };
 
+    // Override openBook to set currentBookId and trigger load after iframe loads
     const originalOpenBook = window.openBook;
     if (originalOpenBook) {
         window.openBook = async function(filename, bookId) {
             currentBookId = bookId;
             window.currentBookId = bookId;
             localStorage.setItem('medlib_last_book', bookId);
-            console.log("openBook called, setting currentBookId =", bookId);
+            console.log("openBook called, bookId =", bookId);
             await originalOpenBook(filename, bookId);
             const iframe = document.getElementById('bookFrame');
             if (iframe) {
@@ -242,19 +218,14 @@
                         if (currentUser) loadAnnotations();
                     };
                 }
-            } else {
-                console.warn("Iframe not found after openBook");
             }
         };
-    } else {
-        console.warn("window.openBook not found, cannot override");
     }
 
-    // On page load, restore last book
+    // On page load, restore the last opened book
     window.addEventListener('load', () => {
         const lastBook = localStorage.getItem('medlib_last_book');
         if (lastBook && !currentBookId && !window.currentBookId) {
-            // Wait a bit for books array to load
             const checkBooks = setInterval(() => {
                 if (window.books && window.books.length) {
                     clearInterval(checkBooks);
