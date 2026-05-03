@@ -1,4 +1,4 @@
-// notes.js – Persistent sticky notes with inline editing
+// notes.js – Persistent sticky notes with retry and debug logs
 (function() {
     let currentUser = null;
     let currentBookId = null;
@@ -7,28 +7,31 @@
 
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
-        if (user && currentBookId) loadAnnotations();
+        console.log("Auth state changed, user:", user ? user.uid : "null");
+        if (user && currentBookId) {
+            console.log("User signed in and book ID present, loading annotations for", currentBookId);
+            loadAnnotations();
+        }
     });
 
     function getCurrentBookId() { return window.currentBookId || null; }
 
     async function loadAnnotations() {
-        if (!currentUser || !currentBookId) return;
+        if (!currentUser) { console.log("No user, cannot load annotations"); return; }
+        if (!currentBookId) { console.log("No currentBookId, cannot load annotations"); return; }
+        console.log("Loading annotations for book", currentBookId);
         const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(currentBookId));
         const doc = await docRef.get();
         annotations[currentBookId] = doc.exists ? doc.data().annotations || [] : [];
-        // Wait for iframe to be ready before rendering highlights
+        console.log("Annotations loaded:", annotations[currentBookId].length);
         const iframe = document.getElementById('bookFrame');
-        if (iframe && iframe.contentDocument) {
+        if (iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
             renderHighlights();
+        } else if (iframe) {
+            iframe.onload = () => renderHighlights();
         } else {
-            const checkInterval = setInterval(() => {
-                const iframe = document.getElementById('bookFrame');
-                if (iframe && iframe.contentDocument) {
-                    clearInterval(checkInterval);
-                    renderHighlights();
-                }
-            }, 200);
+            console.warn("Iframe not found, will retry in 500ms");
+            setTimeout(() => renderHighlights(), 500);
         }
     }
 
@@ -36,6 +39,7 @@
         if (!currentUser || !currentBookId) return;
         const docRef = firebase.firestore().collection('users').doc(currentUser.uid).collection('annotations').doc(String(currentBookId));
         await docRef.set({ annotations: annotations[currentBookId] || [] });
+        console.log("Annotations saved for book", currentBookId);
     }
 
     function clearHighlights() {
@@ -51,11 +55,15 @@
 
     function renderHighlights() {
         const iframe = document.getElementById('bookFrame');
-        if (!iframe || !iframe.contentDocument) return;
+        if (!iframe || !iframe.contentDocument) {
+            console.warn("Iframe not ready, cannot render highlights");
+            return;
+        }
         const doc = iframe.contentDocument;
         clearHighlights();
 
         const annos = annotations[currentBookId] || [];
+        console.log("Rendering", annos.length, "highlights");
         annos.forEach(anno => {
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
             let node;
@@ -105,11 +113,9 @@
         card.style.left = Math.max(10, left) + 'px';
         card.style.top = Math.max(10, top) + 'px';
 
-        // Edit button – opens inline editor
         const editBtn = card.querySelector('.note-edit');
         const contentDiv = card.querySelector('.note-content');
         editBtn.onclick = () => {
-            // Replace content with a textarea
             const textarea = document.createElement('textarea');
             textarea.value = anno.note;
             textarea.style.width = '100%';
@@ -123,7 +129,6 @@
             contentDiv.appendChild(textarea);
             textarea.focus();
 
-            // Save button
             const saveBtn = document.createElement('button');
             saveBtn.innerText = 'Save';
             saveBtn.style.marginTop = '8px';
@@ -142,7 +147,7 @@
                     contentDiv.innerHTML = escapeHtml(newNote);
                     element.setAttribute('data-note', newNote);
                     saveAnnotations();
-                    renderHighlights(); // re-render to update all instances
+                    renderHighlights();
                 } else {
                     contentDiv.innerHTML = escapeHtml(anno.note);
                 }
@@ -162,13 +167,15 @@
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
         });
     }
 
     window.addAnnotation = async function(text) {
         if (!currentUser) { alert('Please sign in to add notes.'); return; }
         currentBookId = getCurrentBookId();
-        if (!currentBookId) return;
+        if (!currentBookId) { alert('No book open. Please open a book first.'); return; }
         const note = prompt('Enter your note for the selected text:');
         if (!note) return;
         if (!annotations[currentBookId]) annotations[currentBookId] = [];
@@ -182,16 +189,23 @@
         window.openBook = async function(filename, bookId) {
             currentBookId = bookId;
             window.currentBookId = bookId;
+            console.log("openBook called, setting currentBookId =", bookId);
             await originalOpenBook(filename, bookId);
-            if (currentUser) {
-                // Wait for iframe to load
-                const iframe = document.getElementById('bookFrame');
-                if (iframe) {
-                    iframe.onload = () => loadAnnotations();
+            const iframe = document.getElementById('bookFrame');
+            if (iframe) {
+                if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                    if (currentUser) loadAnnotations();
                 } else {
-                    loadAnnotations();
+                    iframe.onload = () => {
+                        console.log("Iframe loaded, loading annotations");
+                        if (currentUser) loadAnnotations();
+                    };
                 }
+            } else {
+                console.warn("Iframe not found after openBook");
             }
         };
+    } else {
+        console.warn("window.openBook not found, cannot override");
     }
 })();
