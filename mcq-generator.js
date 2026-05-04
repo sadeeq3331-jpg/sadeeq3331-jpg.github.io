@@ -1,7 +1,7 @@
-// mcq-generator.js – AI-powered MCQ generator (Puter Nexus AI) – v2.0 (fixed + cool UI)
+// mcq-generator.js – AI-powered MCQ generator (Puter Nexus AI) – v2.1 (randomised correct answer + cool UI)
 (function () {
   // ---------- CONFIGURATION ----------
-  const RATE_LIMIT_WINDOW = 60_000;      // 1 minute
+  const RATE_LIMIT_WINDOW = 60_000;
   const MAX_CALLS_PER_WINDOW = 3;
   let callTimestamps = [];
   const cache = {};
@@ -56,18 +56,54 @@ Output ONLY valid JSON in this exact format:
   function extractTextFromResponse(raw) {
     if (typeof raw === 'string') return raw;
     if (raw && typeof raw === 'object') {
-      // common shapes: { message: { content: "..." } }, { text: "..." }, { choices: [...] }, etc.
       return raw.message?.content
           || raw.text
           || raw.content
           || raw.choices?.[0]?.message?.content
           || raw.choices?.[0]?.text
-          || JSON.stringify(raw);  // fallback
+          || JSON.stringify(raw);
     }
     return String(raw || '');
   }
 
-  // ---------- AI GENERATION (with fix) ----------
+  // ---------- SHUFFLE OPTIONS & RANDOMISE CORRECT ANSWER ----------
+  function shuffleOptionsAndCorrect(question) {
+    if (!question || !Array.isArray(question.options) || question.options.length === 0) return question;
+
+    // 1. Extract text without the letter prefix (e.g., "A. ..." -> "...")
+    const texts = question.options.map(opt => {
+      const match = opt.match(/^[A-E]\.\s*(.+)/);
+      return match ? match[1] : opt;  // fallback: use whole string if format not matched
+    });
+
+    // 2. Identify the correct answer text
+    const correctLetter = question.correct.trim().toUpperCase();
+    const correctText = texts['ABCDE'.indexOf(correctLetter)];
+    if (!correctText) return question; // can't map, return unchanged
+
+    // 3. Fisher-Yates shuffle of texts
+    const shuffled = [...texts];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    // 4. Reassign letters
+    const newOptions = shuffled.map((text, idx) => `${String.fromCharCode(65 + idx)}. ${text}`);
+
+    // 5. Find new index of the correct answer text
+    const newCorrectIndex = shuffled.indexOf(correctText);
+    if (newCorrectIndex === -1) return question; // text not found (shouldn't happen)
+    const newCorrect = String.fromCharCode(65 + newCorrectIndex);
+
+    return {
+      ...question,
+      options: newOptions,
+      correct: newCorrect
+    };
+  }
+
+  // ---------- AI GENERATION (with fix and shuffle) ----------
   async function generateQuestionFromAI(subject, difficulty) {
     if (isRateLimited()) return null;
     recordCall();
@@ -81,20 +117,17 @@ Output ONLY valid JSON in this exact format:
         model: 'google/gemini-2.0-flash-lite-001'
       });
 
-      // 1. extract the actual text from the response
       let jsonText = extractTextFromResponse(rawResponse);
-
-      // 2. strip markdown code fences if present
       jsonText = jsonText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
 
-      // 3. parse JSON
       const parsed = JSON.parse(jsonText);
-
-      // basic validation
       if (!parsed.question || !Array.isArray(parsed.options) || !parsed.correct) {
         throw new Error('Incomplete AI response');
       }
-      return parsed;
+
+      // 🔀 RANDOMISE the correct answer placement
+      const randomised = shuffleOptionsAndCorrect(parsed);
+      return randomised;
     } catch (error) {
       console.error('AI generation failed:', error);
       return null;
@@ -138,7 +171,6 @@ Output ONLY valid JSON in this exact format:
     explanationEl.innerHTML = '';
     hasAnswered = false;
 
-    // Reset option styling
     document.querySelectorAll('.mcq-option').forEach(btn => {
       btn.classList.remove('correct', 'wrong', 'disabled');
       btn.disabled = false;
@@ -183,7 +215,6 @@ Output ONLY valid JSON in this exact format:
 
     const isCorrect = selectedLetter === currentQuestion.correct;
 
-    // Highlight all option buttons
     document.querySelectorAll('.mcq-option').forEach(btn => {
       const letter = btn.getAttribute('data-letter');
       btn.disabled = true;
@@ -194,7 +225,6 @@ Output ONLY valid JSON in this exact format:
       }
     });
 
-    // Show explanation
     const correctOption = currentQuestion.options.find(opt => opt.startsWith(currentQuestion.correct));
     const explanationHtml = `
       <div class="mcq-explanation-box ${isCorrect ? 'correct' : 'incorrect'}">
@@ -216,7 +246,7 @@ Output ONLY valid JSON in this exact format:
     section.innerHTML = `
       <div class="mcq-glass-panel">
         <h2 class="mcq-title">🧬 Smart MCQ Generator</h2>
-        <p class="mcq-subtitle">Nexus AI will create a fresh USMLE‑style question just for you.</p>
+        <p class="mcq-subtitle">Nexus AI will create a fresh USMLE‑style question – correct answer is always randomised among A‑E.</p>
 
         <div class="mcq-controls">
           <select id="mcq-subject" class="mcq-select">
@@ -263,7 +293,6 @@ Output ONLY valid JSON in this exact format:
       </div>
     `;
 
-    // Insert after About MedLib or at the end
     const about = document.getElementById('about-medlib-bottom');
     if (about && about.parentNode) {
       about.parentNode.insertBefore(section, about.nextSibling);
@@ -271,7 +300,6 @@ Output ONLY valid JSON in this exact format:
       mainContent.appendChild(section);
     }
 
-    // Attach events
     document.getElementById('generate-mcq-btn').addEventListener('click', () => generateQuestion(false));
     document.getElementById('regenerate-mcq-btn').addEventListener('click', regenerateQuestion);
   }
@@ -282,7 +310,6 @@ Output ONLY valid JSON in this exact format:
     const style = document.createElement('style');
     style.id = 'mcq-styles';
     style.textContent = `
-      /* ---------- COOL GLASS PANEL ---------- */
       .mcq-glass-panel {
         background: rgba(255,255,255,0.7);
         backdrop-filter: blur(20px);
@@ -294,7 +321,6 @@ Output ONLY valid JSON in this exact format:
         margin: 2rem 0;
         color: #0a2942;
       }
-
       .mcq-title {
         font-size: 2rem;
         font-weight: 700;
@@ -303,14 +329,11 @@ Output ONLY valid JSON in this exact format:
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
-
       .mcq-subtitle {
         margin-bottom: 2rem;
         opacity: 0.8;
         font-size: 1.1rem;
       }
-
-      /* ---------- CONTROLS ---------- */
       .mcq-controls {
         display: flex;
         flex-wrap: wrap;
@@ -318,7 +341,6 @@ Output ONLY valid JSON in this exact format:
         align-items: center;
         margin-bottom: 2rem;
       }
-
       .mcq-select {
         padding: 0.75rem 1.75rem;
         border-radius: 50px;
@@ -331,17 +353,14 @@ Output ONLY valid JSON in this exact format:
         transition: all 0.2s;
         cursor: pointer;
       }
-
       .mcq-select:hover {
         border-color: #2c7cb0;
         box-shadow: 0 4px 12px rgba(44,124,176,0.2);
       }
-
       .mcq-buttons {
         display: flex;
         gap: 0.75rem;
       }
-
       .mcq-btn {
         padding: 0.75rem 2rem;
         border-radius: 50px;
@@ -352,43 +371,35 @@ Output ONLY valid JSON in this exact format:
         transition: all 0.2s;
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       }
-
       .mcq-btn.primary {
         background: linear-gradient(135deg, #2c7cb0, #1f5a82);
         color: white;
       }
-
       .mcq-btn.warning {
         background: #ffc107;
         color: #0a2942;
       }
-
       .mcq-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       }
-
-      /* ---------- QUESTION CARD ---------- */
       #mcq-question-card {
         background: white;
         border-radius: 24px;
         padding: 2rem;
         box-shadow: 0 10px 30px rgba(0,0,0,0.06);
       }
-
       .mcq-question-text {
         font-size: 1.2rem;
         font-weight: 600;
         margin-bottom: 1.5rem;
         line-height: 1.6;
       }
-
       .mcq-options-grid {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
       }
-
       .mcq-option {
         display: flex;
         align-items: center;
@@ -402,13 +413,11 @@ Output ONLY valid JSON in this exact format:
         text-align: left;
         font-size: 1rem;
       }
-
       .mcq-option:hover:not(.disabled) {
         border-color: #2c7cb0;
         background: #eef6ff;
         transform: translateX(4px);
       }
-
       .mcq-opt-letter {
         font-weight: 800;
         font-size: 1.3rem;
@@ -421,33 +430,26 @@ Output ONLY valid JSON in this exact format:
         justify-content: center;
         color: #1e3c72;
       }
-
       .mcq-option.correct {
         border-color: #28a745;
         background: #e8f5e9;
       }
-
       .mcq-option.correct .mcq-opt-letter {
         background: #28a745;
         color: white;
       }
-
       .mcq-option.wrong {
         border-color: #dc3545;
         background: #fbeaea;
       }
-
       .mcq-option.wrong .mcq-opt-letter {
         background: #dc3545;
         color: white;
       }
-
       .mcq-option.disabled {
         opacity: 0.6;
         cursor: default;
       }
-
-      /* ---------- EXPLANATION ---------- */
       .mcq-explanation-box {
         margin-top: 2rem;
         padding: 1.25rem;
@@ -456,27 +458,21 @@ Output ONLY valid JSON in this exact format:
         line-height: 1.7;
         border-left: 5px solid;
       }
-
       .mcq-explanation-box.correct {
         background: #e8f5e9;
         border-color: #28a745;
       }
-
       .mcq-explanation-box.incorrect {
         background: #fbeaea;
         border-color: #dc3545;
       }
-
       .correct-answer {
         font-weight: 600;
       }
-
-      /* Loading animation */
       .loading-dots::after {
         content: '';
         animation: dots 1.5s steps(4, end) infinite;
       }
-
       @keyframes dots {
         0% { content: '.'; }
         25% { content: '..'; }
@@ -484,8 +480,6 @@ Output ONLY valid JSON in this exact format:
         75% { content: '....'; }
         100% { content: '.'; }
       }
-
-      /* ---------- MOBILE ---------- */
       @media (max-width: 600px) {
         .mcq-glass-panel {
           padding: 1.5rem;
