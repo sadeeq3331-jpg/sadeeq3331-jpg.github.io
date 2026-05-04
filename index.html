@@ -158,6 +158,50 @@
             border-top: 1px solid #e2e8f0;
         }
 
+        /* -------------------- Modern sign-in / sign-out buttons -------------------- */
+        #google-login-btn, #logout-btn {
+            background: linear-gradient(135deg, #0d9488, #0f766e);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0.55rem 1.4rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-left: 0.75rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        #google-login-btn:hover, #logout-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(13,148,136,0.45);
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+        }
+        #logout-btn {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        }
+        #logout-btn:hover {
+            box-shadow: 0 8px 25px rgba(239,68,68,0.45);
+            background: linear-gradient(135deg, #f87171, #dc2626);
+        }
+        #user-name {
+            font-weight: 600;
+            color: #0a2942;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        @media (max-width: 600px) {
+            #google-login-btn, #logout-btn {
+                padding: 0.4rem 0.9rem;
+                font-size: 0.8rem;
+                margin-left: 0.5rem;
+            }
+        }
+
         @media (prefers-color-scheme: dark) {
             .hero {
                 background: linear-gradient(135deg, #0d2e2b, #0b2f2a) !important;
@@ -183,8 +227,8 @@
         <h1>MedLib</h1>
         <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
         <span id="user-name" style="margin-left: 1rem;"></span>
-        <button id="google-login-btn" class="icon-btn">🔐 Sign in</button>
-        <button id="logout-btn" class="icon-btn" style="display:none;">🚪 Sign out</button>
+        <button id="google-login-btn">🔐 Sign in</button>
+        <button id="logout-btn" style="display:none;">🚪 Sign out</button>
         <button class="theme-toggle" id="themeToggle" aria-label="Dark mode"><i class="fas fa-moon"></i></button>
     </div>
 
