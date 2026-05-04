@@ -1,4 +1,4 @@
-// nexus.js – v2.2 (fixed read-more, global functions, improved escaping)
+// nexus.js – v2.3 (all fixes + text-selection → Ask Nexus)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
@@ -211,13 +211,22 @@
                 deleteConversation(id);
             });
         });
-        document.getElementById('new-chat-sidebar')?.addEventListener('click', newConversation);
+        document.getElementById('new-chat-sidebar')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            newConversation();
+        });
         document.getElementById('sidebar-personality')?.addEventListener('change', (e) => {
             personality = e.target.value;
         });
         document.getElementById('sidebar-dark-toggle')?.addEventListener('change', togglePanelDarkMode);
-        document.getElementById('font-minus')?.addEventListener('click', () => setFontSize(-2));
-        document.getElementById('font-plus')?.addEventListener('click', () => setFontSize(2));
+        document.getElementById('font-minus')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setFontSize(-2);
+        });
+        document.getElementById('font-plus')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setFontSize(2);
+        });
     }
 
     function renderAll() {
@@ -257,10 +266,10 @@
                             ${isLong ? `<button class="read-more" data-idx="${originalIdx}">Read more</button>` : ''}
                         </div>
                         <div class="message-actions">
-                            ${!isUser ? `<button class="icon-btn" onclick="window.togglePinMessage(${originalIdx})" title="${pinned ? 'Unpin' : 'Pin'}">${pinned ? '📌' : '📍'}</button>` : ''}
-                            <button class="icon-btn" onclick="window.copyMessageContent(${originalIdx})" title="Copy">📋</button>
-                            ${isUser ? `<button class="icon-btn" data-edit-idx="${originalIdx}" title="Edit">✏️</button>` : `<button class="icon-btn" onclick="window.quoteMessage(${originalIdx})" title="Quote reply">💬</button>`}
-                            <button class="icon-btn" onclick="window.deleteMessage(${originalIdx})" title="Delete">🗑️</button>
+                            ${!isUser ? `<button class="icon-btn pin-btn" data-idx="${originalIdx}" title="${pinned ? 'Unpin' : 'Pin'}">${pinned ? '📌' : '📍'}</button>` : ''}
+                            <button class="icon-btn copy-btn" data-idx="${originalIdx}" title="Copy">📋</button>
+                            ${isUser ? `<button class="icon-btn edit-btn" data-idx="${originalIdx}" title="Edit">✏️</button>` : `<button class="icon-btn quote-btn" data-idx="${originalIdx}" title="Quote reply">💬</button>`}
+                            <button class="icon-btn delete-btn" data-idx="${originalIdx}" title="Delete">🗑️</button>
                         </div>
                         <div class="timestamp">${time}</div>
                     </div>
@@ -274,7 +283,7 @@
         }
         msgsDiv.innerHTML = html;
 
-        // Attach event listeners for read-more and edit buttons
+        // Attach event listeners with stopPropagation to prevent panel close
         msgsDiv.querySelectorAll('.read-more').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -282,10 +291,34 @@
                 window.toggleReadMore(idx);
             });
         });
-        msgsDiv.querySelectorAll('[data-edit-idx]').forEach(btn => {
+        msgsDiv.querySelectorAll('.pin-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const idx = parseInt(btn.dataset.editIdx);
+                window.togglePinMessage(parseInt(btn.dataset.idx));
+            });
+        });
+        msgsDiv.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.copyMessageContent(parseInt(btn.dataset.idx));
+            });
+        });
+        msgsDiv.querySelectorAll('.quote-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.quoteMessage(parseInt(btn.dataset.idx));
+            });
+        });
+        msgsDiv.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.deleteMessage(parseInt(btn.dataset.idx));
+            });
+        });
+        msgsDiv.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.idx);
                 const conv = getCurrentConv();
                 if (!conv || !conv.messages[idx]) return;
                 const newContent = prompt('Edit your message:', conv.messages[idx].content);
@@ -335,7 +368,8 @@
         ).join('');
         container.innerHTML = chipsHtml;
         document.querySelectorAll('.suggestion-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const q = chip.getAttribute('data-question');
                 if (q) {
                     document.getElementById('nexus-input').value = q;
@@ -516,6 +550,50 @@ ${personalityInstruction}`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 2000);
     }
+
+    // ========== Text Selection → Ask Nexus Button ==========
+    let textSelectionButton = null;
+    function handleTextSelection() {
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
+        if (selectedText && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            if (!textSelectionButton) {
+                textSelectionButton = document.createElement('div');
+                textSelectionButton.className = 'nexus-text-btn';
+                textSelectionButton.innerHTML = '🩺 Ask Nexus';
+                textSelectionButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const panel = document.querySelector('.nexus-panel');
+                    if (panel) {
+                        panel.style.display = 'flex';
+                        const input = document.getElementById('nexus-input');
+                        if (input) input.value = selectedText;
+                        // clear selection and hide button
+                        window.getSelection().removeAllRanges();
+                        textSelectionButton.style.display = 'none';
+                    }
+                });
+                document.body.appendChild(textSelectionButton);
+            }
+            textSelectionButton.style.display = 'block';
+            textSelectionButton.style.top = (rect.top + window.scrollY - 40) + 'px';
+            textSelectionButton.style.left = (rect.left + window.scrollX) + 'px';
+        } else {
+            if (textSelectionButton) textSelectionButton.style.display = 'none';
+        }
+    }
+    document.addEventListener('mouseup', handleTextSelection);
+    document.addEventListener('keyup', handleTextSelection);
+    // hide when clicking anywhere else
+    document.addEventListener('mousedown', (e) => {
+        if (textSelectionButton && !textSelectionButton.contains(e.target)) {
+            setTimeout(() => {
+                if (textSelectionButton) textSelectionButton.style.display = 'none';
+            }, 0);
+        }
+    });
 
     // ========== Widget Creation ==========
     function createWidget() {
@@ -725,6 +803,8 @@ ${personalityInstruction}`;
     }
     .dark .message-actions { background: rgba(40,40,60,0.9); }
     .message:hover .message-actions { opacity: 1; transform: translateY(0); }
+    .icon-btn { background: transparent; border: none; cursor: pointer; color: inherit; opacity: 0.7; font-size: 0.9rem; padding: 2px 4px; }
+    .icon-btn:hover { opacity: 1; }
     .timestamp { font-size: 0.65rem; opacity: 0.5; margin-top: 4px; text-align: right; }
     .read-more { background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 4px; }
     .typing .message-bubble { background: #e6f0fa; display: flex; gap: 4px; padding: 12px 16px; }
@@ -803,8 +883,19 @@ ${personalityInstruction}`;
     }
     @keyframes fadeInUp { from { opacity:0; transform:translate(-50%,20px); } to { opacity:1; transform:translate(-50%,0); } }
     .muted { opacity: 0.5; font-size: 0.8rem; }
-    .icon-btn { background: transparent; border: none; cursor: pointer; color: inherit; opacity: 0.7; font-size: 0.9rem; padding: 2px 4px; }
-    .icon-btn:hover { opacity: 1; }
+    .nexus-text-btn {
+        position: absolute;
+        background: var(--primary);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        z-index: 10002;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: none;
+        white-space: nowrap;
+    }
     @media (max-width: 700px) {
         .nexus-sidebar { width: 0 !important; }
         .nexus-panel { width: 95vw; height: 90vh; }
@@ -944,7 +1035,7 @@ ${personalityInstruction}`;
         renderAll();
     }
 
-    // Expose all necessary functions globally
+    // Expose globally
     window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
