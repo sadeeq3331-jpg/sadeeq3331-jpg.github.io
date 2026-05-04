@@ -1,9 +1,9 @@
-// nexus.js – Medical AI Assistant with Firestore sync & full conversation history
+// nexus.js – Redesigned Medical AI Assistant (v2.0)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
-    const MAX_HISTORY_MESSAGES = 20;   // keep last N messages for context
+    const MAX_HISTORY_MESSAGES = 20;
 
     // ========== State ==========
     let conversations = [];
@@ -14,6 +14,7 @@
     let fontSize = 16;
     let panelDarkMode = false;
     let personality = 'detailed';
+    let sidebarOpen = true;
 
     // ========== Helper Functions ==========
     function extractPuterMessage(raw) {
@@ -23,12 +24,18 @@
         return raw?.message?.content || raw?.content || JSON.stringify(raw);
     }
 
-    function stripTables(text) {
+    function formatText(text) {
         if (!text) return text;
-        return text.split('\n').filter(line => {
-            const trimmed = line.trim();
-            return !(/^\|.*\|$/.test(trimmed) || /^[\|\-\s]+$/.test(trimmed));
-        }).join('\n');
+        // Simple markdown: **bold**, *italic*
+        let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        html = html.replace(/\n/g, '<br>');
+        return html;
+    }
+
+    function truncateText(text, maxLen = 300) {
+        if (text.length <= maxLen) return text;
+        return text.substring(0, maxLen) + '…';
     }
 
     // ========== Conversation Persistence ==========
@@ -69,7 +76,7 @@
             if (!currentConvId || !conversations.find(c => c.id === currentConvId)) {
                 currentConvId = conversations[0].id;
             }
-            renderTabs();
+            renderSidebar();
             renderMessages();
         }
     };
@@ -83,29 +90,34 @@
         conv.messages.push({ role, content, timestamp: Date.now() });
         saveConversations();
         renderMessages();
+        renderSidebar(); // update pinned section
         updateStats();
     }
 
     function deleteMessage(index) {
         const conv = getCurrentConv();
         if (!conv) return;
+        // remove from pinned if pinned
+        pinnedMessages = pinnedMessages.filter(p => p.convId !== currentConvId || p.idx !== index);
         conv.messages.splice(index, 1);
         saveConversations();
+        savePinned();
         renderMessages();
+        renderSidebar();
         updateStats();
     }
 
     function editUserMessage(index, newContent) {
         if (!newContent) return;
         const conv = getCurrentConv();
-        if (!conv || conv.messages[index].role !== 'user') return;
+        if (!conv || conv.messages[index]?.role !== 'user') return;
         conv.messages[index].content = newContent;
         if (index + 1 < conv.messages.length && conv.messages[index+1].role === 'assistant') {
-            conv.messages.splice(index+1, 1);
+            conv.messages.splice(index+1, 1); // remove previous AI reply to regenerate
         }
         saveConversations();
         renderMessages();
-        sendMessage(newContent, true); // force regenerate with updated history
+        sendMessage(newContent, true);
     }
 
     function togglePinMessage(idx) {
@@ -119,158 +131,106 @@
             pinnedMessages.push({ convId: currentConvId, idx, content: msg.content });
         }
         savePinned();
-        renderPinnedSection();
+        renderSidebar();
         renderMessages();
     }
 
     function isPinned(idx) { return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx); }
 
-    function renderPinnedSection() {
-        const container = document.getElementById('nexus-pinned');
-        if (!container) return;
-        const pinnedForThisConv = pinnedMessages.filter(p => p.convId === currentConvId);
-        if (pinnedForThisConv.length === 0) {
-            container.style.display = 'none';
-            return;
-        }
-        container.style.display = 'block';
-        let html = `<div class="pinned-title"><i class="fas fa-thumbtack"></i> Pinned Notes</div>`;
-        pinnedForThisConv.forEach(p => {
-            const content = stripTables(p.content).substring(0, 120) + (p.content.length > 120 ? '…' : '');
-            html += `<div class="pinned-item" onclick="window.scrollToMessage(${p.idx})">📌 ${content}</div>`;
-        });
-        container.innerHTML = html;
-    }
-
-    function updateStats() {
-        const conv = getCurrentConv();
-        if (!conv) return;
-        const msgCount = conv.messages.length;
-        const wordCount = conv.messages.reduce((sum, m) => sum + (m.content.split(/\s+/).length), 0);
-        const statsSpan = document.getElementById('nexus-stats');
-        if (statsSpan) statsSpan.innerText = `${msgCount} msgs · ~${wordCount} words`;
-    }
-
-    function filterMessages() {
-        const input = document.getElementById('nexus-search');
-        if (input) currentSearch = input.value.trim().toLowerCase();
-        renderMessages();
-    }
-
-    function exportAsPDF() {
-        const conv = getCurrentConv();
-        if (!conv) return;
-        const win = window.open('', '_blank');
-        let html = `<html><head><title>MedLib Nexus Chat</title><style>body{font-family:sans-serif; margin:2rem;}</style></head><body><h1>Conversation: ${conv.name}</h1>`;
-        conv.messages.forEach(m => {
-            html += `<div><strong>${m.role === 'user' ? 'You' : 'Nexus'}:</strong> ${m.content.replace(/\n/g, '<br>')}</div><hr>`;
-        });
-        html += `</body></html>`;
-        win.document.write(html);
-        win.document.close();
-        win.print();
-    }
-
-    function shareConversation() {
-        const conv = getCurrentConv();
-        if (!conv) return;
-        let text = `MedLib Nexus Conversation: ${conv.name}\n\n`;
-        conv.messages.forEach(m => {
-            text += `${m.role === 'user' ? 'You' : 'Nexus'}: ${m.content}\n\n`;
-        });
-        navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
-    }
-
-    function setFontSize(delta) {
-        fontSize = Math.min(32, Math.max(12, fontSize + delta));
-        document.querySelectorAll('.message-bubble').forEach(el => el.style.fontSize = fontSize + 'px');
-    }
-
-    function togglePanelDarkMode() {
-        panelDarkMode = !panelDarkMode;
-        const panel = document.querySelector('.nexus-panel');
-        if (panel) panelDarkMode ? panel.classList.add('dark') : panel.classList.remove('dark');
-    }
-
-    function copyMessage(text) {
-        navigator.clipboard.writeText(text).then(() => alert('Copied!')).catch(() => alert('Failed to copy'));
-    }
-
-    function newConversation() {
-        const id = Date.now();
-        conversations.push({
-            id,
-            name: 'Chat ' + (conversations.length + 1),
-            messages: [{ role: 'assistant', content: '👋 Hi, I’m Nexus! Ask me anything about medicine.', timestamp: Date.now() }]
-        });
-        currentConvId = id;
-        saveConversations();
-        renderTabs();
-        renderMessages();
-    }
-
-    function deleteConversation(id) {
-        const idx = conversations.findIndex(c => c.id === id);
-        if (idx === -1) return;
-        conversations.splice(idx, 1);
-        if (!conversations.length) newConversation();
-        else if (currentConvId === id) currentConvId = conversations[0].id;
-        saveConversations();
-        renderTabs();
-        renderMessages();
-    }
-
-    function renameConversation(id, newName) {
-        const conv = conversations.find(c => c.id === id);
-        if (conv) { conv.name = newName; saveConversations(); renderTabs(); }
-    }
-
-    function exportConversation() {
-        const conv = getCurrentConv();
-        if (!conv) return;
-        let text = `Conversation: ${conv.name}\nExported: ${new Date().toLocaleString()}\n\n`;
-        conv.messages.forEach(m => {
-            const role = m.role === 'user' ? 'You' : 'Nexus';
-            const time = new Date(m.timestamp).toLocaleTimeString();
-            text += `[${role}] (${time}):\n${m.content}\n\n`;
-        });
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `nexus-${conv.name.replace(/\s+/g, '_')}.txt`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    // ========== Render UI ==========
-    function renderTabs() {
-        const tabs = document.getElementById('nexus-tabs');
-        if (!tabs) return;
-        let html = '';
+    // ========== UI Render: Sidebar ==========
+    function renderSidebar() {
+        const sidebar = document.getElementById('nexus-sidebar');
+        if (!sidebar) return;
+        let html = `<div class="sidebar-section">
+            <div class="section-title">📋 Chats</div>
+            <div class="conv-list">`;
         conversations.forEach(c => {
             const active = c.id === currentConvId ? 'active' : '';
-            html += `<div class="conv-tab ${active}" data-id="${c.id}">
-                <span class="conv-name" contenteditable="false" onblur="renameConversation(${c.id}, this.innerText)" ondblclick="this.contentEditable=true; this.focus();">${c.name}</span>
-                <button class="delete-conv" onclick="deleteConversation(${c.id})">🗑️</button>
+            html += `<div class="conv-item ${active}" data-id="${c.id}" ondblclick="window.renameConversationPrompt(${c.id})">
+                <span class="conv-name">${c.name}</span>
+                <span class="conv-actions">
+                    <button class="icon-btn delete-conv" data-id="${c.id}" title="Delete">🗑️</button>
+                </span>
             </div>`;
         });
-        html += `<button class="new-conv-btn" onclick="newConversation()">➕ New</button>`;
-        tabs.innerHTML = html;
-        document.querySelectorAll('.conv-tab').forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') return;
-                const id = Number(tab.dataset.id);
-                if (currentConvId !== id) {
+        html += `</div>
+            <button class="icon-btn new-chat-sidebar" id="new-chat-sidebar">➕ New Chat</button>
+        </div>
+        <div class="sidebar-section pinned-section-sidebar">
+            <div class="section-title">📌 Pinned Notes</div>`;
+        const pinnedForConv = pinnedMessages.filter(p => p.convId === currentConvId);
+        if (pinnedForConv.length === 0) {
+            html += `<div class="muted">No pinned notes</div>`;
+        } else {
+            pinnedForConv.forEach(p => {
+                const snippet = truncateText(p.content, 60);
+                html += `<div class="pinned-note-item" onclick="window.scrollToMessage(${p.idx})">📌 ${snippet}</div>`;
+            });
+        }
+        html += `</div>
+        <div class="sidebar-section settings-section">
+            <div class="section-title">⚙️ Settings</div>
+            <div class="setting-row">
+                <label>Personality</label>
+                <select id="sidebar-personality">
+                    <option value="detailed" ${personality === 'detailed' ? 'selected' : ''}>📘 Detailed</option>
+                    <option value="concise" ${personality === 'concise' ? 'selected' : ''}>📝 Concise</option>
+                    <option value="usmle" ${personality === 'usmle' ? 'selected' : ''}>🎯 USMLE</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <span>Dark Mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="sidebar-dark-toggle" ${panelDarkMode ? 'checked' : ''}>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <span>Font Size</span>
+                <div class="font-controls">
+                    <button id="font-minus">A-</button>
+                    <button id="font-plus">A+</button>
+                </div>
+            </div>
+        </div>`;
+        sidebar.innerHTML = html;
+
+        // event delegation for conv items
+        document.querySelectorAll('.conv-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (e.target.closest('.delete-conv')) return;
+                const id = Number(item.dataset.id);
+                if (id !== currentConvId) {
                     currentConvId = id;
                     saveConversations();
-                    renderTabs();
-                    renderMessages();
+                    renderAll();
                 }
             });
         });
+        document.querySelectorAll('.delete-conv').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = Number(btn.dataset.id);
+                deleteConversation(id);
+            });
+        });
+        document.getElementById('new-chat-sidebar')?.addEventListener('click', newConversation);
+        document.getElementById('sidebar-personality')?.addEventListener('change', (e) => {
+            personality = e.target.value;
+        });
+        document.getElementById('sidebar-dark-toggle')?.addEventListener('change', togglePanelDarkMode);
+        document.getElementById('font-minus')?.addEventListener('click', () => setFontSize(-2));
+        document.getElementById('font-plus')?.addEventListener('click', () => setFontSize(2));
     }
 
+    function renderAll() {
+        renderSidebar();
+        renderMessages();
+        updateStats();
+        updateContextSuggestions();
+    }
+
+    // ========== UI Render: Messages ==========
     function renderMessages() {
         const msgsDiv = document.getElementById('nexus-messages');
         if (!msgsDiv) return;
@@ -279,49 +239,127 @@
         let filtered = conv.messages;
         if (currentSearch) filtered = conv.messages.filter(m => m.content.toLowerCase().includes(currentSearch));
         let html = '';
-        filtered.forEach((msg, idx) => {
+        filtered.forEach((msg, filteredIdx) => {
             const originalIdx = conv.messages.indexOf(msg);
             const isUser = msg.role === 'user';
             const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const avatar = isUser ? '👤' : '🤖';
-            const content = isUser ? msg.content : stripTables(msg.content);
+            const contentHtml = isUser ? formatText(msg.content) : formatText(msg.content);
+            const fullContent = msg.content;
+            const isLong = fullContent.length > 400;
             const pinned = isPinned(originalIdx);
+
             html += `
                 <div class="message ${msg.role}" data-idx="${originalIdx}">
                     <div class="avatar">${avatar}</div>
                     <div class="bubble-wrapper">
-                        <div class="message-bubble" style="font-size:${fontSize}px">${content.replace(/\n/g, '<br>')}</div>
-                        <div class="message-footer">
-                            <span class="timestamp">${time}</span>
-                            ${!isUser ? `
-                                <button class="pin-btn" onclick="togglePinMessage(${originalIdx})" title="Pin">${pinned ? '📌' : '📍'}</button>
-                                <button class="copy-btn" onclick="copyMessage('${msg.content.replace(/'/g, "\\'")}')">📋</button>
-                                <button class="delete-btn" onclick="deleteMessage(${originalIdx})">🗑️</button>
-                            ` : `
-                                <button class="edit-btn" onclick="editUserMessage(${originalIdx}, prompt('Edit your message:', '${msg.content.replace(/'/g, "\\'")}'))" title="Edit">✏️</button>
-                                <button class="delete-btn" onclick="deleteMessage(${originalIdx})">🗑️</button>
-                            `}
+                        <div class="message-bubble" style="font-size:${fontSize}px">
+                            <div class="message-content ${isLong ? 'truncated' : ''}" id="msg-content-${originalIdx}">
+                                ${isLong ? truncateText(fullContent, 400) : contentHtml}
+                            </div>
+                            ${isLong ? `<button class="read-more" data-idx="${originalIdx}" onclick="toggleReadMore(${originalIdx})">Read more</button>` : ''}
                         </div>
+                        <div class="message-actions">
+                            ${!isUser ? `<button class="icon-btn" onclick="togglePinMessage(${originalIdx})" title="${pinned ? 'Unpin' : 'Pin'}">${pinned ? '📌' : '📍'}</button>` : ''}
+                            <button class="icon-btn" onclick="copyMessageContent(${originalIdx})" title="Copy">📋</button>
+                            ${isUser ? `<button class="icon-btn" onclick="editUserMessage(${originalIdx}, prompt('Edit your message:', \`${fullContent.replace(/`/g, '\\`')}\`))" title="Edit">✏️</button>` : `<button class="icon-btn" onclick="quoteMessage(${originalIdx})" title="Quote reply">💬</button>`}
+                            <button class="icon-btn" onclick="deleteMessage(${originalIdx})" title="Delete">🗑️</button>
+                        </div>
+                        <div class="timestamp">${time}</div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
         if (isWaiting) {
-            html += `<div class="message assistant typing"><div class="avatar">🤖</div><div class="bubble-wrapper"><div class="message-bubble typing-indicator"><span>.</span><span>.</span><span>.</span></div></div></div>`;
+            html += `<div class="message assistant typing">
+                <div class="avatar">🤖</div>
+                <div class="bubble-wrapper"><div class="message-bubble typing-indicator"><span>.</span><span>.</span><span>.</span></div></div>
+            </div>`;
         }
         msgsDiv.innerHTML = html;
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
-        updateStats();
-        renderPinnedSection();
     }
 
-    // ========== Send Message with Full History ==========
+    function toggleReadMore(idx) {
+        const conv = getCurrentConv();
+        if (!conv || !conv.messages[idx]) return;
+        const contentEl = document.getElementById(`msg-content-${idx}`);
+        if (!contentEl) return;
+        if (contentEl.classList.contains('truncated')) {
+            contentEl.innerHTML = formatText(conv.messages[idx].content);
+            contentEl.classList.remove('truncated');
+        } else {
+            contentEl.innerHTML = truncateText(conv.messages[idx].content, 400);
+            contentEl.classList.add('truncated');
+        }
+    }
+
+    function updateStats() {
+        const conv = getCurrentConv();
+        if (!conv) return;
+        const msgCount = conv.messages.length;
+        const wordCount = conv.messages.reduce((sum, m) => sum + m.content.split(/\s+/).length, 0);
+        document.getElementById('nexus-stats') && (document.getElementById('nexus-stats').innerText = `${msgCount} msgs · ~${wordCount} words`);
+    }
+
+    function updateContextSuggestions() {
+        const container = document.getElementById('suggestions');
+        if (!container) return;
+        const conv = getCurrentConv();
+        const lastMsg = conv?.messages[conv.messages.length-1]?.content || '';
+        // Simple static pool + rotate based on conversation name
+        const allSuggestions = [
+            'Explain the Krebs cycle',
+            'What are ACE inhibitors?',
+            'How to treat hypertension?',
+            'Differential diagnosis of chest pain',
+            'Pathophysiology of diabetes mellitus',
+            'Management of acute MI',
+            'Antibiotic resistance mechanisms',
+            'Physiology of action potential'
+        ];
+        let shown = [...allSuggestions];
+        // If conversation name suggests a specialty, prioritize relevant ones
+        if (conv?.name.toLowerCase().includes('cardio')) {
+            shown = ['What is heart failure with preserved EF?', 'Explain ECG changes in MI', ...shown];
+        }
+        const chipsHtml = shown.slice(0, 4).map(s => `<div class="suggestion-chip" data-question="${s}">🧬 ${s}</div>`).join('');
+        container.innerHTML = chipsHtml;
+        document.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const q = chip.getAttribute('data-question');
+                if (q) {
+                    document.getElementById('nexus-input').value = q;
+                    sendMessage(q);
+                }
+            });
+        });
+    }
+
+    function quoteMessage(idx) {
+        const conv = getCurrentConv();
+        if (!conv || !conv.messages[idx]) return;
+        const msg = conv.messages[idx];
+        const quoted = `> ${msg.content.replace(/\n/g, '\n> ')}`;
+        const input = document.getElementById('nexus-input');
+        if (input) {
+            input.value = input.value ? `${input.value}\n${quoted}` : quoted;
+            input.focus();
+        }
+    }
+
+    function copyMessageContent(idx) {
+        const conv = getCurrentConv();
+        if (!conv) return;
+        const msg = conv.messages[idx];
+        navigator.clipboard.writeText(msg.content).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
+    }
+
+    // ========== Send Message ==========
     async function sendMessage(initialText = null, isRegenerate = false) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
         if (!text || isWaiting) return;
 
-        // Wait for Puter
         let puterReady = false;
         for (let i = 0; i < 5; i++) {
             if (window.puter && window.puter.ai) { puterReady = true; break; }
@@ -331,13 +369,11 @@
             addMessage('assistant', 'Nexus is not ready. Please refresh the page and try again.');
             return;
         }
-
         if (input) input.value = '';
         if (!isRegenerate) addMessage('user', text);
         isWaiting = true;
         renderMessages();
 
-        // Build system instruction
         let personalityInstruction = '';
         if (personality === 'concise') personalityInstruction = 'Be concise and direct. Use bullet points when helpful.';
         else if (personality === 'usmle') personalityInstruction = 'Focus on high‑yield USMLE content. Emphasize mechanisms, clinical correlations, and exam tips.';
@@ -357,18 +393,12 @@ Guidelines:
 
 ${personalityInstruction}`;
 
-        // Get current conversation (already includes the new user message if not regenerate)
         const conv = getCurrentConv();
-        if (!conv) {
-            isWaiting = false;
-            return;
-        }
+        if (!conv) { isWaiting = false; return; }
 
-        // Build messages array: system + last N messages (excluding any pending assistant)
         const history = [];
         const messagesToInclude = conv.messages.slice(-MAX_HISTORY_MESSAGES);
         for (const msg of messagesToInclude) {
-            // Skip if it's the assistant message that we are about to replace (only when regenerating)
             if (isRegenerate && msg.role === 'assistant' && msg === conv.messages[conv.messages.length-1]) continue;
             history.push({ role: msg.role, content: msg.content });
         }
@@ -389,369 +419,517 @@ ${personalityInstruction}`;
         }
     }
 
-    // ========== Widget Creation with Fixed Layout ==========
+    // ========== Global Actions ==========
+    function newConversation() {
+        const id = Date.now();
+        conversations.push({
+            id,
+            name: 'Chat ' + (conversations.length + 1),
+            messages: [{ role: 'assistant', content: '👋 Hi, I’m Nexus! Ask me anything about medicine.', timestamp: Date.now() }]
+        });
+        currentConvId = id;
+        saveConversations();
+        renderAll();
+    }
+
+    function deleteConversation(id) {
+        if (conversations.length <= 1) return; // keep at least one
+        const idx = conversations.findIndex(c => c.id === id);
+        if (idx === -1) return;
+        conversations.splice(idx, 1);
+        if (currentConvId === id) currentConvId = conversations[0].id;
+        // clean pinned
+        pinnedMessages = pinnedMessages.filter(p => p.convId !== id);
+        saveConversations();
+        savePinned();
+        renderAll();
+    }
+
+    window.renameConversationPrompt = function(id) {
+        const conv = conversations.find(c => c.id === id);
+        if (!conv) return;
+        const newName = prompt('Rename conversation:', conv.name);
+        if (newName && newName.trim()) {
+            conv.name = newName.trim();
+            saveConversations();
+            renderSidebar();
+            // update header
+            const headerName = document.getElementById('current-conv-name');
+            if (headerName && currentConvId === id) headerName.textContent = conv.name;
+        }
+    };
+
+    function exportConversation() {
+        const conv = getCurrentConv();
+        if (!conv) return;
+        let text = `Conversation: ${conv.name}\nExported: ${new Date().toLocaleString()}\n\n`;
+        conv.messages.forEach(m => {
+            const role = m.role === 'user' ? 'You' : 'Nexus';
+            const time = new Date(m.timestamp).toLocaleTimeString();
+            text += `[${role}] (${time}):\n${m.content}\n\n`;
+        });
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `nexus-${conv.name.replace(/\s+/g, '_')}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function shareConversation() {
+        const conv = getCurrentConv();
+        if (!conv) return;
+        let text = `MedLib Nexus Conversation: ${conv.name}\n\n`;
+        conv.messages.forEach(m => {
+            text += `${m.role === 'user' ? 'You' : 'Nexus'}: ${m.content}\n\n`;
+        });
+        navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
+    }
+
+    // ========== UI Helpers ==========
+    function setFontSize(delta) {
+        fontSize = Math.min(32, Math.max(12, fontSize + delta));
+        document.querySelectorAll('.message-bubble').forEach(el => el.style.fontSize = fontSize + 'px');
+    }
+
+    function togglePanelDarkMode() {
+        panelDarkMode = !panelDarkMode;
+        const panel = document.querySelector('.nexus-panel');
+        if (panel) panelDarkMode ? panel.classList.add('dark') : panel.classList.remove('dark');
+        const toggleInput = document.getElementById('sidebar-dark-toggle');
+        if (toggleInput) toggleInput.checked = panelDarkMode;
+    }
+
+    function showToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'nexus-toast';
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    // ========== Widget Creation ==========
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
         container.innerHTML = `
-            <style>
-                #nexus-container * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-                .nexus-bubble {
-                    position: fixed;
-                    bottom: 25px;
-                    right: 25px;
-                    width: 64px;
-                    height: 64px;
-                    border-radius: 50%;
-                    background: linear-gradient(145deg, #2c7cb0, #1b4c72);
-                    color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-                    z-index: 10000;
-                    transition: 0.2s;
-                    border: 2px solid #ffd966;
-                    font-size: 2.4rem;
-                    touch-action: manipulation;
-                }
-                .nexus-bubble:hover { transform: scale(1.05); }
-                .nexus-bubble .tooltip {
-                    position: absolute;
-                    top: -32px;
-                    background: #0a2942;
-                    color: white;
-                    padding: 5px 14px;
-                    border-radius: 30px;
-                    font-size: 0.8rem;
-                    opacity: 0;
-                    transition: opacity 0.2s;
-                    pointer-events: none;
-                    white-space: nowrap;
-                }
-                .nexus-bubble:hover .tooltip { opacity: 1; }
-                .nexus-panel {
-                    position: fixed;
-                    bottom: 100px;
-                    right: 20px;
-                    width: 480px;
-                    max-width: calc(100vw - 40px);
-                    height: auto;
-                    max-height: min(85vh, 700px);
-                    background: white;
-                    border-radius: 28px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-                    display: none;
-                    flex-direction: column;
-                    z-index: 10001;
-                    overflow: hidden;
-                    border: 1px solid rgba(44,124,176,0.2);
-                    transition: background 0.2s;
-                }
-                .nexus-panel.dark { background: #1e1e2e; color: #e0e0e0; }
-                .nexus-panel.dark .nexus-panel-header { background: #0f0f1f; border-bottom: 1px solid #2a2a3a; }
-                .nexus-panel.dark .conv-tab { background: #2a2a3a; color: white; border-color: #3a3a55; }
-                .nexus-panel.dark .nexus-messages { background: #1a1a2a; }
-                .nexus-panel.dark .message-bubble { background: #2d2d44; color: #e0e0e0; border-color: #3a3a55; }
-                .nexus-panel.dark .user .message-bubble { background: #2c7cb0; }
-                .nexus-panel.dark .suggestion-chip { background: #2a2a3a; color: #ccc; }
-                .nexus-panel-header {
-                    background: #0a2942;
-                    color: white;
-                    padding: 12px 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    flex-wrap: wrap;
-                    gap: 8px;
-                }
-                .nexus-panel-header h3 { margin:0; font-size:1.2rem; display:flex; align-items:center; gap:8px; }
-                .nexus-header-buttons { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-                .nexus-header-btn, .header-control {
-                    background: rgba(255,255,255,0.15);
-                    border: none;
-                    color: white;
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 30px;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: 0.2s;
-                }
-                .header-control { width: auto; padding: 0 10px; gap: 4px; font-size: 0.8rem; }
-                .nexus-header-btn:hover, .header-control:hover { background: rgba(255,255,255,0.3); }
-                .conversation-tabs {
-                    display: flex;
-                    overflow-x: auto;
-                    padding: 10px 10px 0 10px;
-                    background: #f0f7ff;
-                    border-bottom: 1px solid #d0e0f0;
-                    gap: 6px;
-                    align-items: center;
-                    scrollbar-width: thin;
-                }
-                .conv-tab {
-                    background: white;
-                    border: 1px solid #d0e0f0;
-                    border-radius: 30px 30px 0 0;
-                    padding: 5px 10px;
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    cursor: pointer;
-                    white-space: nowrap;
-                    font-size: 0.85rem;
-                    border-bottom: none;
-                }
-                .conv-tab.active { background: #2c7cb0; color: white; border-color: #2c7cb0; }
-                .conv-tab .conv-name { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
-                .conv-tab .delete-conv { background: transparent; border: none; color: inherit; cursor: pointer; font-size: 1rem; }
-                .new-conv-btn {
-                    background: transparent;
-                    border: 1px dashed #2c7cb0;
-                    border-radius: 30px;
-                    padding: 4px 10px;
-                    color: #2c7cb0;
-                    font-size: 0.85rem;
-                    cursor: pointer;
-                    white-space: nowrap;
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                }
-                .nexus-search-area { padding: 8px 16px; background: #f9fcff; border-bottom: 1px solid #e0ecf5; }
-                .nexus-search-area input { width: 100%; padding: 8px 12px; border: 1px solid #d0e0f0; border-radius: 30px; outline: none; font-size: 0.85rem; }
-                .pinned-section {
-                    padding: 8px 16px;
-                    background: #f0f7ff;
-                    border-bottom: 1px solid #e0ecf5;
-                    font-size: 0.85rem;
-                    max-height: 130px;
-                    overflow-y: auto;
-                    display: none;
-                }
-                .pinned-title { font-weight: 600; color: #0a2942; margin-bottom: 6px; }
-                .pinned-item { padding: 4px 0; cursor: pointer; color: #1e4b6e; border-bottom: 1px solid #e0ecf5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .nexus-messages {
-                    flex: 1;
-                    overflow-y: auto;
-                    padding: 16px;
-                    background: #f9fcff;
-                    min-height: 200px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-                }
-                .message { display: flex; gap: 10px; align-items: flex-start; }
-                .message.user { flex-direction: row-reverse; }
-                .avatar {
-                    width: 34px;
-                    height: 34px;
-                    border-radius: 50%;
-                    background: #e6f0fa;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1.3rem;
-                    flex-shrink: 0;
-                }
-                .user .avatar { background: #2c7cb0; color: white; }
-                .bubble-wrapper { max-width: 80%; }
-                .message-bubble {
-                    padding: 10px 14px;
-                    border-radius: 20px;
-                    background: white;
-                    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-                    color: #0a2942;
-                    word-wrap: break-word;
-                    line-height: 1.45;
-                    font-size: 0.95rem;
-                }
-                .user .message-bubble { background: #2c7cb0; color: white; }
-                .message-footer {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    margin-top: 4px;
-                    font-size: 0.7rem;
-                    color: #8a9cb0;
-                }
-                .timestamp { font-size: 0.65rem; }
-                button { background: none; border: none; cursor: pointer; color: #8a9cb0; font-size: 0.9rem; padding: 2px 5px; }
-                button:hover { color: #2c7cb0; }
-                .typing .message-bubble { background: #e6f0fa; display: flex; gap: 4px; padding: 12px 16px; }
-                .typing-indicator span { animation: blink 1.4s infinite; font-size: 1.2rem; line-height: 0.5; }
-                @keyframes blink { 0% { opacity:0.2; } 20% { opacity:1; } 100% { opacity:0.2; } }
-                .nexus-input-area {
-                    padding: 12px 16px;
-                    border-top: 1px solid #e0ecf5;
-                    display: flex;
-                    gap: 8px;
-                    background: white;
-                    align-items: flex-end;
-                }
-                .nexus-input-area textarea {
-                    flex: 1;
-                    padding: 10px 14px;
-                    border: 1px solid #d0e0f0;
-                    border-radius: 24px;
-                    resize: vertical;
-                    font-family: inherit;
-                    font-size: 0.9rem;
-                    outline: none;
-                    min-height: 44px;
-                    max-height: 120px;
-                }
-                .nexus-input-area button {
-                    background: #2c7cb0;
-                    color: white;
-                    border: none;
-                    border-radius: 40px;
-                    width: 44px;
-                    height: 44px;
-                    font-size: 1.2rem;
-                    cursor: pointer;
-                    transition: 0.2s;
-                    box-shadow: 0 2px 6px rgba(44,124,176,0.3);
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .nexus-input-area button:disabled { background: #a0b8cc; cursor: not-allowed; }
-                .suggestions {
-                    display: flex;
-                    gap: 8px;
-                    padding: 8px 16px 4px;
-                    flex-wrap: wrap;
-                    border-top: 1px solid #e0ecf5;
-                    background: white;
-                }
-                .suggestion-chip {
-                    background: #e6f0fa;
-                    border-radius: 40px;
-                    padding: 5px 12px;
-                    font-size: 0.75rem;
-                    cursor: pointer;
-                    color: #1e4b6e;
-                    transition: 0.2s;
-                }
-                .suggestion-chip:hover { background: #cde0f0; transform: scale(1.02); }
-                .nexus-stats { font-size: 0.65rem; color: #8a9cb0; padding: 6px 16px 12px; text-align: right; }
-                @media (max-width: 560px) {
-                    .nexus-panel { width: calc(100vw - 30px); right: 15px; bottom: 85px; max-height: 80vh; }
-                    .nexus-bubble { bottom: 20px; right: 20px; width: 56px; height: 56px; font-size: 2rem; }
-                    .message-bubble { font-size: 0.85rem; }
-                }
-            </style>
-            <div class="nexus-bubble">
-                🩺
-                <span class="tooltip">Ask Nexus</span>
+<style>
+    #nexus-container * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    :root {
+        --primary: #2c7cb0;
+        --primary-dark: #1b4c72;
+        --bg-glass: rgba(255,255,255,0.65);
+        --bg-sidebar: rgba(248,252,255,0.8);
+        --border-light: rgba(44,124,176,0.15);
+        --shadow-sm: 0 8px 30px rgba(0,0,0,0.08);
+        --shadow-lg: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    .nexus-bubble {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #2c7cb0, #1b4c72);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        z-index: 10000;
+        transition: 0.2s;
+        border: 2px solid #ffd966;
+        font-size: 2.4rem;
+        touch-action: manipulation;
+    }
+    .nexus-bubble:hover { transform: scale(1.05); }
+    .nexus-bubble .tooltip {
+        position: absolute;
+        top: -32px;
+        background: #0a2942;
+        color: white;
+        padding: 5px 14px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+    .nexus-bubble:hover .tooltip { opacity: 1; }
+    .nexus-panel {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 850px;
+        max-width: 95vw;
+        height: 85vh;
+        max-height: 800px;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-radius: 28px;
+        box-shadow: var(--shadow-lg);
+        display: none;
+        flex-direction: column;
+        z-index: 10001;
+        overflow: hidden;
+        border: 1px solid var(--border-light);
+        transition: background 0.2s;
+    }
+    .nexus-panel.dark {
+        background: rgba(30,30,46,0.85);
+        color: #e0e0e0;
+        --bg-glass: rgba(30,30,46,0.85);
+        --bg-sidebar: rgba(20,20,30,0.9);
+        --border-light: rgba(255,255,255,0.1);
+    }
+    .nexus-panel-header {
+        background: rgba(10,41,66,0.9);
+        backdrop-filter: blur(12px);
+        color: white;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        flex-shrink: 0;
+    }
+    .nexus-panel-header h3 { margin:0; font-size:1.2rem; display:flex; align-items:center; gap:8px; }
+    .panel-actions { display: flex; gap: 8px; }
+    .panel-btn {
+        background: rgba(255,255,255,0.15);
+        border: none;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 30px;
+        font-size: 1rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+    .panel-btn:hover { background: rgba(255,255,255,0.3); }
+    .nexus-body {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+    .nexus-sidebar {
+        width: 250px;
+        background: var(--bg-sidebar);
+        backdrop-filter: blur(12px);
+        border-right: 1px solid var(--border-light);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        flex-shrink: 0;
+        transition: width 0.3s;
+    }
+    .sidebar-section { padding: 16px 12px; border-bottom: 1px solid var(--border-light); }
+    .section-title { font-weight: 600; opacity: 0.7; margin-bottom: 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .conv-list { display: flex; flex-direction: column; gap: 4px; }
+    .conv-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.85rem;
+    }
+    .conv-item:hover { background: rgba(44,124,176,0.1); }
+    .conv-item.active { background: var(--primary); color: white; }
+    .conv-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+    .conv-actions { display: none; gap: 4px; }
+    .conv-item:hover .conv-actions { display: flex; }
+    .new-chat-sidebar { background: transparent; border: 1px dashed var(--primary); border-radius: 30px; color: var(--primary); padding: 8px 12px; margin-top: 8px; width: 100%; cursor: pointer; }
+    .pinned-note-item { padding: 6px 0; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid var(--border-light); }
+    .settings-section label, .settings-section select { font-size: 0.85rem; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background: #ccc; border-radius: 22px; transition: 0.3s; }
+    .slider:before { position: absolute; content:""; height: 18px; width: 18px; left: 2px; bottom: 2px; background: white; border-radius: 50%; transition: 0.3s; }
+    input:checked + .slider { background: var(--primary); }
+    input:checked + .slider:before { transform: translateX(18px); }
+    .font-controls { display: flex; gap: 6px; }
+    .font-controls button { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+    .nexus-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .chat-header {
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid var(--border-light);
+        flex-shrink: 0;
+    }
+    .chat-header input { flex: 1; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-light); background: rgba(255,255,255,0.5); }
+    .nexus-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .message { display: flex; gap: 12px; align-items: flex-start; }
+    .message.user { flex-direction: row-reverse; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #e6f0fa; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .user .avatar { background: var(--primary); color: white; }
+    .bubble-wrapper { max-width: 80%; position: relative; }
+    .message-bubble {
+        padding: 12px 16px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        line-height: 1.5;
+        word-wrap: break-word;
+    }
+    .dark .message-bubble { background: rgba(45,45,68,0.8); color: #e0e0e0; }
+    .user .message-bubble { background: var(--primary); color: white; }
+    .message-actions {
+        position: absolute;
+        top: -12px;
+        right: 10px;
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transform: translateY(5px);
+        transition: all 0.2s;
+        background: rgba(255,255,255,0.9);
+        border-radius: 20px;
+        padding: 2px 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .dark .message-actions { background: rgba(40,40,60,0.9); }
+    .message:hover .message-actions { opacity: 1; transform: translateY(0); }
+    .timestamp { font-size: 0.65rem; opacity: 0.5; margin-top: 4px; text-align: right; }
+    .read-more { background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 4px; }
+    .typing .message-bubble { background: #e6f0fa; display: flex; gap: 4px; padding: 12px 16px; }
+    .typing-indicator span { animation: blink 1.4s infinite; font-size: 1.2rem; }
+    @keyframes blink { 0% { opacity:0.2; } 20% { opacity:1; } 100% { opacity:0.2; } }
+    .input-area {
+        padding: 12px 20px;
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        background: rgba(255,255,255,0.4);
+    }
+    .input-area textarea {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 24px;
+        border: 1px solid var(--border-light);
+        background: rgba(255,255,255,0.7);
+        resize: none;
+        font-size: 0.9rem;
+        outline: none;
+        max-height: 120px;
+    }
+    .send-btn, .voice-btn, .share-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 12px rgba(44,124,176,0.3);
+    }
+    .voice-btn { background: #6c5ce7; }
+    .share-btn { background: #555; }
+    .suggestions {
+        display: flex;
+        gap: 8px;
+        padding: 8px 20px;
+        flex-wrap: wrap;
+        border-top: 1px solid var(--border-light);
+        background: rgba(255,255,255,0.3);
+    }
+    .suggestion-chip {
+        background: rgba(44,124,176,0.1);
+        border-radius: 30px;
+        padding: 6px 14px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .suggestion-chip:hover { background: rgba(44,124,176,0.2); transform: scale(1.02); }
+    .nexus-stats { font-size: 0.65rem; opacity: 0.5; padding: 8px 20px; text-align: right; }
+    .nexus-toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--primary);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 30px;
+        z-index: 99999;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: fadeInUp 0.3s;
+    }
+    @keyframes fadeInUp { from { opacity:0; transform:translate(-50%,20px); } to { opacity:1; transform:translate(-50%,0); } }
+    .muted { opacity: 0.5; font-size: 0.8rem; }
+    .icon-btn { background: transparent; border: none; cursor: pointer; color: inherit; opacity: 0.7; font-size: 0.9rem; padding: 2px 4px; }
+    .icon-btn:hover { opacity: 1; }
+    @media (max-width: 700px) {
+        .nexus-sidebar { width: 0; overflow: hidden; }
+        .nexus-panel { width: 95vw; height: 90vh; }
+    }
+</style>
+<div class="nexus-bubble">🩺<span class="tooltip">Ask Nexus</span></div>
+<div class="nexus-panel">
+    <div class="nexus-panel-header">
+        <h3>🩺 Nexus</h3>
+        <div class="panel-actions">
+            <button class="panel-btn" id="sidebar-toggle" title="Toggle Sidebar">☰</button>
+            <button class="panel-btn" id="export-chat" title="Export">📥</button>
+            <button class="panel-btn" id="minimize-panel" title="Minimize">─</button>
+            <button class="panel-btn" id="close-panel" title="Close">✕</button>
+        </div>
+    </div>
+    <div class="nexus-body">
+        <div class="nexus-sidebar" id="nexus-sidebar"></div>
+        <div class="nexus-main">
+            <div class="chat-header">
+                <span id="current-conv-name" style="font-weight:600; flex-shrink:0;">New Chat</span>
+                <input type="text" id="nexus-search" placeholder="🔍 Search messages...">
             </div>
-            <div class="nexus-panel">
-                <div class="nexus-panel-header">
-                    <h3>🩺 Nexus</h3>
-                    <div class="nexus-header-buttons">
-                        <button class="header-control" id="nexus-font-minus">A-</button>
-                        <button class="header-control" id="nexus-font-plus">A+</button>
-                        <button class="header-control" id="nexus-dark-toggle">🌓</button>
-                        <select id="nexus-personality" class="header-control" style="background:rgba(255,255,255,0.15); border:none; color:white; border-radius:30px; padding:0 10px;">
-                            <option value="detailed">📘 Detailed</option>
-                            <option value="concise">📝 Concise</option>
-                            <option value="usmle">🎯 USMLE Focus</option>
-                        </select>
-                        <button class="nexus-header-btn" id="nexus-export">📥</button>
-                        <button class="nexus-header-btn" id="nexus-minimize">−</button>
-                        <button class="nexus-header-btn" id="nexus-close">✕</button>
-                    </div>
-                </div>
-                <div class="conversation-tabs" id="nexus-tabs"></div>
-                <div class="nexus-search-area"><input type="text" id="nexus-search" placeholder="🔍 Search in conversation..."></div>
-                <div class="pinned-section" id="nexus-pinned"></div>
-                <div class="nexus-messages" id="nexus-messages"></div>
-                <div class="suggestions" id="suggestions">
-                    <div class="suggestion-chip" data-question="Explain the Krebs cycle">🧬 Krebs cycle</div>
-                    <div class="suggestion-chip" data-question="What are ACE inhibitors?">💊 ACE inhibitors</div>
-                    <div class="suggestion-chip" data-question="How to treat hypertension?">🩺 Hypertension treatment</div>
-                </div>
-                <div class="nexus-input-area">
-                    <textarea id="nexus-input" placeholder="Ask a medical question..." rows="1" maxlength="1000"></textarea>
-                    <button id="nexus-send">➤</button>
-                    <button id="nexus-share" style="background:#555; box-shadow:none;">🔗</button>
-                </div>
-                <div class="nexus-stats" id="nexus-stats"></div>
+            <div class="nexus-messages" id="nexus-messages"></div>
+            <div class="suggestions" id="suggestions"></div>
+            <div class="input-area">
+                <textarea id="nexus-input" placeholder="Ask a medical question..." rows="1" maxlength="1000"></textarea>
+                <button class="voice-btn" id="voice-input" title="Voice input">🎤</button>
+                <button class="share-btn" id="share-conv" title="Share">🔗</button>
+                <button class="send-btn" id="nexus-send">➤</button>
             </div>
-        `;
+            <div class="nexus-stats" id="nexus-stats"></div>
+        </div>
+    </div>
+</div>`;
         document.body.appendChild(container);
 
+        // Event binding
         const panel = container.querySelector('.nexus-panel');
         const bubble = container.querySelector('.nexus-bubble');
-        bubble.onclick = () => { panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; };
+        bubble.onclick = () => { panel.style.display = 'flex'; };
 
-        document.getElementById('nexus-font-minus').onclick = () => setFontSize(-2);
-        document.getElementById('nexus-font-plus').onclick = () => setFontSize(2);
-        document.getElementById('nexus-dark-toggle').onclick = togglePanelDarkMode;
-        document.getElementById('nexus-personality').onchange = (e) => { personality = e.target.value; };
-        document.getElementById('nexus-export').onclick = exportAsPDF;
-        document.getElementById('nexus-minimize').onclick = () => panel.style.display = 'none';
-        document.getElementById('nexus-close').onclick = () => panel.style.display = 'none';
+        document.getElementById('minimize-panel').onclick = () => panel.style.display = 'none';
+        document.getElementById('close-panel').onclick = () => panel.style.display = 'none';
+        document.getElementById('sidebar-toggle').onclick = () => {
+            sidebarOpen = !sidebarOpen;
+            const sidebar = document.getElementById('nexus-sidebar');
+            sidebar.style.width = sidebarOpen ? '250px' : '0px';
+        };
+        document.getElementById('export-chat').onclick = exportConversation;
+        document.getElementById('share-conv').onclick = shareConversation;
         document.getElementById('nexus-send').onclick = () => sendMessage();
-        document.getElementById('nexus-share').onclick = shareConversation;
 
         const textarea = document.getElementById('nexus-input');
-        if (textarea) {
-            textarea.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-            // Auto-resize
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = Math.min(120, this.scrollHeight) + 'px';
-            });
-        }
-        document.getElementById('nexus-search').addEventListener('input', filterMessages);
-        document.querySelectorAll('.suggestion-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                const q = chip.getAttribute('data-question');
-                if (q) {
-                    const input = document.getElementById('nexus-input');
-                    if (input) input.value = q;
-                    sendMessage(q);
-                }
-            });
+        textarea.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(120, this.scrollHeight) + 'px';
         });
 
-        return panel;
+        document.getElementById('nexus-search').addEventListener('input', (e) => {
+            currentSearch = e.target.value.trim().toLowerCase();
+            renderMessages();
+        });
+
+        document.getElementById('voice-input').addEventListener('click', () => {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { showToast('Voice not supported'); return; }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.onresult = (e) => {
+                const transcript = e.results[0][0].transcript;
+                document.getElementById('nexus-input').value = transcript;
+                sendMessage(transcript);
+            };
+            recognition.start();
+        });
+
+        // Drag panel
+        let isDragging = false, dragOffsetX, dragOffsetY;
+        const header = panel.querySelector('.nexus-panel-header');
+        header.addEventListener('mousedown', (e) => {
+            if (e.target.tagName === 'BUTTON') return;
+            isDragging = true;
+            const rect = panel.getBoundingClientRect();
+            dragOffsetX = e.clientX - rect.left;
+            dragOffsetY = e.clientY - rect.top;
+            panel.style.transition = 'none';
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panel.style.left = (e.clientX - dragOffsetX) + 'px';
+            panel.style.top = (e.clientY - dragOffsetY) + 'px';
+            panel.style.transform = 'none';
+        });
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                panel.style.transition = '';
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('nexus-search').focus();
+            }
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                newConversation();
+            }
+        });
     }
 
-    // ========== Initialize ==========
+    // ========== Init ==========
     function init() {
         loadConversations();
         createWidget();
-        renderTabs();
-        renderMessages();
+        renderAll();
     }
 
-    // Expose functions
+    // Expose globally
     window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
-    window.renameConversation = renameConversation;
-    window.deleteConversation = deleteConversation;
-    window.newConversation = newConversation;
-    window.exportConversation = exportConversation;
     window.togglePinMessage = togglePinMessage;
     window.editUserMessage = editUserMessage;
     window.deleteMessage = deleteMessage;
-    window.copyMessage = copyMessage;
+    window.copyMessageContent = copyMessageContent;
+    window.quoteMessage = quoteMessage;
 
     init();
 })();
