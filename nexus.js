@@ -1,4 +1,4 @@
-// nexus.js – v2.4 (stable: no panel close on internal clicks, no extra selection button)
+// nexus.js – v2.5 (fix: Ask Nexus button from selection-popup opens panel without closing it)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
@@ -193,10 +193,10 @@
         </div>`;
         sidebar.innerHTML = html;
 
-        // *** FIX: Stop propagation on all interactive elements to prevent panel close ***
+        // Stop propagation to prevent panel close
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
-                e.stopPropagation(); // <<< prevent closing panel
+                e.stopPropagation();
                 if (e.target.closest('.delete-conv')) return;
                 const id = Number(item.dataset.id);
                 if (id !== currentConvId) {
@@ -890,9 +890,12 @@ ${personalityInstruction}`;
             }
         });
 
-        // Click outside to close panel – but any internal click stops propagation before reaching here
+        // Click outside to close panel – EXCEPT clicks on the selection popup
         document.addEventListener('click', (e) => {
-            if (panel.style.display === 'flex' && !panel.contains(e.target) && e.target !== bubble) {
+            if (panel.style.display === 'flex' &&
+                !panel.contains(e.target) &&
+                e.target !== bubble &&
+                !e.target.closest('#medlib-selection-popup')) {  // <-- FIX: ignore selection popup
                 panel.style.display = 'none';
             }
         });
