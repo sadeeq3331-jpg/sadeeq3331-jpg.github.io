@@ -1,7 +1,4 @@
 // app.js – Main MedLib logic (books, categories, favorites, bookmarks, viewer, etc.)
-// NOTE: Menu toggle and theme toggle are now handled in the main HTML (index.html)
-// to avoid duplicate event listeners and ensure smooth responsive behaviour.
-
 let books = [];
 let recentBooks = [];
 let favorites = [];
@@ -544,13 +541,28 @@ async function loadAllResources() {
 
 loadAllResources();
 
-// Back‑to‑top button
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+const mainPanel = document.getElementById('mainPanel');
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    mainPanel.classList.toggle('shifted');
+});
+
 const backToTop = document.getElementById('backToTop');
 window.addEventListener('scroll', () => {
     if (window.scrollY > 300) backToTop.style.display = 'flex';
     else backToTop.style.display = 'none';
 });
 backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+const themeToggle = document.getElementById('themeToggle');
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme === 'dark') document.body.classList.add('dark');
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+});
 
 // Expose functions for inline onclick
 window.selectCategory = selectCategory;
