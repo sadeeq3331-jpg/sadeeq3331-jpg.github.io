@@ -1,4 +1,4 @@
-// nexus.js – Redesigned v2.1 (compact suggestions, click-outside-close, auto-collapse sidebar, no mic)
+// nexus.js – v2.2 (fixed read-more, global functions, improved escaping)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
@@ -241,9 +241,9 @@
             const isUser = msg.role === 'user';
             const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const avatar = isUser ? '👤' : '🤖';
-            const contentHtml = formatText(msg.content);
             const fullContent = msg.content;
             const isLong = fullContent.length > 400;
+            const contentHtml = isLong ? truncateText(fullContent, 400) : formatText(fullContent);
             const pinned = isPinned(originalIdx);
 
             html += `
@@ -252,15 +252,15 @@
                     <div class="bubble-wrapper">
                         <div class="message-bubble" style="font-size:${fontSize}px">
                             <div class="message-content ${isLong ? 'truncated' : ''}" id="msg-content-${originalIdx}">
-                                ${isLong ? truncateText(fullContent, 400) : contentHtml}
+                                ${contentHtml}
                             </div>
-                            ${isLong ? `<button class="read-more" data-idx="${originalIdx}" onclick="toggleReadMore(${originalIdx})">Read more</button>` : ''}
+                            ${isLong ? `<button class="read-more" data-idx="${originalIdx}">Read more</button>` : ''}
                         </div>
                         <div class="message-actions">
-                            ${!isUser ? `<button class="icon-btn" onclick="togglePinMessage(${originalIdx})" title="${pinned ? 'Unpin' : 'Pin'}">${pinned ? '📌' : '📍'}</button>` : ''}
-                            <button class="icon-btn" onclick="copyMessageContent(${originalIdx})" title="Copy">📋</button>
-                            ${isUser ? `<button class="icon-btn" onclick="editUserMessage(${originalIdx}, prompt('Edit your message:', \`${fullContent.replace(/`/g, '\\`')}\`))" title="Edit">✏️</button>` : `<button class="icon-btn" onclick="quoteMessage(${originalIdx})" title="Quote reply">💬</button>`}
-                            <button class="icon-btn" onclick="deleteMessage(${originalIdx})" title="Delete">🗑️</button>
+                            ${!isUser ? `<button class="icon-btn" onclick="window.togglePinMessage(${originalIdx})" title="${pinned ? 'Unpin' : 'Pin'}">${pinned ? '📌' : '📍'}</button>` : ''}
+                            <button class="icon-btn" onclick="window.copyMessageContent(${originalIdx})" title="Copy">📋</button>
+                            ${isUser ? `<button class="icon-btn" data-edit-idx="${originalIdx}" title="Edit">✏️</button>` : `<button class="icon-btn" onclick="window.quoteMessage(${originalIdx})" title="Quote reply">💬</button>`}
+                            <button class="icon-btn" onclick="window.deleteMessage(${originalIdx})" title="Delete">🗑️</button>
                         </div>
                         <div class="timestamp">${time}</div>
                     </div>
@@ -273,10 +273,33 @@
             </div>`;
         }
         msgsDiv.innerHTML = html;
+
+        // Attach event listeners for read-more and edit buttons
+        msgsDiv.querySelectorAll('.read-more').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.idx);
+                window.toggleReadMore(idx);
+            });
+        });
+        msgsDiv.querySelectorAll('[data-edit-idx]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.editIdx);
+                const conv = getCurrentConv();
+                if (!conv || !conv.messages[idx]) return;
+                const newContent = prompt('Edit your message:', conv.messages[idx].content);
+                if (newContent && newContent.trim()) {
+                    window.editUserMessage(idx, newContent.trim());
+                }
+            });
+        });
+
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
     }
 
-    function toggleReadMore(idx) {
+    // ========== toggleReadMore (global) ==========
+    window.toggleReadMore = function(idx) {
         const conv = getCurrentConv();
         if (!conv || !conv.messages[idx]) return;
         const contentEl = document.getElementById(`msg-content-${idx}`);
@@ -288,7 +311,7 @@
             contentEl.innerHTML = truncateText(conv.messages[idx].content, 400);
             contentEl.classList.add('truncated');
         }
-    }
+    };
 
     function updateStats() {
         const conv = getCurrentConv();
@@ -302,15 +325,11 @@
     function updateContextSuggestions() {
         const container = document.getElementById('suggestions');
         if (!container) return;
-        const conv = getCurrentConv();
-        // Shorter list, only 3 chips to keep it compact
         const allSuggestions = [
             'Explain Krebs cycle',
             'ACE inhibitors',
             'Treat hypertension',
-            'Chest pain differential',
         ];
-        // Limit to 3 items, scrollable if needed
         const chipsHtml = allSuggestions.slice(0, 3).map(s => 
             `<div class="suggestion-chip" data-question="${s}">🧬 ${s}</div>`
         ).join('');
@@ -751,10 +770,10 @@ ${personalityInstruction}`;
         padding: 6px 20px;
         overflow-x: auto;
         white-space: nowrap;
-        flex-wrap: nowrap;            /* ← compact single row */
+        flex-wrap: nowrap;
         border-top: 1px solid var(--border-light);
         background: rgba(255,255,255,0.3);
-        scrollbar-width: none;        /* hide scrollbar */
+        scrollbar-width: none;
         -ms-overflow-style: none;
     }
     .suggestions::-webkit-scrollbar { display: none; }
@@ -842,7 +861,7 @@ ${personalityInstruction}`;
             }
         });
 
-        // Clicking inside main area collapses sidebar (unless clicking toggles or sidebar itself)
+        // Clicking inside main area collapses sidebar
         const mainArea = document.getElementById('nexus-main');
         mainArea.addEventListener('click', (e) => {
             const sidebar = document.getElementById('nexus-sidebar');
@@ -925,7 +944,7 @@ ${personalityInstruction}`;
         renderAll();
     }
 
-    // Expose globally
+    // Expose all necessary functions globally
     window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
