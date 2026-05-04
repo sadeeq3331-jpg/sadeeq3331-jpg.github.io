@@ -1,4 +1,4 @@
-// nexus.js – Redesigned Medical AI Assistant (v2.0)
+// nexus.js – Redesigned v2.1 (compact suggestions, click-outside-close, auto-collapse sidebar, no mic)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
@@ -26,7 +26,6 @@
 
     function formatText(text) {
         if (!text) return text;
-        // Simple markdown: **bold**, *italic*
         let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
         html = html.replace(/\n/g, '<br>');
@@ -90,14 +89,13 @@
         conv.messages.push({ role, content, timestamp: Date.now() });
         saveConversations();
         renderMessages();
-        renderSidebar(); // update pinned section
+        renderSidebar();
         updateStats();
     }
 
     function deleteMessage(index) {
         const conv = getCurrentConv();
         if (!conv) return;
-        // remove from pinned if pinned
         pinnedMessages = pinnedMessages.filter(p => p.convId !== currentConvId || p.idx !== index);
         conv.messages.splice(index, 1);
         saveConversations();
@@ -113,7 +111,7 @@
         if (!conv || conv.messages[index]?.role !== 'user') return;
         conv.messages[index].content = newContent;
         if (index + 1 < conv.messages.length && conv.messages[index+1].role === 'assistant') {
-            conv.messages.splice(index+1, 1); // remove previous AI reply to regenerate
+            conv.messages.splice(index+1, 1);
         }
         saveConversations();
         renderMessages();
@@ -137,7 +135,7 @@
 
     function isPinned(idx) { return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx); }
 
-    // ========== UI Render: Sidebar ==========
+    // ========== Sidebar Render ==========
     function renderSidebar() {
         const sidebar = document.getElementById('nexus-sidebar');
         if (!sidebar) return;
@@ -195,7 +193,6 @@
         </div>`;
         sidebar.innerHTML = html;
 
-        // event delegation for conv items
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 if (e.target.closest('.delete-conv')) return;
@@ -230,7 +227,7 @@
         updateContextSuggestions();
     }
 
-    // ========== UI Render: Messages ==========
+    // ========== Messages Render ==========
     function renderMessages() {
         const msgsDiv = document.getElementById('nexus-messages');
         if (!msgsDiv) return;
@@ -244,7 +241,7 @@
             const isUser = msg.role === 'user';
             const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const avatar = isUser ? '👤' : '🤖';
-            const contentHtml = isUser ? formatText(msg.content) : formatText(msg.content);
+            const contentHtml = formatText(msg.content);
             const fullContent = msg.content;
             const isLong = fullContent.length > 400;
             const pinned = isPinned(originalIdx);
@@ -298,31 +295,25 @@
         if (!conv) return;
         const msgCount = conv.messages.length;
         const wordCount = conv.messages.reduce((sum, m) => sum + m.content.split(/\s+/).length, 0);
-        document.getElementById('nexus-stats') && (document.getElementById('nexus-stats').innerText = `${msgCount} msgs · ~${wordCount} words`);
+        const statsEl = document.getElementById('nexus-stats');
+        if (statsEl) statsEl.innerText = `${msgCount} msgs · ~${wordCount} words`;
     }
 
     function updateContextSuggestions() {
         const container = document.getElementById('suggestions');
         if (!container) return;
         const conv = getCurrentConv();
-        const lastMsg = conv?.messages[conv.messages.length-1]?.content || '';
-        // Simple static pool + rotate based on conversation name
+        // Shorter list, only 3 chips to keep it compact
         const allSuggestions = [
-            'Explain the Krebs cycle',
-            'What are ACE inhibitors?',
-            'How to treat hypertension?',
-            'Differential diagnosis of chest pain',
-            'Pathophysiology of diabetes mellitus',
-            'Management of acute MI',
-            'Antibiotic resistance mechanisms',
-            'Physiology of action potential'
+            'Explain Krebs cycle',
+            'ACE inhibitors',
+            'Treat hypertension',
+            'Chest pain differential',
         ];
-        let shown = [...allSuggestions];
-        // If conversation name suggests a specialty, prioritize relevant ones
-        if (conv?.name.toLowerCase().includes('cardio')) {
-            shown = ['What is heart failure with preserved EF?', 'Explain ECG changes in MI', ...shown];
-        }
-        const chipsHtml = shown.slice(0, 4).map(s => `<div class="suggestion-chip" data-question="${s}">🧬 ${s}</div>`).join('');
+        // Limit to 3 items, scrollable if needed
+        const chipsHtml = allSuggestions.slice(0, 3).map(s => 
+            `<div class="suggestion-chip" data-question="${s}">🧬 ${s}</div>`
+        ).join('');
         container.innerHTML = chipsHtml;
         document.querySelectorAll('.suggestion-chip').forEach(chip => {
             chip.addEventListener('click', () => {
@@ -433,12 +424,11 @@ ${personalityInstruction}`;
     }
 
     function deleteConversation(id) {
-        if (conversations.length <= 1) return; // keep at least one
+        if (conversations.length <= 1) return;
         const idx = conversations.findIndex(c => c.id === id);
         if (idx === -1) return;
         conversations.splice(idx, 1);
         if (currentConvId === id) currentConvId = conversations[0].id;
-        // clean pinned
         pinnedMessages = pinnedMessages.filter(p => p.convId !== id);
         saveConversations();
         savePinned();
@@ -453,7 +443,6 @@ ${personalityInstruction}`;
             conv.name = newName.trim();
             saveConversations();
             renderSidebar();
-            // update header
             const headerName = document.getElementById('current-conv-name');
             if (headerName && currentConvId === id) headerName.textContent = conv.name;
         }
@@ -741,7 +730,7 @@ ${personalityInstruction}`;
         outline: none;
         max-height: 120px;
     }
-    .send-btn, .voice-btn, .share-btn {
+    .send-btn, .share-btn {
         background: var(--primary);
         color: white;
         border: none;
@@ -755,26 +744,31 @@ ${personalityInstruction}`;
         font-size: 1.2rem;
         box-shadow: 0 4px 12px rgba(44,124,176,0.3);
     }
-    .voice-btn { background: #6c5ce7; }
     .share-btn { background: #555; }
     .suggestions {
         display: flex;
         gap: 8px;
-        padding: 8px 20px;
-        flex-wrap: wrap;
+        padding: 6px 20px;
+        overflow-x: auto;
+        white-space: nowrap;
+        flex-wrap: nowrap;            /* ← compact single row */
         border-top: 1px solid var(--border-light);
         background: rgba(255,255,255,0.3);
+        scrollbar-width: none;        /* hide scrollbar */
+        -ms-overflow-style: none;
     }
+    .suggestions::-webkit-scrollbar { display: none; }
     .suggestion-chip {
+        flex-shrink: 0;
         background: rgba(44,124,176,0.1);
         border-radius: 30px;
-        padding: 6px 14px;
-        font-size: 0.8rem;
+        padding: 5px 12px;
+        font-size: 0.75rem;
         cursor: pointer;
         transition: 0.2s;
     }
     .suggestion-chip:hover { background: rgba(44,124,176,0.2); transform: scale(1.02); }
-    .nexus-stats { font-size: 0.65rem; opacity: 0.5; padding: 8px 20px; text-align: right; }
+    .nexus-stats { font-size: 0.65rem; opacity: 0.5; padding: 4px 20px 8px; text-align: right; }
     .nexus-toast {
         position: fixed;
         bottom: 30px;
@@ -793,7 +787,7 @@ ${personalityInstruction}`;
     .icon-btn { background: transparent; border: none; cursor: pointer; color: inherit; opacity: 0.7; font-size: 0.9rem; padding: 2px 4px; }
     .icon-btn:hover { opacity: 1; }
     @media (max-width: 700px) {
-        .nexus-sidebar { width: 0; overflow: hidden; }
+        .nexus-sidebar { width: 0 !important; }
         .nexus-panel { width: 95vw; height: 90vh; }
     }
 </style>
@@ -810,7 +804,7 @@ ${personalityInstruction}`;
     </div>
     <div class="nexus-body">
         <div class="nexus-sidebar" id="nexus-sidebar"></div>
-        <div class="nexus-main">
+        <div class="nexus-main" id="nexus-main">
             <div class="chat-header">
                 <span id="current-conv-name" style="font-weight:600; flex-shrink:0;">New Chat</span>
                 <input type="text" id="nexus-search" placeholder="🔍 Search messages...">
@@ -819,7 +813,6 @@ ${personalityInstruction}`;
             <div class="suggestions" id="suggestions"></div>
             <div class="input-area">
                 <textarea id="nexus-input" placeholder="Ask a medical question..." rows="1" maxlength="1000"></textarea>
-                <button class="voice-btn" id="voice-input" title="Voice input">🎤</button>
                 <button class="share-btn" id="share-conv" title="Share">🔗</button>
                 <button class="send-btn" id="nexus-send">➤</button>
             </div>
@@ -829,14 +822,40 @@ ${personalityInstruction}`;
 </div>`;
         document.body.appendChild(container);
 
-        // Event binding
         const panel = container.querySelector('.nexus-panel');
         const bubble = container.querySelector('.nexus-bubble');
-        bubble.onclick = () => { panel.style.display = 'flex'; };
+
+        // Toggle panel with bubble
+        bubble.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (panel.style.display === 'flex') {
+                panel.style.display = 'none';
+            } else {
+                panel.style.display = 'flex';
+            }
+        });
+
+        // Click outside to close panel
+        document.addEventListener('click', (e) => {
+            if (panel.style.display === 'flex' && !panel.contains(e.target) && e.target !== bubble) {
+                panel.style.display = 'none';
+            }
+        });
+
+        // Clicking inside main area collapses sidebar (unless clicking toggles or sidebar itself)
+        const mainArea = document.getElementById('nexus-main');
+        mainArea.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('nexus-sidebar');
+            if (sidebarOpen && !e.target.closest('#sidebar-toggle') && !e.target.closest('.nexus-sidebar')) {
+                sidebarOpen = false;
+                sidebar.style.width = '0px';
+            }
+        });
 
         document.getElementById('minimize-panel').onclick = () => panel.style.display = 'none';
         document.getElementById('close-panel').onclick = () => panel.style.display = 'none';
-        document.getElementById('sidebar-toggle').onclick = () => {
+        document.getElementById('sidebar-toggle').onclick = (e) => {
+            e.stopPropagation();
             sidebarOpen = !sidebarOpen;
             const sidebar = document.getElementById('nexus-sidebar');
             sidebar.style.width = sidebarOpen ? '250px' : '0px';
@@ -860,19 +879,6 @@ ${personalityInstruction}`;
         document.getElementById('nexus-search').addEventListener('input', (e) => {
             currentSearch = e.target.value.trim().toLowerCase();
             renderMessages();
-        });
-
-        document.getElementById('voice-input').addEventListener('click', () => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) { showToast('Voice not supported'); return; }
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'en-US';
-            recognition.onresult = (e) => {
-                const transcript = e.results[0][0].transcript;
-                document.getElementById('nexus-input').value = transcript;
-                sendMessage(transcript);
-            };
-            recognition.start();
         });
 
         // Drag panel
