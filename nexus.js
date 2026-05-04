@@ -1,4 +1,4 @@
-// nexus.js – v2.3 (all fixes + text-selection → Ask Nexus)
+// nexus.js – v2.4 (stable: no panel close on internal clicks, no extra selection button)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
@@ -193,8 +193,10 @@
         </div>`;
         sidebar.innerHTML = html;
 
+        // *** FIX: Stop propagation on all interactive elements to prevent panel close ***
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
+                e.stopPropagation(); // <<< prevent closing panel
                 if (e.target.closest('.delete-conv')) return;
                 const id = Number(item.dataset.id);
                 if (id !== currentConvId) {
@@ -283,7 +285,7 @@
         }
         msgsDiv.innerHTML = html;
 
-        // Attach event listeners with stopPropagation to prevent panel close
+        // Attach all action listeners with stopPropagation
         msgsDiv.querySelectorAll('.read-more').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -550,50 +552,6 @@ ${personalityInstruction}`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 2000);
     }
-
-    // ========== Text Selection → Ask Nexus Button ==========
-    let textSelectionButton = null;
-    function handleTextSelection() {
-        const selection = window.getSelection();
-        const selectedText = selection.toString().trim();
-        if (selectedText && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            const rect = range.getBoundingClientRect();
-            if (!textSelectionButton) {
-                textSelectionButton = document.createElement('div');
-                textSelectionButton.className = 'nexus-text-btn';
-                textSelectionButton.innerHTML = '🩺 Ask Nexus';
-                textSelectionButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const panel = document.querySelector('.nexus-panel');
-                    if (panel) {
-                        panel.style.display = 'flex';
-                        const input = document.getElementById('nexus-input');
-                        if (input) input.value = selectedText;
-                        // clear selection and hide button
-                        window.getSelection().removeAllRanges();
-                        textSelectionButton.style.display = 'none';
-                    }
-                });
-                document.body.appendChild(textSelectionButton);
-            }
-            textSelectionButton.style.display = 'block';
-            textSelectionButton.style.top = (rect.top + window.scrollY - 40) + 'px';
-            textSelectionButton.style.left = (rect.left + window.scrollX) + 'px';
-        } else {
-            if (textSelectionButton) textSelectionButton.style.display = 'none';
-        }
-    }
-    document.addEventListener('mouseup', handleTextSelection);
-    document.addEventListener('keyup', handleTextSelection);
-    // hide when clicking anywhere else
-    document.addEventListener('mousedown', (e) => {
-        if (textSelectionButton && !textSelectionButton.contains(e.target)) {
-            setTimeout(() => {
-                if (textSelectionButton) textSelectionButton.style.display = 'none';
-            }, 0);
-        }
-    });
 
     // ========== Widget Creation ==========
     function createWidget() {
@@ -883,19 +841,6 @@ ${personalityInstruction}`;
     }
     @keyframes fadeInUp { from { opacity:0; transform:translate(-50%,20px); } to { opacity:1; transform:translate(-50%,0); } }
     .muted { opacity: 0.5; font-size: 0.8rem; }
-    .nexus-text-btn {
-        position: absolute;
-        background: var(--primary);
-        color: white;
-        padding: 6px 14px;
-        border-radius: 30px;
-        font-size: 0.8rem;
-        cursor: pointer;
-        z-index: 10002;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        display: none;
-        white-space: nowrap;
-    }
     @media (max-width: 700px) {
         .nexus-sidebar { width: 0 !important; }
         .nexus-panel { width: 95vw; height: 90vh; }
@@ -945,7 +890,7 @@ ${personalityInstruction}`;
             }
         });
 
-        // Click outside to close panel
+        // Click outside to close panel – but any internal click stops propagation before reaching here
         document.addEventListener('click', (e) => {
             if (panel.style.display === 'flex' && !panel.contains(e.target) && e.target !== bubble) {
                 panel.style.display = 'none';
