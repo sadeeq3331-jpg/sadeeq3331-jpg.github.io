@@ -11,6 +11,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://medlib.top">
     <meta property="og:image" content="https://images.unsplash.com/photo-1585435557343-3b092031a831?w=1200">
+    <meta name="theme-color" content="#0f766e">
     <title>MedLib · Free Medical Library</title>
     <link rel="canonical" href="https://medlib.top">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
@@ -18,15 +19,162 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
+    <!-- Inline theme enhancements – vibrant & professional -->
+    <style>
+        :root {
+            --accent: #0d9488;
+            --accent-light: #14b8a6;
+            --accent-glow: #5eead4;
+            --card-radius: 18px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --transition: 0.2s ease;
+            --hero-gradient: linear-gradient(135deg, #0f766e 0%, #115e59 50%, #134e4a 100%);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        .hero {
+            background: var(--hero-gradient) !important;
+            padding: 3rem 1.5rem !important;
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+        }
+        .hero-content h1 {
+            color: white !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .hero-content p {
+            color: #ccfbf1 !important;
+        }
+
+        .search-bar {
+            background: white;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            padding: 0.25rem 0.25rem 0.25rem 1.25rem;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 1rem;
+            background: transparent;
+            padding: 0.75rem 0;
+        }
+        .search-bar button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0.65rem 1.6rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .search-bar button:hover {
+            background: #0f766e;
+            box-shadow: 0 0 15px rgba(13,148,136,0.4);
+        }
+        .search-bar .clear-search {
+            display: none;
+            background: none;
+            color: #6b7280;
+            padding: 0.5rem;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            margin-right: 0.25rem;
+        }
+        .search-bar .clear-search.visible {
+            display: inline-block;
+        }
+
+        .book-card, .category-card, .recent-card, .favorite-card, .bookmark-card, .blog-card {
+            border-radius: var(--card-radius) !important;
+            overflow: hidden;
+            transition: transform var(--transition), box-shadow var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+        .book-card:hover, .category-card:hover, .recent-card:hover, 
+        .favorite-card:hover, .bookmark-card:hover, .blog-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .bookmark-card .delete-bookmark {
+            background: #ff6b6b !important;
+            font-size: 0.75rem;
+        }
+
+        .notification {
+            background: linear-gradient(135deg, #0d9488, #0f766e);
+            border: none !important;
+            color: white;
+            box-shadow: 0 8px 20px rgba(13,148,136,0.3);
+            border-radius: 16px;
+            padding: 0.9rem 1.5rem;
+            font-weight: 500;
+            animation: slideInUp 0.3s ease;
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loading-skeleton {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        .skeleton-card {
+            width: 240px;
+            height: 320px;
+            border-radius: var(--card-radius);
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .back-to-top {
+            background: var(--accent) !important;
+        }
+
+        .footer {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .hero {
+                background: linear-gradient(135deg, #0d2e2b, #0b2f2a) !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <div id="loading-skeleton" class="loading-skeleton" style="padding:2rem 1.5rem;">
-        <div class="skeleton-card" aria-hidden="true"></div><div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div><div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div><div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div><div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
+        <div class="skeleton-card" aria-hidden="true"></div>
     </div>
 
     <div class="top-bar">
@@ -91,8 +239,9 @@
             <div class="hero-content">
                 <h1>Free Medical Textbooks & MCQ Banks</h1>
                 <p>150+ books, 1000+ USMLE questions – completely free</p>
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Search title, author, subject...">
+                <div class="search-bar" id="searchBar">
+                    <input type="text" id="searchInput" placeholder="Search title, author, subject..." onkeyup="if(event.key==='Enter') searchBooks()" aria-label="Search books">
+                    <button class="clear-search" id="clearSearch" onclick="clearSearchInput()" aria-label="Clear search"><i class="fas fa-times"></i></button>
                     <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
                 </div>
             </div>
@@ -114,15 +263,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <script src="firebase-config.js"></script>
-<script src="login.js"></script>
-<script src="sync.js"></script>
-<script src="sync-conversations.js"></script>   <!-- new -->
-<script src="app.js"></script>
-<script src="mcq-generator.js"></script>
-<script src="notes.js"></script>
-<script src="pronunciation.js"></script>
-<script src="selection-popup.js"></script>
-<script defer src="https://js.puter.com/v2/"></script>
-<script defer src="nexus.js"></script>
+    <script src="login.js"></script>
+    <script src="sync.js"></script>
+    <script src="sync-conversations.js"></script>
+    <script src="app.js"></script>
+    <script src="mcq-generator.js"></script>
+    <script src="notes.js"></script>
+    <script src="pronunciation.js"></script>
+    <script src="selection-popup.js"></script>
+    <script defer src="https://js.puter.com/v2/"></script>
+    <script defer src="nexus.js"></script>
 </body>
 </html>
