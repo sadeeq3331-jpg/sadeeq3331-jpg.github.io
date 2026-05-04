@@ -15,202 +15,13 @@
     <link rel="canonical" href="https://medlib.top">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Fonts (use swap to avoid connection‑closed errors) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Google AdSense (unchanged) -->
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
-
-    <!-- ========== UPDATED MEDICAL‑THEMED TOP BAR + FIXES ========== -->
-    <style>
-        :root {
-            --med-blue: #2c7cb0;
-            --med-blue-light: #4a9fd4;
-            --bg: #ffffff;
-            --text: #1e293b;
-            --topbar-bg: rgba(255, 255, 255, 0.92);
-            --topbar-border: #e2e8f0;
-            --shadow: rgba(0,0,0,0.04);
-            --btn-bg: #f1f5f9;
-            --btn-hover: #e2e8f0;
-            --avatar-border: #cbd5e1;
-        }
-
-        .dark {
-            --bg: #0f2a3f;
-            --text: #e2e8f0;
-            --topbar-bg: rgba(15, 42, 63, 0.9);
-            --topbar-border: #1e4a6b;
-            --shadow: rgba(0,0,0,0.3);
-            --btn-bg: #1e3b4f;
-            --btn-hover: #2a4f64;
-            --avatar-border: #3b6a8a;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding-top: 4.5rem;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        /* ---------- Top Bar ---------- */
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--topbar-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--topbar-border);
-            box-shadow: 0 2px 12px var(--shadow);
-            transition: background 0.3s ease, border-color 0.3s ease;
-            flex-wrap: wrap;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--med-blue);
-            white-space: nowrap;
-        }
-
-        .author {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            white-space: nowrap;
-        }
-
-        .spacer {
-            flex: 1;
-            min-width: 1rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            white-space: nowrap;
-            flex-wrap: wrap;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--avatar-border);
-            display: none;
-        }
-        .user-avatar.show { display: block; }
-
-        .user-name { font-weight: 500; }
-
-        /* ---------- Buttons ---------- */
-        .icon-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 2rem;
-            background: var(--btn-bg);
-            color: var(--text);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            position: relative;
-            overflow: hidden;
-            outline: none;
-        }
-        .icon-btn:hover { background: var(--btn-hover); transform: translateY(-1px); }
-        .icon-btn:active { transform: scale(0.96); }
-        .icon-btn:focus-visible { outline: 2px solid var(--med-blue); outline-offset: 2px; }
-
-        .menu-toggle {
-            background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--text);
-            cursor: pointer;
-            padding: 0.3rem;
-            display: none;
-        }
-
-        .theme-toggle {
-            background: transparent;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--text);
-            cursor: pointer;
-            padding: 0.4rem;
-            border-radius: 50%;
-            transition: background 0.2s, transform 0.3s;
-        }
-        .theme-toggle:hover { background: var(--btn-bg); }
-
-        /* Loading spinner */
-        .icon-btn .spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid transparent;
-            border-top-color: currentColor;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-        .icon-btn.loading .spinner { display: inline-block; }
-        .icon-btn.loading .btn-text { opacity: 0.7; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Ripple */
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(44,124,176,0.3);
-            transform: scale(0);
-            animation: rippleEffect 0.6s linear;
-            pointer-events: none;
-        }
-        @keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
-
-        /* ---------- Responsive ---------- */
-        @media (max-width: 768px) {
-            .menu-toggle { display: block; }
-            .top-bar { padding: 0.6rem 1rem; gap: 0.5rem; }
-            .author { display: none; }
-            .brand h1 { font-size: 1.1rem; }
-        }
-        @media (max-width: 480px) {
-            .top-bar { justify-content: space-between; }
-            .spacer { display: none; }
-            .user-info { width: 100%; justify-content: center; order: 1; margin-top: 0.5rem; }
-            .icon-btn { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
-            .menu-toggle { order: -1; }
-        }
-    </style>
 </head>
 <body>
-    <!-- Skeleton loader (unchanged) -->
     <div id="loading-skeleton" class="loading-skeleton" style="padding:2rem 1.5rem;">
         <div class="skeleton-card" aria-hidden="true"></div><div class="skeleton-card" aria-hidden="true"></div>
         <div class="skeleton-card" aria-hidden="true"></div><div class="skeleton-card" aria-hidden="true"></div>
@@ -218,44 +29,17 @@
         <div class="skeleton-card" aria-hidden="true"></div><div class="skeleton-card" aria-hidden="true"></div>
     </div>
 
-    <!-- ========== TOP BAR (FIXED + RESPONSIVE) ========== -->
-    <div class="top-bar" id="topBar">
-        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
-            <i class="fas fa-bars"></i>
-        </button>
-
-        <div class="brand">
-            <i class="fas fa-book-medical"></i>
-            <h1 style="font-size:1.25rem; font-weight:700; margin:0;">MedLib</h1>
-        </div>
-
-        <div class="author">
-            <i class="fas fa-stethoscope"></i> Abubakar Sadeeq
-        </div>
-
-        <div class="spacer"></div>
-
-        <div class="user-info" id="userInfo">
-            <img id="user-avatar" class="user-avatar" src="" alt="User avatar" />
-            <span id="user-name" class="user-name">Not signed in</span>
-            <button id="google-login-btn" class="icon-btn">
-                <i class="fa-brands fa-google"></i>
-                <span class="btn-text">Sign in</span>
-                <span class="spinner"></span>
-            </button>
-            <button id="logout-btn" class="icon-btn" style="display:none;">
-                <i class="fas fa-sign-out-alt"></i>
-                <span class="btn-text">Sign out</span>
-                <span class="spinner"></span>
-            </button>
-        </div>
-
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-            <i class="fas fa-moon"></i>
-        </button>
+    <div class="top-bar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-book-medical"></i>
+        <h1>MedLib</h1>
+        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+        <span id="user-name" style="margin-left: 1rem;"></span>
+        <button id="google-login-btn" class="icon-btn">🔐 Sign in</button>
+        <button id="logout-btn" class="icon-btn" style="display:none;">🚪 Sign out</button>
+        <button class="theme-toggle" id="themeToggle" aria-label="Dark mode"><i class="fas fa-moon"></i></button>
     </div>
 
-    <!-- Sidebar (unchanged) -->
     <div class="sidebar" id="sidebar">
         <h2><i class="fas fa-list-ul"></i> Curriculum</h2>
         <div class="cat-section"><h3>📘 Basic Sciences</h3><ul class="cat-items">
@@ -296,14 +80,12 @@
         <div class="cat-section"><ul><li class="cat-item"><a href="https://forms.gle/YOUR_FORM_LINK" target="_blank"><i class="fas fa-plus-circle"></i> Suggest a Book</a></li></ul></div>
     </div>
 
-    <!-- Book Viewer (unchanged) -->
     <div class="book-viewer" id="bookViewer">
         <div class="progress-bar-container"><div class="progress-bar" id="readingProgress"></div></div>
         <div class="close-viewer" onclick="closeViewer()"><i class="fas fa-times"></i></div>
         <iframe id="bookFrame" src=""></iframe>
     </div>
 
-    <!-- Main Panel (unchanged) -->
     <div class="main-panel" id="mainPanel">
         <section class="hero">
             <div class="hero-content">
@@ -326,162 +108,21 @@
     <div class="back-to-top" id="backToTop" title="Back to top"><i class="fas fa-arrow-up"></i></div>
     <div class="keyboard-hint" id="keyboardHint">Press ? for shortcuts</div>
 
-    <!-- ========== FIREBASE SDK (latest stable compat) ========== -->
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-    <!-- Firebase config (keep your custom config) -->
     <script src="firebase-config.js"></script>
-
-    <!-- ========== INLINE LOGIN (replaces external login.js, avoids 404) ========== -->
-    <script>
-        (function() {
-            // Wait for Firebase to be available
-            if (typeof firebase === 'undefined') {
-                console.error('Firebase SDK not loaded. Check internet connection or CDN.');
-                return;
-            }
-
-            const auth = firebase.auth();
-            const provider = new firebase.auth.GoogleAuthProvider();
-
-            // DOM elements
-            const loginBtn = document.getElementById('google-login-btn');
-            const logoutBtn = document.getElementById('logout-btn');
-            const userNameEl = document.getElementById('user-name');
-            const userAvatarEl = document.getElementById('user-avatar');
-
-            // Auth state observer
-            auth.onAuthStateChanged((user) => {
-                // Remove loading states
-                if (loginBtn) loginBtn.classList.remove('loading');
-                if (logoutBtn) logoutBtn.classList.remove('loading');
-
-                if (user) {
-                    // User signed in
-                    if (userNameEl) userNameEl.textContent = user.displayName || 'User';
-                    if (user.photoURL) {
-                        userAvatarEl.src = user.photoURL;
-                        userAvatarEl.alt = user.displayName || 'User avatar';
-                        userAvatarEl.classList.add('show');
-                    } else {
-                        userAvatarEl.classList.remove('show');
-                    }
-                    if (loginBtn) loginBtn.style.display = 'none';
-                    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
-                } else {
-                    // User signed out
-                    if (userNameEl) userNameEl.textContent = 'Not signed in';
-                    userAvatarEl.classList.remove('show');
-                    userAvatarEl.src = '';
-                    if (loginBtn) loginBtn.style.display = 'inline-flex';
-                    if (logoutBtn) logoutBtn.style.display = 'none';
-                }
-            });
-
-            // Sign in
-            if (loginBtn) {
-                loginBtn.addEventListener('click', async () => {
-                    loginBtn.classList.add('loading');
-                    try {
-                        await auth.signInWithPopup(provider);
-                    } catch (error) {
-                        console.error('Sign-in error:', error);
-                        loginBtn.classList.remove('loading');
-                        // Simple error notification (reuse existing notification if possible)
-                        if (typeof showNotification === 'function') {
-                            if (error.code === 'auth/popup-closed-by-user') {
-                                showNotification('Sign-in popup closed. Please try again.');
-                            } else {
-                                showNotification(error.message || 'Sign-in failed.');
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Sign out
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', async () => {
-                    logoutBtn.classList.add('loading');
-                    try {
-                        await auth.signOut();
-                    } catch (error) {
-                        console.error('Sign-out error:', error);
-                        logoutBtn.classList.remove('loading');
-                        if (typeof showNotification === 'function') {
-                            showNotification('Sign-out failed. Please try again.');
-                        }
-                    }
-                });
-            }
-
-            // Ripple effect for all icon buttons
-            document.querySelectorAll('.icon-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    const ripple = document.createElement('span');
-                    const rect = btn.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height);
-                    ripple.style.width = ripple.style.height = `${size}px`;
-                    ripple.style.left = `${e.clientX - rect.left - size/2}px`;
-                    ripple.style.top = `${e.clientY - rect.top - size/2}px`;
-                    ripple.className = 'ripple';
-                    btn.appendChild(ripple);
-                    ripple.addEventListener('animationend', () => ripple.remove());
-                });
-            });
-        })();
-
-        // Theme toggler (already in app.js but keep it here also to be safe)
-        (function() {
-            const themeToggle = document.getElementById('themeToggle');
-            if (!themeToggle) return;
-
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark)) {
-                document.body.classList.add('dark');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                document.body.classList.remove('dark');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark');
-                if (document.body.classList.contains('dark')) {
-                    localStorage.setItem('theme', 'dark');
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                } else {
-                    localStorage.setItem('theme', 'light');
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                }
-            });
-        })();
-
-        // Mobile menu (sidebar toggle)
-        (function() {
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            const mainPanel = document.getElementById('mainPanel');
-            if (menuToggle && sidebar) {
-                menuToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('open');
-                    if (mainPanel) mainPanel.classList.toggle('shifted');
-                });
-            }
-        })();
-    </script>
-
-    <!-- Your other scripts (original order) -->
-    <script src="sync.js"></script>
-    <script src="sync-conversations.js"></script>
-    <script src="app.js"></script>
-    <script src="mcq-generator.js"></script>
-    <script src="notes.js"></script>
-    <script src="pronunciation.js"></script>
-    <script src="selection-popup.js"></script>
-    <script defer src="https://js.puter.com/v2/"></script>
-    <script defer src="nexus.js"></script>
+<script src="login.js"></script>
+<script src="sync.js"></script>
+<script src="sync-conversations.js"></script>   <!-- new -->
+<script src="app.js"></script>
+<script src="mcq-generator.js"></script>
+<script src="notes.js"></script>
+<script src="pronunciation.js"></script>
+<script src="selection-popup.js"></script>
+<script defer src="https://js.puter.com/v2/"></script>
+<script defer src="nexus.js"></script>
 </body>
 </html>
