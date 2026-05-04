@@ -76,7 +76,7 @@ function renderBookmarks() {
                     <i class="fas fa-bookmark"></i>
                     <h3>${b.title}</h3>
                     <p>Click to open</p>
-                    <button class="delete-bookmark" onclick="event.stopPropagation(); removeBookmark(${b.bookId})" style="position:absolute; bottom:10px; right:10px; background:#ff6b6b; border:none; border-radius:20px; padding:4px 10px; color:white;">Remove</button>
+                    <button class="delete-bookmark" onclick="event.stopPropagation(); removeBookmark(${b.bookId})">Remove</button>
                 </div>`;
     });
     html += '</div>';
@@ -96,7 +96,7 @@ function shareCategory(catName) {
 function showNotification(msg) {
     const notif = document.getElementById('notification');
     const span = document.getElementById('notificationMessage');
-    if (notif) {
+    if (notif && span) {
         span.innerText = msg;
         notif.style.display = 'block';
         setTimeout(() => notif.style.display = 'none', 3000);
@@ -144,16 +144,40 @@ function searchBooks() {
     const input = document.getElementById('searchInput');
     const term = input.value.toLowerCase().trim();
     if (!term) { showNotification('Enter a search term'); return; }
-    const results = books.filter(b => 
+    const results = books.filter(b =>
         b.title.toLowerCase().includes(term) ||
         b.author.toLowerCase().includes(term) ||
         b.category.toLowerCase().includes(term) ||
         (b.subcat && b.subcat.toLowerCase().includes(term))
     );
-    if (results.length === 0) showNotification('No books found');
-    else {
+    if (results.length === 0) {
+        showNotification('No books found');
+        document.getElementById('mainContent').innerHTML =
+            `<div style="text-align:center; padding:3rem; color:#555;">
+                <i class="fas fa-search" style="font-size:3rem; opacity:0.3;"></i>
+                <h3 style="margin-top:1rem;">No results for "${term}"</h3>
+                <p>Try a different keyword or browse categories.</p>
+            </div>`;
+    } else {
         displayBooks(results, `Search: "${term}"`);
         window.location.hash = '';
+    }
+    // Show clear button if text present
+    updateClearSearchButton();
+}
+
+function clearSearchInput() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    updateClearSearchButton();
+    input.focus();
+}
+
+function updateClearSearchButton() {
+    const btn = document.getElementById('clearSearch');
+    const input = document.getElementById('searchInput');
+    if (btn) {
+        btn.classList.toggle('visible', input.value.length > 0);
     }
 }
 
@@ -183,7 +207,7 @@ function openBook(filename, bookId) {
             const percent = (scrollTop / (scrollHeight - clientHeight)) * 100;
             const progressBar = document.getElementById('readingProgress');
             if (progressBar) progressBar.style.width = percent + '%';
-        } catch(e) {}
+        } catch(e) { /* cross-origin or blank – ignore */ }
     }, 200);
 
     history.pushState({ viewerOpen: true, bookId, filename }, '', window.location.href);
@@ -205,7 +229,7 @@ window.addEventListener('popstate', function(event) {
     if (viewerActive) {
         closeViewer();
         history.replaceState({}, '', window.location.href);
-        event.preventDefault();
+        // No event.preventDefault() needed – popstate is not cancellable
         return;
     }
 });
@@ -539,6 +563,15 @@ async function loadAllResources() {
     document.getElementById('loading-skeleton').style.display = 'none';
 }
 
+// Attach search input event for clear button visibility
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', updateClearSearchButton);
+        updateClearSearchButton(); // initial state
+    }
+});
+
 loadAllResources();
 
 const menuToggle = document.getElementById('menuToggle');
@@ -576,6 +609,7 @@ window.toggleFavorite = toggleFavorite;
 window.addBookmark = addBookmark;
 window.removeBookmark = removeBookmark;
 window.shareBook = shareBook;
+window.clearSearchInput = clearSearchInput;
 window.getStaticCount = getStaticCount;
 window.createBookCard = createBookCard;
 window.sendMessage = null; // will be overridden by Nexus
