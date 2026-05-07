@@ -1,9 +1,12 @@
-// nexus.js – v2.5 (fix: Ask Nexus button from selection-popup opens panel without closing it)
+// nexus.js – v2.6 (added VisioMed Diagram Generator link in sidebar)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
     const MAX_HISTORY_MESSAGES = 20;
+
+    // ----------  REPLACE THIS WITH YOUR ACTUAL Medical AI URL  ----------
+    const VISIOMED_URL = 'https://YOUR-APP-URL.base44.app/MedicalAI';
 
     // ========== State ==========
     let conversations = [];
@@ -190,6 +193,12 @@
                     <button id="font-plus">A+</button>
                 </div>
             </div>
+        </div>
+        <!-- NEW: VisioMed Diagram Generator section -->
+        <div class="sidebar-section visiomed-section">
+            <div class="section-title">🔬 Tools</div>
+            <div class="visiomed-guide">Need pictures? Try VisioMed for visual explanations</div>
+            <a href="${VISIOMED_URL}" target="_blank" class="visiomed-btn">🔬 Open VisioMed</a>
         </div>`;
         sidebar.innerHTML = html;
 
@@ -285,7 +294,6 @@
         }
         msgsDiv.innerHTML = html;
 
-        // Attach all action listeners with stopPropagation
         msgsDiv.querySelectorAll('.read-more').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -333,7 +341,6 @@
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
     }
 
-    // ========== toggleReadMore (global) ==========
     window.toggleReadMore = function(idx) {
         const conv = getCurrentConv();
         if (!conv || !conv.messages[idx]) return;
@@ -706,6 +713,23 @@ ${personalityInstruction}`;
     input:checked + .slider:before { transform: translateX(18px); }
     .font-controls { display: flex; gap: 6px; }
     .font-controls button { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+
+    /* VisioMed button styles */
+    .visiomed-section { border-bottom: none; }
+    .visiomed-guide { font-size: 0.8rem; margin-bottom: 8px; opacity: 0.8; }
+    .visiomed-btn {
+        display: block;
+        text-align: center;
+        padding: 8px 12px;
+        background: #0a9396;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: background 0.2s;
+    }
+    .visiomed-btn:hover { background: #087f82; }
+
     .nexus-main {
         flex: 1;
         display: flex;
@@ -880,7 +904,6 @@ ${personalityInstruction}`;
         const panel = container.querySelector('.nexus-panel');
         const bubble = container.querySelector('.nexus-bubble');
 
-        // Toggle panel with bubble
         bubble.addEventListener('click', (e) => {
             e.stopPropagation();
             if (panel.style.display === 'flex') {
@@ -890,17 +913,15 @@ ${personalityInstruction}`;
             }
         });
 
-        // Click outside to close panel – EXCEPT clicks on the selection popup
         document.addEventListener('click', (e) => {
             if (panel.style.display === 'flex' &&
                 !panel.contains(e.target) &&
                 e.target !== bubble &&
-                !e.target.closest('#medlib-selection-popup')) {  // <-- FIX: ignore selection popup
+                !e.target.closest('#medlib-selection-popup')) {
                 panel.style.display = 'none';
             }
         });
 
-        // Clicking inside main area collapses sidebar
         const mainArea = document.getElementById('nexus-main');
         mainArea.addEventListener('click', (e) => {
             const sidebar = document.getElementById('nexus-sidebar');
@@ -939,7 +960,6 @@ ${personalityInstruction}`;
             renderMessages();
         });
 
-        // Drag panel
         let isDragging = false, dragOffsetX, dragOffsetY;
         const header = panel.querySelector('.nexus-panel-header');
         header.addEventListener('mousedown', (e) => {
@@ -963,7 +983,6 @@ ${personalityInstruction}`;
             }
         });
 
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'k') {
                 e.preventDefault();
@@ -976,14 +995,12 @@ ${personalityInstruction}`;
         });
     }
 
-    // ========== Init ==========
     function init() {
         loadConversations();
         createWidget();
         renderAll();
     }
 
-    // Expose globally
     window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
