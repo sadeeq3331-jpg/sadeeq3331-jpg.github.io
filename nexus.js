@@ -6,7 +6,7 @@
     const MAX_HISTORY_MESSAGES = 20;
 
     // ----------  REPLACE THIS WITH YOUR ACTUAL Medical AI URL  ----------
-    const VISIOMED_URL = 'https://YOUR-APP-URL.base44.app/MedicalAI';
+    const VISIOMED_URL = 'https://bold-pixel-craft-ai.base44.app/MedicalAI';
 
     // ========== State ==========
     let conversations = [];
