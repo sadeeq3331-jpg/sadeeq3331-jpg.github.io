@@ -1,15 +1,14 @@
-// nexus.js – v2.7 (exact AI Diagram Generator button from Option 3)
+// nexus.js – v2.6 (added VisioMed Diagram Generator link in sidebar)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
     const MAX_HISTORY_MESSAGES = 20;
 
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // REPLACE THIS WITH YOUR ACTUAL MEDICAL AI URL
-    const DIAGRAM_URL = 'https://bold-pixel-craft-ai.base44.app/MedicalAI';
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // ----------  REPLACE THIS WITH YOUR ACTUAL Medical AI URL  ----------
+    const VISIOMED_URL = 'https://bold-pixel-craft-ai.base44.app/MedicalAI';
 
+    // ========== State ==========
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
@@ -20,6 +19,7 @@
     let personality = 'detailed';
     let sidebarOpen = true;
 
+    // ========== Helper Functions ==========
     function extractPuterMessage(raw) {
         if (typeof raw === 'string') {
             try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
@@ -40,6 +40,7 @@
         return text.substring(0, maxLen) + '…';
     }
 
+    // ========== Conversation Persistence ==========
     function loadConversations() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -192,17 +193,16 @@
                     <button id="font-plus">A+</button>
                 </div>
             </div>
+        </div>
+        <!-- NEW: VisioMed Diagram Generator section -->
+        <div class="sidebar-section visiomed-section">
+            <div class="section-title">🔬 Tools</div>
+            <div class="visiomed-guide">Need pictures? Try VisioMed for visual explanations</div>
+            <a href="${VISIOMED_URL}" target="_blank" class="visiomed-btn">🔬 Open VisioMed</a>
         </div>`;
-
-        // ========== EXACT BUTTON FROM OPTION 3 (corrected href) ==========
-        html += `<a href="${DIAGRAM_URL}" target="_blank" 
-            style="display:block; margin-top:8px; padding:8px 12px; background:#0a9396; 
-            color:white; border-radius:8px; text-decoration:none; font-size:0.85rem; margin-left:12px; margin-right:12px;">
-            🔬 AI Diagram Generator
-        </a>`;
-
         sidebar.innerHTML = html;
 
+        // Stop propagation to prevent panel close
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -247,6 +247,7 @@
         updateContextSuggestions();
     }
 
+    // ========== Messages Render ==========
     function renderMessages() {
         const msgsDiv = document.getElementById('nexus-messages');
         if (!msgsDiv) return;
@@ -406,6 +407,7 @@
         navigator.clipboard.writeText(msg.content).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
     }
 
+    // ========== Send Message ==========
     async function sendMessage(initialText = null, isRegenerate = false) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
@@ -470,6 +472,7 @@ ${personalityInstruction}`;
         }
     }
 
+    // ========== Global Actions ==========
     function newConversation() {
         const id = Date.now();
         conversations.push({
@@ -535,6 +538,7 @@ ${personalityInstruction}`;
         navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
     }
 
+    // ========== UI Helpers ==========
     function setFontSize(delta) {
         fontSize = Math.min(32, Math.max(12, fontSize + delta));
         document.querySelectorAll('.message-bubble').forEach(el => el.style.fontSize = fontSize + 'px');
@@ -556,6 +560,7 @@ ${personalityInstruction}`;
         setTimeout(() => toast.remove(), 2000);
     }
 
+    // ========== Widget Creation ==========
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
@@ -708,6 +713,22 @@ ${personalityInstruction}`;
     input:checked + .slider:before { transform: translateX(18px); }
     .font-controls { display: flex; gap: 6px; }
     .font-controls button { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+
+    /* VisioMed button styles */
+    .visiomed-section { border-bottom: none; }
+    .visiomed-guide { font-size: 0.8rem; margin-bottom: 8px; opacity: 0.8; }
+    .visiomed-btn {
+        display: block;
+        text-align: center;
+        padding: 8px 12px;
+        background: #0a9396;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: background 0.2s;
+    }
+    .visiomed-btn:hover { background: #087f82; }
 
     .nexus-main {
         flex: 1;
