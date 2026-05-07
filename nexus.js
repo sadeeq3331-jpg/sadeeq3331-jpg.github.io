@@ -1,12 +1,9 @@
-// nexus.js – v2.6 (added VisioMed Diagram Generator link in sidebar)
+// nexus.js – v2.8 (Medical AI iframe embedded in sidebar)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
     const MAX_HISTORY_MESSAGES = 20;
-
-    // ----------  REPLACE THIS WITH YOUR ACTUAL Medical AI URL  ----------
-    const VISIOMED_URL = 'https://bold-pixel-craft-ai.base44.app/MedicalAI';
 
     // ========== State ==========
     let conversations = [];
@@ -193,16 +190,22 @@
                     <button id="font-plus">A+</button>
                 </div>
             </div>
-        </div>
-        <!-- NEW: VisioMed Diagram Generator section -->
-        <div class="sidebar-section visiomed-section">
-            <div class="section-title">🔬 Tools</div>
-            <div class="visiomed-guide">Need pictures? Try VisioMed for visual explanations</div>
-            <a href="${VISIOMED_URL}" target="_blank" class="visiomed-btn">🔬 Open VisioMed</a>
         </div>`;
+
+        // ------- EMBEDDED MEDICAL AI (IFRAME) -------
+        html += `
+        <div class="sidebar-section">
+            <div class="section-title">🔬 Medical AI Tools</div>
+            <iframe 
+                src="https://bold-pixel-craft-ai.base44.app/MedicalAI"
+                style="width:100%; height:500px; border:none; border-radius:12px;"
+                title="Medical AI"
+            ></iframe>
+        </div>`;
+
         sidebar.innerHTML = html;
 
-        // Stop propagation to prevent panel close
+        // Stop propagation on all interactive elements
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -713,22 +716,6 @@ ${personalityInstruction}`;
     input:checked + .slider:before { transform: translateX(18px); }
     .font-controls { display: flex; gap: 6px; }
     .font-controls button { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
-
-    /* VisioMed button styles */
-    .visiomed-section { border-bottom: none; }
-    .visiomed-guide { font-size: 0.8rem; margin-bottom: 8px; opacity: 0.8; }
-    .visiomed-btn {
-        display: block;
-        text-align: center;
-        padding: 8px 12px;
-        background: #0a9396;
-        color: white;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 0.85rem;
-        transition: background 0.2s;
-    }
-    .visiomed-btn:hover { background: #087f82; }
 
     .nexus-main {
         flex: 1;
