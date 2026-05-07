@@ -1,4 +1,4 @@
-// nexus.js – v2.8 (Medical AI iframe embedded in sidebar)
+// nexus.js – v2.5 (fix: Ask Nexus button from selection-popup opens panel without closing it)
 (function() {
     // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
@@ -191,21 +191,9 @@
                 </div>
             </div>
         </div>`;
-
-        // ------- EMBEDDED MEDICAL AI (IFRAME) -------
-        html += `
-        <div class="sidebar-section">
-            <div class="section-title">🔬 Medical AI Tools</div>
-            <iframe 
-                src="https://bold-pixel-craft-ai.base44.app/MedicalAI"
-                style="width:100%; height:500px; border:none; border-radius:12px;"
-                title="Medical AI"
-            ></iframe>
-        </div>`;
-
         sidebar.innerHTML = html;
 
-        // Stop propagation on all interactive elements
+        // Stop propagation to prevent panel close
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -297,6 +285,7 @@
         }
         msgsDiv.innerHTML = html;
 
+        // Attach all action listeners with stopPropagation
         msgsDiv.querySelectorAll('.read-more').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -344,6 +333,7 @@
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
     }
 
+    // ========== toggleReadMore (global) ==========
     window.toggleReadMore = function(idx) {
         const conv = getCurrentConv();
         if (!conv || !conv.messages[idx]) return;
@@ -716,7 +706,6 @@ ${personalityInstruction}`;
     input:checked + .slider:before { transform: translateX(18px); }
     .font-controls { display: flex; gap: 6px; }
     .font-controls button { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
-
     .nexus-main {
         flex: 1;
         display: flex;
@@ -891,6 +880,7 @@ ${personalityInstruction}`;
         const panel = container.querySelector('.nexus-panel');
         const bubble = container.querySelector('.nexus-bubble');
 
+        // Toggle panel with bubble
         bubble.addEventListener('click', (e) => {
             e.stopPropagation();
             if (panel.style.display === 'flex') {
@@ -900,15 +890,17 @@ ${personalityInstruction}`;
             }
         });
 
+        // Click outside to close panel – EXCEPT clicks on the selection popup
         document.addEventListener('click', (e) => {
             if (panel.style.display === 'flex' &&
                 !panel.contains(e.target) &&
                 e.target !== bubble &&
-                !e.target.closest('#medlib-selection-popup')) {
+                !e.target.closest('#medlib-selection-popup')) {  // <-- FIX: ignore selection popup
                 panel.style.display = 'none';
             }
         });
 
+        // Clicking inside main area collapses sidebar
         const mainArea = document.getElementById('nexus-main');
         mainArea.addEventListener('click', (e) => {
             const sidebar = document.getElementById('nexus-sidebar');
@@ -947,6 +939,7 @@ ${personalityInstruction}`;
             renderMessages();
         });
 
+        // Drag panel
         let isDragging = false, dragOffsetX, dragOffsetY;
         const header = panel.querySelector('.nexus-panel-header');
         header.addEventListener('mousedown', (e) => {
@@ -970,6 +963,7 @@ ${personalityInstruction}`;
             }
         });
 
+        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'k') {
                 e.preventDefault();
@@ -982,12 +976,14 @@ ${personalityInstruction}`;
         });
     }
 
+    // ========== Init ==========
     function init() {
         loadConversations();
         createWidget();
         renderAll();
     }
 
+    // Expose globally
     window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
