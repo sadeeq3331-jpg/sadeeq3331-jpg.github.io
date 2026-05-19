@@ -1,4 +1,4 @@
-// app.js – Main MedLib logic (books, categories, favorites, bookmarks, viewer, etc.)
+// app.js – Final version with forced fresh load & MCQs guarantee
 let books = [];
 let recentBooks = [];
 let favorites = [];
@@ -17,6 +17,7 @@ function loadUserData() {
         if (storedBookmarks) bookmarks = JSON.parse(storedBookmarks);
     } catch(e) {}
 }
+
 function saveRecent() { localStorage.setItem('medlib_recent', JSON.stringify(recentBooks)); }
 function saveFavorites() { localStorage.setItem('medlib_favorites', JSON.stringify(favorites)); }
 function saveBookmarks() { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks)); }
@@ -65,10 +66,7 @@ function removeBookmark(bookId) {
 function renderBookmarks() {
     const container = document.getElementById('bookmarks-section');
     if (!container) return;
-    if (bookmarks.length === 0) {
-        container.style.display = 'none';
-        return;
-    }
+    if (bookmarks.length === 0) { container.style.display = 'none'; return; }
     container.style.display = 'block';
     let html = `<div class="section-title"><h2><i class="fas fa-bookmark"></i> My Bookmarks</h2></div><div class="bookmarks-grid">`;
     bookmarks.forEach(b => {
@@ -149,24 +147,17 @@ function showAllBooks() {
     displayBooks(books, 'All Textbooks');
 }
 
-// Autocomplete logic
 function handleSearchInput(e) {
     updateClearSearchButton();
     const term = e.target.value.toLowerCase().trim();
     const dropdown = document.getElementById('autocompleteDropdown');
     if (!dropdown) return;
-    if (term.length < 2) {
-        dropdown.classList.remove('active');
-        return;
-    }
+    if (term.length < 2) { dropdown.classList.remove('active'); return; }
     const matches = books.filter(b =>
         b.title.toLowerCase().includes(term) ||
         b.author.toLowerCase().includes(term)
     ).slice(0, 6);
-    if (matches.length === 0) {
-        dropdown.classList.remove('active');
-        return;
-    }
+    if (matches.length === 0) { dropdown.classList.remove('active'); return; }
     let html = '';
     matches.forEach(book => {
         html += `<div class="autocomplete-item" onclick="selectAutocomplete('${book.filename}', ${book.id})">
@@ -203,8 +194,7 @@ function searchBooks() {
     document.getElementById('autocompleteDropdown').classList.remove('active');
     if (results.length === 0) {
         showNotification('No books found');
-        document.getElementById('mainContent').innerHTML =
-            `<div style="text-align:center; padding:3rem; color:#555;">
+        document.getElementById('mainContent').innerHTML = `<div style="text-align:center; padding:3rem; color:#555;">
                 <i class="fas fa-search" style="font-size:3rem; opacity:0.3;"></i>
                 <h3 style="margin-top:1rem;">No results for "${term}"</h3>
                 <p>Try a different keyword or browse categories.</p>
@@ -348,7 +338,6 @@ function createBookCard(book, count) {
     `;
 }
 
-// Intersection Observer for reveal animations
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -428,10 +417,7 @@ function renderAnalytics() {
 function renderRecent() {
     const container = document.getElementById('recent-section');
     if (!container) return;
-    if (recentBooks.length === 0) {
-        container.style.display = 'none';
-        return;
-    }
+    if (recentBooks.length === 0) { container.style.display = 'none'; return; }
     container.style.display = 'block';
     const recentData = recentBooks.map(id => books.find(b => b.id === id)).filter(b => b);
     let html = `<div class="section-title"><h2><i class="fas fa-history"></i> Recently Viewed</h2></div><div class="recent-grid">`;
@@ -450,10 +436,7 @@ function renderRecent() {
 function renderFavorites() {
     const container = document.getElementById('favorites-section');
     if (!container) return;
-    if (favorites.length === 0) {
-        container.style.display = 'none';
-        return;
-    }
+    if (favorites.length === 0) { container.style.display = 'none'; return; }
     container.style.display = 'block';
     const favData = favorites.map(id => books.find(b => b.id === id)).filter(b => b);
     let html = `<div class="section-title"><h2><i class="fas fa-star"></i> Your Favorites</h2></div><div class="favorites-grid">`;
@@ -586,7 +569,6 @@ document.getElementById('backToTop').addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Hamburger toggle animation
 const menuToggle = document.getElementById('menuToggle');
 const sidebar = document.getElementById('sidebar');
 const mainPanel = document.getElementById('mainPanel');
@@ -630,40 +612,29 @@ document.addEventListener('touchend', (e) => {
     }
 });
 
+// ---------- CRITICAL FIX: Force fresh books.json load (skip cache) ----------
 async function loadAllResources() {
     loadUserData();
-    const cached = localStorage.getItem('medlib_books');
-    if (cached) {
-        try {
-            books = JSON.parse(cached);
-            loadFromHash();
-            renderHome();
-            document.getElementById('loading-skeleton').style.display = 'none';
-            return;
-        } catch(e) { console.warn('Cache parse failed'); }
-    }
+    // Clear old cache so MCQs will appear
+    localStorage.removeItem('medlib_books');
     try {
         const response = await fetch('books.json');
         if (!response.ok) throw new Error('books.json not found');
         books = await response.json();
+        console.log('✅ Loaded', books.length, 'books from books.json');
+        // Check MCQs
+        const mcqCount = books.filter(b => b.category === 'Question Bank').length;
+        console.log('📝 Question Bank entries:', mcqCount);
         localStorage.setItem('medlib_books', JSON.stringify(books));
         loadFromHash();
         renderHome();
     } catch(e) {
         console.error('Error loading books', e);
-        document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json exists.</div>';
+        books = []; // empty fallback
+        document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load books.json</div>';
     }
     document.getElementById('loading-skeleton').style.display = 'none';
 }
-
-// Autocomplete close on outside click
-document.addEventListener('click', (e) => {
-    const dropdown = document.getElementById('autocompleteDropdown');
-    const searchBar = document.getElementById('searchBar');
-    if (dropdown && !searchBar.contains(e.target)) {
-        dropdown.classList.remove('active');
-    }
-});
 
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
@@ -671,6 +642,14 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.addEventListener('input', updateClearSearchButton);
         updateClearSearchButton();
     }
+    // Close autocomplete on outside click
+    document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('autocompleteDropdown');
+        const searchBar = document.getElementById('searchBar');
+        if (dropdown && !searchBar.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
 });
 
 loadAllResources();
