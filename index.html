@@ -12,8 +12,11 @@
     <meta property="og:url" content="https://medlib.top">
     <meta property="og:image" content="https://images.unsplash.com/photo-1585435557343-3b092031a831?w=1200">
     <meta name="theme-color" content="#0f766e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>MedLib · Free Medical Library</title>
     <link rel="canonical" href="https://medlib.top">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
@@ -27,19 +30,50 @@
             --card-radius: 18px;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
             --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-            --transition: 0.2s ease;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --hero-gradient: linear-gradient(135deg, #0f766e 0%, #115e59 50%, #134e4a 100%);
+            --ripple-color: rgba(255,255,255,0.35);
         }
 
+        * { box-sizing: border-box; }
         body {
             font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            transition: background-color 0.4s, color 0.4s;
+            scroll-behavior: smooth;
         }
 
+        /* Hero animated background */
         .hero {
-            background: var(--hero-gradient) !important;
+            background: var(--hero-gradient);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
             padding: 3rem 1.5rem !important;
             border-radius: 0 0 40px 40px;
             box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: particleMove 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes particleMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
         }
         .hero-content h1 {
             color: white !important;
@@ -49,16 +83,21 @@
             color: #ccfbf1 !important;
         }
 
+        /* Search bar with autocomplete */
         .search-bar {
+            position: relative;
             background: white;
             border-radius: 50px;
-            overflow: hidden;
             box-shadow: var(--shadow-md);
             display: flex;
             align-items: center;
             padding: 0.25rem 0.25rem 0.25rem 1.25rem;
             max-width: 640px;
             margin: 0 auto;
+            transition: box-shadow 0.3s;
+        }
+        .search-bar:focus-within {
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.3);
         }
         .search-bar input {
             border: none;
@@ -78,6 +117,21 @@
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        .search-bar button::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            background: var(--ripple-color);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .search-bar button:hover::after {
+            width: 300px; height: 300px;
         }
         .search-bar button:hover {
             background: #0f766e;
@@ -96,109 +150,129 @@
         .search-bar .clear-search.visible {
             display: inline-block;
         }
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-top: 8px;
+            z-index: 1000;
+            max-height: 240px;
+            overflow-y: auto;
+            display: none;
+        }
+        .autocomplete-dropdown.active {
+            display: block;
+        }
+        .autocomplete-item {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .autocomplete-item:hover {
+            background: #f0fdfa;
+        }
 
+        /* Cards with reveal animation */
         .book-card, .category-card, .recent-card, .favorite-card, .bookmark-card, .blog-card {
             border-radius: var(--card-radius) !important;
             overflow: hidden;
             transition: transform var(--transition), box-shadow var(--transition);
             box-shadow: var(--shadow-sm);
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity;
+        }
+        .book-card.revealed, .category-card.revealed, .recent-card.revealed,
+        .favorite-card.revealed, .bookmark-card.revealed, .blog-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
         }
         .book-card:hover, .category-card:hover, .recent-card:hover,
         .favorite-card:hover, .bookmark-card:hover, .blog-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         }
 
-        .bookmark-card .delete-bookmark {
-            background: #ff6b6b !important;
-            font-size: 0.75rem;
+        /* Dark mode transitions */
+        .dark {
+            --bg: #0a1929;
+            --card-bg: #132f4c;
+            --text: #e0e0e0;
+        }
+        body.dark {
+            background-color: var(--bg);
+            color: var(--text);
+        }
+        body.dark .top-bar, body.dark .footer {
+            background: #0d2137;
+        }
+        body.dark .book-card, body.dark .category-card {
+            background: var(--card-bg);
+            color: var(--text);
         }
 
-        .notification {
-            background: linear-gradient(135deg, #0d9488, #0f766e);
-            border: none !important;
-            color: white;
-            box-shadow: 0 8px 20px rgba(13,148,136,0.3);
-            border-radius: 16px;
-            padding: 0.9rem 1.5rem;
-            font-weight: 500;
-            animation: slideInUp 0.3s ease;
-        }
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .loading-skeleton {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: center;
-        }
-        .skeleton-card {
-            width: 240px;
-            height: 320px;
-            border-radius: var(--card-radius);
-            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .back-to-top {
-            background: var(--accent) !important;
-        }
-
-        .footer {
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        /* Modern sign-in / sign-out buttons */
-        #google-login-btn, #logout-btn {
-            background: linear-gradient(135deg, #0d9488, #0f766e);
-            color: white;
+        /* Hamburger to X */
+        .menu-toggle {
+            background: none;
             border: none;
-            border-radius: 30px;
-            padding: 0.55rem 1.4rem;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 1.5rem;
             cursor: pointer;
-            margin-left: 0.75rem;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
-            display: inline-flex;
+            color: inherit;
+            transition: transform 0.3s;
+        }
+        .menu-toggle.active i::before {
+            content: "\f00d"; /* FontAwesome times */
+        }
+
+        /* Back-to-top with progress ring */
+        .back-to-top {
+            background: var(--accent);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
-            gap: 0.4rem;
+            justify-content: center;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: opacity 0.3s, transform 0.3s;
         }
-        #google-login-btn:hover, #logout-btn:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 8px 25px rgba(13,148,136,0.45);
-            background: linear-gradient(135deg, #14b8a6, #0d9488);
+        .back-to-top .progress-ring {
+            position: absolute;
+            transform: rotate(-90deg);
         }
-        #logout-btn {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        .back-to-top .progress-ring circle {
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-dasharray: 126; /* 2*pi*20 ≈ 126 */
+            stroke-dashoffset: 126;
+            transition: stroke-dashoffset 0.3s;
         }
-        #logout-btn:hover {
-            box-shadow: 0 8px 25px rgba(239,68,68,0.45);
-            background: linear-gradient(135deg, #f87171, #dc2626);
+
+        /* Notification animation improved */
+        .notification {
+            animation: slideInRight 0.3s ease;
         }
-        #user-name {
-            font-weight: 600;
-            color: #0a2942;
-            font-size: 0.9rem;
-            margin-left: 0.5rem;
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-        @media (max-width: 600px) {
-            #google-login-btn, #logout-btn {
-                padding: 0.4rem 0.9rem;
-                font-size: 0.8rem;
-                margin-left: 0.5rem;
-            }
+
+        /* Responsive tweaks */
+        @media (max-width: 768px) {
+            .hero { padding: 2rem 1rem !important; }
+            .search-bar { margin: 0 1rem; }
+        }
+        @media (max-width: 480px) {
+            .search-bar button { padding: 0.5rem 1rem; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -269,7 +343,7 @@
     <div class="book-viewer" id="bookViewer">
         <div class="progress-bar-container"><div class="progress-bar" id="readingProgress"></div></div>
         <div class="close-viewer" onclick="closeViewer()"><i class="fas fa-times"></i></div>
-        <iframe id="bookFrame" src=""></iframe>
+        <iframe id="bookFrame" src="" loading="lazy"></iframe>
     </div>
 
     <div class="main-panel" id="mainPanel">
@@ -278,7 +352,8 @@
                 <h1>Free Medical Textbooks & MCQ Banks</h1>
                 <p>150+ books, 1000+ USMLE questions – completely free</p>
                 <div class="search-bar" id="searchBar">
-                    <input type="text" id="searchInput" placeholder="Search title, author, subject..." onkeyup="if(event.key==='Enter') searchBooks()" aria-label="Search books">
+                    <input type="text" id="searchInput" placeholder="Search title, author, subject..." autocomplete="off" onkeyup="handleSearchInput(event)" aria-label="Search books">
+                    <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
                     <button class="clear-search" id="clearSearch" onclick="clearSearchInput()" aria-label="Clear search"><i class="fas fa-times"></i></button>
                     <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
                 </div>
@@ -292,7 +367,12 @@
     </div>
 
     <div class="notification" id="notification"><i class="fas fa-check-circle"></i> <span id="notificationMessage"></span></div>
-    <div class="back-to-top" id="backToTop" title="Back to top"><i class="fas fa-arrow-up"></i></div>
+    <div class="back-to-top" id="backToTop" title="Back to top">
+        <svg class="progress-ring" width="44" height="44">
+            <circle cx="22" cy="22" r="20" stroke="white" stroke-width="2" fill="none" id="progressCircle"></circle>
+        </svg>
+        <i class="fas fa-arrow-up"></i>
+    </div>
     <div class="keyboard-hint" id="keyboardHint">Press ? for shortcuts</div>
 
     <!-- Firebase SDKs -->
