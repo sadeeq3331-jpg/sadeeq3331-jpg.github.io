@@ -1,321 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <meta name="description" content="Free medical textbook library with 150+ books and 1000+ USMLE practice questions. Study medicine for free.">
-    <meta name="keywords" content="medical textbooks, USMLE Step 1, USMLE Step 2, free medical education, med student resources">
-    <meta name="author" content="Abubakar Sadeeq">
-    <meta property="og:title" content="MedLib – Free Medical Library">
-    <meta property="og:description" content="150+ textbooks, 1000+ USMLE questions – completely free">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://medlib.top">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1585435557343-3b092031a831?w=1200">
-    <meta name="theme-color" content="#0f766e">
-    <title>MedLib · Free Medical Library</title>
-    <link rel="canonical" href="https://medlib.top">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-
-    <!-- Inline theme enhancements – vibrant & professional -->
-    <style>
-        :root {
-            --accent: #0d9488;
-            --accent-light: #14b8a6;
-            --accent-glow: #5eead4;
-            --card-radius: 18px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-            --transition: 0.2s ease;
-            --hero-gradient: linear-gradient(135deg, #0f766e 0%, #115e59 50%, #134e4a 100%);
-        }
-
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-        }
-
-        .hero {
-            background: var(--hero-gradient) !important;
-            padding: 3rem 1.5rem !important;
-            border-radius: 0 0 40px 40px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
-        }
-        .hero-content h1 {
-            color: white !important;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .hero-content p {
-            color: #ccfbf1 !important;
-        }
-
-        .search-bar {
-            background: white;
-            border-radius: 50px;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            align-items: center;
-            padding: 0.25rem 0.25rem 0.25rem 1.25rem;
-            max-width: 640px;
-            margin: 0 auto;
-        }
-        .search-bar input {
-            border: none;
-            outline: none;
-            flex: 1;
-            font-size: 1rem;
-            background: transparent;
-            padding: 0.75rem 0;
-        }
-        .search-bar button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 0.65rem 1.6rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-        }
-        .search-bar button:hover {
-            background: #0f766e;
-            box-shadow: 0 0 15px rgba(13,148,136,0.4);
-        }
-        .search-bar .clear-search {
-            display: none;
-            background: none;
-            color: #6b7280;
-            padding: 0.5rem;
-            font-size: 1.2rem;
-            border: none;
-            cursor: pointer;
-            margin-right: 0.25rem;
-        }
-        .search-bar .clear-search.visible {
-            display: inline-block;
-        }
-
-        .book-card, .category-card, .recent-card, .favorite-card, .bookmark-card, .blog-card {
-            border-radius: var(--card-radius) !important;
-            overflow: hidden;
-            transition: transform var(--transition), box-shadow var(--transition);
-            box-shadow: var(--shadow-sm);
-        }
-        .book-card:hover, .category-card:hover, .recent-card:hover, 
-        .favorite-card:hover, .bookmark-card:hover, .blog-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-        }
-
-        .bookmark-card .delete-bookmark {
-            background: #ff6b6b !important;
-            font-size: 0.75rem;
-        }
-
-        .notification {
-            background: linear-gradient(135deg, #0d9488, #0f766e);
-            border: none !important;
-            color: white;
-            box-shadow: 0 8px 20px rgba(13,148,136,0.3);
-            border-radius: 16px;
-            padding: 0.9rem 1.5rem;
-            font-weight: 500;
-            animation: slideInUp 0.3s ease;
-        }
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .loading-skeleton {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: center;
-        }
-        .skeleton-card {
-            width: 240px;
-            height: 320px;
-            border-radius: var(--card-radius);
-            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .back-to-top {
-            background: var(--accent) !important;
-        }
-
-        .footer {
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        /* -------------------- Modern sign-in / sign-out buttons -------------------- */
-        #google-login-btn, #logout-btn {
-            background: linear-gradient(135deg, #0d9488, #0f766e);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 0.55rem 1.4rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            margin-left: 0.75rem;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        #google-login-btn:hover, #logout-btn:hover {
-            transform: translateY(-2px) scale(1.03);
-            box-shadow: 0 8px 25px rgba(13,148,136,0.45);
-            background: linear-gradient(135deg, #14b8a6, #0d9488);
-        }
-        #logout-btn {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
-        }
-        #logout-btn:hover {
-            box-shadow: 0 8px 25px rgba(239,68,68,0.45);
-            background: linear-gradient(135deg, #f87171, #dc2626);
-        }
-        #user-name {
-            font-weight: 600;
-            color: #0a2942;
-            font-size: 0.9rem;
-            margin-left: 0.5rem;
-        }
-        @media (max-width: 600px) {
-            #google-login-btn, #logout-btn {
-                padding: 0.4rem 0.9rem;
-                font-size: 0.8rem;
-                margin-left: 0.5rem;
-            }
-        }
-
-        @media (prefers-color-scheme: dark) {
-            .hero {
-                background: linear-gradient(135deg, #0d2e2b, #0b2f2a) !important;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div id="loading-skeleton" class="loading-skeleton" style="padding:2rem 1.5rem;">
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-        <div class="skeleton-card" aria-hidden="true"></div>
-    </div>
-
-    <div class="top-bar">
-        <button class="menu-toggle" id="menuToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
-        <i class="fas fa-book-medical"></i>
-        <h1>MedLib</h1>
-        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
-        <span id="user-name" style="margin-left: 1rem;"></span>
-        <button id="google-login-btn">🔐 Sign in</button>
-        <button id="logout-btn" style="display:none;">🚪 Sign out</button>
-        <button class="theme-toggle" id="themeToggle" aria-label="Dark mode"><i class="fas fa-moon"></i></button>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <h2><i class="fas fa-list-ul"></i> Curriculum</h2>
-        <div class="cat-section"><h3>📘 Basic Sciences</h3><ul class="cat-items">
-            <li class="cat-item"><a onclick="selectCategory('Biochemistry')"><i class="fas fa-flask"></i> Biochemistry</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Genetics')"><i class="fas fa-dna"></i> Genetics</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Immunology')"><i class="fas fa-shield-alt"></i> Immunology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Microbiology')"><i class="fas fa-bacteria"></i> Microbiology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('General Pathology')"><i class="fas fa-microscope"></i> General Pathology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('General Pharmacology')"><i class="fas fa-pills"></i> General Pharmacology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Research')"><i class="fas fa-chart-bar"></i> Research</a></li>
-        </ul></div>
-        <div class="cat-section"><h3>❤️ Systems</h3><ul class="cat-items">
-            <li class="cat-item"><a onclick="selectCategory('Respiratory')"><i class="fas fa-lungs"></i> Respiratory</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Cardiology')"><i class="fas fa-heart"></i> Cardiology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Neurology')"><i class="fas fa-brain"></i> Neurology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Gastroenterology')"><i class="fas fa-stomach"></i> Gastroenterology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Endocrinology')"><i class="fas fa-hormone"></i> Endocrinology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Renal')"><i class="fas fa-kidney"></i> Renal</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Reproductive')"><i class="fas fa-venus-mars"></i> Reproductive</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Musculoskeletal')"><i class="fas fa-bone"></i> Musculoskeletal</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Hematology')"><i class="fas fa-blood"></i> Hematology</a></li>
-        </ul></div>
-        <div class="cat-section"><h3>⚕️ Clinical</h3><ul class="cat-items">
-            <li class="cat-item"><a onclick="selectCategory('Dermatology')"><i class="fas fa-hand"></i> Dermatology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Psychiatry')"><i class="fas fa-brain"></i> Psychiatry</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Ophthalmology')"><i class="fas fa-eye"></i> Ophthalmology</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Pediatrics')"><i class="fas fa-child"></i> Pediatrics</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Emergency')"><i class="fas fa-ambulance"></i> Emergency</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Clinical Skills')"><i class="fas fa-stethoscope"></i> Clinical Skills</a></li>
-            <li class="cat-item"><a onclick="selectCategory('Nutrition')"><i class="fas fa-apple-alt"></i> Nutrition</a></li>
-        </ul></div>
-        <div class="cat-section"><h3>📝 Question Banks</h3><ul class="cat-items">
-            <li class="cat-item"><a onclick="selectCategory('Question Bank')"><i class="fas fa-question-circle"></i> All MCQ Banks</a></li>
-            <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 1 · 500+ MCQ Bank.html', 1060)"><i class="fas fa-question-circle"></i> USMLE Step 1</a></li>
-            <li class="cat-item"><a onclick="openBookWithSidebarClose('USMLE Step 2 CK · 500+ MCQ Bank.html', 1061)"><i class="fas fa-question-circle"></i> USMLE Step 2 CK</a></li>
-        </ul></div>
-        <div class="cat-section"><ul><li class="cat-item"><a onclick="goToHome()"><i class="fas fa-home"></i> Home</a></li></ul></div>
-        <div class="cat-section"><ul><li class="cat-item"><a href="https://forms.gle/YOUR_FORM_LINK" target="_blank"><i class="fas fa-plus-circle"></i> Suggest a Book</a></li></ul></div>
-    </div>
-
-    <div class="book-viewer" id="bookViewer">
-        <div class="progress-bar-container"><div class="progress-bar" id="readingProgress"></div></div>
-        <div class="close-viewer" onclick="closeViewer()"><i class="fas fa-times"></i></div>
-        <iframe id="bookFrame" src=""></iframe>
-    </div>
-
-    <div class="main-panel" id="mainPanel">
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Free Medical Textbooks & MCQ Banks</h1>
-                <p>150+ books, 1000+ USMLE questions – completely free</p>
-                <div class="search-bar" id="searchBar">
-                    <input type="text" id="searchInput" placeholder="Search title, author, subject..." onkeyup="if(event.key==='Enter') searchBooks()" aria-label="Search books">
-                    <button class="clear-search" id="clearSearch" onclick="clearSearchInput()" aria-label="Clear search"><i class="fas fa-times"></i></button>
-                    <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
-                </div>
-            </div>
-        </section>
-        <main class="main-content" id="mainContent"></main>
-        <footer class="footer">
-            <p>© 2026 MedLib · Free Medical Library</p>
-            <p><a href="about.html">About</a> | <a href="privacy-policy.html">Privacy</a> | <a href="contact.html">Contact</a> | <a href="https://forms.gle/YOUR_FORM_LINK" target="_blank">Suggest a Book</a></p>
-        </footer>
-    </div>
-
-    <div class="notification" id="notification"><i class="fas fa-check-circle"></i> <span id="notificationMessage"></span></div>
-    <div class="back-to-top" id="backToTop" title="Back to top"><i class="fas fa-arrow-up"></i></div>
-    <div class="keyboard-hint" id="keyboardHint">Press ? for shortcuts</div>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
-    <script src="firebase-config.js"></script>
-    <script src="login.js"></script>
-    <script src="sync.js"></script>
-    <script src="sync-conversations.js"></script>
-    <script src="app.js"></script>
-    <script src="mcq-generator.js"></script>
-    <script src="notes.js"></script>
-    <script src="pronunciation.js"></script>
-    <script src="selection-popup.js"></script>
-    <script defer src="https://js.puter.com/v2/"></script>
-    <script defer src="nexus.js"></script>
-</body>
-</html>
+[
+    {
+        "id": 1001,
+        "title": "Harper's Illustrated Biochemistry",
+        "author": "Victor W. Rodwell",
+        "category": "Biochemistry",
+        "subcat": "",
+        "pages": 800,
+        "filename": "biochemistry.pdf"
+    },
+    {
+        "id": 1002,
+        "title": "Robbins Basic Pathology",
+        "author": "Vinay Kumar",
+        "category": "General Pathology",
+        "subcat": "",
+        "pages": 950,
+        "filename": "pathology.pdf"
+    },
+    {
+        "id": 1003,
+        "title": "Guyton and Hall Textbook of Medical Physiology",
+        "author": "John E. Hall",
+        "category": "Cardiology",
+        "subcat": "",
+        "pages": 1100,
+        "filename": "physiology.pdf"
+    },
+    {
+        "id": 1004,
+        "title": "Clinical Microbiology Made Ridiculously Simple",
+        "author": "Mark Gladwin",
+        "category": "Microbiology",
+        "subcat": "",
+        "pages": 400,
+        "filename": "microbiology.pdf"
+    },
+    {
+        "id": 1005,
+        "title": "Katzung & Trevor's Pharmacology",
+        "author": "Bertram G. Katzung",
+        "category": "General Pharmacology",
+        "subcat": "",
+        "pages": 1200,
+        "filename": "pharmacology.pdf"
+    },
+    {
+        "id": 1060,
+        "title": "USMLE Step 1 · 500+ MCQ Bank",
+        "author": "MedLib",
+        "category": "Question Bank",
+        "subcat": "Step 1",
+        "pages": 0,
+        "filename": "USMLE Step 1 · 500+ MCQ Bank.html"
+    },
+    {
+        "id": 1061,
+        "title": "USMLE Step 2 CK · 500+ MCQ Bank",
+        "author": "MedLib",
+        "category": "Question Bank",
+        "subcat": "Step 2",
+        "pages": 0,
+        "filename": "USMLE Step 2 CK · 500+ MCQ Bank.html"
+    }
+]
