@@ -5,6 +5,28 @@ let favorites = [];
 let bookmarks = [];
 const BOOKMARKS_KEY = 'medlib_bookmarks';
 
+// Fallback minimal books if loading fails
+const FALLBACK_BOOKS = [
+    {
+        id: 1060,
+        title: "USMLE Step 1 · 500+ MCQ Bank",
+        author: "MedLib",
+        category: "Question Bank",
+        subcat: "Step 1",
+        pages: 0,
+        filename: "USMLE Step 1 · 500+ MCQ Bank.html"
+    },
+    {
+        id: 1061,
+        title: "USMLE Step 2 CK · 500+ MCQ Bank",
+        author: "MedLib",
+        category: "Question Bank",
+        subcat: "Step 2",
+        pages: 0,
+        filename: "USMLE Step 2 CK · 500+ MCQ Bank.html"
+    }
+];
+
 function getStaticCount() { return Math.floor(Math.random() * 800) + 700; }
 
 function loadUserData() {
@@ -133,6 +155,11 @@ function goToHome() {
 
 function filterCategory(catName) {
     const results = books.filter(b => b.category === catName);
+    if (results.length === 0) {
+        showNotification('No books found in this category');
+        document.getElementById('mainContent').innerHTML = `<div style="text-align:center; padding:3rem;"><h3>No textbooks yet in "${catName}"</h3><p>Check back soon!</p></div>`;
+        return;
+    }
     displayBooks(results, catName + ' Textbooks');
 }
 
@@ -162,7 +189,6 @@ function searchBooks() {
         displayBooks(results, `Search: "${term}"`);
         window.location.hash = '';
     }
-    // Show clear button if text present
     updateClearSearchButton();
 }
 
@@ -194,7 +220,7 @@ function openBook(filename, bookId) {
     document.body.style.overflow = 'hidden';
     addToRecent(bookId);
     currentViewerBookId = bookId;
-    window.currentBookId = bookId; // for notes.js
+    window.currentBookId = bookId;
     viewerActive = true;
 
     if (progressInterval) clearInterval(progressInterval);
@@ -207,7 +233,7 @@ function openBook(filename, bookId) {
             const percent = (scrollTop / (scrollHeight - clientHeight)) * 100;
             const progressBar = document.getElementById('readingProgress');
             if (progressBar) progressBar.style.width = percent + '%';
-        } catch(e) { /* cross-origin or blank – ignore */ }
+        } catch(e) { /* ignore cross-origin errors */ }
     }, 200);
 
     history.pushState({ viewerOpen: true, bookId, filename }, '', window.location.href);
@@ -229,8 +255,6 @@ window.addEventListener('popstate', function(event) {
     if (viewerActive) {
         closeViewer();
         history.replaceState({}, '', window.location.href);
-        // No event.preventDefault() needed – popstate is not cancellable
-        return;
     }
 });
 
@@ -241,7 +265,6 @@ function loadFromHash() {
             const cat = decodeURIComponent(hash.substring(4));
             filterCategory(cat);
         } catch(e) {
-            console.warn('Invalid hash, resetting');
             window.location.hash = '';
         }
     } else if (hash.startsWith('book=')) {
@@ -258,7 +281,6 @@ window.addEventListener('hashchange', function() {
             const cat = decodeURIComponent(hash.substring(4));
             filterCategory(cat);
         } catch(e) {
-            console.warn('Invalid hash, resetting');
             window.location.hash = '';
         }
     } else if (hash === '') {
@@ -360,9 +382,7 @@ function renderAnalytics() {
     let html = `<div class="section-title"><h2><i class="fas fa-chart-line"></i> Most Read Books</h2></div><div class="book-grid">`;
     for (let [id, count] of sorted) {
         const book = books.find(b => b.id == id);
-        if (book) {
-            html += createBookCard(book, count);
-        }
+        if (book) html += createBookCard(book, count);
     }
     html += '</div>';
     container.innerHTML = html;
@@ -415,6 +435,15 @@ function renderCurrentBooks() {
     if (!main) return;
     const allCategories = [...new Set(books.map(b => b.category))];
     allCategories.sort();
+    if (allCategories.length === 0) {
+        main.innerHTML = `<div style="text-align:center; padding:4rem 2rem;">
+            <i class="fas fa-book-medical" style="font-size:4rem; color:var(--accent); opacity:0.4;"></i>
+            <h2 style="margin-top:1rem;">Your library is being set up</h2>
+            <p>Loading the medical textbook collection…</p>
+            <p style="font-size:0.9rem; color:#666;">If you see this message for long, please check that <code>books.json</code> exists and is valid.</p>
+        </div>`;
+        return;
+    }
     let html = `<div class="section-title"><h2><i class="fas fa-tags"></i> Browse by Subject</h2></div>`;
     html += '<div class="categories">';
     allCategories.forEach(cat => {
@@ -558,17 +587,20 @@ async function loadAllResources() {
         renderHome();
     } catch(e) {
         console.error('Error loading books', e);
-        document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json exists.</div>';
+        // Use fallback data so at least MCQ banks show up
+        books = FALLBACK_BOOKS;
+        showNotification('Could not load full library; showing minimal content.');
+        renderHome();
     }
     document.getElementById('loading-skeleton').style.display = 'none';
 }
 
-// Attach search input event for clear button visibility
+// Search input clear button logic
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', updateClearSearchButton);
-        updateClearSearchButton(); // initial state
+        updateClearSearchButton();
     }
 });
 
