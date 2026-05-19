@@ -5,37 +5,17 @@ let favorites = [];
 let bookmarks = [];
 const BOOKMARKS_KEY = 'medlib_bookmarks';
 
-// Fallback minimal books if loading fails
-const FALLBACK_BOOKS = [
-    {
-        id: 1060,
-        title: "USMLE Step 1 · 500+ MCQ Bank",
-        author: "MedLib",
-        category: "Question Bank",
-        subcat: "Step 1",
-        pages: 0,
-        filename: "USMLE Step 1 · 500+ MCQ Bank.html"
-    },
-    {
-        id: 1061,
-        title: "USMLE Step 2 CK · 500+ MCQ Bank",
-        author: "MedLib",
-        category: "Question Bank",
-        subcat: "Step 2",
-        pages: 0,
-        filename: "USMLE Step 2 CK · 500+ MCQ Bank.html"
-    }
-];
-
 function getStaticCount() { return Math.floor(Math.random() * 800) + 700; }
 
 function loadUserData() {
-    const storedRecent = localStorage.getItem('medlib_recent');
-    if (storedRecent) recentBooks = JSON.parse(storedRecent);
-    const storedFav = localStorage.getItem('medlib_favorites');
-    if (storedFav) favorites = JSON.parse(storedFav);
-    const storedBookmarks = localStorage.getItem(BOOKMARKS_KEY);
-    if (storedBookmarks) bookmarks = JSON.parse(storedBookmarks);
+    try {
+        const storedRecent = localStorage.getItem('medlib_recent');
+        if (storedRecent) recentBooks = JSON.parse(storedRecent);
+        const storedFav = localStorage.getItem('medlib_favorites');
+        if (storedFav) favorites = JSON.parse(storedFav);
+        const storedBookmarks = localStorage.getItem(BOOKMARKS_KEY);
+        if (storedBookmarks) bookmarks = JSON.parse(storedBookmarks);
+    } catch(e) { /* ignore corrupted data */ }
 }
 function saveRecent() { localStorage.setItem('medlib_recent', JSON.stringify(recentBooks)); }
 function saveFavorites() { localStorage.setItem('medlib_favorites', JSON.stringify(favorites)); }
@@ -233,7 +213,7 @@ function openBook(filename, bookId) {
             const percent = (scrollTop / (scrollHeight - clientHeight)) * 100;
             const progressBar = document.getElementById('readingProgress');
             if (progressBar) progressBar.style.width = percent + '%';
-        } catch(e) { /* ignore cross-origin errors */ }
+        } catch(e) { /* ignore cross-origin */ }
     }, 200);
 
     history.pushState({ viewerOpen: true, bookId, filename }, '', window.location.href);
@@ -337,7 +317,7 @@ function getCategoryIcon(cat) {
         'Gastroenterology':'fa-stomach','Endocrinology':'fa-hormone','Renal':'fa-kidney','Reproductive':'fa-venus-mars',
         'Musculoskeletal':'fa-bone','Hematology':'fa-blood','Dermatology':'fa-hand','Psychiatry':'fa-brain',
         'Ophthalmology':'fa-eye','Pediatrics':'fa-child','Emergency':'fa-ambulance','Clinical Skills':'fa-stethoscope',
-        'Nutrition':'fa-apple-alt','Question Bank':'fa-question-circle'
+        'Nutrition':'fa-apple-alt','Question Bank':'fa-question-circle','Toxicology':'fa-skull-crossbones'
     };
     return icons[cat] || 'fa-book';
 }
@@ -367,7 +347,8 @@ function getCategoryImage(cat) {
         'Emergency': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?w=500',
         'Clinical Skills': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?w=500',
         'Nutrition': 'https://images.unsplash.com/photo-1579158951263-7a0e6f8a5b0e?w=500',
-        'Question Bank': 'https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=500'
+        'Question Bank': 'https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=500',
+        'Toxicology': 'https://images.unsplash.com/photo-1576086212638-5f2a8d3d4f5b?w=500'
     };
     return images[cat] || 'https://placehold.co/500x300/0a2942/white?text=Medical';
 }
@@ -576,7 +557,7 @@ async function loadAllResources() {
             renderHome();
             document.getElementById('loading-skeleton').style.display = 'none';
             return;
-        } catch(e) { console.warn('Cache parse failed'); }
+        } catch(e) { console.warn('Cache parse failed, will fetch fresh'); }
     }
     try {
         const response = await fetch('books.json');
@@ -587,15 +568,12 @@ async function loadAllResources() {
         renderHome();
     } catch(e) {
         console.error('Error loading books', e);
-        // Use fallback data so at least MCQ banks show up
-        books = FALLBACK_BOOKS;
-        showNotification('Could not load full library; showing minimal content.');
-        renderHome();
+        document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:2rem;">Failed to load content. Please ensure books.json exists.</div>';
     }
     document.getElementById('loading-skeleton').style.display = 'none';
 }
 
-// Search input clear button logic
+// Search input clear button
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
