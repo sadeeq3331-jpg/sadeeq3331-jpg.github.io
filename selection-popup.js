@@ -1,44 +1,47 @@
 /**
- * selection-popup.js – Modern, event-driven text selection popup for iframe content
+ * selection-popup.js – Modern, stable text selection popup for iframe content
  * 
- * Features:
- * - Uses 'selectionchange' event instead of polling (performance & accuracy)
- * - Repositions popup on scroll/resize events
- * - Proper cleanup with AbortController
- * - Handles iframe reloads and dynamic insertion
- * - Click-outside-to-close behavior
- * - Fully encapsulated in a class with no global state pollution
- * - Maintains speed toggle state per voice
+ * Fixes:
+ * - Prevents unexpected closure when clicking buttons or outside
+ * - Uses debounced selection change detection to avoid flicker
+ * - Stores selected text separately, survives focus loss
+ * - Ignores hide when click target is inside popup
+ * - Handles iframe reloads and dynamic content
+ * - Clean event management with AbortController
  */
-
 (function() {
     'use strict';
 
     class SelectionPopupManager {
-        /**
-         * @param {string} iframeSelector - CSS selector for the target iframe
-         */
         constructor(iframeSelector = '#bookFrame') {
             this.iframeSelector = iframeSelector;
             this.popup = null;
             this.iframe = null;
-            this.abortController = null;      // For iframe-specific events
-            this.parentAbortController = null; // For window events
+            this.abortController = null;
+            this.parentAbortController = null;
             this.usSpeed = 1.0;
             this.ukSpeed = 1.0;
             this.isInitialized = false;
             this.mutationObserver = null;
             
-            // Bind methods to preserve 'this' in event handlers
+            // Store current selected text separately to survive focus loss
+            this.currentSelectedText = '';
+            
+            // Debounce timer for hiding popup
+            this.hideDebounceTimer = null;
+            
+            // Flag to prevent immediate hide after showing
+            this.justShown = false;
+            this.justShownTimer = null;
+            
+            // Bind methods
             this._onSelectionChange = this._onSelectionChange.bind(this);
             this._repositionHandler = this._repositionHandler.bind(this);
             this._onIframeLoad = this._onIframeLoad.bind(this);
             this._onDocumentClick = this._onDocumentClick.bind(this);
+            this._onIframeMouseUp = this._onIframeMouseUp.bind(this);
         }
 
-        /**
-         * Initializes the manager: creates popup element, starts observing iframe
-         */
         init() {
             if (this.isInitialized) return;
             this._createPopupElement();
@@ -46,10 +49,9 @@
             this.isInitialized = true;
         }
 
-        /**
-         * Stops all observers, removes event listeners, hides popup
-         */
         destroy() {
+            if (this.hideDebounceTimer) clearTimeout(this.hideDebounceTimer);
+            if (this.justShownTimer) clearTimeout(this.justShownTimer);
             this._cleanupIframeEvents();
             if (this.parentAbortController) {
                 this.parentAbortController.abort();
@@ -68,9 +70,8 @@
         }
 
         // ----------------------------------------------------------------------
-        // Private DOM & UI methods
+        // UI Creation
         // ----------------------------------------------------------------------
-
         _createPopupElement() {
             if (this.popup) return;
             const div = document.createElement('div');
@@ -78,6 +79,9 @@
             div.className = 'medlib-selection-popup';
             div.setAttribute('role', 'toolbar');
             div.setAttribute('aria-label', 'Text selection actions');
+            // Prevent popup from stealing focus and causing selection loss
+            div.style.userSelect = 'none';
+            div.addEventListener('mousedown', (e) => e.preventDefault());
             div.innerHTML = `
                 <button type="button" class="popup-btn" id="popup-ask-nexus" data-action="ask">🤖 Ask Nexus</button>
                 <button type="button" class="popup-btn" id="popup-us" data-action="us">🔊 US <span class="speed-indicator" id="popup-us-speed">1x</span></button>
@@ -100,8 +104,9 @@
             const ukSpeedSpan = this.popup.querySelector('#popup-uk-speed');
 
             if (askBtn) {
-                askBtn.onclick = () => {
-                    const text = this.popup.getAttribute('data-text');
+                askBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const text = this.currentSelectedText;
                     if (text) {
                         const input = document.getElementById('nexus-input');
                         if (input) input.value = text;
@@ -110,7 +115,7 @@
                         if (typeof window.sendMessage === 'function') {
                             window.sendMessage(text);
                         } else {
-                            console.warn('Nexus not ready: window.sendMessage missing');
+                            console.warn('Nexus not ready');
                             alert('Nexus not ready');
                         }
                     }
@@ -119,23 +124,20 @@
             }
 
             if (usBtn && usSpeedSpan) {
-                usBtn.onclick = () => {
-                    const text = this.popup.getAttribute('data-text');
+                usBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const text = this.currentSelectedText;
                     if (text) {
-                        // Toggle speed between 1.0 and 0.5
                         this.usSpeed = this.usSpeed === 1.0 ? 0.5 : 1.0;
                         usSpeedSpan.innerText = this.usSpeed === 1.0 ? '1x' : '½x';
-                        
-                        // Optional: expose speed globally for external speech handlers
                         if (typeof window.__medlibSpeechSpeed === 'undefined') {
                             window.__medlibSpeechSpeed = {};
                         }
                         window.__medlibSpeechSpeed.us = this.usSpeed;
-                        
                         if (typeof window.speakUS === 'function') {
                             window.speakUS(text);
                         } else {
-                            console.warn('Pronunciation not loaded: window.speakUS missing');
+                            console.warn('Pronunciation not loaded');
                             alert('Pronunciation not loaded');
                         }
                     }
@@ -144,21 +146,20 @@
             }
 
             if (ukBtn && ukSpeedSpan) {
-                ukBtn.onclick = () => {
-                    const text = this.popup.getAttribute('data-text');
+                ukBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const text = this.currentSelectedText;
                     if (text) {
                         this.ukSpeed = this.ukSpeed === 1.0 ? 0.5 : 1.0;
                         ukSpeedSpan.innerText = this.ukSpeed === 1.0 ? '1x' : '½x';
-                        
                         if (typeof window.__medlibSpeechSpeed === 'undefined') {
                             window.__medlibSpeechSpeed = {};
                         }
                         window.__medlibSpeechSpeed.uk = this.ukSpeed;
-                        
                         if (typeof window.speakUK === 'function') {
                             window.speakUK(text);
                         } else {
-                            console.warn('Pronunciation not loaded: window.speakUK missing');
+                            console.warn('Pronunciation not loaded');
                             alert('Pronunciation not loaded');
                         }
                     }
@@ -167,13 +168,14 @@
             }
 
             if (noteBtn) {
-                noteBtn.onclick = () => {
-                    const text = this.popup.getAttribute('data-text');
+                noteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const text = this.currentSelectedText;
                     if (text) {
                         if (typeof window.addAnnotation === 'function') {
                             window.addAnnotation(text);
                         } else {
-                            console.warn('Add note not available: user may not be signed in');
+                            console.warn('Add note not available');
                             alert('Please sign in to add notes');
                         }
                     }
@@ -182,6 +184,9 @@
             }
         }
 
+        // ----------------------------------------------------------------------
+        // Positioning & Visibility
+        // ----------------------------------------------------------------------
         _positionPopup(rect, iframeRect) {
             if (!this.popup) return;
             const left = iframeRect.left + rect.left + window.scrollX + (rect.width / 2) - 70;
@@ -192,12 +197,44 @@
         }
 
         _hidePopup() {
-            if (this.popup) this.popup.style.display = 'none';
+            // Clear any pending hide debounce
+            if (this.hideDebounceTimer) clearTimeout(this.hideDebounceTimer);
+            // Use a small delay to avoid hiding when selection is momentarily cleared
+            // (e.g., when clicking a button, selection might be lost but we still want to keep popup)
+            this.hideDebounceTimer = setTimeout(() => {
+                // Re-check if there is still a selection before hiding
+                if (this._hasSelection()) {
+                    return; // Selection came back, keep popup
+                }
+                if (this.popup) this.popup.style.display = 'none';
+                this.currentSelectedText = '';
+            }, 150);
+        }
+
+        _showPopup(rect, iframeRect, text) {
+            // Clear any pending hide
+            if (this.hideDebounceTimer) clearTimeout(this.hideDebounceTimer);
+            this.currentSelectedText = text;
+            this._positionPopup(rect, iframeRect);
+            
+            // Set a flag to prevent hide from selectionchange that fires immediately after
+            this.justShown = true;
+            if (this.justShownTimer) clearTimeout(this.justShownTimer);
+            this.justShownTimer = setTimeout(() => {
+                this.justShown = false;
+            }, 300);
         }
 
         // ----------------------------------------------------------------------
-        // Selection & iframe event handling
+        // Selection Helpers
         // ----------------------------------------------------------------------
+        _hasSelection() {
+            if (!this.iframe || !this.iframe.contentDocument) return false;
+            const doc = this.iframe.contentDocument;
+            const sel = doc.getSelection();
+            const text = sel?.toString().trim();
+            return !!text;
+        }
 
         _getCurrentSelectionInfo() {
             if (!this.iframe || !this.iframe.contentDocument) return null;
@@ -213,7 +250,6 @@
                     return { text, rect };
                 }
             } catch (e) {
-                // Range may be invalid in some edge cases
                 return null;
             }
             return null;
@@ -223,17 +259,25 @@
             const selectionInfo = this._getCurrentSelectionInfo();
             if (selectionInfo) {
                 const iframeRect = this.iframe.getBoundingClientRect();
-                this._positionPopup(selectionInfo.rect, iframeRect);
-                this.popup.setAttribute('data-text', selectionInfo.text);
+                this._showPopup(selectionInfo.rect, iframeRect, selectionInfo.text);
             } else {
-                this._hidePopup();
+                // Only hide if we're not in "just shown" grace period
+                if (!this.justShown) {
+                    this._hidePopup();
+                }
             }
         }
 
+        // ----------------------------------------------------------------------
+        // Event Handlers
+        // ----------------------------------------------------------------------
         _repositionHandler() {
-            // Only reposition if popup is currently visible and there's an active selection
-            if (this.popup && this.popup.style.display === 'flex') {
-                this._updatePopup();
+            if (this.popup && this.popup.style.display === 'flex' && this.currentSelectedText) {
+                const selectionInfo = this._getCurrentSelectionInfo();
+                if (selectionInfo) {
+                    const iframeRect = this.iframe.getBoundingClientRect();
+                    this._positionPopup(selectionInfo.rect, iframeRect);
+                }
             }
         }
 
@@ -241,19 +285,28 @@
             this._updatePopup();
         }
 
+        // Special handling for mouseup to capture selection right after user finishes selecting
+        _onIframeMouseUp() {
+            // Give browser time to fully update selection
+            setTimeout(() => this._updatePopup(), 10);
+        }
+
         _onDocumentClick(event) {
-            // Hide popup if clicked outside it
-            if (this.popup && this.popup.style.display === 'flex') {
-                if (!this.popup.contains(event.target)) {
+            // If click is inside popup, do nothing (popup should stay)
+            if (this.popup && this.popup.contains(event.target)) {
+                return;
+            }
+            // Otherwise, hide after a tiny delay (to allow selection to be re-evaluated)
+            setTimeout(() => {
+                if (!this._hasSelection()) {
                     this._hidePopup();
                 }
-            }
+            }, 50);
         }
 
         // ----------------------------------------------------------------------
-        // Iframe event binding & cleanup
+        // Iframe Event Binding
         // ----------------------------------------------------------------------
-
         _cleanupIframeEvents() {
             if (this.abortController) {
                 this.abortController.abort();
@@ -272,58 +325,54 @@
             this.abortController = abortCtrl;
             const { signal } = abortCtrl;
 
-            // Listen to selection changes inside iframe
+            // Primary selection change event
             iframeDoc.addEventListener('selectionchange', this._onSelectionChange, { signal });
+            // Mouseup to catch selection end reliably
+            iframeDoc.addEventListener('mouseup', this._onIframeMouseUp, { signal });
             
-            // Reposition on scroll inside iframe
+            // Reposition on scroll/resize
             iframeWin.addEventListener('scroll', this._repositionHandler, { signal });
-            
-            // Reposition on window resize (viewport changes)
             window.addEventListener('resize', this._repositionHandler, { signal });
-            
-            // Reposition on parent window scroll
             window.addEventListener('scroll', this._repositionHandler, { signal });
             
-            // Click outside detection: listen on parent document and iframe document
+            // Click outside detection (both parent and iframe)
             document.addEventListener('click', this._onDocumentClick, { signal });
             iframeDoc.addEventListener('click', this._onDocumentClick, { signal });
+            
+            // Also watch for keyup (e.g., Ctrl+A select all)
+            iframeDoc.addEventListener('keyup', () => setTimeout(() => this._updatePopup(), 20), { signal });
         }
 
         _onIframeLoad() {
             if (!this.iframe || !this.iframe.contentDocument) return;
             this._attachEventsToIframe(this.iframe);
-            // Immediately hide popup on navigation, selection will be cleared automatically
-            this._hidePopup();
+            this._hidePopup(); // Clear any stale popup
         }
 
         _setupIframe(iframe) {
             if (!iframe) return;
             this.iframe = iframe;
             
-            // Remove previous load listener if any
             if (this._boundLoadHandler) {
                 this.iframe.removeEventListener('load', this._boundLoadHandler);
             }
             this._boundLoadHandler = this._onIframeLoad;
             this.iframe.addEventListener('load', this._boundLoadHandler);
             
-            // If iframe already loaded, attach events immediately
             if (this.iframe.contentDocument && this.iframe.contentDocument.readyState === 'complete') {
                 this._onIframeLoad();
             }
         }
 
         // ----------------------------------------------------------------------
-        // Iframe discovery (handles dynamic insertion)
+        // Iframe Discovery
         // ----------------------------------------------------------------------
-
         _startObservingIframe() {
             const existingIframe = document.querySelector(this.iframeSelector);
             if (existingIframe) {
                 this._setupIframe(existingIframe);
             }
             
-            // Watch for iframe being added dynamically
             this.mutationObserver = new MutationObserver((mutations) => {
                 for (const mutation of mutations) {
                     for (const node of mutation.addedNodes) {
@@ -337,7 +386,6 @@
                             }
                         }
                     }
-                    // Also handle case where iframe's id changes or attribute changes
                     if (mutation.type === 'attributes' && mutation.attributeName === 'id') {
                         const newIframe = document.querySelector(this.iframeSelector);
                         if (newIframe && newIframe !== this.iframe) {
@@ -356,13 +404,10 @@
         }
     }
 
-    // Auto-initialize when DOM is ready, ensuring we don't interfere with other scripts
+    // Auto-initialize
     let manager = null;
-    
     const initManager = () => {
-        if (manager) {
-            manager.destroy();
-        }
+        if (manager) manager.destroy();
         manager = new SelectionPopupManager('#bookFrame');
         manager.init();
     };
@@ -373,7 +418,6 @@
         initManager();
     }
     
-    // Optional: expose cleanup for hot module replacement or manual control
     window.__medlibSelectionPopup = {
         destroy: () => {
             if (manager) {
@@ -382,9 +426,7 @@
             }
         },
         reinit: () => {
-            if (manager) {
-                manager.destroy();
-            }
+            if (manager) manager.destroy();
             manager = new SelectionPopupManager('#bookFrame');
             manager.init();
         }
