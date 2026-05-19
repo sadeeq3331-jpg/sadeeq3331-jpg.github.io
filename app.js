@@ -15,7 +15,7 @@ function loadUserData() {
         if (storedFav) favorites = JSON.parse(storedFav);
         const storedBookmarks = localStorage.getItem(BOOKMARKS_KEY);
         if (storedBookmarks) bookmarks = JSON.parse(storedBookmarks);
-    } catch(e) { /* ignore corrupted data */ }
+    } catch(e) {}
 }
 function saveRecent() { localStorage.setItem('medlib_recent', JSON.stringify(recentBooks)); }
 function saveFavorites() { localStorage.setItem('medlib_favorites', JSON.stringify(favorites)); }
@@ -83,6 +83,7 @@ function renderBookmarks() {
     });
     html += '</div>';
     container.innerHTML = html;
+    observeReveal(container);
 }
 
 function shareBook(title, filename) {
@@ -108,6 +109,7 @@ function showNotification(msg) {
 function closeSidebar() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('mainPanel').classList.remove('shifted');
+    document.getElementById('menuToggle').classList.remove('active');
 }
 
 function closeSidebarAndDo(action) {
@@ -147,6 +149,47 @@ function showAllBooks() {
     displayBooks(books, 'All Textbooks');
 }
 
+// Autocomplete logic
+function handleSearchInput(e) {
+    updateClearSearchButton();
+    const term = e.target.value.toLowerCase().trim();
+    const dropdown = document.getElementById('autocompleteDropdown');
+    if (!dropdown) return;
+    if (term.length < 2) {
+        dropdown.classList.remove('active');
+        return;
+    }
+    const matches = books.filter(b =>
+        b.title.toLowerCase().includes(term) ||
+        b.author.toLowerCase().includes(term)
+    ).slice(0, 6);
+    if (matches.length === 0) {
+        dropdown.classList.remove('active');
+        return;
+    }
+    let html = '';
+    matches.forEach(book => {
+        html += `<div class="autocomplete-item" onclick="selectAutocomplete('${book.filename}', ${book.id})">
+            <i class="fas fa-book" style="margin-right:0.5rem; color:var(--accent);"></i> ${highlightMatch(book.title, term)}
+            <small style="display:block; color:#666;">${book.category}</small>
+        </div>`;
+    });
+    dropdown.innerHTML = html;
+    dropdown.classList.add('active');
+}
+
+function highlightMatch(text, term) {
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<strong>$1</strong>');
+}
+
+function selectAutocomplete(filename, bookId) {
+    document.getElementById('autocompleteDropdown').classList.remove('active');
+    document.getElementById('searchInput').value = '';
+    updateClearSearchButton();
+    openBook(filename, bookId);
+}
+
 function searchBooks() {
     const input = document.getElementById('searchInput');
     const term = input.value.toLowerCase().trim();
@@ -157,6 +200,7 @@ function searchBooks() {
         b.category.toLowerCase().includes(term) ||
         (b.subcat && b.subcat.toLowerCase().includes(term))
     );
+    document.getElementById('autocompleteDropdown').classList.remove('active');
     if (results.length === 0) {
         showNotification('No books found');
         document.getElementById('mainContent').innerHTML =
@@ -169,22 +213,20 @@ function searchBooks() {
         displayBooks(results, `Search: "${term}"`);
         window.location.hash = '';
     }
-    updateClearSearchButton();
 }
 
 function clearSearchInput() {
     const input = document.getElementById('searchInput');
     input.value = '';
     updateClearSearchButton();
+    document.getElementById('autocompleteDropdown').classList.remove('active');
     input.focus();
 }
 
 function updateClearSearchButton() {
     const btn = document.getElementById('clearSearch');
     const input = document.getElementById('searchInput');
-    if (btn) {
-        btn.classList.toggle('visible', input.value.length > 0);
-    }
+    if (btn) btn.classList.toggle('visible', input.value.length > 0);
 }
 
 let currentViewerBookId = null;
@@ -213,7 +255,7 @@ function openBook(filename, bookId) {
             const percent = (scrollTop / (scrollHeight - clientHeight)) * 100;
             const progressBar = document.getElementById('readingProgress');
             if (progressBar) progressBar.style.width = percent + '%';
-        } catch(e) { /* ignore cross-origin */ }
+        } catch(e) {}
     }, 200);
 
     history.pushState({ viewerOpen: true, bookId, filename }, '', window.location.href);
@@ -244,9 +286,7 @@ function loadFromHash() {
         try {
             const cat = decodeURIComponent(hash.substring(4));
             filterCategory(cat);
-        } catch(e) {
-            window.location.hash = '';
-        }
+        } catch(e) { window.location.hash = ''; }
     } else if (hash.startsWith('book=')) {
         const filename = decodeURIComponent(hash.substring(5));
         const book = books.find(b => b.filename === filename);
@@ -260,9 +300,7 @@ window.addEventListener('hashchange', function() {
         try {
             const cat = decodeURIComponent(hash.substring(4));
             filterCategory(cat);
-        } catch(e) {
-            window.location.hash = '';
-        }
+        } catch(e) { window.location.hash = ''; }
     } else if (hash === '') {
         renderHome();
     }
@@ -278,6 +316,7 @@ async function displayBooks(bookList, title) {
     }
     html += '</div>';
     main.innerHTML = html;
+    observeReveal(main);
 }
 
 function createBookCard(book, count) {
@@ -307,6 +346,22 @@ function createBookCard(book, count) {
             </div>
         </div>
     `;
+}
+
+// Intersection Observer for reveal animations
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+function observeReveal(container) {
+    container.querySelectorAll('.book-card, .category-card, .recent-card, .favorite-card, .bookmark-card, .blog-card').forEach(card => {
+        observer.observe(card);
+    });
 }
 
 function getCategoryIcon(cat) {
@@ -367,6 +422,7 @@ function renderAnalytics() {
     }
     html += '</div>';
     container.innerHTML = html;
+    observeReveal(container);
 }
 
 function renderRecent() {
@@ -388,6 +444,7 @@ function renderRecent() {
     });
     html += '</div>';
     container.innerHTML = html;
+    observeReveal(container);
 }
 
 function renderFavorites() {
@@ -409,6 +466,7 @@ function renderFavorites() {
     });
     html += '</div>';
     container.innerHTML = html;
+    observeReveal(container);
 }
 
 function renderCurrentBooks() {
@@ -459,6 +517,7 @@ function renderCurrentBooks() {
                 </div>
             </div>`;
     main.innerHTML = html;
+    observeReveal(main);
 }
 
 async function renderHome() {
@@ -510,10 +569,35 @@ async function renderHome() {
     main.appendChild(aboutSection);
 }
 
+// Back‑to‑top with progress circle
+window.addEventListener('scroll', () => {
+    const backBtn = document.getElementById('backToTop');
+    if (!backBtn) return;
+    const scrollY = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollY / docHeight) * 126 : 0;
+    const circle = document.getElementById('progressCircle');
+    if (circle) circle.style.strokeDashoffset = 126 - progress;
+    if (scrollY > 300) backBtn.style.display = 'flex';
+    else backBtn.style.display = 'none';
+});
+
+document.getElementById('backToTop').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Hamburger toggle animation
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+const mainPanel = document.getElementById('mainPanel');
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    mainPanel.classList.toggle('shifted');
+    menuToggle.classList.toggle('active');
+});
+
 document.addEventListener('click', function(e) {
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('menuToggle');
-    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggleBtn && !toggleBtn.contains(e.target)) {
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== menuToggle && !menuToggle.contains(e.target)) {
         closeSidebar();
     }
 });
@@ -537,13 +621,12 @@ document.addEventListener('touchstart', (e) => {
 });
 document.addEventListener('touchend', (e) => {
     touchEndX = e.changedTouches[0].screenX;
-    const sidebar = document.getElementById('sidebar');
     if (touchStartX < 50 && touchEndX > 150 && !sidebar.classList.contains('open')) {
         sidebar.classList.add('open');
-        document.getElementById('mainPanel').classList.add('shifted');
+        mainPanel.classList.add('shifted');
+        menuToggle.classList.add('active');
     } else if (touchStartX > 250 && touchEndX < 100 && sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
-        document.getElementById('mainPanel').classList.remove('shifted');
+        closeSidebar();
     }
 });
 
@@ -557,7 +640,7 @@ async function loadAllResources() {
             renderHome();
             document.getElementById('loading-skeleton').style.display = 'none';
             return;
-        } catch(e) { console.warn('Cache parse failed, will fetch fresh'); }
+        } catch(e) { console.warn('Cache parse failed'); }
     }
     try {
         const response = await fetch('books.json');
@@ -573,7 +656,15 @@ async function loadAllResources() {
     document.getElementById('loading-skeleton').style.display = 'none';
 }
 
-// Search input clear button
+// Autocomplete close on outside click
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('autocompleteDropdown');
+    const searchBar = document.getElementById('searchBar');
+    if (dropdown && !searchBar.contains(e.target)) {
+        dropdown.classList.remove('active');
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
@@ -583,21 +674,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 loadAllResources();
-
-const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.getElementById('sidebar');
-const mainPanel = document.getElementById('mainPanel');
-menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    mainPanel.classList.toggle('shifted');
-});
-
-const backToTop = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) backToTop.style.display = 'flex';
-    else backToTop.style.display = 'none';
-});
-backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
 const themeToggle = document.getElementById('themeToggle');
 const currentTheme = localStorage.getItem('theme');
@@ -620,6 +696,7 @@ window.addBookmark = addBookmark;
 window.removeBookmark = removeBookmark;
 window.shareBook = shareBook;
 window.clearSearchInput = clearSearchInput;
+window.selectAutocomplete = selectAutocomplete;
 window.getStaticCount = getStaticCount;
 window.createBookCard = createBookCard;
-window.sendMessage = null; // will be overridden by Nexus
+window.sendMessage = null;
