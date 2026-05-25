@@ -1,11 +1,9 @@
-// nexus.js – v2.5 (fix: Ask Nexus button from selection-popup opens panel without closing it)
+// nexus.js – v2.6 (added Study Mode personality, full tutor experience)
 (function() {
-    // ========== Configuration ==========
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
     const MAX_HISTORY_MESSAGES = 20;
 
-    // ========== State ==========
     let conversations = [];
     let currentConvId = null;
     let isWaiting = false;
@@ -16,7 +14,6 @@
     let personality = 'detailed';
     let sidebarOpen = true;
 
-    // ========== Helper Functions ==========
     function extractPuterMessage(raw) {
         if (typeof raw === 'string') {
             try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
@@ -37,7 +34,6 @@
         return text.substring(0, maxLen) + '…';
     }
 
-    // ========== Conversation Persistence ==========
     function loadConversations() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -135,7 +131,6 @@
 
     function isPinned(idx) { return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx); }
 
-    // ========== Sidebar Render ==========
     function renderSidebar() {
         const sidebar = document.getElementById('nexus-sidebar');
         if (!sidebar) return;
@@ -174,6 +169,7 @@
                     <option value="detailed" ${personality === 'detailed' ? 'selected' : ''}>📘 Detailed</option>
                     <option value="concise" ${personality === 'concise' ? 'selected' : ''}>📝 Concise</option>
                     <option value="usmle" ${personality === 'usmle' ? 'selected' : ''}>🎯 USMLE</option>
+                    <option value="study" ${personality === 'study' ? 'selected' : ''}>📗 Study Mode</option>
                 </select>
             </div>
             <div class="setting-row">
@@ -193,7 +189,7 @@
         </div>`;
         sidebar.innerHTML = html;
 
-        // Stop propagation to prevent panel close
+        // events
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -238,7 +234,6 @@
         updateContextSuggestions();
     }
 
-    // ========== Messages Render ==========
     function renderMessages() {
         const msgsDiv = document.getElementById('nexus-messages');
         if (!msgsDiv) return;
@@ -256,7 +251,6 @@
             const isLong = fullContent.length > 400;
             const contentHtml = isLong ? truncateText(fullContent, 400) : formatText(fullContent);
             const pinned = isPinned(originalIdx);
-
             html += `
                 <div class="message ${msg.role}" data-idx="${originalIdx}">
                     <div class="avatar">${avatar}</div>
@@ -285,7 +279,6 @@
         }
         msgsDiv.innerHTML = html;
 
-        // Attach all action listeners with stopPropagation
         msgsDiv.querySelectorAll('.read-more').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -333,7 +326,6 @@
         msgsDiv.scrollTop = msgsDiv.scrollHeight;
     }
 
-    // ========== toggleReadMore (global) ==========
     window.toggleReadMore = function(idx) {
         const conv = getCurrentConv();
         if (!conv || !conv.messages[idx]) return;
@@ -365,10 +357,9 @@
             'ACE inhibitors',
             'Treat hypertension',
         ];
-        const chipsHtml = allSuggestions.slice(0, 3).map(s => 
+        container.innerHTML = allSuggestions.slice(0,3).map(s => 
             `<div class="suggestion-chip" data-question="${s}">🧬 ${s}</div>`
         ).join('');
-        container.innerHTML = chipsHtml;
         document.querySelectorAll('.suggestion-chip').forEach(chip => {
             chip.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -396,11 +387,9 @@
     function copyMessageContent(idx) {
         const conv = getCurrentConv();
         if (!conv) return;
-        const msg = conv.messages[idx];
-        navigator.clipboard.writeText(msg.content).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
+        navigator.clipboard.writeText(conv.messages[idx].content).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
     }
 
-    // ========== Send Message ==========
     async function sendMessage(initialText = null, isRegenerate = false) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
@@ -423,6 +412,7 @@
         let personalityInstruction = '';
         if (personality === 'concise') personalityInstruction = 'Be concise and direct. Use bullet points when helpful.';
         else if (personality === 'usmle') personalityInstruction = 'Focus on high‑yield USMLE content. Emphasize mechanisms, clinical correlations, and exam tips.';
+        else if (personality === 'study') personalityInstruction = `You are a medical tutor in Study Mode. Ask the user one concept-based question at a time. Wait for their answer. Then provide brief feedback and ask a follow‑up question to deepen understanding. Keep it conversational, step‑by‑step. Never give away the full answer immediately; guide them to reason.`;
         else personalityInstruction = 'Provide thorough explanations with clinical context.';
 
         const systemPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
@@ -432,7 +422,7 @@ For ANY non-medical question, respond with: "I'm a medical assistant and can onl
 Guidelines:
 - Provide accurate, evidence-based medical information.
 - Include relevant clinical context when appropriate.
-- If a term has both medical and non-medical meanings, always interpret it in the medical context (e.g., "GLUT" = Glucose Transporter, not OpenGL).
+- If a term has both medical and non-medical meanings, always interpret it in the medical context.
 - Be educational and clear for medical students.
 - Use proper medical terminology but explain when necessary.
 - If uncertain, acknowledge limitations.
@@ -465,7 +455,6 @@ ${personalityInstruction}`;
         }
     }
 
-    // ========== Global Actions ==========
     function newConversation() {
         const id = Date.now();
         conversations.push({
@@ -531,7 +520,6 @@ ${personalityInstruction}`;
         navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
     }
 
-    // ========== UI Helpers ==========
     function setFontSize(delta) {
         fontSize = Math.min(32, Math.max(12, fontSize + delta));
         document.querySelectorAll('.message-bubble').forEach(el => el.style.fontSize = fontSize + 'px');
@@ -553,7 +541,6 @@ ${personalityInstruction}`;
         setTimeout(() => toast.remove(), 2000);
     }
 
-    // ========== Widget Creation ==========
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
@@ -880,27 +867,20 @@ ${personalityInstruction}`;
         const panel = container.querySelector('.nexus-panel');
         const bubble = container.querySelector('.nexus-bubble');
 
-        // Toggle panel with bubble
         bubble.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (panel.style.display === 'flex') {
-                panel.style.display = 'none';
-            } else {
-                panel.style.display = 'flex';
-            }
+            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
         });
 
-        // Click outside to close panel – EXCEPT clicks on the selection popup
         document.addEventListener('click', (e) => {
             if (panel.style.display === 'flex' &&
                 !panel.contains(e.target) &&
                 e.target !== bubble &&
-                !e.target.closest('#medlib-selection-popup')) {  // <-- FIX: ignore selection popup
+                !e.target.closest('#medlib-selection-popup')) {
                 panel.style.display = 'none';
             }
         });
 
-        // Clicking inside main area collapses sidebar
         const mainArea = document.getElementById('nexus-main');
         mainArea.addEventListener('click', (e) => {
             const sidebar = document.getElementById('nexus-sidebar');
@@ -915,8 +895,7 @@ ${personalityInstruction}`;
         document.getElementById('sidebar-toggle').onclick = (e) => {
             e.stopPropagation();
             sidebarOpen = !sidebarOpen;
-            const sidebar = document.getElementById('nexus-sidebar');
-            sidebar.style.width = sidebarOpen ? '250px' : '0px';
+            document.getElementById('nexus-sidebar').style.width = sidebarOpen ? '250px' : '0px';
         };
         document.getElementById('export-chat').onclick = exportConversation;
         document.getElementById('share-conv').onclick = shareConversation;
@@ -933,13 +912,12 @@ ${personalityInstruction}`;
             this.style.height = 'auto';
             this.style.height = Math.min(120, this.scrollHeight) + 'px';
         });
-
         document.getElementById('nexus-search').addEventListener('input', (e) => {
             currentSearch = e.target.value.trim().toLowerCase();
             renderMessages();
         });
 
-        // Drag panel
+        // drag
         let isDragging = false, dragOffsetX, dragOffsetY;
         const header = panel.querySelector('.nexus-panel-header');
         header.addEventListener('mousedown', (e) => {
@@ -963,7 +941,7 @@ ${personalityInstruction}`;
             }
         });
 
-        // Keyboard shortcuts
+        // keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.key === 'k') {
                 e.preventDefault();
@@ -976,14 +954,12 @@ ${personalityInstruction}`;
         });
     }
 
-    // ========== Init ==========
     function init() {
         loadConversations();
         createWidget();
         renderAll();
     }
 
-    // Expose globally
     window.sendMessage = sendMessage;
     window.scrollToMessage = (idx) => {
         const el = document.querySelector(`.message[data-idx="${idx}"]`);
