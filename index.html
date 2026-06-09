@@ -16,8 +16,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>MedLib · Free Medical Library</title>
     <link rel="canonical" href="https://medlib.top">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6[...]
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 1[...]
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
@@ -302,11 +302,18 @@
     <div class="sidebar" id="sidebar">
         <h2><i class="fas fa-list-ul"></i> Curriculum</h2>
         <div class="cat-section"><h3>📘 Basic Sciences</h3><ul class="cat-items">
-           <li onclick="window.open('lab-report.html', '_blank')" style="cursor:pointer; list-style:none;">
-  <a href__="lab-report.html" onclick="closeSidebar()" style="display:flex; align-items:center; gap:0.6rem; padding:0.6rem 1rem; text-decoration:none; color:inherit;">
-    <i class="fas fa-flask" style="color:var(--accent);"></i>
+            <li>
+  <a href="lab-report.html" onclick="closeSidebar()">
+    <i class="fas fa-flask"></i>
     <span>Lab Report Generator</span>
-    <span style="background:#0f766e;color:white;font-size:10px;padding:2px 7px;border-radius:9999px;margin-left:4px;">AI</span>
+    <span style="
+      background: #0f766e;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 9999px;
+      margin-left: 6px;
+    ">AI</span>
   </a>
 </li>
 
