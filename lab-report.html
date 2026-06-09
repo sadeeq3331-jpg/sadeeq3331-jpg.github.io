@@ -35,5 +35,32 @@
     allow="clipboard-write"
     title="Lab Report Generator"
   ></iframe>
+  <script>
+  // Auto-close any new tab opened from the iframe (Base44 badge)
+  window.addEventListener('message', function(e) {
+    // catch postMessage from iframe if any
+  });
+
+  // Monitor for new windows opened by the iframe
+  const frame = document.querySelector('iframe');
+  if (frame) {
+    frame.addEventListener('load', function() {
+      try {
+        // Intercept clicks inside iframe that open new tabs
+        const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+        iframeDoc.addEventListener('click', function(e) {
+          const link = e.target.closest('a[target="_blank"]');
+          if (link && link.href.includes('base44')) {
+            e.preventDefault();
+            const popup = window.open(link.href, '_blank');
+            if (popup) setTimeout(() => popup.close(), 100);
+          }
+        }, true);
+      } catch(e) {
+        // cross-origin blocks this — see note below
+      }
+    });
+  }
+</script>
 </body>
 </html>
