@@ -331,6 +331,53 @@
                 padding: 0.5rem 1rem;
                 font-size: 0.8rem;
             }
+            /* ===== FIX MISSING ICONS ===== */
+/* Force icon visibility in all themes */
+.menu-toggle i,
+.close-viewer i,
+.theme-toggle i,
+.sidebar i,
+.top-bar i,
+.back-to-top i,
+.notification i,
+.cat-item i,
+.book-actions button i,
+.bookmark-card i,
+.recent-card i,
+.favorite-card i,
+.category-card i,
+.blog-card i {
+    color: inherit !important; /* inherit from parent, then override if needed */
+}
+
+/* Ensure specific icons are always visible in dark mode */
+body.dark .menu-toggle i,
+body.dark .theme-toggle i,
+body.dark .close-viewer i,
+body.dark .top-bar .fa-book-medical,
+body.dark .sidebar h2 i,
+body.dark .cat-item i,
+body.dark .back-to-top i {
+    color: #e0e0e0 !important;
+}
+
+body.dark .fa-moon:before {
+    content: "\f186"; /* changes to sun icon in dark mode if you want, but keep moon visible */
+}
+
+/* Make sure the hamburger icon is never hidden */
+.menu-toggle {
+    color: inherit;
+}
+
+.menu-toggle i {
+    font-size: 1.5rem;
+}
+
+/* The cross icon when sidebar is open */
+.menu-toggle.active i::before {
+    content: "\f00d"; /* FontAwesome 'times' */
+}
         }
     </style>
 </head>
