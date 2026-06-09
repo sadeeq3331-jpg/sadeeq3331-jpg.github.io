@@ -515,17 +515,17 @@
             <h3>🚀 AI Tools</h3>
             <ul class="cat-items">
                 <li>
-                    <a href="lab-report.html" onclick="closeSidebar()">
-                        <i class="fas fa-flask"></i>
-                        <span>Lab Report Generator</span>
-                        <span style="background: #0f766e; color: white; font-size: 10px; padding: 2px 6px; border-radius: 9999px; margin-left: 6px;">AI</span>
-                    </a>
-                </li>
-                <li>
                     <a href="mcq-generator.html" onclick="closeSidebar()">
                         <i class="fas fa-brain"></i>
                         <span>MCQ Generator</span>
                         <span style="background: #f59e0b; color: white; font-size: 10px; padding: 2px 6px; border-radius: 9999px; margin-left: 6px;">New</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="lab-report.html" onclick="closeSidebar()">
+                        <i class="fas fa-flask"></i>
+                        <span>Lab Report Generator</span>
+                        <span style="background: #0f766e; color: white; font-size: 10px; padding: 2px 6px; border-radius: 9999px; margin-left: 6px;">AI</span>
                     </a>
                 </li>
             </ul>
@@ -597,7 +597,7 @@
                     <div class="tool-icon">🤖</div>
                     <h3>MCQ Generator</h3>
                     <p>Generate unlimited practice questions with AI-powered explanations. Perfect for USMLE prep and self-assessment.</p>
-                    <button class="tool-card-btn" onclick="window.location.href='mcq-generator.html'">
+                    <button class="tool-card-btn" onclick="handleMCQGenerator()">
                         <i class="fas fa-brain"></i> Generate Now
                     </button>
                     <span class="badge">AI Powered</span>
@@ -607,7 +607,7 @@
                     <div class="tool-icon">📋</div>
                     <h3>Lab Report Generator</h3>
                     <p>Automatically generate comprehensive lab reports from patient data. Save time on documentation and analysis.</p>
-                    <button class="tool-card-btn" onclick="window.location.href='lab-report.html'">
+                    <button class="tool-card-btn" onclick="handleLabReport()">
                         <i class="fas fa-flask"></i> Open Tool
                     </button>
                     <span class="badge">AI Powered</span>
@@ -617,7 +617,7 @@
                     <div class="tool-icon">📚</div>
                     <h3>Browse Library</h3>
                     <p>Access 150+ medical textbooks across all specialties. Curated collection from top medical institutions.</p>
-                    <button class="tool-card-btn" onclick="selectCategory('All')">
+                    <button class="tool-card-btn" onclick="handleBrowseLibrary()">
                         <i class="fas fa-book"></i> Browse All
                     </button>
                 </div>
@@ -656,5 +656,20 @@
     <script src="selection-popup.js"></script>
     <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
+
+    <script>
+        // Handler functions for featured tools
+        function handleMCQGenerator() {
+            window.location.href = 'mcq-generator.html';
+        }
+
+        function handleLabReport() {
+            window.location.href = 'lab-report.html';
+        }
+
+        function handleBrowseLibrary() {
+            selectCategory('All');
+        }
+    </script>
 </body>
 </html>
