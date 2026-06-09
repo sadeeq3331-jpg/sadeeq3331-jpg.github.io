@@ -223,104 +223,6 @@
             background: #f0fdfa;
         }
 
-        /* ===== FEATURED TOOLS SECTION ===== */
-        .featured-tools {
-            padding: 2rem 1.5rem;
-            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
-            margin-top: -20px;
-            position: relative;
-            z-index: 3;
-        }
-
-        .featured-tools-grid {
-            max-width: 900px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .tool-card {
-            background: white;
-            border-radius: 18px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-md);
-            transition: var(--transition);
-            cursor: pointer;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #0f766e, #14b8a6, #0f766e);
-        }
-
-        .tool-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: #14b8a6;
-        }
-
-        .tool-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #0f766e;
-        }
-
-        .tool-card h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #0a1929;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .tool-card p {
-            color: #666;
-            font-size: 0.95rem;
-            margin: 0 0 1rem 0;
-            line-height: 1.5;
-        }
-
-        .tool-card-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: #0f766e;
-            color: white;
-            border: none;
-            padding: 0.65rem 1.2rem;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-
-        .tool-card-btn:hover {
-            background: #0d5e57;
-            transform: translateX(4px);
-        }
-
-        .badge {
-            display: inline-block;
-            background: #fbbf24;
-            color: #78350f;
-            padding: 0.3rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-top: 1rem;
-        }
-
         /* ===== CARDS WITH REVEAL ANIMATION ===== */
         .book-card, .category-card, .recent-card, .favorite-card, .bookmark-card, .blog-card {
             border-radius: var(--card-radius) !important;
@@ -360,17 +262,9 @@
             background: #0d2137;
         }
 
-        body.dark .book-card, body.dark .category-card, body.dark .tool-card {
+        body.dark .book-card, body.dark .category-card {
             background: var(--card-bg);
             color: var(--text);
-        }
-
-        body.dark .tool-card h3 {
-            color: #e0e0e0;
-        }
-
-        body.dark .tool-card p {
-            color: #b0b0b0;
         }
 
         /* ===== RESPONSIVE IMPROVEMENTS ===== */
@@ -381,10 +275,6 @@
 
             .hero-content h1 {
                 font-size: 2rem;
-            }
-
-            .featured-tools-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
         }
 
@@ -415,20 +305,6 @@
                 padding: 0.6rem 1.2rem;
                 font-size: 0.9rem;
             }
-
-            .featured-tools {
-                padding: 1.5rem 1rem;
-                margin-top: -15px;
-            }
-
-            .featured-tools-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .tool-card {
-                padding: 1.2rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -454,32 +330,6 @@
             .search-bar button {
                 padding: 0.5rem 1rem;
                 font-size: 0.8rem;
-            }
-
-            .featured-tools {
-                padding: 1rem;
-                margin-top: -10px;
-            }
-
-            .featured-tools-grid {
-                gap: 0.8rem;
-            }
-
-            .tool-card {
-                padding: 1rem;
-            }
-
-            .tool-icon {
-                font-size: 2rem;
-            }
-
-            .tool-card h3 {
-                font-size: 1.1rem;
-            }
-
-            .tool-card p {
-                font-size: 0.85rem;
-                margin-bottom: 0.75rem;
             }
         }
     </style>
@@ -510,17 +360,10 @@
     <div class="sidebar" id="sidebar">
         <h2><i class="fas fa-list-ul"></i> Curriculum</h2>
         
-        <!-- Featured Tools Section in Sidebar -->
+        <!-- AI Tools Section in Sidebar -->
         <div class="cat-section">
-            <h3>🚀 AI Tools</h3>
+            <h3>🔧 Tools</h3>
             <ul class="cat-items">
-                <li>
-                    <a href="mcq-generator.html" onclick="closeSidebar()">
-                        <i class="fas fa-brain"></i>
-                        <span>MCQ Generator</span>
-                        <span style="background: #f59e0b; color: white; font-size: 10px; padding: 2px 6px; border-radius: 9999px; margin-left: 6px;">New</span>
-                    </a>
-                </li>
                 <li>
                     <a href="lab-report.html" onclick="closeSidebar()">
                         <i class="fas fa-flask"></i>
@@ -580,46 +423,12 @@
         <section class="hero">
             <div class="hero-content">
                 <h1>Free Medical Textbooks & MCQ Banks</h1>
-                <p>150+ textbooks, 1000+ USMLE questions – completely free</p>
+                <p>150+ books, 1000+ USMLE questions – completely free</p>
                 <div class="search-bar" id="searchBar">
                     <input type="text" id="searchInput" placeholder="Search title, author, subject..." autocomplete="off" onkeyup="handleSearchInput(event)" aria-label="Search books">
                     <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
                     <button class="clear-search" id="clearSearch" onclick="clearSearchInput()" aria-label="Clear search"><i class="fas fa-times"></i></button>
                     <button onclick="searchBooks()"><i class="fas fa-search"></i> Search</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Featured Tools Section -->
-        <section class="featured-tools">
-            <div class="featured-tools-grid">
-                <div class="tool-card">
-                    <div class="tool-icon">🤖</div>
-                    <h3>MCQ Generator</h3>
-                    <p>Generate unlimited practice questions with AI-powered explanations. Perfect for USMLE prep and self-assessment.</p>
-                    <button class="tool-card-btn" onclick="handleMCQGenerator()">
-                        <i class="fas fa-brain"></i> Generate Now
-                    </button>
-                    <span class="badge">AI Powered</span>
-                </div>
-
-                <div class="tool-card">
-                    <div class="tool-icon">📋</div>
-                    <h3>Lab Report Generator</h3>
-                    <p>Automatically generate comprehensive lab reports from patient data. Save time on documentation and analysis.</p>
-                    <button class="tool-card-btn" onclick="handleLabReport()">
-                        <i class="fas fa-flask"></i> Open Tool
-                    </button>
-                    <span class="badge">AI Powered</span>
-                </div>
-
-                <div class="tool-card">
-                    <div class="tool-icon">📚</div>
-                    <h3>Browse Library</h3>
-                    <p>Access 150+ medical textbooks across all specialties. Curated collection from top medical institutions.</p>
-                    <button class="tool-card-btn" onclick="handleBrowseLibrary()">
-                        <i class="fas fa-book"></i> Browse All
-                    </button>
                 </div>
             </div>
         </section>
@@ -656,20 +465,5 @@
     <script src="selection-popup.js"></script>
     <script defer src="https://js.puter.com/v2/"></script>
     <script defer src="nexus.js"></script>
-
-    <script>
-        // Handler functions for featured tools
-        function handleMCQGenerator() {
-            window.location.href = 'mcq-generator.html';
-        }
-
-        function handleLabReport() {
-            window.location.href = 'lab-report.html';
-        }
-
-        function handleBrowseLibrary() {
-            selectCategory('All');
-        }
-    </script>
 </body>
 </html>
