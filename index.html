@@ -30,12 +30,14 @@
             --card-radius: 18px;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
             --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
             --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --hero-gradient: linear-gradient(135deg, #0f766e 0%, #115e59 50%, #134e4a 100%);
             --ripple-color: rgba(255,255,255,0.35);
         }
 
         * { box-sizing: border-box; }
+        
         body {
             font-family: 'Inter', system-ui, sans-serif;
             margin: 0;
@@ -43,17 +45,18 @@
             scroll-behavior: smooth;
         }
 
-        /* Hero animated background */
+        /* ===== IMPROVED HERO SECTION ===== */
         .hero {
             background: var(--hero-gradient);
             background-size: 200% 200%;
             animation: gradientShift 8s ease infinite;
-            padding: 3rem 1.5rem !important;
+            padding: 2.5rem 1.5rem !important;
             border-radius: 0 0 40px 40px;
             box-shadow: 0 4px 30px rgba(0,0,0,0.15);
             position: relative;
             overflow: hidden;
         }
+
         .hero::before {
             content: '';
             position: absolute;
@@ -66,24 +69,41 @@
             animation: particleMove 20s linear infinite;
             pointer-events: none;
         }
+
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
         @keyframes particleMove {
             0% { transform: translate(0, 0); }
             100% { transform: translate(40px, 40px); }
         }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
         .hero-content h1 {
             color: white !important;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .hero-content p {
-            color: #ccfbf1 !important;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 1rem 0;
+            line-height: 1.2;
         }
 
-        /* Search bar with autocomplete */
+        .hero-content p {
+            color: #ccfbf1 !important;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ===== SEARCH BAR WITH AUTOCOMPLETE ===== */
         .search-bar {
             position: relative;
             background: white;
@@ -91,35 +111,42 @@
             box-shadow: var(--shadow-md);
             display: flex;
             align-items: center;
-            padding: 0.25rem 0.25rem 0.25rem 1.25rem;
-            max-width: 640px;
+            padding: 0.3rem;
+            max-width: 700px;
             margin: 0 auto;
             transition: box-shadow 0.3s;
+            gap: 0.5rem;
         }
+
         .search-bar:focus-within {
             box-shadow: 0 0 0 3px rgba(13,148,136,0.3);
         }
+
         .search-bar input {
             border: none;
             outline: none;
             flex: 1;
             font-size: 1rem;
             background: transparent;
-            padding: 0.75rem 0;
+            padding: 0.75rem 1rem;
+            font-family: 'Inter', system-ui, sans-serif;
         }
+
         .search-bar button {
             background: var(--accent);
             color: white;
             border: none;
             border-radius: 30px;
-            padding: 0.65rem 1.6rem;
-            font-weight: 600;
+            padding: 0.65rem 1.8rem;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
             position: relative;
             overflow: hidden;
+            margin-right: 0.3rem;
         }
+
         .search-bar button::after {
             content: '';
             position: absolute;
@@ -130,26 +157,38 @@
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
+
         .search-bar button:hover::after {
             width: 300px; height: 300px;
         }
+
         .search-bar button:hover {
             background: #0f766e;
             box-shadow: 0 0 15px rgba(13,148,136,0.4);
         }
+
         .search-bar .clear-search {
             display: none;
             background: none;
             color: #6b7280;
-            padding: 0.5rem;
+            padding: 0.5rem 0.7rem;
             font-size: 1.2rem;
             border: none;
             cursor: pointer;
-            margin-right: 0.25rem;
+            border-radius: 50%;
+            transition: background 0.2s;
         }
+
+        .search-bar .clear-search:hover {
+            background: #f0fdfa;
+        }
+
         .search-bar .clear-search.visible {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
+
         .autocomplete-dropdown {
             position: absolute;
             top: 100%;
@@ -160,23 +199,129 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             margin-top: 8px;
             z-index: 1000;
-            max-height: 240px;
+            max-height: 300px;
             overflow-y: auto;
             display: none;
         }
+
         .autocomplete-dropdown.active {
             display: block;
         }
+
         .autocomplete-item {
             padding: 0.75rem 1.25rem;
             cursor: pointer;
             transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
         }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
         .autocomplete-item:hover {
             background: #f0fdfa;
         }
 
-        /* Cards with reveal animation */
+        /* ===== FEATURED TOOLS SECTION ===== */
+        .featured-tools {
+            padding: 2rem 1.5rem;
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
+            margin-top: -20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .featured-tools-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 18px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #0f766e, #14b8a6, #0f766e);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: #14b8a6;
+        }
+
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #0f766e;
+        }
+
+        .tool-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0a1929;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .tool-card p {
+            color: #666;
+            font-size: 0.95rem;
+            margin: 0 0 1rem 0;
+            line-height: 1.5;
+        }
+
+        .tool-card-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 0.65rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .tool-card-btn:hover {
+            background: #0d5e57;
+            transform: translateX(4px);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #fbbf24;
+            color: #78350f;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        /* ===== CARDS WITH REVEAL ANIMATION ===== */
         .book-card, .category-card, .recent-card, .favorite-card, .bookmark-card, .blog-card {
             border-radius: var(--card-radius) !important;
             overflow: hidden;
@@ -186,93 +331,156 @@
             transform: translateY(30px);
             will-change: transform, opacity;
         }
+
         .book-card.revealed, .category-card.revealed, .recent-card.revealed,
         .favorite-card.revealed, .bookmark-card.revealed, .blog-card.revealed {
             opacity: 1;
             transform: translateY(0);
         }
+
         .book-card:hover, .category-card:hover, .recent-card:hover,
         .favorite-card:hover, .bookmark-card:hover, .blog-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* Dark mode transitions */
+        /* ===== DARK MODE ===== */
         .dark {
             --bg: #0a1929;
             --card-bg: #132f4c;
             --text: #e0e0e0;
         }
+
         body.dark {
             background-color: var(--bg);
             color: var(--text);
         }
+
         body.dark .top-bar, body.dark .footer {
             background: #0d2137;
         }
-        body.dark .book-card, body.dark .category-card {
+
+        body.dark .book-card, body.dark .category-card, body.dark .tool-card {
             background: var(--card-bg);
             color: var(--text);
         }
 
-        /* Hamburger to X */
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: inherit;
-            transition: transform 0.3s;
-        }
-        .menu-toggle.active i::before {
-            content: "\f00d"; /* FontAwesome times */
+        body.dark .tool-card h3 {
+            color: #e0e0e0;
         }
 
-        /* Back-to-top with progress ring */
-        .back-to-top {
-            background: var(--accent);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .back-to-top .progress-ring {
-            position: absolute;
-            transform: rotate(-90deg);
-        }
-        .back-to-top .progress-ring circle {
-            fill: none;
-            stroke: white;
-            stroke-width: 2;
-            stroke-dasharray: 126; /* 2*pi*20 ≈ 126 */
-            stroke-dashoffset: 126;
-            transition: stroke-dashoffset 0.3s;
+        body.dark .tool-card p {
+            color: #b0b0b0;
         }
 
-        /* Notification animation improved */
-        .notification {
-            animation: slideInRight 0.3s ease;
-        }
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* ===== RESPONSIVE IMPROVEMENTS ===== */
+        @media (max-width: 1024px) {
+            .hero {
+                padding: 2rem 1.5rem !important;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .featured-tools-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
         }
 
-        /* Responsive tweaks */
         @media (max-width: 768px) {
-            .hero { padding: 2rem 1rem !important; }
-            .search-bar { margin: 0 1rem; }
+            .hero {
+                padding: 1.5rem 1rem !important;
+            }
+
+            .hero-content h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .search-bar {
+                flex-wrap: wrap;
+                max-width: 100%;
+            }
+
+            .search-bar input {
+                padding: 0.65rem 0.75rem;
+                font-size: 1rem;
+            }
+
+            .search-bar button {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .featured-tools {
+                padding: 1.5rem 1rem;
+                margin-top: -15px;
+            }
+
+            .featured-tools-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .tool-card {
+                padding: 1.2rem;
+            }
         }
+
         @media (max-width: 480px) {
-            .search-bar button { padding: 0.5rem 1rem; font-size: 0.9rem; }
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-content p {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .search-bar {
+                margin: 0 0.5rem;
+                padding: 0.2rem;
+            }
+
+            .search-bar input {
+                padding: 0.5rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .search-bar button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .featured-tools {
+                padding: 1rem;
+                margin-top: -10px;
+            }
+
+            .featured-tools-grid {
+                gap: 0.8rem;
+            }
+
+            .tool-card {
+                padding: 1rem;
+            }
+
+            .tool-icon {
+                font-size: 2rem;
+            }
+
+            .tool-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .tool-card p {
+                font-size: 0.85rem;
+                margin-bottom: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -301,22 +509,29 @@
 
     <div class="sidebar" id="sidebar">
         <h2><i class="fas fa-list-ul"></i> Curriculum</h2>
-        <div class="cat-section"><h3>📘 Basic Sciences</h3><ul class="cat-items">
-            <li>
-  <a href="lab-report.html" onclick="closeSidebar()">
-    <i class="fas fa-flask"></i>
-    <span>Lab Report Generator</span>
-    <span style="
-      background: #0f766e;
-      color: white;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 9999px;
-      margin-left: 6px;
-    ">AI</span>
-  </a>
-</li>
+        
+        <!-- Featured Tools Section in Sidebar -->
+        <div class="cat-section">
+            <h3>🚀 AI Tools</h3>
+            <ul class="cat-items">
+                <li>
+                    <a href="lab-report.html" onclick="closeSidebar()">
+                        <i class="fas fa-flask"></i>
+                        <span>Lab Report Generator</span>
+                        <span style="background: #0f766e; color: white; font-size: 10px; padding: 2px 6px; border-radius: 9999px; margin-left: 6px;">AI</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="mcq-generator.html" onclick="closeSidebar()">
+                        <i class="fas fa-brain"></i>
+                        <span>MCQ Generator</span>
+                        <span style="background: #f59e0b; color: white; font-size: 10px; padding: 2px 6px; border-radius: 9999px; margin-left: 6px;">New</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
+        <div class="cat-section"><h3>📘 Basic Sciences</h3><ul class="cat-items">
             <li class="cat-item"><a onclick="selectCategory('Biochemistry')"><i class="fas fa-flask"></i> Biochemistry</a></li>
             <li class="cat-item"><a onclick="selectCategory('Genetics')"><i class="fas fa-dna"></i> Genetics</a></li>
             <li class="cat-item"><a onclick="selectCategory('Immunology')"><i class="fas fa-shield-alt"></i> Immunology</a></li>
@@ -365,7 +580,7 @@
         <section class="hero">
             <div class="hero-content">
                 <h1>Free Medical Textbooks & MCQ Banks</h1>
-                <p>150+ books, 1000+ USMLE questions – completely free</p>
+                <p>150+ textbooks, 1000+ USMLE questions – completely free</p>
                 <div class="search-bar" id="searchBar">
                     <input type="text" id="searchInput" placeholder="Search title, author, subject..." autocomplete="off" onkeyup="handleSearchInput(event)" aria-label="Search books">
                     <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
@@ -374,6 +589,41 @@
                 </div>
             </div>
         </section>
+
+        <!-- Featured Tools Section -->
+        <section class="featured-tools">
+            <div class="featured-tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🤖</div>
+                    <h3>MCQ Generator</h3>
+                    <p>Generate unlimited practice questions with AI-powered explanations. Perfect for USMLE prep and self-assessment.</p>
+                    <button class="tool-card-btn" onclick="window.location.href='mcq-generator.html'">
+                        <i class="fas fa-brain"></i> Generate Now
+                    </button>
+                    <span class="badge">AI Powered</span>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-icon">📋</div>
+                    <h3>Lab Report Generator</h3>
+                    <p>Automatically generate comprehensive lab reports from patient data. Save time on documentation and analysis.</p>
+                    <button class="tool-card-btn" onclick="window.location.href='lab-report.html'">
+                        <i class="fas fa-flask"></i> Open Tool
+                    </button>
+                    <span class="badge">AI Powered</span>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-icon">📚</div>
+                    <h3>Browse Library</h3>
+                    <p>Access 150+ medical textbooks across all specialties. Curated collection from top medical institutions.</p>
+                    <button class="tool-card-btn" onclick="selectCategory('All')">
+                        <i class="fas fa-book"></i> Browse All
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <main class="main-content" id="mainContent"></main>
         <footer class="footer">
             <p>© 2026 MedLib · Free Medical Library</p>
