@@ -1,4 +1,4 @@
-// mcq-generator.js – v3.0 (concept rotation, wrong-answer follow-up, study mode, anti-truncation)
+// mcq-generator.js – v3.1 (dynamic model selection + concept rotation, wrong-answer follow-up, study mode)
 (function () {
   // ---------- CONFIG ----------
   const RATE_LIMIT_WINDOW = 60_000;
@@ -14,6 +14,50 @@
   let recentConcepts = [];
   const MAX_RECENT_CONCEPTS = 3;
   window._lastSelectedLetter = '';
+
+  // ---------- DYNAMIC MODEL SELECTION (same as nexus.js) ----------
+  let cachedModelId = null;
+
+  async function getBestModel() {
+    if (cachedModelId) return cachedModelId;
+    try {
+      // Wait for puter.ai to be ready
+      if (!window.puter?.ai) {
+        for (let i = 0; i < 5; i++) {
+          await new Promise(r => setTimeout(r, 1000));
+          if (window.puter?.ai) break;
+        }
+      }
+      if (!window.puter?.ai) throw new Error('Puter AI not loaded');
+      const models = await puter.ai.listModels();
+      const preferred = [
+        'google/gemini-3.1-flash-lite',
+        'google/gemini-2.5-flash-lite-001',
+        'google/gemini-2.0-flash-lite-001',
+        'gpt-5.4-nano'
+      ];
+      for (const preferredId of preferred) {
+        if (models.some(m => m.id === preferredId)) {
+          cachedModelId = preferredId;
+          return cachedModelId;
+        }
+      }
+      const geminiModel = models.find(m => m.id.toLowerCase().includes('gemini'));
+      if (geminiModel) {
+        cachedModelId = geminiModel.id;
+        return cachedModelId;
+      }
+      if (models.length > 0) {
+        cachedModelId = models[0].id;
+        return cachedModelId;
+      }
+      throw new Error('No chat models available');
+    } catch (err) {
+      console.warn('Model listing failed, using fallback', err);
+      cachedModelId = 'google/gemini-2.5-flash-lite-001'; // safe fallback
+      return cachedModelId;
+    }
+  }
 
   // ---------- RATE LIMITER ----------
   function isRateLimited() {
@@ -101,13 +145,14 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
     while (recentConcepts.length > MAX_RECENT_CONCEPTS) recentConcepts.shift();
   }
 
-  // ---------- AI GENERATION ----------
+  // ---------- AI GENERATION (UPDATED WITH DYNAMIC MODEL) ----------
   async function generateQuestionFromAI(prompt) {
     if (isRateLimited()) return null;
     recordCall();
     try {
       if (!window.puter?.ai) throw new Error('Puter AI not loaded.');
-      const rawResponse = await puter.ai.chat(prompt, { model: 'google/gemini-2.0-flash-lite-001' });
+      const modelId = await getBestModel();
+      const rawResponse = await puter.ai.chat(prompt, { model: modelId });
       let jsonText = extractTextFromResponse(rawResponse);
       jsonText = jsonText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
       const parsed = JSON.parse(jsonText);
@@ -127,7 +172,7 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
     if (!forceRegenerate && !isFollowUp && cache[key]) {
       const cachedQ = cache[key];
       const words = cachedQ.question?.split(/\s+/).slice(0, 3).join(' ') || '';
-      if (!recentConcepts.includes(words)) return cachedQ; // else fall through to regenerate
+      if (!recentConcepts.includes(words)) return cachedQ;
     }
     const prompt = buildPrompt(subject, difficulty, recentConcepts);
     const newQ = await generateQuestionFromAI(prompt);
@@ -254,7 +299,6 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
 
     document.getElementById('mcq-explanation').innerHTML = explanationHtml;
 
-    // Attach event to follow-up button if present
     const followBtn = document.getElementById('follow-up-btn');
     if (followBtn) {
       followBtn.addEventListener('click', async () => {
@@ -278,7 +322,6 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
       btn.innerText = isStudyMode ? '📘 Study Mode ON' : '📘 Study Mode OFF';
       btn.style.background = isStudyMode ? '#28a745' : '#6c757d';
     }
-    // Reset and start fresh
     generateQuestion(true);
   }
 
@@ -336,7 +379,6 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
         </div>
       </div>`;
 
-    // Insert after About MedLib
     const about = document.getElementById('about-medlib-bottom');
     if (about && about.parentNode) {
       about.parentNode.insertBefore(section, about.nextSibling);
@@ -344,7 +386,6 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
       mainContent.appendChild(section);
     }
 
-    // Events
     document.getElementById('generate-mcq-btn').addEventListener('click', () => generateQuestion(false));
     document.getElementById('regenerate-mcq-btn').addEventListener('click', regenerateQuestion);
     document.getElementById('study-mode-toggle').addEventListener('click', toggleStudyMode);
