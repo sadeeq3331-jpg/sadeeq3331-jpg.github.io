@@ -1,4 +1,4 @@
-// nexus.js – v2.6 (added Study Mode personality, full tutor experience)
+// nexus.js – v2.7 (robust model selection + full tutor experience)
 (function() {
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
@@ -13,6 +13,7 @@
     let panelDarkMode = false;
     let personality = 'detailed';
     let sidebarOpen = true;
+    let currentModelId = null; // will be set dynamically
 
     function extractPuterMessage(raw) {
         if (typeof raw === 'string') {
@@ -140,7 +141,7 @@
         conversations.forEach(c => {
             const active = c.id === currentConvId ? 'active' : '';
             html += `<div class="conv-item ${active}" data-id="${c.id}" ondblclick="window.renameConversationPrompt(${c.id})">
-                <span class="conv-name">${c.name}</span>
+                <span class="conv-name">${escapeHtml(c.name)}</span>
                 <span class="conv-actions">
                     <button class="icon-btn delete-conv" data-id="${c.id}" title="Delete">🗑️</button>
                 </span>
@@ -157,7 +158,7 @@
         } else {
             pinnedForConv.forEach(p => {
                 const snippet = truncateText(p.content, 60);
-                html += `<div class="pinned-note-item" onclick="window.scrollToMessage(${p.idx})">📌 ${snippet}</div>`;
+                html += `<div class="pinned-note-item" onclick="window.scrollToMessage(${p.idx})">📌 ${escapeHtml(snippet)}</div>`;
             });
         }
         html += `</div>
@@ -189,7 +190,6 @@
         </div>`;
         sidebar.innerHTML = html;
 
-        // events
         document.querySelectorAll('.conv-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -358,7 +358,7 @@
             'Treat hypertension',
         ];
         container.innerHTML = allSuggestions.slice(0,3).map(s => 
-            `<div class="suggestion-chip" data-question="${s}">🧬 ${s}</div>`
+            `<div class="suggestion-chip" data-question="${escapeHtml(s)}">🧬 ${escapeHtml(s)}</div>`
         ).join('');
         document.querySelectorAll('.suggestion-chip').forEach(chip => {
             chip.addEventListener('click', (e) => {
@@ -388,6 +388,43 @@
         const conv = getCurrentConv();
         if (!conv) return;
         navigator.clipboard.writeText(conv.messages[idx].content).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
+    }
+
+    // Helper: pick the best available model from puter.ai
+    async function getBestModel() {
+        if (currentModelId) return currentModelId;
+        try {
+            const models = await puter.ai.listModels();
+            // preferred order: newer Gemini flash models, then any Gemini, then any chat model
+            const preferred = [
+                'google/gemini-3.1-flash-lite',
+                'google/gemini-2.5-flash-lite-001',
+                'google/gemini-2.0-flash-lite-001',
+                'gpt-5.4-nano'
+            ];
+            for (const preferredId of preferred) {
+                if (models.some(m => m.id === preferredId)) {
+                    currentModelId = preferredId;
+                    return currentModelId;
+                }
+            }
+            // fallback: any model that contains "gemini" or "flash"
+            const geminiModel = models.find(m => m.id.toLowerCase().includes('gemini'));
+            if (geminiModel) {
+                currentModelId = geminiModel.id;
+                return currentModelId;
+            }
+            // last resort: first available chat model
+            if (models.length > 0) {
+                currentModelId = models[0].id;
+                return currentModelId;
+            }
+            throw new Error('No chat models available');
+        } catch (err) {
+            console.warn('Model listing failed, using safe default', err);
+            currentModelId = 'google/gemini-2.5-flash-lite-001'; // fallback
+            return currentModelId;
+        }
     }
 
     async function sendMessage(initialText = null, isRegenerate = false) {
@@ -445,7 +482,8 @@ ${personalityInstruction}`;
         ];
 
         try {
-            const raw = await puter.ai.chat(chatMessages, { model: 'google/gemini-2.0-flash-lite-001' });
+            const modelId = await getBestModel();
+            const raw = await puter.ai.chat(chatMessages, { model: modelId });
             const clean = extractPuterMessage(raw);
             isWaiting = false;
             addMessage('assistant', clean);
@@ -539,6 +577,15 @@ ${personalityInstruction}`;
         toast.textContent = msg;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 2000);
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
 
     function createWidget() {
