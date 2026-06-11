@@ -270,6 +270,7 @@
     let recentConcepts = [];
     const MAX_RECENT = 3;
     window._lastSelectedLetter = '';
+    let isGeneratingFollowUp = false;
 
     function showToast(msg) {
         const toast = document.getElementById('toast');
@@ -286,16 +287,12 @@
         return String(raw);
     }
 
-    // Robust JSON extraction: handles markdown code blocks, trailing commas, etc.
     function extractJSON(text) {
-        // Remove markdown code blocks
         let clean = text.replace(/```(?:json)?\s*([\s\S]*?)\s*```/gi, '$1');
-        // Find the first { and last }
         const start = clean.indexOf('{');
         const end = clean.lastIndexOf('}');
         if (start === -1 || end === -1) throw new Error('No JSON object found');
         let jsonStr = clean.substring(start, end + 1);
-        // Fix common issues: trailing commas
         jsonStr = jsonStr.replace(/,\s*}/g, '}').replace(/,\s*]/g, ']');
         return JSON.parse(jsonStr);
     }
@@ -357,9 +354,22 @@ Correct answer: ${correct}
 Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic to reinforce learning. Make it slightly easier or rephrased. Keep explanation under 300 words. Output JSON same format as before.`;
     }
 
-    // Fallback static question
-    function getFallbackQuestion() {
-        return {
+    function getFallbackQuestion(subject = "general medicine") {
+        const fallbacks = {
+            "Cardiology": {
+                question: "A 55-year-old man presents with chest pain on exertion that resolves with rest. What is the most likely diagnosis?",
+                options: ["A. Unstable angina", "B. Stable angina", "C. NSTEMI", "D. STEMI", "E. Pericarditis"],
+                correct: "B",
+                explanation: "Stable angina is chest pain triggered by exertion and relieved by rest. Unstable angina occurs at rest or with minimal exertion."
+            },
+            "Biochemistry": {
+                question: "Which enzyme is deficient in phenylketonuria?",
+                options: ["A. Phenylalanine hydroxylase", "B. Tyrosine aminotransferase", "C. Homogentisate oxidase", "D. Phenylalanine decarboxylase", "E. Dihydrobiopterin reductase"],
+                correct: "A",
+                explanation: "Phenylketonuria (PKU) is caused by deficiency of phenylalanine hydroxylase, leading to accumulation of phenylalanine."
+            }
+        };
+        return fallbacks[subject] || {
             question: "What is the first-line treatment for stable angina?",
             options: ["A. Aspirin", "B. Nitroglycerin", "C. Beta-blockers", "D. Calcium channel blockers", "E. Ranolazine"],
             correct: "B",
@@ -367,7 +377,7 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
         };
     }
 
-    async function generateQuestionFromAI(prompt, retries = 2) {
+    async function generateQuestionFromAI(prompt, retries = 2, subject = null) {
         if (isRateLimited()) return null;
         recordCall();
         for (let attempt = 0; attempt <= retries; attempt++) {
@@ -384,8 +394,8 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
             } catch(e) {
                 console.warn(`Attempt ${attempt+1} failed:`, e);
                 if (attempt === retries) {
-                    showToast('⚠️ AI generation failed. Using a sample question.');
-                    return getFallbackQuestion();
+                    showToast('⚠️ Using a fallback question due to AI issue.');
+                    return getFallbackQuestion(subject);
                 }
                 await new Promise(r => setTimeout(r, 1000));
             }
@@ -400,19 +410,29 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
             if (!recentConcepts.includes(words)) return cache[key];
         }
         const prompt = buildPrompt(subject, difficulty, recentConcepts);
-        const q = await generateQuestionFromAI(prompt, 2);
+        const q = await generateQuestionFromAI(prompt, 2, subject);
         if (q) {
             trackConcept(q);
             if (!isFollowUp) cache[key] = q;
             return q;
         }
-        return getFallbackQuestion();
+        return getFallbackQuestion(subject);
     }
 
     async function generateFollowUp() {
-        if (!currentQuestion) return null;
-        const prompt = buildFollowUpPrompt(currentQuestion, window._lastSelectedLetter, currentQuestion.correct);
-        return await generateQuestionFromAI(prompt, 1);
+        if (!currentQuestion || isGeneratingFollowUp) return null;
+        isGeneratingFollowUp = true;
+        try {
+            const prompt = buildFollowUpPrompt(currentQuestion, window._lastSelectedLetter, currentQuestion.correct);
+            const fallback = getFallbackQuestion(currentSubject);
+            const q = await generateQuestionFromAI(prompt, 1, currentSubject);
+            return q || fallback;
+        } catch(e) {
+            console.error('Follow-up generation error:', e);
+            return getFallbackQuestion(currentSubject);
+        } finally {
+            isGeneratingFollowUp = false;
+        }
     }
 
     function renderQuestion(q) {
@@ -487,30 +507,32 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
             <span>Correct: ${currentQuestion.correct}. ${correctOpt?.substring(2) || ''}</span>
             <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
         </div>`;
-        if (isStudyMode) {
-            explHtml += `<p style="margin-top:10px;"><em>Study Mode: loading next question…</em></p>`;
-            document.getElementById('mcq-explanation').innerHTML = explHtml;
-            setTimeout(async () => {
-                const follow = await generateFollowUp();
-                if (follow) { currentQuestion = follow; renderQuestion(currentQuestion); }
-                else await generateQuestion(true);
-            }, 1000);
-            return;
-        }
+
+        // For both normal mode AND study mode, show the follow‑up button if answer is wrong
         if (!isCorrect) {
             wrongAnswerCount++;
             if (wrongAnswerCount <= 2) {
                 explHtml += `<div style="margin-top:12px;"><button id="follow-up-btn" class="follow-up-btn">🔁 Try a follow‑up question</button></div>`;
             }
+        } else {
+            // Optional: also allow a follow‑up even when correct (for extra practice)
+            explHtml += `<div style="margin-top:12px;"><button id="follow-up-btn" class="follow-up-btn">📚 Continue with a follow‑up question</button></div>`;
         }
+
         document.getElementById('mcq-explanation').innerHTML = explHtml;
         const btn = document.getElementById('follow-up-btn');
-        if (btn) btn.onclick = async () => {
-            setLoading(true);
-            const follow = await generateFollowUp();
-            if (follow) { currentQuestion = follow; renderQuestion(currentQuestion); }
-            else await generateQuestion(true);
-        };
+        if (btn) {
+            btn.onclick = async () => {
+                setLoading(true);
+                const follow = await generateFollowUp();
+                if (follow) {
+                    currentQuestion = follow;
+                    renderQuestion(currentQuestion);
+                } else {
+                    await generateQuestion(true);
+                }
+            };
+        }
     };
 
     function toggleStudyMode() {
@@ -523,6 +545,7 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
             btn.innerHTML = '<i class="fas fa-graduation-cap"></i> Study Mode OFF';
             btn.classList.remove('active');
         }
+        // Reset and generate a fresh question when toggling
         generateQuestion(true);
     }
 
@@ -530,7 +553,8 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
     document.getElementById('regenerate-mcq-btn').addEventListener('click', regenerateQuestion);
     document.getElementById('study-mode-toggle').addEventListener('click', toggleStudyMode);
 
-    setTimeout(() => generateQuestion(false), 50);
+    // Initial load
+    setTimeout(() => generateQuestion(false), 500);
 })();
 </script>
 </body>
