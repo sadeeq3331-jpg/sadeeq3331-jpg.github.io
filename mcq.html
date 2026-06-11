@@ -286,6 +286,20 @@
         return String(raw);
     }
 
+    // Robust JSON extraction: handles markdown code blocks, trailing commas, etc.
+    function extractJSON(text) {
+        // Remove markdown code blocks
+        let clean = text.replace(/```(?:json)?\s*([\s\S]*?)\s*```/gi, '$1');
+        // Find the first { and last }
+        const start = clean.indexOf('{');
+        const end = clean.lastIndexOf('}');
+        if (start === -1 || end === -1) throw new Error('No JSON object found');
+        let jsonStr = clean.substring(start, end + 1);
+        // Fix common issues: trailing commas
+        jsonStr = jsonStr.replace(/,\s*}/g, '}').replace(/,\s*]/g, ']');
+        return JSON.parse(jsonStr);
+    }
+
     function shuffleOptionsAndCorrect(question) {
         if (!question?.options?.length) return question;
         const texts = question.options.map(opt => {
@@ -343,23 +357,40 @@ Correct answer: ${correct}
 Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic to reinforce learning. Make it slightly easier or rephrased. Keep explanation under 300 words. Output JSON same format as before.`;
     }
 
-    async function generateQuestionFromAI(prompt) {
+    // Fallback static question
+    function getFallbackQuestion() {
+        return {
+            question: "What is the first-line treatment for stable angina?",
+            options: ["A. Aspirin", "B. Nitroglycerin", "C. Beta-blockers", "D. Calcium channel blockers", "E. Ranolazine"],
+            correct: "B",
+            explanation: "Nitroglycerin is first-line for acute relief of stable angina. Beta-blockers and calcium channel blockers are used for long-term management."
+        };
+    }
+
+    async function generateQuestionFromAI(prompt, retries = 2) {
         if (isRateLimited()) return null;
         recordCall();
-        try {
-            const model = await getBestModel();
-            const raw = await puter.ai.chat(prompt, { model });
-            let json = extractTextFromResponse(raw);
-            json = json.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-            const parsed = JSON.parse(json);
-            if (!parsed.question || !Array.isArray(parsed.options) || !parsed.correct) throw new Error('Incomplete');
-            const shuffled = shuffleOptionsAndCorrect(parsed);
-            return shuffled;
-        } catch(e) {
-            console.error('AI error:', e);
-            showToast('❌ Generation failed. Please try again.');
-            return null;
+        for (let attempt = 0; attempt <= retries; attempt++) {
+            try {
+                const model = await getBestModel();
+                const raw = await puter.ai.chat(prompt, { model });
+                const text = extractTextFromResponse(raw);
+                const parsed = extractJSON(text);
+                if (!parsed.question || !Array.isArray(parsed.options) || parsed.options.length !== 5 || !parsed.correct) {
+                    throw new Error('Missing required fields');
+                }
+                const shuffled = shuffleOptionsAndCorrect(parsed);
+                return shuffled;
+            } catch(e) {
+                console.warn(`Attempt ${attempt+1} failed:`, e);
+                if (attempt === retries) {
+                    showToast('⚠️ AI generation failed. Using a sample question.');
+                    return getFallbackQuestion();
+                }
+                await new Promise(r => setTimeout(r, 1000));
+            }
         }
+        return null;
     }
 
     async function getOrGenerateQuestion(subject, difficulty, force=false, isFollowUp=false) {
@@ -369,19 +400,19 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
             if (!recentConcepts.includes(words)) return cache[key];
         }
         const prompt = buildPrompt(subject, difficulty, recentConcepts);
-        const q = await generateQuestionFromAI(prompt);
+        const q = await generateQuestionFromAI(prompt, 2);
         if (q) {
             trackConcept(q);
             if (!isFollowUp) cache[key] = q;
             return q;
         }
-        return null;
+        return getFallbackQuestion();
     }
 
     async function generateFollowUp() {
         if (!currentQuestion) return null;
         const prompt = buildFollowUpPrompt(currentQuestion, window._lastSelectedLetter, currentQuestion.correct);
-        return await generateQuestionFromAI(prompt);
+        return await generateQuestionFromAI(prompt, 1);
     }
 
     function renderQuestion(q) {
@@ -499,7 +530,7 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
     document.getElementById('regenerate-mcq-btn').addEventListener('click', regenerateQuestion);
     document.getElementById('study-mode-toggle').addEventListener('click', toggleStudyMode);
 
-    setTimeout(() => generateQuestion(false), 500);
+    setTimeout(() => generateQuestion(false), 50);
 })();
 </script>
 </body>
