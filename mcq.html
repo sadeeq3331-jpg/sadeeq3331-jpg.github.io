@@ -130,7 +130,7 @@
         }
         .mcq-explanation-box.correct { background: #e8f5e9; border-left-color: #28a745; }
         .mcq-explanation-box.incorrect { background: #fbeaea; border-left-color: #dc3545; }
-        .follow-up-btn {
+        .follow-up-btn, .retry-followup-btn {
             margin-top: 1rem;
             background: #2c7cb0;
             color: white;
@@ -138,7 +138,9 @@
             padding: 0.6rem 1.2rem;
             border-radius: 2rem;
             cursor: pointer;
+            margin-right: 0.5rem;
         }
+        .retry-followup-btn { background: #ffc107; color: #1e3c72; }
         .loading-dots::after { content: ''; animation: dots 1.5s steps(4,end) infinite; }
         @keyframes dots { 0%{content:'.';} 25%{content:'..';} 50%{content:'...';} 75%{content:'....';} 100%{content:'.';} }
         .toast {
@@ -222,10 +224,10 @@
             if (!window.puter?.ai) throw new Error('Puter AI not loaded');
             const models = await puter.ai.listModels();
             const preferred = [
+                'gpt-5.4-nano',
                 'google/gemini-3.1-flash-lite',
                 'google/gemini-2.5-flash-lite-001',
-                'google/gemini-2.0-flash-lite-001',
-                'gpt-5.4-nano'
+                'google/gemini-2.0-flash-lite-001'
             ];
             for (const p of preferred) {
                 if (models.some(m => m.id === p)) {
@@ -239,20 +241,20 @@
             throw new Error('No chat models');
         } catch(e) {
             console.warn(e);
-            cachedModelId = 'google/gemini-2.5-flash-lite-001';
+            cachedModelId = 'gpt-5.4-nano';
             return cachedModelId;
         }
     }
 
     // ---------- RATE LIMIT ----------
     const RATE_LIMIT_WINDOW = 60000;
-    const MAX_CALLS = 3;
+    const MAX_CALLS = 5;
     let callTimestamps = [];
     function isRateLimited() {
         const now = Date.now();
         callTimestamps = callTimestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW);
         if (callTimestamps.length >= MAX_CALLS) {
-            showToast('⏳ Rate limit reached (3/min). Please wait.');
+            showToast('⏳ Rate limit reached. Please wait a moment.');
             return true;
         }
         return false;
@@ -266,7 +268,6 @@
     let currentDifficulty = 2;
     let hasAnswered = false;
     let isStudyMode = false;
-    let wrongAnswerCount = 0;
     let recentConcepts = [];
     const MAX_RECENT = 3;
     window._lastSelectedLetter = '';
@@ -288,20 +289,28 @@
     }
 
     function extractJSON(text) {
-        let clean = text.replace(/```(?:json)?\s*([\s\S]*?)\s*```/gi, '$1');
+        // Remove markdown code blocks
+        let clean = text.replace(/```(?:json)?\s*/gi, '').replace(/```\s*$/g, '');
+        
+        // Find JSON object
         const start = clean.indexOf('{');
         const end = clean.lastIndexOf('}');
         if (start === -1 || end === -1) throw new Error('No JSON object found');
+        
         let jsonStr = clean.substring(start, end + 1);
+        
+        // Fix common JSON issues
         jsonStr = jsonStr.replace(/,\s*}/g, '}').replace(/,\s*]/g, ']');
+        jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":'); // ensure property names are quoted
+        
         return JSON.parse(jsonStr);
     }
 
     function shuffleOptionsAndCorrect(question) {
         if (!question?.options?.length) return question;
         const texts = question.options.map(opt => {
-            const m = opt.match(/^[A-E]\.\s*(.+)/);
-            return m ? m[1] : opt;
+            const m = opt.match(/^[A-E]\.?\s*(.+)/i);
+            return m ? m[1].trim() : opt;
         });
         const correctLetter = question.correct.trim().toUpperCase();
         const correctIdx = 'ABCDE'.indexOf(correctLetter);
@@ -325,18 +334,25 @@
 
     function buildPrompt(subject, difficulty, avoid=[]) {
         const levels = {1:'easy (foundational)',2:'intermediate (clinical application)',3:'hard (integrative, multi-step)'};
-        let avoidTxt = avoid.length ? `\nIMPORTANT: Avoid these recently used topics: ${avoid.join(', ')}. Generate a completely different medical concept.` : '';
-        return `You are a medical educator creating a high-quality USMLE-style multiple-choice question.
+        let avoidTxt = avoid.length ? `\nAvoid these topics: ${avoid.join(', ')}. Generate something different.` : '';
+        return `Create a medical multiple-choice question (USMLE style).
 Subject: ${subject}
-Difficulty: ${levels[difficulty] || levels[2]} (${'⭐'.repeat(difficulty)})${avoidTxt}
+Difficulty: ${levels[difficulty] || levels[2]}${avoidTxt}
 
-Generate ONE multiple‑choice question with:
-1. A clinical vignette (field: "question").
-2. Five answer options labeled A–E.
-3. One correct answer (field: "correct", just the letter).
-4. A concise, complete explanation (under 300 words, no cut‑offs).
+Return ONLY valid JSON with these exact fields:
+{
+  "question": "the question text here",
+  "options": ["A. option 1", "B. option 2", "C. option 3", "D. option 4", "E. option 5"],
+  "correct": "A",
+  "explanation": "detailed explanation here"
+}`;
+    }
 
-Output ONLY valid JSON in this exact format:
+    function buildFollowUpPrompt(originalTopic) {
+        // Simplified follow-up prompt - just ask for a new question on the same topic
+        return `Create a NEW medical multiple-choice question about: ${originalTopic}
+Make it slightly different from typical questions on this topic.
+Return ONLY valid JSON:
 {
   "question": "...",
   "options": ["A. ...", "B. ...", "C. ...", "D. ...", "E. ..."],
@@ -345,91 +361,96 @@ Output ONLY valid JSON in this exact format:
 }`;
     }
 
-    function buildFollowUpPrompt(original, userAns, correct) {
-        return `A medical student answered the following question INCORRECTLY:
-Original question: "${original.question}"
-Their answer: ${userAns}
-Correct answer: ${correct}
-
-Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic to reinforce learning. Make it slightly easier or rephrased. Keep explanation under 300 words. Output JSON same format as before.`;
-    }
-
-    function getFallbackQuestion(subject = "general medicine") {
-        const fallbacks = {
-            "Cardiology": {
+    function getFallbackQuestion() {
+        const fallbacks = [
+            {
                 question: "A 55-year-old man presents with chest pain on exertion that resolves with rest. What is the most likely diagnosis?",
                 options: ["A. Unstable angina", "B. Stable angina", "C. NSTEMI", "D. STEMI", "E. Pericarditis"],
                 correct: "B",
                 explanation: "Stable angina is chest pain triggered by exertion and relieved by rest. Unstable angina occurs at rest or with minimal exertion."
             },
-            "Biochemistry": {
-                question: "Which enzyme is deficient in phenylketonuria?",
-                options: ["A. Phenylalanine hydroxylase", "B. Tyrosine aminotransferase", "C. Homogentisate oxidase", "D. Phenylalanine decarboxylase", "E. Dihydrobiopterin reductase"],
-                correct: "A",
-                explanation: "Phenylketonuria (PKU) is caused by deficiency of phenylalanine hydroxylase, leading to accumulation of phenylalanine."
+            {
+                question: "Which medication is first-line for hypertension in a diabetic patient?",
+                options: ["A. Hydrochlorothiazide", "B. Lisinopril (ACE inhibitor)", "C. Metoprolol", "D. Amlodipine", "E. Doxazosin"],
+                correct: "B",
+                explanation: "ACE inhibitors (like lisinopril) are preferred in diabetics as they are renoprotective and reduce progression to diabetic nephropathy."
+            },
+            {
+                question: "What is the most common cause of community-acquired pneumonia?",
+                options: ["A. Staphylococcus aureus", "B. Haemophilus influenzae", "C. Mycoplasma pneumoniae", "D. Streptococcus pneumoniae", "E. Klebsiella pneumoniae"],
+                correct: "D",
+                explanation: "Streptococcus pneumoniae is the most common bacterial cause of community-acquired pneumonia."
             }
-        };
-        return fallbacks[subject] || {
-            question: "What is the first-line treatment for stable angina?",
-            options: ["A. Aspirin", "B. Nitroglycerin", "C. Beta-blockers", "D. Calcium channel blockers", "E. Ranolazine"],
-            correct: "B",
-            explanation: "Nitroglycerin is first-line for acute relief of stable angina. Beta-blockers and calcium channel blockers are used for long-term management."
-        };
+        ];
+        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
     }
 
-    async function generateQuestionFromAI(prompt, retries = 2, subject = null) {
+    async function generateQuestionFromAI(prompt, retries = 2) {
         if (isRateLimited()) return null;
         recordCall();
+        
         for (let attempt = 0; attempt <= retries; attempt++) {
             try {
                 const model = await getBestModel();
+                console.log(`Using model: ${model}`);
                 const raw = await puter.ai.chat(prompt, { model });
                 const text = extractTextFromResponse(raw);
+                console.log(`Response (attempt ${attempt+1}):`, text.substring(0, 200));
+                
                 const parsed = extractJSON(text);
-                if (!parsed.question || !Array.isArray(parsed.options) || parsed.options.length !== 5 || !parsed.correct) {
+                if (!parsed.question || !Array.isArray(parsed.options) || parsed.options.length < 4 || !parsed.correct) {
                     throw new Error('Missing required fields');
                 }
+                
+                // Ensure we have exactly 5 options
+                while (parsed.options.length < 5) parsed.options.push(`${String.fromCharCode(65+parsed.options.length)}. Placeholder`);
+                if (parsed.options.length > 5) parsed.options = parsed.options.slice(0, 5);
+                
                 const shuffled = shuffleOptionsAndCorrect(parsed);
                 return shuffled;
             } catch(e) {
-                console.warn(`Attempt ${attempt+1} failed:`, e);
+                console.warn(`Attempt ${attempt+1} failed:`, e.message);
                 if (attempt === retries) {
-                    showToast('⚠️ Using a fallback question due to AI issue.');
-                    return getFallbackQuestion(subject);
+                    console.log('Using fallback question');
+                    return getFallbackQuestion();
                 }
                 await new Promise(r => setTimeout(r, 1000));
             }
         }
-        return null;
+        return getFallbackQuestion();
     }
 
-    async function getOrGenerateQuestion(subject, difficulty, force=false, isFollowUp=false) {
+    async function getOrGenerateQuestion(subject, difficulty, force=false) {
         const key = `${subject}_${difficulty}`;
-        if (!force && !isFollowUp && cache[key]) {
+        if (!force && cache[key]) {
             const words = cache[key].question?.split(/\s+/).slice(0,3).join(' ') || '';
             if (!recentConcepts.includes(words)) return cache[key];
         }
         const prompt = buildPrompt(subject, difficulty, recentConcepts);
-        const q = await generateQuestionFromAI(prompt, 2, subject);
+        const q = await generateQuestionFromAI(prompt, 2);
         if (q) {
             trackConcept(q);
-            if (!isFollowUp) cache[key] = q;
+            cache[key] = q;
             return q;
         }
-        return getFallbackQuestion(subject);
+        return getFallbackQuestion();
     }
 
     async function generateFollowUp() {
         if (!currentQuestion || isGeneratingFollowUp) return null;
         isGeneratingFollowUp = true;
+        showToast('Generating follow-up question...');
+        
         try {
-            const prompt = buildFollowUpPrompt(currentQuestion, window._lastSelectedLetter, currentQuestion.correct);
-            const fallback = getFallbackQuestion(currentSubject);
-            const q = await generateQuestionFromAI(prompt, 1, currentSubject);
-            return q || fallback;
+            // Extract topic from current question (first few words)
+            const topic = currentQuestion.question.split('.')[0].split('?')[0].substring(0, 50);
+            const prompt = buildFollowUpPrompt(topic);
+            const q = await generateQuestionFromAI(prompt, 2);
+            return q || getFallbackQuestion();
         } catch(e) {
             console.error('Follow-up generation error:', e);
-            return getFallbackQuestion(currentSubject);
+            showToast('Using fallback question');
+            return getFallbackQuestion();
         } finally {
             isGeneratingFollowUp = false;
         }
@@ -440,7 +461,7 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
         const optsEl = document.getElementById('mcq-options-container');
         const explEl = document.getElementById('mcq-explanation');
         if (!q) {
-            qEl.innerText = '❌ Failed to generate question.';
+            qEl.innerText = '❌ Failed to generate question. Please try again.';
             optsEl.innerHTML = '';
             explEl.innerHTML = '';
             return;
@@ -464,72 +485,81 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
         });
     }
 
-    function setLoading(isLoading) {
+    function setLoading(isLoading, customText = null) {
         const qEl = document.getElementById('mcq-question-text');
         if (isLoading) {
-            qEl.innerHTML = '🧠 Generating a fresh question <span class="loading-dots">...</span>';
+            qEl.innerHTML = customText || '🧠 Generating question <span class="loading-dots">...</span>';
             document.getElementById('mcq-options-container').innerHTML = '';
             document.getElementById('mcq-explanation').innerHTML = '';
         }
     }
 
-    async function generateQuestion(force=false, isFollowUp=false) {
+    async function generateQuestion(force=false) {
         const subject = document.getElementById('mcq-subject').value;
         const diff = parseInt(document.getElementById('mcq-difficulty').value, 10);
         currentSubject = subject;
         currentDifficulty = diff;
         setLoading(true);
-        const q = await getOrGenerateQuestion(subject, diff, force, isFollowUp);
+        const q = await getOrGenerateQuestion(subject, diff, force);
         if (q) {
             currentQuestion = q;
             renderQuestion(currentQuestion);
         } else {
-            document.getElementById('mcq-question-text').innerText = '⚠️ Generation failed. Try again.';
+            document.getElementById('mcq-question-text').innerText = '⚠️ Generation failed. Please try again.';
         }
     }
 
-    async function regenerateQuestion() { await generateQuestion(true); }
+    async function regenerateQuestion() { 
+        await generateQuestion(true); 
+    }
 
     window.checkMCQAnswer = async function(letter) {
         if (!currentQuestion || hasAnswered) return;
         hasAnswered = true;
         window._lastSelectedLetter = letter;
         const isCorrect = (letter === currentQuestion.correct);
+        
         document.querySelectorAll('.mcq-option').forEach(btn => {
             const l = btn.getAttribute('data-letter');
             btn.disabled = true;
             if (l === currentQuestion.correct) btn.classList.add('correct');
             else if (l === letter && !isCorrect) btn.classList.add('wrong');
         });
+        
         const correctOpt = currentQuestion.options.find(o => o.startsWith(currentQuestion.correct));
         let explHtml = `<div class="mcq-explanation-box ${isCorrect ? 'correct' : 'incorrect'}">
             <strong>${isCorrect ? '✅ Correct!' : '❌ Incorrect'}</strong><br>
             <span>Correct: ${currentQuestion.correct}. ${correctOpt?.substring(2) || ''}</span>
             <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
         </div>`;
-
-        // For both normal mode AND study mode, show the follow‑up button if answer is wrong
-        if (!isCorrect) {
-            wrongAnswerCount++;
-            if (wrongAnswerCount <= 2) {
-                explHtml += `<div style="margin-top:12px;"><button id="follow-up-btn" class="follow-up-btn">🔁 Try a follow‑up question</button></div>`;
-            }
-        } else {
-            // Optional: also allow a follow‑up even when correct (for extra practice)
-            explHtml += `<div style="margin-top:12px;"><button id="follow-up-btn" class="follow-up-btn">📚 Continue with a follow‑up question</button></div>`;
-        }
-
+        
+        // Always show follow-up button (for both correct and incorrect)
+        explHtml += `<div style="margin-top:12px;">
+            <button id="follow-up-btn" class="follow-up-btn">🔁 Generate Follow-up Question</button>
+        </div>`;
+        
         document.getElementById('mcq-explanation').innerHTML = explHtml;
+        
         const btn = document.getElementById('follow-up-btn');
         if (btn) {
             btn.onclick = async () => {
-                setLoading(true);
+                setLoading(true, '🧠 Generating follow-up question <span class="loading-dots">...</span>');
                 const follow = await generateFollowUp();
                 if (follow) {
                     currentQuestion = follow;
                     renderQuestion(currentQuestion);
+                    showToast('Follow-up question ready!');
                 } else {
-                    await generateQuestion(true);
+                    // Try one more time with a fresh generation
+                    setLoading(true, 'Retrying... <span class="loading-dots">...</span>');
+                    const retryFollow = await generateFollowUp();
+                    if (retryFollow) {
+                        currentQuestion = retryFollow;
+                        renderQuestion(currentQuestion);
+                    } else {
+                        document.getElementById('mcq-question-text').innerHTML = '⚠️ Could not generate follow-up. Please click "Generate" for a new question.';
+                        document.getElementById('mcq-options-container').innerHTML = '';
+                    }
                 }
             };
         }
@@ -541,14 +571,15 @@ Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic 
         if (isStudyMode) {
             btn.innerHTML = '<i class="fas fa-graduation-cap"></i> Study Mode ON';
             btn.classList.add('active');
+            showToast('Study Mode enabled - follow-up questions available');
         } else {
             btn.innerHTML = '<i class="fas fa-graduation-cap"></i> Study Mode OFF';
             btn.classList.remove('active');
         }
-        // Reset and generate a fresh question when toggling
         generateQuestion(true);
     }
 
+    // Event listeners
     document.getElementById('generate-mcq-btn').addEventListener('click', () => generateQuestion(false));
     document.getElementById('regenerate-mcq-btn').addEventListener('click', regenerateQuestion);
     document.getElementById('study-mode-toggle').addEventListener('click', toggleStudyMode);
