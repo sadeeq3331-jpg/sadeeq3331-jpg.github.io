@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Smart MCQ Generator | MedLib Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(145deg, #f0f9ff 0%, #e6f0fa 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hero { text-align: center; margin-bottom: 2.5rem; }
+        .hero h1 {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p { font-size: 1.1rem; color: #2c3e66; max-width: 700px; margin: 0 auto; }
+        .mcq-glass-panel {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .mcq-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            justify-content: space-between;
+        }
+        .control-group { flex: 1; min-width: 150px; }
+        .control-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #1e3c72;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        .mcq-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 3rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.9);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .mcq-buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .mcq-btn {
+            padding: 0.75rem 1.8rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            color: #1e3c72;
+            transition: 0.2s;
+        }
+        .mcq-btn.primary { background: linear-gradient(135deg, #2c7cb0, #1f5a82); color: white; }
+        .mcq-btn.warning { background: #ffc107; color: #1e3c72; }
+        .mcq-btn.study { background: #6c757d; color: white; }
+        .mcq-btn.study.active { background: #28a745; }
+        .mcq-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+        #mcq-question-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .mcq-question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 1.8rem;
+            color: #0a2942;
+        }
+        .mcq-options-grid { display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 1.5rem; }
+        .mcq-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1.2rem;
+            border: 2px solid #e0e7f0;
+            background: #f9fcff;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            text-align: left;
+        }
+        .mcq-option:hover:not(.disabled) { border-color: #2c7cb0; background: #eef6ff; transform: translateX(6px); }
+        .mcq-opt-letter {
+            font-weight: 800;
+            width: 2.2rem;
+            height: 2.2rem;
+            background: #dce9f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mcq-option.correct { border-color: #28a745; background: #e8f5e9; }
+        .mcq-option.correct .mcq-opt-letter { background: #28a745; color: white; }
+        .mcq-option.wrong { border-color: #dc3545; background: #fbeaea; }
+        .mcq-option.wrong .mcq-opt-letter { background: #dc3545; color: white; }
+        .mcq-option.disabled { opacity: 0.7; cursor: default; }
+        .mcq-explanation-box {
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+            border-left: 5px solid;
+            background: #f8fafc;
+        }
+        .mcq-explanation-box.correct { background: #e8f5e9; border-left-color: #28a745; }
+        .mcq-explanation-box.incorrect { background: #fbeaea; border-left-color: #dc3545; }
+        .follow-up-btn {
+            margin-top: 1rem;
+            background: #2c7cb0;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+        }
+        .loading-dots::after { content: ''; animation: dots 1.5s steps(4,end) infinite; }
+        @keyframes dots { 0%{content:'.';} 25%{content:'..';} 50%{content:'...';} 75%{content:'....';} 100%{content:'.';} }
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            background: #1e3c72; color: white; padding: 0.75rem 1.8rem; border-radius: 3rem;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000;
+        }
+        .toast.show { opacity: 1; }
+        @media (max-width: 700px) {
+            .mcq-glass-panel { padding: 1.2rem; }
+            .mcq-controls { flex-direction: column; align-items: stretch; }
+            .mcq-buttons { justify-content: stretch; }
+            .mcq-btn { justify-content: center; flex: 1; }
+        }
+        footer { text-align: center; margin-top: 2rem; font-size: 0.8rem; color: #4a627a; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1><i class="fas fa-brain"></i> Smart MCQ Generator</h1>
+        <p>USMLE‑style questions • AI‑powered • Adaptive learning • Study mode with follow‑ups</p>
+    </div>
+    <div class="mcq-glass-panel">
+        <div class="mcq-controls">
+            <div class="control-group">
+                <label><i class="fas fa-book"></i> Subject</label>
+                <select id="mcq-subject" class="mcq-select">
+                    <option value="Random">🎲 Random</option>
+                    <option value="Biochemistry">Biochemistry</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Pharmacology">Pharmacology</option>
+                    <option value="Genetics">Genetics</option>
+                    <option value="Immunology">Immunology</option>
+                    <option value="Microbiology">Microbiology</option>
+                    <option value="Respiratory">Respiratory</option>
+                    <option value="Gastroenterology">Gastroenterology</option>
+                    <option value="Endocrinology">Endocrinology</option>
+                    <option value="Renal">Renal</option>
+                    <option value="Hematology">Hematology</option>
+                    <option value="Psychiatry">Psychiatry</option>
+                    <option value="Emergency">Emergency</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label><i class="fas fa-chart-line"></i> Difficulty</label>
+                <select id="mcq-difficulty" class="mcq-select">
+                    <option value="1">⭐ Easy (foundational)</option>
+                    <option value="2" selected>⭐⭐ Intermediate</option>
+                    <option value="3">⭐⭐⭐ Hard (integrative)</option>
+                </select>
+            </div>
+            <div class="mcq-buttons">
+                <button id="generate-mcq-btn" class="mcq-btn primary"><i class="fas fa-magic"></i> Generate</button>
+                <button id="regenerate-mcq-btn" class="mcq-btn warning"><i class="fas fa-sync-alt"></i> Re‑generate</button>
+                <button id="study-mode-toggle" class="mcq-btn study"><i class="fas fa-graduation-cap"></i> Study Mode OFF</button>
+            </div>
+        </div>
+        <div id="mcq-question-card">
+            <div id="mcq-question-text" class="mcq-question-text">✨ Click "Generate" to start practicing.</div>
+            <div id="mcq-options-container" class="mcq-options-grid"></div>
+            <div id="mcq-explanation"></div>
+        </div>
+    </div>
+    <footer><i class="fas fa-robot"></i> Powered by Nexus AI • Dynamic model selection • No sign‑up required</footer>
+</div>
+<div id="toast" class="toast"></div>
+
+<script src="https://js.puter.com/v2/"></script>
+<script>
+(function(){
+    // ---------- DYNAMIC MODEL SELECTION ----------
+    let cachedModelId = null;
+    async function getBestModel() {
+        if (cachedModelId) return cachedModelId;
+        try {
+            if (!window.puter?.ai) {
+                for (let i=0;i<5;i++) { await new Promise(r=>setTimeout(r,1000)); if(window.puter?.ai) break; }
+            }
+            if (!window.puter?.ai) throw new Error('Puter AI not loaded');
+            const models = await puter.ai.listModels();
+            const preferred = [
+                'google/gemini-3.1-flash-lite',
+                'google/gemini-2.5-flash-lite-001',
+                'google/gemini-2.0-flash-lite-001',
+                'gpt-5.4-nano'
+            ];
+            for (const p of preferred) {
+                if (models.some(m => m.id === p)) {
+                    cachedModelId = p;
+                    return cachedModelId;
+                }
+            }
+            const gemini = models.find(m => m.id.toLowerCase().includes('gemini'));
+            if (gemini) { cachedModelId = gemini.id; return cachedModelId; }
+            if (models.length) { cachedModelId = models[0].id; return cachedModelId; }
+            throw new Error('No chat models');
+        } catch(e) {
+            console.warn(e);
+            cachedModelId = 'google/gemini-2.5-flash-lite-001';
+            return cachedModelId;
+        }
+    }
+
+    // ---------- RATE LIMIT ----------
+    const RATE_LIMIT_WINDOW = 60000;
+    const MAX_CALLS = 3;
+    let callTimestamps = [];
+    function isRateLimited() {
+        const now = Date.now();
+        callTimestamps = callTimestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW);
+        if (callTimestamps.length >= MAX_CALLS) {
+            showToast('⏳ Rate limit reached (3/min). Please wait.');
+            return true;
+        }
+        return false;
+    }
+    function recordCall() { callTimestamps.push(Date.now()); }
+
+    // ---------- CACHE & STATE ----------
+    const cache = {};
+    let currentQuestion = null;
+    let currentSubject = 'Random';
+    let currentDifficulty = 2;
+    let hasAnswered = false;
+    let isStudyMode = false;
+    let wrongAnswerCount = 0;
+    let recentConcepts = [];
+    const MAX_RECENT = 3;
+    window._lastSelectedLetter = '';
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function extractTextFromResponse(raw) {
+        if (typeof raw === 'string') return raw;
+        if (raw && typeof raw === 'object') {
+            return raw.message?.content || raw.text || raw.content || raw.choices?.[0]?.message?.content || JSON.stringify(raw);
+        }
+        return String(raw);
+    }
+
+    function shuffleOptionsAndCorrect(question) {
+        if (!question?.options?.length) return question;
+        const texts = question.options.map(opt => {
+            const m = opt.match(/^[A-E]\.\s*(.+)/);
+            return m ? m[1] : opt;
+        });
+        const correctLetter = question.correct.trim().toUpperCase();
+        const correctIdx = 'ABCDE'.indexOf(correctLetter);
+        const correctText = texts[correctIdx];
+        if (!correctText) return question;
+        const shuffled = [...texts];
+        for (let i = shuffled.length-1; i>0; i--) {
+            const j = Math.floor(Math.random()*(i+1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const newOptions = shuffled.map((t,i) => `${String.fromCharCode(65+i)}. ${t}`);
+        const newCorrectIdx = shuffled.indexOf(correctText);
+        return { ...question, options: newOptions, correct: String.fromCharCode(65+newCorrectIdx) };
+    }
+
+    function trackConcept(question) {
+        const words = question.question?.split(/\s+/).slice(0,3).join(' ') || '';
+        recentConcepts.push(words);
+        while (recentConcepts.length > MAX_RECENT) recentConcepts.shift();
+    }
+
+    function buildPrompt(subject, difficulty, avoid=[]) {
+        const levels = {1:'easy (foundational)',2:'intermediate (clinical application)',3:'hard (integrative, multi-step)'};
+        let avoidTxt = avoid.length ? `\nIMPORTANT: Avoid these recently used topics: ${avoid.join(', ')}. Generate a completely different medical concept.` : '';
+        return `You are a medical educator creating a high-quality USMLE-style multiple-choice question.
+Subject: ${subject}
+Difficulty: ${levels[difficulty] || levels[2]} (${'⭐'.repeat(difficulty)})${avoidTxt}
+
+Generate ONE multiple‑choice question with:
+1. A clinical vignette (field: "question").
+2. Five answer options labeled A–E.
+3. One correct answer (field: "correct", just the letter).
+4. A concise, complete explanation (under 300 words, no cut‑offs).
+
+Output ONLY valid JSON in this exact format:
+{
+  "question": "...",
+  "options": ["A. ...", "B. ...", "C. ...", "D. ...", "E. ..."],
+  "correct": "A",
+  "explanation": "..."
+}`;
+    }
+
+    function buildFollowUpPrompt(original, userAns, correct) {
+        return `A medical student answered the following question INCORRECTLY:
+Original question: "${original.question}"
+Their answer: ${userAns}
+Correct answer: ${correct}
+
+Generate a NEW follow‑up multiple‑choice question on the SAME concept/topic to reinforce learning. Make it slightly easier or rephrased. Keep explanation under 300 words. Output JSON same format as before.`;
+    }
+
+    async function generateQuestionFromAI(prompt) {
+        if (isRateLimited()) return null;
+        recordCall();
+        try {
+            const model = await getBestModel();
+            const raw = await puter.ai.chat(prompt, { model });
+            let json = extractTextFromResponse(raw);
+            json = json.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+            const parsed = JSON.parse(json);
+            if (!parsed.question || !Array.isArray(parsed.options) || !parsed.correct) throw new Error('Incomplete');
+            const shuffled = shuffleOptionsAndCorrect(parsed);
+            return shuffled;
+        } catch(e) {
+            console.error('AI error:', e);
+            showToast('❌ Generation failed. Please try again.');
+            return null;
+        }
+    }
+
+    async function getOrGenerateQuestion(subject, difficulty, force=false, isFollowUp=false) {
+        const key = `${subject}_${difficulty}`;
+        if (!force && !isFollowUp && cache[key]) {
+            const words = cache[key].question?.split(/\s+/).slice(0,3).join(' ') || '';
+            if (!recentConcepts.includes(words)) return cache[key];
+        }
+        const prompt = buildPrompt(subject, difficulty, recentConcepts);
+        const q = await generateQuestionFromAI(prompt);
+        if (q) {
+            trackConcept(q);
+            if (!isFollowUp) cache[key] = q;
+            return q;
+        }
+        return null;
+    }
+
+    async function generateFollowUp() {
+        if (!currentQuestion) return null;
+        const prompt = buildFollowUpPrompt(currentQuestion, window._lastSelectedLetter, currentQuestion.correct);
+        return await generateQuestionFromAI(prompt);
+    }
+
+    function renderQuestion(q) {
+        const qEl = document.getElementById('mcq-question-text');
+        const optsEl = document.getElementById('mcq-options-container');
+        const explEl = document.getElementById('mcq-explanation');
+        if (!q) {
+            qEl.innerText = '❌ Failed to generate question.';
+            optsEl.innerHTML = '';
+            explEl.innerHTML = '';
+            return;
+        }
+        qEl.innerText = q.question;
+        let html = '';
+        q.options.forEach(opt => {
+            const letter = opt.charAt(0);
+            const text = opt.substring(2).trim();
+            html += `<button class="mcq-option" data-letter="${letter}" onclick="window.checkMCQAnswer('${letter}')">
+                        <span class="mcq-opt-letter">${letter}</span>
+                        <span>${text}</span>
+                    </button>`;
+        });
+        optsEl.innerHTML = html;
+        explEl.innerHTML = '';
+        hasAnswered = false;
+        document.querySelectorAll('.mcq-option').forEach(btn => {
+            btn.classList.remove('correct','wrong','disabled');
+            btn.disabled = false;
+        });
+    }
+
+    function setLoading(isLoading) {
+        const qEl = document.getElementById('mcq-question-text');
+        if (isLoading) {
+            qEl.innerHTML = '🧠 Generating a fresh question <span class="loading-dots">...</span>';
+            document.getElementById('mcq-options-container').innerHTML = '';
+            document.getElementById('mcq-explanation').innerHTML = '';
+        }
+    }
+
+    async function generateQuestion(force=false, isFollowUp=false) {
+        const subject = document.getElementById('mcq-subject').value;
+        const diff = parseInt(document.getElementById('mcq-difficulty').value, 10);
+        currentSubject = subject;
+        currentDifficulty = diff;
+        setLoading(true);
+        const q = await getOrGenerateQuestion(subject, diff, force, isFollowUp);
+        if (q) {
+            currentQuestion = q;
+            renderQuestion(currentQuestion);
+        } else {
+            document.getElementById('mcq-question-text').innerText = '⚠️ Generation failed. Try again.';
+        }
+    }
+
+    async function regenerateQuestion() { await generateQuestion(true); }
+
+    window.checkMCQAnswer = async function(letter) {
+        if (!currentQuestion || hasAnswered) return;
+        hasAnswered = true;
+        window._lastSelectedLetter = letter;
+        const isCorrect = (letter === currentQuestion.correct);
+        document.querySelectorAll('.mcq-option').forEach(btn => {
+            const l = btn.getAttribute('data-letter');
+            btn.disabled = true;
+            if (l === currentQuestion.correct) btn.classList.add('correct');
+            else if (l === letter && !isCorrect) btn.classList.add('wrong');
+        });
+        const correctOpt = currentQuestion.options.find(o => o.startsWith(currentQuestion.correct));
+        let explHtml = `<div class="mcq-explanation-box ${isCorrect ? 'correct' : 'incorrect'}">
+            <strong>${isCorrect ? '✅ Correct!' : '❌ Incorrect'}</strong><br>
+            <span>Correct: ${currentQuestion.correct}. ${correctOpt?.substring(2) || ''}</span>
+            <p><strong>Explanation:</strong> ${currentQuestion.explanation}</p>
+        </div>`;
+        if (isStudyMode) {
+            explHtml += `<p style="margin-top:10px;"><em>Study Mode: loading next question…</em></p>`;
+            document.getElementById('mcq-explanation').innerHTML = explHtml;
+            setTimeout(async () => {
+                const follow = await generateFollowUp();
+                if (follow) { currentQuestion = follow; renderQuestion(currentQuestion); }
+                else await generateQuestion(true);
+            }, 1000);
+            return;
+        }
+        if (!isCorrect) {
+            wrongAnswerCount++;
+            if (wrongAnswerCount <= 2) {
+                explHtml += `<div style="margin-top:12px;"><button id="follow-up-btn" class="follow-up-btn">🔁 Try a follow‑up question</button></div>`;
+            }
+        }
+        document.getElementById('mcq-explanation').innerHTML = explHtml;
+        const btn = document.getElementById('follow-up-btn');
+        if (btn) btn.onclick = async () => {
+            setLoading(true);
+            const follow = await generateFollowUp();
+            if (follow) { currentQuestion = follow; renderQuestion(currentQuestion); }
+            else await generateQuestion(true);
+        };
+    };
+
+    function toggleStudyMode() {
+        isStudyMode = !isStudyMode;
+        const btn = document.getElementById('study-mode-toggle');
+        if (isStudyMode) {
+            btn.innerHTML = '<i class="fas fa-graduation-cap"></i> Study Mode ON';
+            btn.classList.add('active');
+        } else {
+            btn.innerHTML = '<i class="fas fa-graduation-cap"></i> Study Mode OFF';
+            btn.classList.remove('active');
+        }
+        generateQuestion(true);
+    }
+
+    document.getElementById('generate-mcq-btn').addEventListener('click', () => generateQuestion(false));
+    document.getElementById('regenerate-mcq-btn').addEventListener('click', regenerateQuestion);
+    document.getElementById('study-mode-toggle').addEventListener('click', toggleStudyMode);
+
+    setTimeout(() => generateQuestion(false), 500);
+})();
+</script>
+</body>
+</html>
