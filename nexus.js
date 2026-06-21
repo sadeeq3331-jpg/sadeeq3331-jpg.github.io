@@ -422,7 +422,7 @@
             throw new Error('No chat models available');
         } catch (err) {
             console.warn('Model listing failed, using safe default', err);
-            currentModelId = 'google/gemini-3.1-flash-lite-001'; // fallback
+            currentModelId = 'google/gemini-3.1-flash-lite'; // fallback
             return currentModelId;
         }
     }
