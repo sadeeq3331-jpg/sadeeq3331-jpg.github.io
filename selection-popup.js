@@ -1,13 +1,5 @@
 /**
- * selection-popup.js – Modern, stable text selection popup for iframe content
- * 
- * Fixes:
- * - Prevents unexpected closure when clicking buttons or outside
- * - Uses debounced selection change detection to avoid flicker
- * - Stores selected text separately, survives focus loss
- * - Ignores hide when click target is inside popup
- * - Handles iframe reloads and dynamic content
- * - Clean event management with AbortController
+ * selection-popup.js – v2.0 (fixed: stable, reliable, no flicker)
  */
 (function() {
     'use strict';
@@ -18,367 +10,317 @@
             this.popup = null;
             this.iframe = null;
             this.abortController = null;
-            this.parentAbortController = null;
-            this.usSpeed = 1.0;
-            this.ukSpeed = 1.0;
-            this.isInitialized = false;
-            this.mutationObserver = null;
-            
-            // Store current selected text separately to survive focus loss
             this.currentSelectedText = '';
-            
-            // Debounce timer for hiding popup
-            this.hideDebounceTimer = null;
-            
-            // Flag to prevent immediate hide after showing
-            this.justShown = false;
-            this.justShownTimer = null;
-            
-            // Bind methods
-            this._onSelectionChange = this._onSelectionChange.bind(this);
-            this._repositionHandler = this._repositionHandler.bind(this);
-            this._onIframeLoad = this._onIframeLoad.bind(this);
-            this._onDocumentClick = this._onDocumentClick.bind(this);
-            this._onIframeMouseUp = this._onIframeMouseUp.bind(this);
+            this.hideTimer = null;
+            this.isVisible = false;
+            this._boundOnIframeLoad = this._onIframeLoad.bind(this);
+            this._boundOnSelectionChange = this._onSelectionChange.bind(this);
+            this._boundOnDocumentClick = this._onDocumentClick.bind(this);
+            this._boundOnMouseUp = this._onMouseUp.bind(this);
+            this._boundOnScroll = this._onScroll.bind(this);
         }
 
         init() {
-            if (this.isInitialized) return;
-            this._createPopupElement();
-            this._startObservingIframe();
-            this.isInitialized = true;
+            this._createPopup();
+            this._startObserving();
         }
 
         destroy() {
-            if (this.hideDebounceTimer) clearTimeout(this.hideDebounceTimer);
-            if (this.justShownTimer) clearTimeout(this.justShownTimer);
-            this._cleanupIframeEvents();
-            if (this.parentAbortController) {
-                this.parentAbortController.abort();
-                this.parentAbortController = null;
+            if (this.hideTimer) clearTimeout(this.hideTimer);
+            if (this.abortController) this.abortController.abort();
+            if (this.iframe) {
+                this.iframe.removeEventListener('load', this._boundOnIframeLoad);
             }
-            if (this.mutationObserver) {
-                this.mutationObserver.disconnect();
-                this.mutationObserver = null;
-            }
-            if (this.popup) {
-                this.popup.remove();
-                this.popup = null;
-            }
-            this.isInitialized = false;
+            if (this.popup) this.popup.remove();
+            this.popup = null;
             this.iframe = null;
         }
 
-        // ----------------------------------------------------------------------
-        // UI Creation
-        // ----------------------------------------------------------------------
-        _createPopupElement() {
+        // ---- Popup DOM ----
+        _createPopup() {
             if (this.popup) return;
             const div = document.createElement('div');
             div.id = 'medlib-selection-popup';
             div.className = 'medlib-selection-popup';
             div.setAttribute('role', 'toolbar');
-            div.setAttribute('aria-label', 'Text selection actions');
-            // Prevent popup from stealing focus and causing selection loss
-            div.style.userSelect = 'none';
-            div.addEventListener('mousedown', (e) => e.preventDefault());
+            div.style.cssText = `
+                position: fixed; z-index: 10002;
+                display: none;
+                background: rgba(255,255,255,0.95);
+                backdrop-filter: blur(8px);
+                border-radius: 12px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+                padding: 6px 10px;
+                gap: 6px;
+                align-items: center;
+                border: 1px solid rgba(0,0,0,0.08);
+                user-select: none;
+                pointer-events: auto;
+            `;
             div.innerHTML = `
-                <button type="button" class="popup-btn" id="popup-ask-nexus" data-action="ask">🤖 Ask Nexus</button>
-                <button type="button" class="popup-btn" id="popup-us" data-action="us">🔊 US <span class="speed-indicator" id="popup-us-speed">1x</span></button>
-                <button type="button" class="popup-btn" id="popup-uk" data-action="uk">🔊 UK <span class="speed-indicator" id="popup-uk-speed">1x</span></button>
-                <button type="button" class="popup-btn" id="popup-add-note" data-action="note">📝 Add Note</button>
+                <button type="button" class="popup-btn" data-action="ask">🤖 Ask Nexus</button>
+                <button type="button" class="popup-btn" data-action="us">🔊 US <span class="speed-indicator">1x</span></button>
+                <button type="button" class="popup-btn" data-action="uk">🔊 UK <span class="speed-indicator">1x</span></button>
+                <button type="button" class="popup-btn" data-action="note">📝 Add Note</button>
             `;
             document.body.appendChild(div);
             this.popup = div;
-            this._attachButtonEvents();
+
+            // Attach button events (stop propagation to keep popup open)
+            div.querySelectorAll('.popup-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this._handleAction(btn.dataset.action);
+                });
+                // Prevent mouseup from stealing selection
+                btn.addEventListener('mousedown', e => e.preventDefault());
+            });
+
+            // Click inside popup should not hide it
+            div.addEventListener('click', e => e.stopPropagation());
         }
 
-        _attachButtonEvents() {
-            if (!this.popup) return;
-
-            const askBtn = this.popup.querySelector('#popup-ask-nexus');
-            const usBtn = this.popup.querySelector('#popup-us');
-            const ukBtn = this.popup.querySelector('#popup-uk');
-            const noteBtn = this.popup.querySelector('#popup-add-note');
-            const usSpeedSpan = this.popup.querySelector('#popup-us-speed');
-            const ukSpeedSpan = this.popup.querySelector('#popup-uk-speed');
-
-            if (askBtn) {
-                askBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const text = this.currentSelectedText;
-                    if (text) {
-                        const input = document.getElementById('nexus-input');
-                        if (input) input.value = text;
-                        const panel = document.querySelector('.nexus-panel');
-                        if (panel) panel.style.display = 'flex';
-                        if (typeof window.sendMessage === 'function') {
-                            window.sendMessage(text);
-                        } else {
-                            console.warn('Nexus not ready');
-                            alert('Nexus not ready');
-                        }
-                    }
-                    this._hidePopup();
-                };
+        // ---- Action handlers ----
+        _handleAction(action) {
+            const text = this.currentSelectedText;
+            if (!text) {
+                this._hidePopup();
+                return;
             }
 
-            if (usBtn && usSpeedSpan) {
-                usBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const text = this.currentSelectedText;
-                    if (text) {
-                        this.usSpeed = this.usSpeed === 1.0 ? 0.5 : 1.0;
-                        usSpeedSpan.innerText = this.usSpeed === 1.0 ? '1x' : '½x';
-                        if (typeof window.__medlibSpeechSpeed === 'undefined') {
-                            window.__medlibSpeechSpeed = {};
-                        }
-                        window.__medlibSpeechSpeed.us = this.usSpeed;
-                        if (typeof window.speakUS === 'function') {
-                            window.speakUS(text);
-                        } else {
-                            console.warn('Pronunciation not loaded');
-                            alert('Pronunciation not loaded');
-                        }
+            switch (action) {
+                case 'ask':
+                    const input = document.getElementById('nexus-input');
+                    if (input) input.value = text;
+                    const panel = document.querySelector('.nexus-panel');
+                    if (panel) panel.style.display = 'flex';
+                    if (typeof window.sendMessage === 'function') {
+                        window.sendMessage(text);
+                    } else {
+                        console.warn('Nexus not ready');
+                        alert('Nexus not ready');
                     }
-                    this._hidePopup();
-                };
-            }
+                    break;
 
-            if (ukBtn && ukSpeedSpan) {
-                ukBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const text = this.currentSelectedText;
-                    if (text) {
-                        this.ukSpeed = this.ukSpeed === 1.0 ? 0.5 : 1.0;
-                        ukSpeedSpan.innerText = this.ukSpeed === 1.0 ? '1x' : '½x';
-                        if (typeof window.__medlibSpeechSpeed === 'undefined') {
-                            window.__medlibSpeechSpeed = {};
-                        }
-                        window.__medlibSpeechSpeed.uk = this.ukSpeed;
-                        if (typeof window.speakUK === 'function') {
-                            window.speakUK(text);
-                        } else {
-                            console.warn('Pronunciation not loaded');
-                            alert('Pronunciation not loaded');
-                        }
+                case 'us':
+                    if (typeof window.speakUS === 'function') {
+                        // toggle speed
+                        if (!window.__medlibSpeechSpeed) window.__medlibSpeechSpeed = {};
+                        const speed = window.__medlibSpeechSpeed.us || 1.0;
+                        const newSpeed = speed === 1.0 ? 0.5 : 1.0;
+                        window.__medlibSpeechSpeed.us = newSpeed;
+                        const indicator = this.popup.querySelector('[data-action="us"] .speed-indicator');
+                        if (indicator) indicator.textContent = newSpeed === 1.0 ? '1x' : '½x';
+                        window.speakUS(text);
+                    } else {
+                        alert('Pronunciation not loaded');
                     }
-                    this._hidePopup();
-                };
-            }
+                    break;
 
-            if (noteBtn) {
-                noteBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const text = this.currentSelectedText;
-                    if (text) {
-                        if (typeof window.addAnnotation === 'function') {
-                            window.addAnnotation(text);
-                        } else {
-                            console.warn('Add note not available');
-                            alert('Please sign in to add notes');
-                        }
+                case 'uk':
+                    if (typeof window.speakUK === 'function') {
+                        if (!window.__medlibSpeechSpeed) window.__medlibSpeechSpeed = {};
+                        const speed = window.__medlibSpeechSpeed.uk || 1.0;
+                        const newSpeed = speed === 1.0 ? 0.5 : 1.0;
+                        window.__medlibSpeechSpeed.uk = newSpeed;
+                        const indicator = this.popup.querySelector('[data-action="uk"] .speed-indicator');
+                        if (indicator) indicator.textContent = newSpeed === 1.0 ? '1x' : '½x';
+                        window.speakUK(text);
+                    } else {
+                        alert('Pronunciation not loaded');
                     }
-                    this._hidePopup();
-                };
+                    break;
+
+                case 'note':
+                    if (typeof window.addAnnotation === 'function') {
+                        window.addAnnotation(text);
+                    } else {
+                        alert('Please sign in to add notes');
+                    }
+                    break;
             }
+            // Keep popup open after action (user may want to do more)
+            // But we'll hide after a short delay if they click away.
         }
 
-        // ----------------------------------------------------------------------
-        // Positioning & Visibility
-        // ----------------------------------------------------------------------
-        _positionPopup(rect, iframeRect) {
+        // ---- Show / Hide ----
+        _showPopup(rect, text) {
             if (!this.popup) return;
-            const left = iframeRect.left + rect.left + window.scrollX + (rect.width / 2) - 70;
-            const top = iframeRect.top + rect.top + window.scrollY - 50;
-            this.popup.style.display = 'flex';
+            this.currentSelectedText = text;
+            // Position popup
+            const left = rect.left + window.scrollX + rect.width / 2 - 80;
+            const top = rect.top + window.scrollY - 50;
             this.popup.style.left = `${Math.max(10, left)}px`;
             this.popup.style.top = `${Math.max(10, top)}px`;
+            this.popup.style.display = 'flex';
+            this.isVisible = true;
+            // Clear any pending hide timer
+            if (this.hideTimer) clearTimeout(this.hideTimer);
+            this.hideTimer = null;
         }
 
-        _hidePopup() {
-            // Clear any pending hide debounce
-            if (this.hideDebounceTimer) clearTimeout(this.hideDebounceTimer);
-            // Use a small delay to avoid hiding when selection is momentarily cleared
-            // (e.g., when clicking a button, selection might be lost but we still want to keep popup)
-            this.hideDebounceTimer = setTimeout(() => {
-                // Re-check if there is still a selection before hiding
-                if (this._hasSelection()) {
-                    return; // Selection came back, keep popup
+        _hidePopup(delay = 100) {
+            if (this.hideTimer) clearTimeout(this.hideTimer);
+            this.hideTimer = setTimeout(() => {
+                // Only hide if there's no selection or we're not hovering the popup
+                if (this.popup && !this.isVisible) return;
+                // Check if selection still exists
+                if (this._getSelectedText()) {
+                    // Selection still exists, keep popup
+                    this.hideTimer = null;
+                    return;
                 }
-                if (this.popup) this.popup.style.display = 'none';
+                // Also, if mouse is over the popup, don't hide
+                // (We'll rely on mouseenter/leave later)
+                this.popup.style.display = 'none';
+                this.isVisible = false;
                 this.currentSelectedText = '';
-            }, 150);
+                this.hideTimer = null;
+            }, delay);
         }
 
-        _showPopup(rect, iframeRect, text) {
-            // Clear any pending hide
-            if (this.hideDebounceTimer) clearTimeout(this.hideDebounceTimer);
-            this.currentSelectedText = text;
-            this._positionPopup(rect, iframeRect);
-            
-            // Set a flag to prevent hide from selectionchange that fires immediately after
-            this.justShown = true;
-            if (this.justShownTimer) clearTimeout(this.justShownTimer);
-            this.justShownTimer = setTimeout(() => {
-                this.justShown = false;
-            }, 300);
-        }
-
-        // ----------------------------------------------------------------------
-        // Selection Helpers
-        // ----------------------------------------------------------------------
-        _hasSelection() {
-            if (!this.iframe || !this.iframe.contentDocument) return false;
-            const doc = this.iframe.contentDocument;
-            const sel = doc.getSelection();
-            const text = sel?.toString().trim();
-            return !!text;
-        }
-
-        _getCurrentSelectionInfo() {
-            if (!this.iframe || !this.iframe.contentDocument) return null;
-            const doc = this.iframe.contentDocument;
-            const sel = doc.getSelection();
-            const text = sel?.toString().trim();
-            if (!text) return null;
-            
+        // ---- Selection helpers ----
+        _getSelectedText() {
+            if (!this.iframe) return '';
             try {
+                const doc = this.iframe.contentDocument;
+                if (!doc) return '';
+                const sel = doc.getSelection();
+                return sel ? sel.toString().trim() : '';
+            } catch (e) {
+                return '';
+            }
+        }
+
+        _getSelectionRect() {
+            if (!this.iframe) return null;
+            try {
+                const doc = this.iframe.contentDocument;
+                if (!doc) return null;
+                const sel = doc.getSelection();
+                if (!sel || sel.isCollapsed || !sel.rangeCount) return null;
                 const range = sel.getRangeAt(0);
                 const rect = range.getBoundingClientRect();
                 if (rect && rect.width > 0 && rect.height > 0) {
-                    return { text, rect };
+                    return rect;
                 }
+                // Fallback: get client rects
+                const rects = range.getClientRects();
+                if (rects.length) {
+                    return rects[0];
+                }
+                return null;
             } catch (e) {
                 return null;
             }
-            return null;
         }
 
-        _updatePopup() {
-            const selectionInfo = this._getCurrentSelectionInfo();
-            if (selectionInfo) {
-                const iframeRect = this.iframe.getBoundingClientRect();
-                this._showPopup(selectionInfo.rect, iframeRect, selectionInfo.text);
-            } else {
-                // Only hide if we're not in "just shown" grace period
-                if (!this.justShown) {
-                    this._hidePopup();
-                }
-            }
-        }
-
-        // ----------------------------------------------------------------------
-        // Event Handlers
-        // ----------------------------------------------------------------------
-        _repositionHandler() {
-            if (this.popup && this.popup.style.display === 'flex' && this.currentSelectedText) {
-                const selectionInfo = this._getCurrentSelectionInfo();
-                if (selectionInfo) {
-                    const iframeRect = this.iframe.getBoundingClientRect();
-                    this._positionPopup(selectionInfo.rect, iframeRect);
-                }
-            }
-        }
-
+        // ---- Event handlers ----
         _onSelectionChange() {
-            this._updatePopup();
+            const text = this._getSelectedText();
+            const rect = this._getSelectionRect();
+            if (text && rect) {
+                this._showPopup(rect, text);
+            } else {
+                // If no selection, hide after a short delay (to avoid flicker on click)
+                this._hidePopup(150);
+            }
         }
 
-        // Special handling for mouseup to capture selection right after user finishes selecting
-        _onIframeMouseUp() {
-            // Give browser time to fully update selection
-            setTimeout(() => this._updatePopup(), 10);
+        _onMouseUp() {
+            // When user releases mouse, selection is finalized
+            // Give browser time to update selection
+            setTimeout(() => this._onSelectionChange(), 10);
         }
 
-        _onDocumentClick(event) {
-            // If click is inside popup, do nothing (popup should stay)
-            if (this.popup && this.popup.contains(event.target)) {
+        _onDocumentClick(e) {
+            // If click is inside popup, keep it open
+            if (this.popup && this.popup.contains(e.target)) {
                 return;
             }
-            // Otherwise, hide after a tiny delay (to allow selection to be re-evaluated)
+            // If click is inside iframe, we might have lost selection or made a new one
+            // Let selectionchange handle it, but we can hide if there's no selection after a moment
             setTimeout(() => {
-                if (!this._hasSelection()) {
-                    this._hidePopup();
+                if (!this._getSelectedText()) {
+                    this._hidePopup(50);
                 }
             }, 50);
         }
 
-        // ----------------------------------------------------------------------
-        // Iframe Event Binding
-        // ----------------------------------------------------------------------
-        _cleanupIframeEvents() {
-            if (this.abortController) {
-                this.abortController.abort();
-                this.abortController = null;
+        _onScroll() {
+            // Reposition if popup is visible
+            if (this.isVisible && this.popup.style.display === 'flex') {
+                const rect = this._getSelectionRect();
+                if (rect) {
+                    this.popup.style.left = `${rect.left + window.scrollX + rect.width/2 - 80}px`;
+                    this.popup.style.top = `${rect.top + window.scrollY - 50}px`;
+                } else {
+                    this._hidePopup(100);
+                }
             }
         }
 
-        _attachEventsToIframe(iframe) {
-            this._cleanupIframeEvents();
-            
-            const iframeDoc = iframe.contentDocument;
-            const iframeWin = iframe.contentWindow;
-            if (!iframeDoc || !iframeWin) return;
+        // ---- Attach to iframe ----
+        _attachEvents(iframe) {
+            if (!iframe) return;
+            if (this.abortController) this.abortController.abort();
+            this.abortController = new AbortController();
+            const signal = this.abortController.signal;
 
-            const abortCtrl = new AbortController();
-            this.abortController = abortCtrl;
-            const { signal } = abortCtrl;
+            try {
+                const doc = iframe.contentDocument;
+                const win = iframe.contentWindow;
+                if (!doc || !win) return;
 
-            // Primary selection change event
-            iframeDoc.addEventListener('selectionchange', this._onSelectionChange, { signal });
-            // Mouseup to catch selection end reliably
-            iframeDoc.addEventListener('mouseup', this._onIframeMouseUp, { signal });
-            
-            // Reposition on scroll/resize
-            iframeWin.addEventListener('scroll', this._repositionHandler, { signal });
-            window.addEventListener('resize', this._repositionHandler, { signal });
-            window.addEventListener('scroll', this._repositionHandler, { signal });
-            
-            // Click outside detection (both parent and iframe)
-            document.addEventListener('click', this._onDocumentClick, { signal });
-            iframeDoc.addEventListener('click', this._onDocumentClick, { signal });
-            
-            // Also watch for keyup (e.g., Ctrl+A select all)
-            iframeDoc.addEventListener('keyup', () => setTimeout(() => this._updatePopup(), 20), { signal });
+                // Selection change
+                doc.addEventListener('selectionchange', this._boundOnSelectionChange, { signal });
+                // Mouse up to catch final selection
+                doc.addEventListener('mouseup', this._boundOnMouseUp, { signal });
+                // Click outside (document and iframe)
+                document.addEventListener('click', this._boundOnDocumentClick, { signal });
+                doc.addEventListener('click', this._boundOnDocumentClick, { signal });
+                // Scroll events
+                win.addEventListener('scroll', this._boundOnScroll, { signal });
+                window.addEventListener('scroll', this._boundOnScroll, { signal });
+                window.addEventListener('resize', this._boundOnScroll, { signal });
+            } catch (e) {
+                console.warn('Could not attach events to iframe:', e);
+            }
         }
 
         _onIframeLoad() {
-            if (!this.iframe || !this.iframe.contentDocument) return;
-            this._attachEventsToIframe(this.iframe);
-            this._hidePopup(); // Clear any stale popup
+            if (!this.iframe) return;
+            this._attachEvents(this.iframe);
+            // Clear any stale popup
+            this._hidePopup(0);
         }
 
         _setupIframe(iframe) {
             if (!iframe) return;
-            this.iframe = iframe;
-            
-            if (this._boundLoadHandler) {
-                this.iframe.removeEventListener('load', this._boundLoadHandler);
+            if (this.iframe) {
+                this.iframe.removeEventListener('load', this._boundOnIframeLoad);
             }
-            this._boundLoadHandler = this._onIframeLoad;
-            this.iframe.addEventListener('load', this._boundLoadHandler);
-            
-            if (this.iframe.contentDocument && this.iframe.contentDocument.readyState === 'complete') {
+            this.iframe = iframe;
+            this.iframe.addEventListener('load', this._boundOnIframeLoad);
+            // If iframe already loaded, attach immediately
+            if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
                 this._onIframeLoad();
             }
         }
 
-        // ----------------------------------------------------------------------
-        // Iframe Discovery
-        // ----------------------------------------------------------------------
-        _startObservingIframe() {
-            const existingIframe = document.querySelector(this.iframeSelector);
-            if (existingIframe) {
-                this._setupIframe(existingIframe);
+        // ---- Observer ----
+        _startObserving() {
+            const existing = document.querySelector(this.iframeSelector);
+            if (existing) {
+                this._setupIframe(existing);
             }
-            
-            this.mutationObserver = new MutationObserver((mutations) => {
+
+            const observer = new MutationObserver((mutations) => {
                 for (const mutation of mutations) {
                     for (const node of mutation.addedNodes) {
                         if (node.nodeType === Node.ELEMENT_NODE) {
-                            const iframe = node.matches?.(this.iframeSelector) 
-                                ? node 
+                            const iframe = node.matches?.(this.iframeSelector)
+                                ? node
                                 : node.querySelector?.(this.iframeSelector);
                             if (iframe && !this.iframe) {
                                 this._setupIframe(iframe);
@@ -386,49 +328,38 @@
                             }
                         }
                     }
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'id') {
-                        const newIframe = document.querySelector(this.iframeSelector);
-                        if (newIframe && newIframe !== this.iframe) {
-                            this._setupIframe(newIframe);
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
+                        const iframe = document.querySelector(this.iframeSelector);
+                        if (iframe && iframe !== this.iframe) {
+                            this._setupIframe(iframe);
                         }
                     }
                 }
             });
-            
-            this.mutationObserver.observe(document.body, {
+            observer.observe(document.body, {
                 childList: true,
                 subtree: true,
                 attributes: true,
-                attributeFilter: ['id']
+                attributeFilter: ['src', 'id']
             });
         }
     }
 
-    // Auto-initialize
+    // Initialize
     let manager = null;
-    const initManager = () => {
+    function init() {
         if (manager) manager.destroy();
         manager = new SelectionPopupManager('#bookFrame');
         manager.init();
-    };
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initManager);
-    } else {
-        initManager();
+        console.log('✅ Selection popup initialized');
     }
-    
-    window.__medlibSelectionPopup = {
-        destroy: () => {
-            if (manager) {
-                manager.destroy();
-                manager = null;
-            }
-        },
-        reinit: () => {
-            if (manager) manager.destroy();
-            manager = new SelectionPopupManager('#bookFrame');
-            manager.init();
-        }
-    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // Expose for debugging
+    window.__selectionPopup = { manager, reinit: init };
 })();
