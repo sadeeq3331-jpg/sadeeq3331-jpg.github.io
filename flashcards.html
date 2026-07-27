@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>Smart Flashcards · MedLib</title>
-    <!-- Favicon (same as index) -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -337,7 +336,7 @@
 
             // ---------- STATE ----------
             let decks = {};
-            let currentView = 'list';
+            let currentView = 'list';      // 'list' | 'practice'
             let currentDeckId = null;
             let currentCardIndex = 0;
             let dueCards = [];
@@ -516,7 +515,6 @@
 
                 try {
                     const model = await getBestModel();
-                    // Timeout to prevent hanging
                     const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI request timed out')), 30000));
                     const aiPromise = puter.ai.chat(prompt, { model });
                     const raw = await Promise.race([aiPromise, timeoutPromise]);
@@ -532,8 +530,9 @@
                     const newCards = cards.filter(c => c.front && !existingFronts.some(f => f.toLowerCase() === c.front.toLowerCase()));
                     if (newCards.length === 0) { showToast('No new unique cards could be generated.'); isGenerating = false; renderView(); return; }
 
-                    const deck = deckId ? decks[deckId] : null;
-                    if (deck) {
+                    let deck;
+                    if (deckId) {
+                        deck = decks[deckId];
                         const startIdx = deck.cards.length;
                         newCards.forEach((c, i) => {
                             deck.cards.push({
@@ -550,7 +549,7 @@
                         showToast(`✅ Added ${newCards.length} new cards to "${deck.name}"!`);
                     } else {
                         const newDeckId = 'deck_' + Date.now();
-                        const newDeck = {
+                        deck = {
                             id: newDeckId,
                             name: topic.trim(),
                             topic: topic.trim(),
@@ -565,20 +564,21 @@
                                 reviewCount: 0
                             }))
                         };
-                        decks[newDeckId] = newDeck;
+                        decks[newDeckId] = deck;
                         saveDecks();
                         showToast(`✅ Generated ${newCards.length} flashcards for "${topic}"!`);
                     }
-                    currentView = 'list';
-                    currentDeckId = null;
-                    renderView();
+                    // Start practicing immediately
+                    isGenerating = false; // clear flag before switching view
+                    startPractice(deck.id);
                 } catch (e) {
                     console.error('Generation error:', e);
                     showToast('⚠️ AI generation failed. Using fallback cards.');
                     // Use fallback cards
                     const fallbackCards = getFallbackCards(topic);
+                    let deck;
                     if (deckId) {
-                        const deck = decks[deckId];
+                        deck = decks[deckId];
                         const startIdx = deck.cards.length;
                         fallbackCards.forEach((c, i) => {
                             deck.cards.push({
@@ -595,7 +595,7 @@
                         showToast(`📚 Added ${fallbackCards.length} fallback cards to "${deck.name}".`);
                     } else {
                         const newDeckId = 'deck_fallback_' + Date.now();
-                        const newDeck = {
+                        deck = {
                             id: newDeckId,
                             name: topic.trim() + ' (fallback)',
                             topic: topic.trim(),
@@ -610,15 +610,24 @@
                                 reviewCount: 0
                             }))
                         };
-                        decks[newDeckId] = newDeck;
+                        decks[newDeckId] = deck;
                         saveDecks();
                         showToast(`📚 Created fallback deck with ${fallbackCards.length} cards.`);
                     }
-                    currentView = 'list';
-                    renderView();
+                    isGenerating = false;
+                    startPractice(deck.id);
                 } finally {
+                    // Ensure the generating flag is always cleared
                     isGenerating = false;
                 }
+            }
+
+            // ---------- START PRACTICE ----------
+            function startPractice(deckId) {
+                currentDeckId = deckId;
+                currentCardIndex = 0;
+                currentView = 'practice';
+                renderView();
             }
 
             // ---------- DELETE DECK ----------
@@ -680,29 +689,21 @@
 
             // ---------- ASK NEXUS ----------
             function askNexus(text) {
-                // If Nexus sendMessage is available, use it directly
                 if (typeof window.sendMessage === 'function') {
-                    // Find or create Nexus input
                     let input = document.getElementById('nexus-input');
                     if (!input) {
-                        // Nexus widget might not be created yet – try to open the panel
                         const panel = document.querySelector('.nexus-panel');
-                        if (panel) {
-                            // Panel exists but input missing? unlikely, but we can try to find input inside panel
-                            input = panel.querySelector('textarea');
-                        }
+                        if (panel) input = panel.querySelector('textarea');
                         if (!input) {
                             showToast('Nexus not ready. Please open Nexus first.');
                             return;
                         }
                     }
                     input.value = `Explain more about: ${text}`;
-                    // Open panel if closed
                     const panel = document.querySelector('.nexus-panel');
                     if (panel && panel.style.display !== 'flex') {
                         panel.style.display = 'flex';
                     }
-                    // Send message
                     window.sendMessage(input.value);
                 } else {
                     showToast('Nexus AI not loaded. Please refresh the page.');
@@ -937,12 +938,7 @@
             }
 
             // ---------- GLOBAL EXPOSURES ----------
-            window.startPractice = function(deckId) {
-                currentDeckId = deckId;
-                currentCardIndex = 0;
-                currentView = 'practice';
-                renderView();
-            };
+            window.startPractice = startPractice;
             window.goToDeckList = function() {
                 currentView = 'list';
                 currentDeckId = null;
@@ -958,7 +954,6 @@
             loadDecks();
             renderView();
 
-            // Ensure Nexus is ready (give it a moment)
             setTimeout(() => {
                 if (typeof window.sendMessage === 'function') {
                     console.log('Nexus AI ready for flashcards.');
