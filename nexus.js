@@ -1,4 +1,4 @@
-// nexus.js – v3.0 (clean output, expanded explanations, modern responsive UI)
+// nexus.js – v3.2 (clean output, expanded terms, free model first, user-friendly auth)
 (function() {
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
@@ -18,43 +18,31 @@
     // ---------- CLEAN OUTPUT: strip markdown and keep plain text ----------
     function cleanText(text) {
         if (!text) return text;
-        // Remove markdown headers (#, ##, etc.)
         let cleaned = text.replace(/^#{1,6}\s*/gm, '');
-        // Remove bold/italic markers (** and *)
         cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, '$1');
         cleaned = cleaned.replace(/\*(.+?)\*/g, '$1');
-        // Remove underscores for emphasis
         cleaned = cleaned.replace(/_(.+?)_/g, '$1');
-        // Remove inline code backticks
         cleaned = cleaned.replace(/`(.+?)`/g, '$1');
-        // Remove code blocks (``` ... ```)
         cleaned = cleaned.replace(/```[\s\S]*?```/g, '');
-        // Convert bullet lists: lines starting with - or * or + or number.
-        // We'll keep them as plain text with a dash.
         cleaned = cleaned.replace(/^[\s]*[-*+]\s+/gm, '• ');
         cleaned = cleaned.replace(/^[\s]*\d+\.\s+/gm, (match) => match.trim() + ' ');
-        // Remove horizontal rules (---, ***, ___)
         cleaned = cleaned.replace(/^[\s]*[-*_]{3,}[\s]*$/gm, '');
-        // Collapse multiple newlines to two max
         cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
         return cleaned.trim();
     }
 
-    // ---------- FORMAT FOR DISPLAY (plain text with <br>) ----------
     function formatText(text) {
         if (!text) return text;
-        // First clean markdown
         let cleaned = cleanText(text);
-        // Convert newlines to <br>
         return cleaned.replace(/\n/g, '<br>');
     }
 
-    // ---------- ORIGINAL HELPERS (unchanged) ----------
     function truncateText(text, maxLen = 300) {
         if (text.length <= maxLen) return text;
         return text.substring(0, maxLen) + '…';
     }
 
+    // ---------- STORAGE ----------
     function loadConversations() {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -152,7 +140,7 @@
 
     function isPinned(idx) { return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx); }
 
-    // ---------- RENDER SIDEBAR (unchanged but with updated CSS) ----------
+    // ---------- RENDER SIDEBAR ----------
     function renderSidebar() {
         const sidebar = document.getElementById('nexus-sidebar');
         if (!sidebar) return;
@@ -255,6 +243,7 @@
         updateContextSuggestions();
     }
 
+    // ---------- RENDER MESSAGES ----------
     function renderMessages() {
         const msgsDiv = document.getElementById('nexus-messages');
         if (!msgsDiv) return;
@@ -411,16 +400,24 @@
         navigator.clipboard.writeText(conv.messages[idx].content).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
     }
 
-    // ---------- MODEL SELECTION (latest first) ----------
+    // ---------- MODEL SELECTION – PRIORITISE FREE MODEL ----------
     async function getBestModel() {
         if (currentModelId) return currentModelId;
         try {
+            if (!window.puter?.ai) {
+                for (let i = 0; i < 5; i++) {
+                    await new Promise(r => setTimeout(r, 1000));
+                    if (window.puter?.ai) break;
+                }
+            }
+            if (!window.puter?.ai) throw new Error('Puter AI not loaded');
             const models = await puter.ai.listModels();
+            // Put `gpt-5.4-nano` FIRST – it's likely free and doesn't require a card.
             const preferred = [
+                'gpt-5.4-nano',
                 'google/gemini-3.1-flash-lite',
                 'google/gemini-2.5-flash-lite-001',
-                'google/gemini-2.0-flash-lite-001',
-                'gpt-5.4-nano'
+                'google/gemini-2.0-flash-lite-001'
             ];
             for (const preferredId of preferred) {
                 if (models.some(m => m.id === preferredId)) {
@@ -440,12 +437,12 @@
             throw new Error('No chat models available');
         } catch (err) {
             console.warn('Model listing failed, using safe default', err);
-            currentModelId = 'google/gemini-3.1-flash-lite';
+            currentModelId = 'gpt-5.4-nano';
             return currentModelId;
         }
     }
 
-    // ---------- SEND MESSAGE WITH IMPROVED PERSONALITIES ----------
+    // ---------- SEND MESSAGE ----------
     async function sendMessage(initialText = null, isRegenerate = false) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
@@ -457,7 +454,7 @@
             await new Promise(r => setTimeout(r, 1000));
         }
         if (!puterReady) {
-            addMessage('assistant', 'Nexus is not ready. Please refresh the page and try again.');
+            addMessage('assistant', '⚠️ Nexus is not ready. Please refresh the page or make sure you are logged into Puter (click the 🔐 icon).');
             return;
         }
         if (input) input.value = '';
@@ -469,18 +466,11 @@
         if (personality === 'concise') {
             personalityInstruction = `Be concise and direct. Use short sentences and bullet points when helpful. Avoid unnecessary details.`;
         } else if (personality === 'usmle') {
-            personalityInstruction = `Focus on high‑yield USMLE content. Emphasize mechanisms, clinical correlations, and exam tips. 
-When you use an abbreviation, write the full term first (e.g., "glomerular filtration rate (GFR)"). Keep explanations clear and actionable.`;
+            personalityInstruction = `Focus on high‑yield USMLE content. Emphasize mechanisms, clinical correlations, and exam tips. When you use an abbreviation, write the full term first (e.g., "glomerular filtration rate (GFR)"). Keep explanations clear and actionable.`;
         } else if (personality === 'study') {
             personalityInstruction = `You are a medical tutor in Study Mode. Ask the user one concept-based question at a time. Wait for their answer. Then provide brief feedback and ask a follow‑up question to deepen understanding. Keep it conversational, step‑by‑step. Never give away the full answer immediately; guide them to reason. Use plain language and explain any technical terms.`;
-        } else { // detailed (default)
-            personalityInstruction = `Provide thorough, well‑structured explanations. 
-- Use simple, plain language suitable for a beginner medical student.
-- Always write out abbreviations in full the first time (e.g., "glomerular filtration rate (GFR)").
-- Explain the "why" behind each fact.
-- Include clinical context and examples where helpful.
-- Break down complex topics into manageable parts.
-- Avoid medical jargon unless you define it clearly.`;
+        } else {
+            personalityInstruction = `Provide thorough, well‑structured explanations. Use simple, plain language suitable for a beginner medical student. Always write out abbreviations in full the first time (e.g., "glomerular filtration rate (GFR)"). Explain the "why" behind each fact. Include clinical context and examples where helpful. Break down complex topics into manageable parts. Avoid medical jargon unless you define it clearly.`;
         }
 
         const systemPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
@@ -516,17 +506,20 @@ ${personalityInstruction}`;
             const modelId = await getBestModel();
             const raw = await puter.ai.chat(chatMessages, { model: modelId });
             let rawContent = raw?.message?.content || raw?.content || JSON.stringify(raw);
-            // Clean markdown before adding
             const clean = cleanText(rawContent);
             isWaiting = false;
             addMessage('assistant', clean);
         } catch (e) {
             isWaiting = false;
-            addMessage('assistant', 'Nexus error: ' + e.message);
+            if (e.message && (e.message.includes('authentication') || e.message.includes('login') || e.message.includes('credentials') || e.message.includes('Unauthorized'))) {
+                addMessage('assistant', `🔐 **Nexus needs you to log in to Puter.**\n\nPuter is a free AI platform that gives you $5 in credits every month – no credit card needed for the free tier.\n\n[👉 Click here to sign up or log in](${window.location.origin}/?login) and then refresh this page.`);
+            } else {
+                addMessage('assistant', 'Nexus error: ' + e.message);
+            }
         }
     }
 
-    // ---------- CONVERSATION MANAGEMENT (unchanged) ----------
+    // ---------- CONVERSATION MANAGEMENT ----------
     function newConversation() {
         const id = Date.now();
         conversations.push({
@@ -622,7 +615,7 @@ ${personalityInstruction}`;
         });
     }
 
-    // ---------- CREATE WIDGET WITH MODERN RESPONSIVE UI ----------
+    // ---------- CREATE WIDGET (modern responsive UI) ----------
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
@@ -1281,6 +1274,7 @@ ${personalityInstruction}`;
         });
     }
 
+    // ---------- INIT ----------
     function init() {
         loadConversations();
         createWidget();
