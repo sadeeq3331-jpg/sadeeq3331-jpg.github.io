@@ -4,17 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>Smart Flashcards · MedLib</title>
+    <!-- Favicon (same as index) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%232c7cb0' d='M192 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v25.6C69.5 68.4 16 127.1 16 200v32c0 101.7 82.3 184 184 184h64c101.7 0 184-82.3 184-184v-32c0-72.9-53.5-131.6-128-142.4V32c0-17.7-14.3-32-32-32s-32 14.3-32 32v16H192V32zM48 200c0-63.1 48-115.4 109.5-126.9 4.2-.7 8.5-1.1 12.8-1.1h31.5c4.3 0 8.6 .4 12.8 1.1C288 84.6 336 136.9 336 200v32c0 75.1-60.9 136-136 136h-64c-75.1 0-136-60.9-136-136v-32zm320 240c0-8.8-7.2-16-16-16H32c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16v-48z'/%3E%3C/svg%3E" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+        html, body {
+            height: 100%;
             font-family: 'Inter', system-ui, sans-serif;
             background: linear-gradient(145deg, #f0f9ff 0%, #e6f0fa 100%);
-            min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 0;
+            margin: 0;
         }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
         .glass-panel {
             background: rgba(255,255,255,0.75);
@@ -24,7 +34,8 @@
             border: 1px solid rgba(255,255,255,0.5);
             box-shadow: 0 20px 40px rgba(0,0,0,0.08);
             padding: 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            flex: 1;
         }
 
         .page-title {
@@ -291,13 +302,24 @@
         }
 
         @media (max-width: 700px) {
-            .glass-panel { padding: 1.2rem; }
+            .container { padding: 1rem 0.5rem; }
+            .glass-panel { padding: 1.2rem; border-radius: 1.2rem; }
             .deck-item { flex-direction: column; align-items: stretch; gap: 0.8rem; }
             .deck-actions { justify-content: stretch; }
             .deck-actions .btn { flex: 1; justify-content: center; }
             .rating-buttons { flex-direction: row; justify-content: center; }
-            .rating-btn { flex: 1; text-align: center; }
-            .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 140px; }
+            .rating-btn { flex: 1; text-align: center; padding: 0.6rem 0.8rem; }
+            .card-face {
+                font-size: 1rem;
+                padding: 1.5rem 1rem;
+                min-height: 140px;
+            }
+            .card-inner { min-height: 140px; }
+            .create-deck input { min-width: 140px; }
+        }
+        @media (max-width: 480px) {
+            .btn { padding: 0.6rem 1rem; font-size: 0.9rem; }
+            .card-face .card-text { font-size: 0.95rem; }
         }
     </style>
 </head>
@@ -305,7 +327,10 @@
     <div class="container" id="app"></div>
     <div id="toast" class="toast"></div>
 
+    <!-- Load Puter AI and Nexus -->
     <script src="https://js.puter.com/v2/"></script>
+    <script src="nexus.js"></script>
+
     <script>
         (function() {
             'use strict';
@@ -445,34 +470,32 @@
 
             // ---------- FALLBACK CARDS ----------
             function getFallbackCards(topic) {
-                const fallbacks = {
-                    'cardiology': [
+                const lower = topic.toLowerCase();
+                if (lower.includes('cardio')) {
+                    return [
                         { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)' },
                         { front: 'What is the mechanism of action of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.' },
                         { front: 'What is the most common cause of heart failure?', back: 'Ischemic heart disease (coronary artery disease)' },
                         { front: 'What is the hallmark ECG finding in pericarditis?', back: 'Diffuse ST-segment elevation' },
                         { front: 'What is the first-line medication for acute decompensated heart failure?', back: 'Loop diuretics (e.g., furosemide)' }
-                    ],
-                    'pharmacology': [
+                    ];
+                } else if (lower.includes('pharma') || lower.includes('drug')) {
+                    return [
                         { front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.' },
                         { front: 'What is the antidote for heparin overdose?', back: 'Protamine sulfate' },
                         { front: 'What is the mechanism of action of statins?', back: 'HMG-CoA reductase inhibitors, reducing cholesterol synthesis.' },
                         { front: 'What is the first-line treatment for hypertension in a diabetic patient?', back: 'ACE inhibitors (e.g., lisinopril)' },
                         { front: 'What is the mechanism of action of metformin?', back: 'Decreases hepatic glucose production and increases insulin sensitivity.' }
-                    ]
-                };
-                const lower = topic.toLowerCase();
-                for (const key in fallbacks) {
-                    if (lower.includes(key)) return fallbacks[key];
+                    ];
+                } else {
+                    return [
+                        { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin' },
+                        { front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.' },
+                        { front: 'What is the most common cause of community-acquired pneumonia?', back: 'Streptococcus pneumoniae' },
+                        { front: 'What is the hallmark of type 1 diabetes?', back: 'Autoimmune destruction of pancreatic beta cells, leading to absolute insulin deficiency.' },
+                        { front: 'What is the first-line treatment for acute anaphylaxis?', back: 'Epinephrine (intramuscular)' }
+                    ];
                 }
-                // generic
-                return [
-                    { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin' },
-                    { front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.' },
-                    { front: 'What is the most common cause of community-acquired pneumonia?', back: 'Streptococcus pneumoniae' },
-                    { front: 'What is the hallmark of type 1 diabetes?', back: 'Autoimmune destruction of pancreatic beta cells, leading to absolute insulin deficiency.' },
-                    { front: 'What is the first-line treatment for acute anaphylaxis?', back: 'Epinephrine (intramuscular)' }
-                ];
             }
 
             // ---------- GENERATE DECK ----------
@@ -480,7 +503,7 @@
                 if (isGenerating) return;
                 if (!topic || topic.trim().length < 2) { showToast('Please enter a valid topic.'); return; }
                 isGenerating = true;
-                renderView();
+                renderView(); // show loading
 
                 const avoidText = existingFronts.length ? `\nAvoid these existing concepts: ${existingFronts.join(', ')}.` : '';
                 const prompt = `You are a medical educator. Generate ${existingFronts.length ? '5' : '8'} unique, high‑yield flashcards about the topic: "${topic.trim()}".
@@ -493,7 +516,7 @@
 
                 try {
                     const model = await getBestModel();
-                    // Add a timeout to avoid hanging
+                    // Timeout to prevent hanging
                     const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI request timed out')), 30000));
                     const aiPromise = puter.ai.chat(prompt, { model });
                     const raw = await Promise.race([aiPromise, timeoutPromise]);
@@ -505,13 +528,12 @@
                     if (!Array.isArray(cards) || cards.length === 0) throw new Error('No cards generated');
                     if (cards.length > 10) cards = cards.slice(0, 10);
 
-                    // Filter out duplicates with existing fronts
+                    // Filter duplicates
                     const newCards = cards.filter(c => c.front && !existingFronts.some(f => f.toLowerCase() === c.front.toLowerCase()));
                     if (newCards.length === 0) { showToast('No new unique cards could be generated.'); isGenerating = false; renderView(); return; }
 
                     const deck = deckId ? decks[deckId] : null;
                     if (deck) {
-                        // Add to existing deck
                         const startIdx = deck.cards.length;
                         newCards.forEach((c, i) => {
                             deck.cards.push({
@@ -527,7 +549,6 @@
                         saveDecks();
                         showToast(`✅ Added ${newCards.length} new cards to "${deck.name}"!`);
                     } else {
-                        // Create new deck
                         const newDeckId = 'deck_' + Date.now();
                         const newDeck = {
                             id: newDeckId,
@@ -659,30 +680,32 @@
 
             // ---------- ASK NEXUS ----------
             function askNexus(text) {
-                if (!window.puter || !window.puter.ai) {
-                    showToast('Nexus AI not ready.');
-                    return;
-                }
-                // Try to find the Nexus input and panel
-                const input = document.getElementById('nexus-input');
-                const panel = document.querySelector('.nexus-panel');
-                if (input) {
-                    input.value = `Explain more about: ${text}`;
-                } else {
-                    showToast('Nexus input not found – open Nexus first.');
-                    return;
-                }
-                if (panel) {
-                    panel.style.display = 'flex';
-                } else {
-                    showToast('Nexus panel not found.');
-                    return;
-                }
-                // Trigger send
+                // If Nexus sendMessage is available, use it directly
                 if (typeof window.sendMessage === 'function') {
+                    // Find or create Nexus input
+                    let input = document.getElementById('nexus-input');
+                    if (!input) {
+                        // Nexus widget might not be created yet – try to open the panel
+                        const panel = document.querySelector('.nexus-panel');
+                        if (panel) {
+                            // Panel exists but input missing? unlikely, but we can try to find input inside panel
+                            input = panel.querySelector('textarea');
+                        }
+                        if (!input) {
+                            showToast('Nexus not ready. Please open Nexus first.');
+                            return;
+                        }
+                    }
+                    input.value = `Explain more about: ${text}`;
+                    // Open panel if closed
+                    const panel = document.querySelector('.nexus-panel');
+                    if (panel && panel.style.display !== 'flex') {
+                        panel.style.display = 'flex';
+                    }
+                    // Send message
                     window.sendMessage(input.value);
                 } else {
-                    showToast('Nexus send function not available.');
+                    showToast('Nexus AI not loaded. Please refresh the page.');
                 }
             }
 
@@ -776,7 +799,6 @@
 
                 let available = getDueCards(deck);
                 if (available.length === 0) {
-                    // No due cards – if deck has < 15 cards, offer to add more
                     if (deck.cards.length < 15) {
                         app.innerHTML = `
                             <div class="glass-panel">
@@ -809,7 +831,6 @@
                     }
                 }
 
-                // Sort by nextReview
                 available.sort((a, b) => a.nextReview - b.nextReview);
                 dueCards = available;
                 if (currentCardIndex >= dueCards.length) currentCardIndex = 0;
@@ -862,14 +883,12 @@
                     </div>
                 `;
 
-                // Flip logic
                 const flipEl = document.getElementById('card-flip');
                 const innerEl = document.getElementById('card-inner');
                 let flipped = false;
                 const ratingArea = document.getElementById('rating-area');
 
                 flipEl.addEventListener('click', (e) => {
-                    // Ignore if click was on a button
                     if (e.target.closest('button')) return;
                     flipped = !flipped;
                     innerEl.classList.toggle('flipped', flipped);
@@ -881,12 +900,10 @@
                     }
                 });
 
-                // Rating buttons
                 document.querySelectorAll('.rating-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const rating = btn.dataset.rating;
-                        // Animate card
                         if (rating === 'again') {
                             innerEl.classList.add('shake');
                             setTimeout(() => innerEl.classList.remove('shake'), 500);
@@ -941,6 +958,14 @@
             loadDecks();
             renderView();
 
+            // Ensure Nexus is ready (give it a moment)
+            setTimeout(() => {
+                if (typeof window.sendMessage === 'function') {
+                    console.log('Nexus AI ready for flashcards.');
+                } else {
+                    console.warn('Nexus AI not available – Ask Nexus may not work.');
+                }
+            }, 2000);
         })();
     </script>
 </body>
