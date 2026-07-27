@@ -93,6 +93,11 @@
         .btn-success:hover { background: #218838; }
         .btn-warning { background: #ffc107; color: #1e3c72; }
         .btn-warning:hover { background: #e0a800; }
+        .btn-nexus {
+            background: #6f42c1;
+            color: white;
+        }
+        .btn-nexus:hover { background: #5a32a3; }
 
         .deck-list {
             display: flex;
@@ -172,6 +177,9 @@
             font-size: 0.8rem;
             color: #6b8ba0;
             opacity: 0.7;
+        }
+        .card-face .nexus-btn-area {
+            margin-top: 1rem;
         }
 
         .rating-buttons {
@@ -435,6 +443,38 @@
                 }
             }
 
+            // ---------- FALLBACK CARDS ----------
+            function getFallbackCards(topic) {
+                const fallbacks = {
+                    'cardiology': [
+                        { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)' },
+                        { front: 'What is the mechanism of action of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.' },
+                        { front: 'What is the most common cause of heart failure?', back: 'Ischemic heart disease (coronary artery disease)' },
+                        { front: 'What is the hallmark ECG finding in pericarditis?', back: 'Diffuse ST-segment elevation' },
+                        { front: 'What is the first-line medication for acute decompensated heart failure?', back: 'Loop diuretics (e.g., furosemide)' }
+                    ],
+                    'pharmacology': [
+                        { front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.' },
+                        { front: 'What is the antidote for heparin overdose?', back: 'Protamine sulfate' },
+                        { front: 'What is the mechanism of action of statins?', back: 'HMG-CoA reductase inhibitors, reducing cholesterol synthesis.' },
+                        { front: 'What is the first-line treatment for hypertension in a diabetic patient?', back: 'ACE inhibitors (e.g., lisinopril)' },
+                        { front: 'What is the mechanism of action of metformin?', back: 'Decreases hepatic glucose production and increases insulin sensitivity.' }
+                    ]
+                };
+                const lower = topic.toLowerCase();
+                for (const key in fallbacks) {
+                    if (lower.includes(key)) return fallbacks[key];
+                }
+                // generic
+                return [
+                    { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin' },
+                    { front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.' },
+                    { front: 'What is the most common cause of community-acquired pneumonia?', back: 'Streptococcus pneumoniae' },
+                    { front: 'What is the hallmark of type 1 diabetes?', back: 'Autoimmune destruction of pancreatic beta cells, leading to absolute insulin deficiency.' },
+                    { front: 'What is the first-line treatment for acute anaphylaxis?', back: 'Epinephrine (intramuscular)' }
+                ];
+            }
+
             // ---------- GENERATE DECK ----------
             async function generateDeck(topic, deckId = null, existingFronts = []) {
                 if (isGenerating) return;
@@ -453,7 +493,10 @@
 
                 try {
                     const model = await getBestModel();
-                    const raw = await puter.ai.chat(prompt, { model });
+                    // Add a timeout to avoid hanging
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI request timed out')), 30000));
+                    const aiPromise = puter.ai.chat(prompt, { model });
+                    const raw = await Promise.race([aiPromise, timeoutPromise]);
                     let text = raw.message?.content || raw.content || raw;
                     let jsonMatch = text.match(/\[[\s\S]*\]/);
                     if (jsonMatch) text = jsonMatch[0];
@@ -510,22 +553,45 @@
                     renderView();
                 } catch (e) {
                     console.error('Generation error:', e);
-                    showToast('❌ Failed to generate flashcards. Please try again.');
-                    if (!deckId) {
-                        // fallback deck
-                        const fallbackDeck = {
-                            id: 'deck_fallback_' + Date.now(),
+                    showToast('⚠️ AI generation failed. Using fallback cards.');
+                    // Use fallback cards
+                    const fallbackCards = getFallbackCards(topic);
+                    if (deckId) {
+                        const deck = decks[deckId];
+                        const startIdx = deck.cards.length;
+                        fallbackCards.forEach((c, i) => {
+                            deck.cards.push({
+                                id: 'card_' + deckId + '_' + (startIdx + i),
+                                front: c.front,
+                                back: c.back,
+                                easeFactor: 2.5,
+                                interval: 1,
+                                nextReview: Date.now(),
+                                reviewCount: 0
+                            });
+                        });
+                        saveDecks();
+                        showToast(`📚 Added ${fallbackCards.length} fallback cards to "${deck.name}".`);
+                    } else {
+                        const newDeckId = 'deck_fallback_' + Date.now();
+                        const newDeck = {
+                            id: newDeckId,
                             name: topic.trim() + ' (fallback)',
                             topic: topic.trim(),
                             created: Date.now(),
-                            cards: [
-                                { id: 'fb1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
-                                { id: 'fb2', front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
-                            ]
+                            cards: fallbackCards.map((c, i) => ({
+                                id: 'card_' + newDeckId + '_' + i,
+                                front: c.front,
+                                back: c.back,
+                                easeFactor: 2.5,
+                                interval: 1,
+                                nextReview: Date.now(),
+                                reviewCount: 0
+                            }))
                         };
-                        decks[fallbackDeck.id] = fallbackDeck;
+                        decks[newDeckId] = newDeck;
                         saveDecks();
-                        showToast('⚠️ Used fallback cards – AI may be overloaded.');
+                        showToast(`📚 Created fallback deck with ${fallbackCards.length} cards.`);
                     }
                     currentView = 'list';
                     renderView();
@@ -589,6 +655,35 @@
                 card.nextReview = Date.now() + (interval * 86400000);
                 card.reviewCount = (card.reviewCount || 0) + 1;
                 saveDecks();
+            }
+
+            // ---------- ASK NEXUS ----------
+            function askNexus(text) {
+                if (!window.puter || !window.puter.ai) {
+                    showToast('Nexus AI not ready.');
+                    return;
+                }
+                // Try to find the Nexus input and panel
+                const input = document.getElementById('nexus-input');
+                const panel = document.querySelector('.nexus-panel');
+                if (input) {
+                    input.value = `Explain more about: ${text}`;
+                } else {
+                    showToast('Nexus input not found – open Nexus first.');
+                    return;
+                }
+                if (panel) {
+                    panel.style.display = 'flex';
+                } else {
+                    showToast('Nexus panel not found.');
+                    return;
+                }
+                // Trigger send
+                if (typeof window.sendMessage === 'function') {
+                    window.sendMessage(input.value);
+                } else {
+                    showToast('Nexus send function not available.');
+                }
             }
 
             // ---------- RENDER ENGINE ----------
@@ -700,7 +795,6 @@
                         `;
                         return;
                     } else {
-                        // Enough cards, just show done
                         app.innerHTML = `
                             <div class="glass-panel">
                                 <div class="empty-state">
@@ -720,11 +814,7 @@
                 dueCards = available;
                 if (currentCardIndex >= dueCards.length) currentCardIndex = 0;
                 const card = dueCards[currentCardIndex];
-                if (!card) { // should not happen
-                    currentView = 'list';
-                    renderView();
-                    return;
-                }
+                if (!card) { currentView = 'list'; renderView(); return; }
 
                 const total = dueCards.length;
                 const idx = currentCardIndex + 1;
@@ -742,11 +832,21 @@
                                 <div class="card-face front">
                                     <span class="card-label">Front</span>
                                     <div class="card-text">${escapeHtml(card.front)}</div>
+                                    <div class="nexus-btn-area">
+                                        <button class="btn btn-nexus btn-sm" onclick="event.stopPropagation(); window.askNexus('${escapeHtml(card.front)}')">
+                                            <i class="fas fa-robot"></i> Ask Nexus
+                                        </button>
+                                    </div>
                                     <div class="click-hint"><i class="fas fa-hand-pointer"></i> Tap to flip</div>
                                 </div>
                                 <div class="card-face back">
                                     <span class="card-label">Back</span>
                                     <div class="card-text">${escapeHtml(card.back)}</div>
+                                    <div class="nexus-btn-area">
+                                        <button class="btn btn-nexus btn-sm" onclick="event.stopPropagation(); window.askNexus('${escapeHtml(card.back)}')">
+                                            <i class="fas fa-robot"></i> Ask Nexus
+                                        </button>
+                                    </div>
                                     <div class="click-hint" style="margin-top:0.5rem;">Tap again to flip back</div>
                                 </div>
                             </div>
@@ -768,7 +868,9 @@
                 let flipped = false;
                 const ratingArea = document.getElementById('rating-area');
 
-                flipEl.addEventListener('click', () => {
+                flipEl.addEventListener('click', (e) => {
+                    // Ignore if click was on a button
+                    if (e.target.closest('button')) return;
                     flipped = !flipped;
                     innerEl.classList.toggle('flipped', flipped);
                     if (flipped) {
@@ -795,7 +897,6 @@
                         updateCard(card.id, rating, currentDeckId);
                         currentCardIndex++;
                         if (currentCardIndex >= dueCards.length) {
-                            // Session finished – show deck list or offer more cards
                             renderView();
                         } else {
                             renderPractice(app);
@@ -834,6 +935,7 @@
             window.deleteDeck = deleteDeck;
             window.generateDeck = generateDeck;
             window.addMoreCards = window.addMoreCards;
+            window.askNexus = askNexus;
 
             // ---------- INIT ----------
             loadDecks();
