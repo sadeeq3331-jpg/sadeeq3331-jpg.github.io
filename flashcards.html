@@ -7,30 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', system-ui, sans-serif;
             background: linear-gradient(145deg, #f0f9ff 0%, #e6f0fa 100%);
             min-height: 100vh;
             padding: 2rem 1rem;
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        .container { max-width: 900px; margin: 0 auto; }
 
-        /* Glass panel */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255,255,255,0.75);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
             padding: 2rem;
             margin-bottom: 2rem;
         }
@@ -50,7 +42,6 @@
             font-size: 1.05rem;
         }
 
-        /* Deck creation */
         .create-deck {
             display: flex;
             flex-wrap: wrap;
@@ -63,15 +54,16 @@
             min-width: 180px;
             padding: 0.75rem 1.2rem;
             border-radius: 3rem;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.9);
             font-size: 1rem;
             outline: none;
         }
         .create-deck input:focus {
             border-color: #2c7cb0;
-            box-shadow: 0 0 0 3px rgba(44, 124, 176, 0.2);
+            box-shadow: 0 0 0 3px rgba(44,124,176,0.2);
         }
+
         .btn {
             padding: 0.75rem 1.8rem;
             border: none;
@@ -84,38 +76,24 @@
             transition: 0.2s;
             background: white;
             color: #1e3c72;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .btn-primary {
             background: linear-gradient(135deg, #2c7cb0, #1f5a82);
             color: white;
-            box-shadow: 0 8px 18px rgba(44, 124, 176, 0.3);
+            box-shadow: 0 8px 18px rgba(44,124,176,0.3);
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(44, 124, 176, 0.4);
-        }
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.8);
-            color: #1e3c72;
-        }
-        .btn-secondary:hover {
-            background: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #c82333;
-        }
-        .btn-sm {
-            padding: 0.4rem 1rem;
-            font-size: 0.85rem;
-        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(44,124,176,0.4); }
+        .btn-secondary { background: rgba(255,255,255,0.8); color: #1e3c72; }
+        .btn-secondary:hover { background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-warning { background: #ffc107; color: #1e3c72; }
+        .btn-warning:hover { background: #e0a800; }
 
-        /* Deck list */
         .deck-list {
             display: flex;
             flex-direction: column;
@@ -129,36 +107,17 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.04);
         }
-        .deck-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-        .deck-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #0a2942;
-        }
-        .deck-meta {
-            font-size: 0.85rem;
-            color: #4a627a;
-        }
-        .deck-actions {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-        }
-        .deck-actions .btn {
-            font-size: 0.85rem;
-        }
+        .deck-info { display: flex; flex-direction: column; gap: 0.2rem; }
+        .deck-name { font-weight: 600; font-size: 1.1rem; color: #0a2942; }
+        .deck-meta { font-size: 0.85rem; color: #4a627a; }
+        .deck-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .deck-actions .btn { font-size: 0.85rem; }
 
-        /* Practice area */
-        .practice-container {
-            text-align: center;
-        }
+        .practice-container { text-align: center; }
+
         .card-flip {
             perspective: 1000px;
             margin: 1.5rem 0;
@@ -170,12 +129,11 @@
             max-width: 600px;
             margin: 0 auto;
             min-height: 220px;
-            transition: transform 0.4s ease;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
         }
-        .card-inner.flipped {
-            transform: rotateX(180deg);
-        }
+        .card-inner.flipped { transform: rotateX(180deg); }
+
         .card-face {
             position: absolute;
             width: 100%;
@@ -183,10 +141,11 @@
             border-radius: 1.5rem;
             padding: 2rem 1.5rem;
             background: white;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.04);
             min-height: 180px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
@@ -207,9 +166,7 @@
             color: #6b8ba0;
             letter-spacing: 0.5px;
         }
-        .card-face .card-text {
-            margin-top: 0.5rem;
-        }
+        .card-face .card-text { margin-top: 0.5rem; }
         .card-face .click-hint {
             margin-top: 1rem;
             font-size: 0.8rem;
@@ -217,7 +174,6 @@
             opacity: 0.7;
         }
 
-        /* Rating buttons */
         .rating-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -231,29 +187,19 @@
             border-radius: 2.5rem;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
             background: #e9ecef;
             color: #1e3c72;
+            position: relative;
+            overflow: hidden;
         }
-        .rating-btn:hover {
-            transform: scale(1.05);
-        }
-        .rating-btn.again {
-            background: #dc3545;
-            color: white;
-        }
-        .rating-btn.hard {
-            background: #ffc107;
-            color: #1e3c72;
-        }
-        .rating-btn.good {
-            background: #28a745;
-            color: white;
-        }
-        .rating-btn.easy {
-            background: #17a2b8;
-            color: white;
-        }
+        .rating-btn:hover { transform: scale(1.08); }
+        .rating-btn:active { transform: scale(0.92); }
+        .rating-btn.again { background: #dc3545; color: white; }
+        .rating-btn.hard { background: #ffc107; color: #1e3c72; }
+        .rating-btn.good { background: #28a745; color: white; }
+        .rating-btn.easy { background: #17a2b8; color: white; }
+
         .practice-stats {
             font-size: 0.9rem;
             color: #4a627a;
@@ -265,14 +211,8 @@
             padding: 3rem 1rem;
             color: #4a627a;
         }
-        .empty-state i {
-            font-size: 3rem;
-            opacity: 0.3;
-            margin-bottom: 1rem;
-        }
-        .empty-state h3 {
-            margin-bottom: 0.5rem;
-        }
+        .empty-state i { font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; }
+        .empty-state h3 { margin-bottom: 0.5rem; }
 
         .loading {
             text-align: center;
@@ -281,7 +221,7 @@
         }
         .loading-dots::after {
             content: '';
-            animation: dots 1.5s steps(4, end) infinite;
+            animation: dots 1.5s steps(4,end) infinite;
         }
         @keyframes dots {
             0% { content: '.'; }
@@ -305,48 +245,56 @@
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
-        .toast.show {
-            opacity: 1;
+        .toast.show { opacity: 1; }
+
+        /* ---- Animations ---- */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+        .shake { animation: shake 0.4s ease; }
+
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop { animation: pop 0.4s ease; }
+
+        @keyframes confetti-fall {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(100px) rotate(360deg); }
+        }
+        .confetti-piece {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 1000;
+            animation: confetti-fall 1s ease-out forwards;
+        }
+
+        .card-flip .card-inner {
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         @media (max-width: 700px) {
-            .glass-panel {
-                padding: 1.2rem;
-            }
-            .deck-item {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.8rem;
-            }
-            .deck-actions {
-                justify-content: stretch;
-            }
-            .deck-actions .btn {
-                flex: 1;
-                justify-content: center;
-            }
-            .rating-buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
-            .rating-btn {
-                flex: 1;
-                text-align: center;
-            }
-            .card-face {
-                font-size: 1rem;
-                padding: 1.5rem 1rem;
-                min-height: 140px;
-            }
+            .glass-panel { padding: 1.2rem; }
+            .deck-item { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            .deck-actions { justify-content: stretch; }
+            .deck-actions .btn { flex: 1; justify-content: center; }
+            .rating-buttons { flex-direction: row; justify-content: center; }
+            .rating-btn { flex: 1; text-align: center; }
+            .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 140px; }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="app">
-        <!-- Dynamic content rendered here -->
-    </div>
+    <div class="container" id="app"></div>
     <div id="toast" class="toast"></div>
 
     <script src="https://js.puter.com/v2/"></script>
@@ -355,14 +303,13 @@
             'use strict';
 
             // ---------- STATE ----------
-            let decks = {};               // key: deckId, value: deck object
-            let currentView = 'list';     // 'list' | 'practice'
+            let decks = {};
+            let currentView = 'list';
             let currentDeckId = null;
-            let currentCardIndex = 0;     // index in dueCards array
+            let currentCardIndex = 0;
             let dueCards = [];
             let isFlipped = false;
             let isGenerating = false;
-
             const STORAGE_KEY = 'medlib_flashcards';
 
             // ---------- TOAST ----------
@@ -371,7 +318,7 @@
                 toast.textContent = msg;
                 toast.classList.add('show');
                 clearTimeout(toast._hideTimer);
-                toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+                toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 3000);
             }
 
             // ---------- STORAGE ----------
@@ -380,44 +327,28 @@
                     const data = localStorage.getItem(STORAGE_KEY);
                     if (data) {
                         decks = JSON.parse(data);
-                        // Ensure each deck has cards array
                         Object.keys(decks).forEach(id => {
                             if (!decks[id].cards) decks[id].cards = [];
+                            if (!decks[id].topic) decks[id].topic = decks[id].name;
                         });
                     } else {
                         decks = {};
                     }
-                } catch (e) {
-                    decks = {};
-                }
+                } catch (e) { decks = {}; }
+
                 // Add a sample deck if empty
                 if (Object.keys(decks).length === 0) {
-                    const sampleDeck = {
+                    const sample = {
                         id: 'deck_sample',
                         name: 'Sample: Cardiology',
+                        topic: 'Cardiology',
                         created: Date.now(),
                         cards: [
-                            {
-                                id: 'card_1',
-                                front: 'What is the first-line treatment for stable angina?',
-                                back: 'Nitroglycerin (sublingual)',
-                                easeFactor: 2.5,
-                                interval: 1,      // days
-                                nextReview: Date.now(), // due now
-                                reviewCount: 0
-                            },
-                            {
-                                id: 'card_2',
-                                front: 'What is the mechanism of action of ACE inhibitors?',
-                                back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.',
-                                easeFactor: 2.5,
-                                interval: 1,
-                                nextReview: Date.now(),
-                                reviewCount: 0
-                            }
+                            { id: 'c1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
+                            { id: 'c2', front: 'What is the mechanism of action of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
                         ]
                     };
-                    decks[sampleDeck.id] = sampleDeck;
+                    decks[sample.id] = sample;
                     saveDecks();
                 }
             }
@@ -426,7 +357,54 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
             }
 
-            // ---------- AI MODEL SELECTION (same as nexus.js) ----------
+            // ---------- SOUND EFFECTS ----------
+            function playTone(freq, duration, type = 'sine') {
+                try {
+                    const ctx = new(window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + duration);
+                } catch(e) {}
+            }
+
+            function playSuccess() {
+                playTone(880, 0.15);
+                setTimeout(() => playTone(1100, 0.1), 120);
+            }
+
+            function playFail() {
+                playTone(300, 0.3, 'sawtooth');
+            }
+
+            function playFlip() {
+                playTone(600, 0.05);
+            }
+
+            // ---------- CONFETTI ----------
+            function fireConfetti() {
+                const emojis = ['🎉', '✨', '⭐', '🌟', '🎊', '💪', '🏆'];
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => {
+                        const el = document.createElement('div');
+                        el.className = 'confetti-piece';
+                        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                        el.style.left = (Math.random() * 80 + 10) + '%';
+                        el.style.top = (Math.random() * 40 + 30) + '%';
+                        el.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+                        document.body.appendChild(el);
+                        setTimeout(() => el.remove(), 1200);
+                    }, i * 80);
+                }
+            }
+
+            // ---------- AI MODEL SELECTION ----------
             let cachedModelId = null;
             async function getBestModel() {
                 if (cachedModelId) return cachedModelId;
@@ -439,12 +417,7 @@
                     }
                     if (!window.puter?.ai) throw new Error('Puter AI not loaded');
                     const models = await puter.ai.listModels();
-                    const preferred = [
-                        'gpt-5.4-nano',
-                        'google/gemini-3.1-flash-lite',
-                        'google/gemini-2.5-flash-lite-001',
-                        'google/gemini-2.0-flash-lite-001'
-                    ];
+                    const preferred = ['gpt-5.4-nano', 'google/gemini-3.1-flash-lite', 'google/gemini-2.5-flash-lite-001', 'google/gemini-2.0-flash-lite-001'];
                     for (const p of preferred) {
                         if (models.some(m => m.id === p)) {
                             cachedModelId = p;
@@ -463,82 +436,97 @@
             }
 
             // ---------- GENERATE DECK ----------
-            async function generateDeck(topic) {
+            async function generateDeck(topic, deckId = null, existingFronts = []) {
                 if (isGenerating) return;
-                if (!topic || topic.trim().length < 2) {
-                    showToast('Please enter a valid topic.');
-                    return;
-                }
+                if (!topic || topic.trim().length < 2) { showToast('Please enter a valid topic.'); return; }
                 isGenerating = true;
-                renderView(); // show loading state
+                renderView();
 
-                const prompt = `You are a medical educator. Generate 8 unique, high‑yield flashcards about the topic: "${topic.trim()}".
-
-Each flashcard must be distinct – cover different subtopics, mechanisms, drugs, or clinical pearls.
-Format the output as a JSON array of objects with fields:
-  - "front": the question or prompt (short, focused),
-  - "back": the answer or explanation (concise, 1–2 sentences).
-
-Do not include any extra text or markdown – only the JSON array. Example:
-[
-  { "front": "What is the mechanism of action of ACE inhibitors?",
-    "back": "ACE inhibitors block the conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone release." }
-]`;
+                const avoidText = existingFronts.length ? `\nAvoid these existing concepts: ${existingFronts.join(', ')}.` : '';
+                const prompt = `You are a medical educator. Generate ${existingFronts.length ? '5' : '8'} unique, high‑yield flashcards about the topic: "${topic.trim()}".
+    Each flashcard must be distinct – cover different subtopics, mechanisms, drugs, or clinical pearls.
+    Format the output as a JSON array of objects with fields:
+      - "front": the question or prompt,
+      - "back": the answer or explanation.
+    Do not include any extra text or markdown. Only the JSON array.
+    ${avoidText}`;
 
                 try {
                     const model = await getBestModel();
                     const raw = await puter.ai.chat(prompt, { model });
                     let text = raw.message?.content || raw.content || raw;
-                    // Extract JSON from markdown if present
                     let jsonMatch = text.match(/\[[\s\S]*\]/);
                     if (jsonMatch) text = jsonMatch[0];
-                    // Clean up
                     text = text.replace(/```json/g, '').replace(/```/g, '').trim();
                     let cards = JSON.parse(text);
-                    if (!Array.isArray(cards) || cards.length === 0) {
-                        throw new Error('No cards generated');
-                    }
-                    // Limit to 10
+                    if (!Array.isArray(cards) || cards.length === 0) throw new Error('No cards generated');
                     if (cards.length > 10) cards = cards.slice(0, 10);
 
-                    // Build deck
-                    const deckId = 'deck_' + Date.now();
-                    const deck = {
-                        id: deckId,
-                        name: topic.trim(),
-                        created: Date.now(),
-                        cards: cards.map((c, i) => ({
-                            id: 'card_' + deckId + '_' + i,
-                            front: c.front || 'Front missing',
-                            back: c.back || 'Back missing',
-                            easeFactor: 2.5,
-                            interval: 1,       // days
-                            nextReview: Date.now(), // due now
-                            reviewCount: 0
-                        }))
-                    };
-                    decks[deckId] = deck;
-                    saveDecks();
-                    showToast(`✅ Generated ${deck.cards.length} flashcards for "${topic}"!`);
+                    // Filter out duplicates with existing fronts
+                    const newCards = cards.filter(c => c.front && !existingFronts.some(f => f.toLowerCase() === c.front.toLowerCase()));
+                    if (newCards.length === 0) { showToast('No new unique cards could be generated.'); isGenerating = false; renderView(); return; }
+
+                    const deck = deckId ? decks[deckId] : null;
+                    if (deck) {
+                        // Add to existing deck
+                        const startIdx = deck.cards.length;
+                        newCards.forEach((c, i) => {
+                            deck.cards.push({
+                                id: 'card_' + deckId + '_' + (startIdx + i),
+                                front: c.front,
+                                back: c.back,
+                                easeFactor: 2.5,
+                                interval: 1,
+                                nextReview: Date.now(),
+                                reviewCount: 0
+                            });
+                        });
+                        saveDecks();
+                        showToast(`✅ Added ${newCards.length} new cards to "${deck.name}"!`);
+                    } else {
+                        // Create new deck
+                        const newDeckId = 'deck_' + Date.now();
+                        const newDeck = {
+                            id: newDeckId,
+                            name: topic.trim(),
+                            topic: topic.trim(),
+                            created: Date.now(),
+                            cards: newCards.map((c, i) => ({
+                                id: 'card_' + newDeckId + '_' + i,
+                                front: c.front,
+                                back: c.back,
+                                easeFactor: 2.5,
+                                interval: 1,
+                                nextReview: Date.now(),
+                                reviewCount: 0
+                            }))
+                        };
+                        decks[newDeckId] = newDeck;
+                        saveDecks();
+                        showToast(`✅ Generated ${newCards.length} flashcards for "${topic}"!`);
+                    }
                     currentView = 'list';
                     currentDeckId = null;
                     renderView();
                 } catch (e) {
                     console.error('Generation error:', e);
                     showToast('❌ Failed to generate flashcards. Please try again.');
-                    // fallback: add a static deck
-                    const fallbackDeck = {
-                        id: 'deck_fallback_' + Date.now(),
-                        name: topic.trim() + ' (fallback)',
-                        created: Date.now(),
-                        cards: [
-                            { id: 'fb1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
-                            { id: 'fb2', front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
-                        ]
-                    };
-                    decks[fallbackDeck.id] = fallbackDeck;
-                    saveDecks();
-                    showToast('⚠️ Used fallback cards – AI may be overloaded.');
+                    if (!deckId) {
+                        // fallback deck
+                        const fallbackDeck = {
+                            id: 'deck_fallback_' + Date.now(),
+                            name: topic.trim() + ' (fallback)',
+                            topic: topic.trim(),
+                            created: Date.now(),
+                            cards: [
+                                { id: 'fb1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
+                                { id: 'fb2', front: 'What is the mechanism of action of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
+                            ]
+                        };
+                        decks[fallbackDeck.id] = fallbackDeck;
+                        saveDecks();
+                        showToast('⚠️ Used fallback cards – AI may be overloaded.');
+                    }
                     currentView = 'list';
                     renderView();
                 } finally {
@@ -551,14 +539,11 @@ Do not include any extra text or markdown – only the JSON array. Example:
                 if (!confirm('Delete this deck and all its flashcards?')) return;
                 delete decks[deckId];
                 saveDecks();
-                if (currentDeckId === deckId) {
-                    currentDeckId = null;
-                    currentView = 'list';
-                }
+                if (currentDeckId === deckId) { currentDeckId = null; currentView = 'list'; }
                 renderView();
             }
 
-            // ---------- SPACED REPETITION (SM-2) ----------
+            // ---------- SPACED REPETITION ----------
             function getDueCards(deck) {
                 const now = Date.now();
                 return deck.cards.filter(c => c.nextReview <= now);
@@ -570,35 +555,38 @@ Do not include any extra text or markdown – only the JSON array. Example:
                 const card = deck.cards.find(c => c.id === cardId);
                 if (!card) return;
 
-                let interval = card.interval || 1; // days
+                let interval = card.interval || 1;
                 let ease = card.easeFactor || 2.5;
 
                 switch (rating) {
                     case 'again':
-                        interval = 0.02; // ~30 minutes (in days)
+                        interval = 0.02;
                         ease = Math.max(1.3, ease - 0.2);
+                        playFail();
                         break;
                     case 'hard':
                         interval = interval * 1.2;
                         ease = Math.max(1.3, ease - 0.15);
+                        playFail();
                         break;
                     case 'good':
                         interval = interval * ease;
                         ease = ease + 0.1;
+                        playSuccess();
                         break;
                     case 'easy':
                         interval = interval * ease * 1.3;
                         ease = ease + 0.15;
+                        playSuccess();
+                        fireConfetti();
                         break;
                 }
-                // Ensure interval is at least 0.01 days (~14 minutes)
                 if (interval < 0.01) interval = 0.01;
-                // Cap interval at 365 days
                 if (interval > 365) interval = 365;
 
                 card.interval = interval;
                 card.easeFactor = ease;
-                card.nextReview = Date.now() + (interval * 86400000); // ms
+                card.nextReview = Date.now() + (interval * 86400000);
                 card.reviewCount = (card.reviewCount || 0) + 1;
                 saveDecks();
             }
@@ -620,11 +608,8 @@ Do not include any extra text or markdown – only the JSON array. Example:
                     return;
                 }
 
-                if (currentView === 'list') {
-                    renderDeckList(app);
-                } else if (currentView === 'practice') {
-                    renderPractice(app);
-                }
+                if (currentView === 'list') renderDeckList(app);
+                else if (currentView === 'practice') renderPractice(app);
             }
 
             function renderDeckList(app) {
@@ -654,6 +639,9 @@ Do not include any extra text or markdown – only the JSON array. Example:
                                     <button class="btn btn-primary btn-sm" onclick="window.startPractice('${id}')">
                                         <i class="fas fa-play"></i> Practice
                                     </button>
+                                    <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${id}')">
+                                        <i class="fas fa-plus"></i> More
+                                    </button>
                                     <button class="btn btn-danger btn-sm" onclick="window.deleteDeck('${id}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -676,74 +664,65 @@ Do not include any extra text or markdown – only the JSON array. Example:
                     </div>
                 `;
 
-                // Event listeners
                 document.getElementById('generate-btn').addEventListener('click', () => {
                     const input = document.getElementById('topic-input');
                     const topic = input.value.trim();
-                    if (topic) {
-                        generateDeck(topic);
-                        input.value = '';
-                    } else {
-                        showToast('Please enter a topic.');
-                    }
+                    if (topic) { generateDeck(topic); input.value = ''; }
+                    else showToast('Please enter a topic.');
                 });
                 document.getElementById('topic-input').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        document.getElementById('generate-btn').click();
-                    }
+                    if (e.key === 'Enter') document.getElementById('generate-btn').click();
                 });
             }
 
             function renderPractice(app) {
                 const deck = decks[currentDeckId];
-                if (!deck) {
-                    currentView = 'list';
-                    renderView();
-                    return;
-                }
+                if (!deck) { currentView = 'list'; renderView(); return; }
 
-                // Get due cards, if none, show all (for initial practice)
                 let available = getDueCards(deck);
                 if (available.length === 0) {
-                    // If no due cards, show all cards (first practice)
-                    available = deck.cards;
-                }
-                if (available.length === 0) {
-                    // No cards at all
-                    app.innerHTML = `
-                        <div class="glass-panel">
-                            <div class="empty-state">
-                                <i class="fas fa-layer-group"></i>
-                                <h3>No cards in this deck</h3>
-                                <button class="btn btn-secondary" onclick="window.goToDeckList()">Back to decks</button>
+                    // No due cards – if deck has < 15 cards, offer to add more
+                    if (deck.cards.length < 15) {
+                        app.innerHTML = `
+                            <div class="glass-panel">
+                                <div class="empty-state">
+                                    <i class="fas fa-check-circle" style="color:#28a745; opacity:1;"></i>
+                                    <h3>All caught up!</h3>
+                                    <p>You've reviewed all due cards. Want to learn more about "${escapeHtml(deck.name)}"?</p>
+                                    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
+                                        <button class="btn btn-success" onclick="window.addMoreCards('${currentDeckId}')">
+                                            <i class="fas fa-plus"></i> Add More Cards
+                                        </button>
+                                        <button class="btn btn-secondary" onclick="window.goToDeckList()">Back to Decks</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                    return;
+                        `;
+                        return;
+                    } else {
+                        // Enough cards, just show done
+                        app.innerHTML = `
+                            <div class="glass-panel">
+                                <div class="empty-state">
+                                    <i class="fas fa-check-circle" style="color:#28a745; opacity:1;"></i>
+                                    <h3>All caught up!</h3>
+                                    <p>You've reviewed all due cards for now. Come back later for spaced repetition.</p>
+                                    <button class="btn btn-primary" onclick="window.goToDeckList()">Back to decks</button>
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
                 }
 
-                // Sort by nextReview (oldest first)
+                // Sort by nextReview
                 available.sort((a, b) => a.nextReview - b.nextReview);
                 dueCards = available;
-
-                // If currentCardIndex is out of bounds, reset
-                if (currentCardIndex >= dueCards.length) {
-                    currentCardIndex = 0;
-                }
-
+                if (currentCardIndex >= dueCards.length) currentCardIndex = 0;
                 const card = dueCards[currentCardIndex];
-                if (!card) {
-                    // Finished this session?
-                    app.innerHTML = `
-                        <div class="glass-panel">
-                            <div class="empty-state">
-                                <i class="fas fa-check-circle" style="color:#28a745; opacity:1;"></i>
-                                <h3>All caught up!</h3>
-                                <p>You've reviewed all due cards for now. Come back later for spaced repetition.</p>
-                                <button class="btn btn-primary" onclick="window.goToDeckList()">Back to decks</button>
-                            </div>
-                        </div>
-                    `;
+                if (!card) { // should not happen
+                    currentView = 'list';
+                    renderView();
                     return;
                 }
 
@@ -751,7 +730,6 @@ Do not include any extra text or markdown – only the JSON array. Example:
                 const idx = currentCardIndex + 1;
                 const progress = Math.round((currentCardIndex / total) * 100);
 
-                // Build UI
                 app.innerHTML = `
                     <div class="glass-panel practice-container">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
@@ -788,11 +766,13 @@ Do not include any extra text or markdown – only the JSON array. Example:
                 const flipEl = document.getElementById('card-flip');
                 const innerEl = document.getElementById('card-inner');
                 let flipped = false;
+                const ratingArea = document.getElementById('rating-area');
+
                 flipEl.addEventListener('click', () => {
                     flipped = !flipped;
                     innerEl.classList.toggle('flipped', flipped);
-                    const ratingArea = document.getElementById('rating-area');
                     if (flipped) {
+                        playFlip();
                         ratingArea.style.display = 'block';
                     } else {
                         ratingArea.style.display = 'none';
@@ -804,12 +784,18 @@ Do not include any extra text or markdown – only the JSON array. Example:
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const rating = btn.dataset.rating;
-                        // Update card
+                        // Animate card
+                        if (rating === 'again') {
+                            innerEl.classList.add('shake');
+                            setTimeout(() => innerEl.classList.remove('shake'), 500);
+                        } else if (rating === 'easy') {
+                            innerEl.classList.add('pop');
+                            setTimeout(() => innerEl.classList.remove('pop'), 500);
+                        }
                         updateCard(card.id, rating, currentDeckId);
-                        // Move to next card
                         currentCardIndex++;
                         if (currentCardIndex >= dueCards.length) {
-                            // Session finished
+                            // Session finished – show deck list or offer more cards
                             renderView();
                         } else {
                             renderPractice(app);
@@ -818,40 +804,40 @@ Do not include any extra text or markdown – only the JSON array. Example:
                 });
             }
 
+            // ---------- ADD MORE CARDS ----------
+            window.addMoreCards = function(deckId) {
+                const deck = decks[deckId];
+                if (!deck) { showToast('Deck not found.'); return; }
+                const existingFronts = deck.cards.map(c => c.front);
+                generateDeck(deck.topic || deck.name, deckId, existingFronts);
+            };
+
             // ---------- HELPERS ----------
             function escapeHtml(str) {
                 if (!str) return '';
-                return String(str)
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
             }
 
-            // ---------- GLOBAL EXPOSURES (for onclick) ----------
+            // ---------- GLOBAL EXPOSURES ----------
             window.startPractice = function(deckId) {
                 currentDeckId = deckId;
                 currentCardIndex = 0;
                 currentView = 'practice';
                 renderView();
             };
-
             window.goToDeckList = function() {
                 currentView = 'list';
                 currentDeckId = null;
                 currentCardIndex = 0;
                 renderView();
             };
-
             window.deleteDeck = deleteDeck;
             window.generateDeck = generateDeck;
+            window.addMoreCards = window.addMoreCards;
 
             // ---------- INIT ----------
             loadDecks();
             renderView();
-
-            // Optional: handle initial hash or query parameter to auto-start practice? (we'll keep simple)
 
         })();
     </script>
