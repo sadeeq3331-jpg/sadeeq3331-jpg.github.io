@@ -1,4 +1,4 @@
-// nexus.js – v2.7 (robust model selection + full tutor experience)
+// nexus.js – v3.0 (clean output, expanded explanations, modern responsive UI)
 (function() {
     const STORAGE_KEY = 'nexus_conversations';
     const MAX_MESSAGE_LENGTH = 1000;
@@ -13,23 +13,43 @@
     let panelDarkMode = false;
     let personality = 'detailed';
     let sidebarOpen = true;
-    let currentModelId = null; // will be set dynamically
+    let currentModelId = null;
 
-    function extractPuterMessage(raw) {
-        if (typeof raw === 'string') {
-            try { return JSON.parse(raw).message?.content || raw; } catch { return raw; }
-        }
-        return raw?.message?.content || raw?.content || JSON.stringify(raw);
+    // ---------- CLEAN OUTPUT: strip markdown and keep plain text ----------
+    function cleanText(text) {
+        if (!text) return text;
+        // Remove markdown headers (#, ##, etc.)
+        let cleaned = text.replace(/^#{1,6}\s*/gm, '');
+        // Remove bold/italic markers (** and *)
+        cleaned = cleaned.replace(/\*\*(.+?)\*\*/g, '$1');
+        cleaned = cleaned.replace(/\*(.+?)\*/g, '$1');
+        // Remove underscores for emphasis
+        cleaned = cleaned.replace(/_(.+?)_/g, '$1');
+        // Remove inline code backticks
+        cleaned = cleaned.replace(/`(.+?)`/g, '$1');
+        // Remove code blocks (``` ... ```)
+        cleaned = cleaned.replace(/```[\s\S]*?```/g, '');
+        // Convert bullet lists: lines starting with - or * or + or number.
+        // We'll keep them as plain text with a dash.
+        cleaned = cleaned.replace(/^[\s]*[-*+]\s+/gm, '• ');
+        cleaned = cleaned.replace(/^[\s]*\d+\.\s+/gm, (match) => match.trim() + ' ');
+        // Remove horizontal rules (---, ***, ___)
+        cleaned = cleaned.replace(/^[\s]*[-*_]{3,}[\s]*$/gm, '');
+        // Collapse multiple newlines to two max
+        cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+        return cleaned.trim();
     }
 
+    // ---------- FORMAT FOR DISPLAY (plain text with <br>) ----------
     function formatText(text) {
         if (!text) return text;
-        let html = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-        html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-        html = html.replace(/\n/g, '<br>');
-        return html;
+        // First clean markdown
+        let cleaned = cleanText(text);
+        // Convert newlines to <br>
+        return cleaned.replace(/\n/g, '<br>');
     }
 
+    // ---------- ORIGINAL HELPERS (unchanged) ----------
     function truncateText(text, maxLen = 300) {
         if (text.length <= maxLen) return text;
         return text.substring(0, maxLen) + '…';
@@ -132,6 +152,7 @@
 
     function isPinned(idx) { return pinnedMessages.some(p => p.convId === currentConvId && p.idx === idx); }
 
+    // ---------- RENDER SIDEBAR (unchanged but with updated CSS) ----------
     function renderSidebar() {
         const sidebar = document.getElementById('nexus-sidebar');
         if (!sidebar) return;
@@ -390,12 +411,11 @@
         navigator.clipboard.writeText(conv.messages[idx].content).then(() => showToast('Copied!')).catch(() => showToast('Copy failed'));
     }
 
-    // Helper: pick the best available model from puter.ai
+    // ---------- MODEL SELECTION (latest first) ----------
     async function getBestModel() {
         if (currentModelId) return currentModelId;
         try {
             const models = await puter.ai.listModels();
-            // preferred order: newer Gemini flash models, then any Gemini, then any chat model
             const preferred = [
                 'google/gemini-3.1-flash-lite',
                 'google/gemini-2.5-flash-lite-001',
@@ -408,13 +428,11 @@
                     return currentModelId;
                 }
             }
-            // fallback: any model that contains "gemini" or "flash"
             const geminiModel = models.find(m => m.id.toLowerCase().includes('gemini'));
             if (geminiModel) {
                 currentModelId = geminiModel.id;
                 return currentModelId;
             }
-            // last resort: first available chat model
             if (models.length > 0) {
                 currentModelId = models[0].id;
                 return currentModelId;
@@ -422,11 +440,12 @@
             throw new Error('No chat models available');
         } catch (err) {
             console.warn('Model listing failed, using safe default', err);
-            currentModelId = 'google/gemini-3.1-flash-lite'; // fallback
+            currentModelId = 'google/gemini-3.1-flash-lite';
             return currentModelId;
         }
     }
 
+    // ---------- SEND MESSAGE WITH IMPROVED PERSONALITIES ----------
     async function sendMessage(initialText = null, isRegenerate = false) {
         const input = document.getElementById('nexus-input');
         const text = initialText || (input ? input.value.trim() : '');
@@ -447,10 +466,22 @@
         renderMessages();
 
         let personalityInstruction = '';
-        if (personality === 'concise') personalityInstruction = 'Be concise and direct. Use bullet points when helpful.';
-        else if (personality === 'usmle') personalityInstruction = 'Focus on high‑yield USMLE content. Emphasize mechanisms, clinical correlations, and exam tips.';
-        else if (personality === 'study') personalityInstruction = `You are a medical tutor in Study Mode. Ask the user one concept-based question at a time. Wait for their answer. Then provide brief feedback and ask a follow‑up question to deepen understanding. Keep it conversational, step‑by‑step. Never give away the full answer immediately; guide them to reason.`;
-        else personalityInstruction = 'Provide thorough explanations with clinical context.';
+        if (personality === 'concise') {
+            personalityInstruction = `Be concise and direct. Use short sentences and bullet points when helpful. Avoid unnecessary details.`;
+        } else if (personality === 'usmle') {
+            personalityInstruction = `Focus on high‑yield USMLE content. Emphasize mechanisms, clinical correlations, and exam tips. 
+When you use an abbreviation, write the full term first (e.g., "glomerular filtration rate (GFR)"). Keep explanations clear and actionable.`;
+        } else if (personality === 'study') {
+            personalityInstruction = `You are a medical tutor in Study Mode. Ask the user one concept-based question at a time. Wait for their answer. Then provide brief feedback and ask a follow‑up question to deepen understanding. Keep it conversational, step‑by‑step. Never give away the full answer immediately; guide them to reason. Use plain language and explain any technical terms.`;
+        } else { // detailed (default)
+            personalityInstruction = `Provide thorough, well‑structured explanations. 
+- Use simple, plain language suitable for a beginner medical student.
+- Always write out abbreviations in full the first time (e.g., "glomerular filtration rate (GFR)").
+- Explain the "why" behind each fact.
+- Include clinical context and examples where helpful.
+- Break down complex topics into manageable parts.
+- Avoid medical jargon unless you define it clearly.`;
+        }
 
         const systemPrompt = `You are a medical expert assistant called Nexus, designed exclusively for healthcare professionals and medical students. You ONLY answer questions related to medicine, physiology, pathology, pharmacology, clinical practice, and medical sciences.
 
@@ -460,7 +491,7 @@ Guidelines:
 - Provide accurate, evidence-based medical information.
 - Include relevant clinical context when appropriate.
 - If a term has both medical and non-medical meanings, always interpret it in the medical context.
-- Be educational and clear for medical students.
+- Be educational and clear.
 - Use proper medical terminology but explain when necessary.
 - If uncertain, acknowledge limitations.
 
@@ -484,7 +515,9 @@ ${personalityInstruction}`;
         try {
             const modelId = await getBestModel();
             const raw = await puter.ai.chat(chatMessages, { model: modelId });
-            const clean = extractPuterMessage(raw);
+            let rawContent = raw?.message?.content || raw?.content || JSON.stringify(raw);
+            // Clean markdown before adding
+            const clean = cleanText(rawContent);
             isWaiting = false;
             addMessage('assistant', clean);
         } catch (e) {
@@ -493,6 +526,7 @@ ${personalityInstruction}`;
         }
     }
 
+    // ---------- CONVERSATION MANAGEMENT (unchanged) ----------
     function newConversation() {
         const id = Date.now();
         conversations.push({
@@ -588,12 +622,13 @@ ${personalityInstruction}`;
         });
     }
 
+    // ---------- CREATE WIDGET WITH MODERN RESPONSIVE UI ----------
     function createWidget() {
         const container = document.createElement('div');
         container.id = 'nexus-container';
         container.innerHTML = `
 <style>
-    #nexus-container * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    #nexus-container * { box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     :root {
         --primary: #2c7cb0;
         --primary-dark: #1b4c72;
@@ -602,6 +637,8 @@ ${personalityInstruction}`;
         --border-light: rgba(44,124,176,0.15);
         --shadow-sm: 0 8px 30px rgba(0,0,0,0.08);
         --shadow-lg: 0 20px 50px rgba(0,0,0,0.2);
+        --radius: 28px;
+        --font-base: 16px;
     }
     .nexus-bubble {
         position: fixed;
@@ -643,21 +680,22 @@ ${personalityInstruction}`;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 850px;
-        max-width: 95vw;
-        height: 85vh;
-        max-height: 800px;
-        background: rgba(255,255,255,0.7);
+        width: 90vw;
+        max-width: 1000px;
+        height: 90vh;
+        max-height: 850px;
+        background: rgba(255,255,255,0.75);
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
-        border-radius: 28px;
+        border-radius: var(--radius);
         box-shadow: var(--shadow-lg);
         display: none;
         flex-direction: column;
         z-index: 10001;
         overflow: hidden;
         border: 1px solid var(--border-light);
-        transition: background 0.2s;
+        transition: background 0.2s, width 0.3s, height 0.3s;
+        font-size: var(--font-base);
     }
     .nexus-panel.dark {
         background: rgba(30,30,46,0.85);
@@ -676,22 +714,35 @@ ${personalityInstruction}`;
         justify-content: space-between;
         border-bottom: 1px solid rgba(255,255,255,0.1);
         flex-shrink: 0;
+        min-height: 56px;
     }
-    .nexus-panel-header h3 { margin:0; font-size:1.2rem; display:flex; align-items:center; gap:8px; }
-    .panel-actions { display: flex; gap: 8px; }
+    .nexus-panel-header h3 {
+        margin:0;
+        font-size:1.2rem;
+        display:flex;
+        align-items:center;
+        gap:8px;
+        font-weight: 600;
+    }
+    .panel-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+    }
     .panel-btn {
         background: rgba(255,255,255,0.15);
         border: none;
         color: white;
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 30px;
-        font-size: 1rem;
+        font-size: 1.1rem;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         transition: 0.2s;
+        touch-action: manipulation;
     }
     .panel-btn:hover { background: rgba(255,255,255,0.3); }
     .nexus-body {
@@ -708,11 +759,25 @@ ${personalityInstruction}`;
         flex-direction: column;
         overflow-y: auto;
         flex-shrink: 0;
-        transition: width 0.3s;
+        transition: width 0.3s, margin 0.3s;
     }
-    .sidebar-section { padding: 16px 12px; border-bottom: 1px solid var(--border-light); }
-    .section-title { font-weight: 600; opacity: 0.7; margin-bottom: 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .conv-list { display: flex; flex-direction: column; gap: 4px; }
+    .sidebar-section {
+        padding: 16px 12px;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .section-title {
+        font-weight: 600;
+        opacity: 0.7;
+        margin-bottom: 12px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .conv-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
     .conv-item {
         display: flex;
         align-items: center;
@@ -721,31 +786,100 @@ ${personalityInstruction}`;
         border-radius: 12px;
         cursor: pointer;
         transition: background 0.2s;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
     .conv-item:hover { background: rgba(44,124,176,0.1); }
     .conv-item.active { background: var(--primary); color: white; }
     .conv-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
     .conv-actions { display: none; gap: 4px; }
     .conv-item:hover .conv-actions { display: flex; }
-    .new-chat-sidebar { background: transparent; border: 1px dashed var(--primary); border-radius: 30px; color: var(--primary); padding: 8px 12px; margin-top: 8px; width: 100%; cursor: pointer; }
-    .pinned-note-item { padding: 6px 0; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid var(--border-light); }
-    .settings-section label, .settings-section select { font-size: 0.85rem; }
-    .setting-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background: #ccc; border-radius: 22px; transition: 0.3s; }
-    .slider:before { position: absolute; content:""; height: 18px; width: 18px; left: 2px; bottom: 2px; background: white; border-radius: 50%; transition: 0.3s; }
+    .new-chat-sidebar {
+        background: transparent;
+        border: 1px dashed var(--primary);
+        border-radius: 30px;
+        color: var(--primary);
+        padding: 8px 12px;
+        margin-top: 8px;
+        width: 100%;
+        cursor: pointer;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+    .new-chat-sidebar:hover { background: var(--primary); color: white; }
+    .pinned-note-item {
+        padding: 6px 0;
+        cursor: pointer;
+        font-size: 0.85rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .settings-section label,
+    .settings-section select {
+        font-size: 0.9rem;
+    }
+    .setting-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 22px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #ccc;
+        border-radius: 22px;
+        transition: 0.3s;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 2px;
+        bottom: 2px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
     input:checked + .slider { background: var(--primary); }
     input:checked + .slider:before { transform: translateX(18px); }
-    .font-controls { display: flex; gap: 6px; }
-    .font-controls button { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+    .font-controls {
+        display: flex;
+        gap: 6px;
+    }
+    .font-controls button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 4px 12px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: 0.2s;
+    }
+    .font-controls button:hover { opacity: 0.8; }
     .nexus-main {
         flex: 1;
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        background: rgba(255,255,255,0.3);
     }
+    .dark .nexus-main { background: rgba(20,20,30,0.4); }
     .chat-header {
         padding: 10px 20px;
         display: flex;
@@ -753,8 +887,22 @@ ${personalityInstruction}`;
         gap: 12px;
         border-bottom: 1px solid var(--border-light);
         flex-shrink: 0;
+        background: rgba(255,255,255,0.2);
     }
-    .chat-header input { flex: 1; padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-light); background: rgba(255,255,255,0.5); }
+    .chat-header input {
+        flex: 1;
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid var(--border-light);
+        background: rgba(255,255,255,0.5);
+        font-size: 0.9rem;
+        outline: none;
+        transition: 0.2s;
+    }
+    .chat-header input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(44,124,176,0.2);
+    }
     .nexus-messages {
         flex: 1;
         padding: 20px;
@@ -762,23 +910,43 @@ ${personalityInstruction}`;
         display: flex;
         flex-direction: column;
         gap: 16px;
+        background: transparent;
     }
-    .message { display: flex; gap: 12px; align-items: flex-start; }
+    .message {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
     .message.user { flex-direction: row-reverse; }
-    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #e6f0fa; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #e6f0fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
     .user .avatar { background: var(--primary); color: white; }
-    .bubble-wrapper { max-width: 80%; position: relative; }
+    .bubble-wrapper {
+        max-width: 80%;
+        position: relative;
+    }
     .message-bubble {
         padding: 12px 16px;
         border-radius: 20px;
-        background: rgba(255,255,255,0.7);
+        background: rgba(255,255,255,0.8);
         backdrop-filter: blur(4px);
         box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-        line-height: 1.5;
+        line-height: 1.6;
         word-wrap: break-word;
+        font-size: 1rem;
     }
     .dark .message-bubble { background: rgba(45,45,68,0.8); color: #e0e0e0; }
     .user .message-bubble { background: var(--primary); color: white; }
+    .message-content { white-space: pre-wrap; }
     .message-actions {
         position: absolute;
         top: -12px;
@@ -788,20 +956,54 @@ ${personalityInstruction}`;
         opacity: 0;
         transform: translateY(5px);
         transition: all 0.2s;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255,255,255,0.95);
         border-radius: 20px;
         padding: 2px 6px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     .dark .message-actions { background: rgba(40,40,60,0.9); }
     .message:hover .message-actions { opacity: 1; transform: translateY(0); }
-    .icon-btn { background: transparent; border: none; cursor: pointer; color: inherit; opacity: 0.7; font-size: 0.9rem; padding: 2px 4px; }
-    .icon-btn:hover { opacity: 1; }
-    .timestamp { font-size: 0.65rem; opacity: 0.5; margin-top: 4px; text-align: right; }
-    .read-more { background: transparent; border: none; color: var(--primary); cursor: pointer; font-size: 0.8rem; margin-top: 4px; }
-    .typing .message-bubble { background: #e6f0fa; display: flex; gap: 4px; padding: 12px 16px; }
-    .typing-indicator span { animation: blink 1.4s infinite; font-size: 1.2rem; }
-    @keyframes blink { 0% { opacity:0.2; } 20% { opacity:1; } 100% { opacity:0.2; } }
+    .icon-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: inherit;
+        opacity: 0.7;
+        font-size: 0.9rem;
+        padding: 2px 4px;
+        transition: 0.2s;
+    }
+    .icon-btn:hover { opacity: 1; transform: scale(1.1); }
+    .timestamp {
+        font-size: 0.65rem;
+        opacity: 0.5;
+        margin-top: 4px;
+        text-align: right;
+    }
+    .read-more {
+        background: transparent;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 0.85rem;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+    .typing .message-bubble {
+        background: #e6f0fa;
+        display: flex;
+        gap: 4px;
+        padding: 12px 16px;
+    }
+    .typing-indicator span {
+        animation: blink 1.4s infinite;
+        font-size: 1.2rem;
+    }
+    @keyframes blink {
+        0% { opacity:0.2; }
+        20% { opacity:1; }
+        100% { opacity:0.2; }
+    }
     .input-area {
         padding: 12px 20px;
         border-top: 1px solid var(--border-light);
@@ -809,6 +1011,7 @@ ${personalityInstruction}`;
         gap: 8px;
         align-items: flex-end;
         background: rgba(255,255,255,0.4);
+        flex-shrink: 0;
     }
     .input-area textarea {
         flex: 1;
@@ -817,9 +1020,15 @@ ${personalityInstruction}`;
         border: 1px solid var(--border-light);
         background: rgba(255,255,255,0.7);
         resize: none;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         outline: none;
         max-height: 120px;
+        font-family: inherit;
+        transition: 0.2s;
+    }
+    .input-area textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(44,124,176,0.2);
     }
     .send-btn, .share-btn {
         background: var(--primary);
@@ -834,7 +1043,10 @@ ${personalityInstruction}`;
         cursor: pointer;
         font-size: 1.2rem;
         box-shadow: 0 4px 12px rgba(44,124,176,0.3);
+        transition: 0.2s;
+        flex-shrink: 0;
     }
+    .send-btn:hover, .share-btn:hover { transform: scale(1.05); }
     .share-btn { background: #555; }
     .suggestions {
         display: flex;
@@ -847,19 +1059,30 @@ ${personalityInstruction}`;
         background: rgba(255,255,255,0.3);
         scrollbar-width: none;
         -ms-overflow-style: none;
+        flex-shrink: 0;
     }
     .suggestions::-webkit-scrollbar { display: none; }
     .suggestion-chip {
         flex-shrink: 0;
-        background: rgba(44,124,176,0.1);
+        background: rgba(44,124,176,0.12);
         border-radius: 30px;
-        padding: 5px 12px;
-        font-size: 0.75rem;
+        padding: 5px 14px;
+        font-size: 0.8rem;
         cursor: pointer;
         transition: 0.2s;
+        font-weight: 500;
     }
-    .suggestion-chip:hover { background: rgba(44,124,176,0.2); transform: scale(1.02); }
-    .nexus-stats { font-size: 0.65rem; opacity: 0.5; padding: 4px 20px 8px; text-align: right; }
+    .suggestion-chip:hover {
+        background: rgba(44,124,176,0.25);
+        transform: scale(1.02);
+    }
+    .nexus-stats {
+        font-size: 0.7rem;
+        opacity: 0.5;
+        padding: 4px 20px 8px;
+        text-align: right;
+        flex-shrink: 0;
+    }
     .nexus-toast {
         position: fixed;
         bottom: 30px;
@@ -872,12 +1095,61 @@ ${personalityInstruction}`;
         z-index: 99999;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         animation: fadeInUp 0.3s;
+        font-size: 0.95rem;
     }
-    @keyframes fadeInUp { from { opacity:0; transform:translate(-50%,20px); } to { opacity:1; transform:translate(-50%,0); } }
-    .muted { opacity: 0.5; font-size: 0.8rem; }
+    @keyframes fadeInUp {
+        from { opacity:0; transform:translate(-50%,20px); }
+        to { opacity:1; transform:translate(-50%,0); }
+    }
+    .muted { opacity: 0.5; font-size: 0.85rem; }
+
+    /* ---------- RESPONSIVE ---------- */
     @media (max-width: 700px) {
-        .nexus-sidebar { width: 0 !important; }
-        .nexus-panel { width: 95vw; height: 90vh; }
+        .nexus-panel {
+            width: 98vw;
+            height: 95vh;
+            max-height: 95vh;
+            border-radius: 20px;
+        }
+        .nexus-sidebar {
+            width: 0 !important;
+            padding: 0;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .nexus-sidebar.open {
+            width: 240px !important;
+            padding: 10px 0;
+        }
+        .nexus-panel-header h3 { font-size: 1rem; }
+        .panel-btn { width: 32px; height: 32px; font-size: 0.9rem; }
+        .bubble-wrapper { max-width: 90%; }
+        .message-bubble { font-size: 0.95rem; padding: 10px 14px; }
+        .input-area { padding: 8px 12px; gap: 6px; }
+        .input-area textarea { font-size: 0.9rem; padding: 8px 12px; }
+        .send-btn, .share-btn { width: 38px; height: 38px; font-size: 1rem; }
+        .chat-header input { font-size: 0.85rem; padding: 6px 12px; }
+        .suggestion-chip { font-size: 0.7rem; padding: 4px 10px; }
+        .nexus-bubble { width: 56px; height: 56px; font-size: 2rem; bottom: 15px; right: 15px; }
+    }
+    @media (max-width: 480px) {
+        .nexus-panel {
+            width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            border-radius: 0;
+        }
+        .nexus-panel-header {
+            padding: 8px 14px;
+            min-height: 48px;
+        }
+        .panel-btn { width: 28px; height: 28px; font-size: 0.8rem; }
+        .message-bubble { font-size: 0.9rem; padding: 8px 12px; }
+        .nexus-messages { padding: 12px; gap: 12px; }
+        .avatar { width: 30px; height: 30px; font-size: 1rem; }
+        .input-area textarea { font-size: 0.85rem; padding: 6px 10px; }
+        .send-btn, .share-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+        .nexus-bubble { width: 48px; height: 48px; font-size: 1.6rem; bottom: 10px; right: 10px; }
     }
 </style>
 <div class="nexus-bubble">🩺<span class="tooltip">Ask Nexus</span></div>
@@ -934,6 +1206,7 @@ ${personalityInstruction}`;
             if (sidebarOpen && !e.target.closest('#sidebar-toggle') && !e.target.closest('.nexus-sidebar')) {
                 sidebarOpen = false;
                 sidebar.style.width = '0px';
+                sidebar.classList.remove('open');
             }
         });
 
@@ -942,7 +1215,14 @@ ${personalityInstruction}`;
         document.getElementById('sidebar-toggle').onclick = (e) => {
             e.stopPropagation();
             sidebarOpen = !sidebarOpen;
-            document.getElementById('nexus-sidebar').style.width = sidebarOpen ? '250px' : '0px';
+            const sidebar = document.getElementById('nexus-sidebar');
+            if (sidebarOpen) {
+                sidebar.style.width = '250px';
+                sidebar.classList.add('open');
+            } else {
+                sidebar.style.width = '0px';
+                sidebar.classList.remove('open');
+            }
         };
         document.getElementById('export-chat').onclick = exportConversation;
         document.getElementById('share-conv').onclick = shareConversation;
