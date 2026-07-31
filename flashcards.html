@@ -11,7 +11,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --bg: #0d1f2c;
-            --surface: rgba(255,255,255,0.04);
             --glass: rgba(255,255,255,0.05);
             --border: rgba(255,255,255,0.08);
             --text: #e8f0f8;
@@ -21,7 +20,6 @@
             --secondary: #3b82f6;
             --radius: 1.2rem;
             --shadow: 0 8px 32px rgba(0,0,0,0.2);
-            --card-bg: rgba(255,255,255,0.06);
             --card-border: rgba(0, 212, 176, 0.15);
         }
         html, body {
@@ -41,7 +39,6 @@
             flex-direction: column;
         }
 
-        /* --- Glass Panel --- */
         .glass-panel {
             background: var(--glass);
             backdrop-filter: blur(16px);
@@ -51,12 +48,7 @@
             box-shadow: var(--shadow);
             padding: 1.8rem;
             margin-bottom: 1.5rem;
-            transition: box-shadow 0.3s;
         }
-        .glass-panel:hover {
-            box-shadow: 0 8px 40px rgba(0, 212, 176, 0.06);
-        }
-
         .page-title {
             font-size: clamp(2rem, 5vw, 3rem);
             font-weight: 700;
@@ -73,7 +65,7 @@
             opacity: 0.8;
         }
 
-        /* --- Create Deck --- */
+        /* --- Create Deck & Search (unchanged from previous) --- */
         .create-deck {
             display: flex;
             flex-wrap: wrap;
@@ -165,7 +157,6 @@
         }
         .btn-nexus:hover { background: rgba(150,80,255,0.2); }
 
-        /* --- Search --- */
         .search-bar {
             display: flex;
             gap: 0.5rem;
@@ -187,7 +178,7 @@
             box-shadow: 0 0 0 3px var(--primary-glow);
         }
 
-        /* --- Folders & Tree --- */
+        /* --- Folders & Tree (unchanged) --- */
         .folders-grid {
             display: flex;
             flex-direction: column;
@@ -251,7 +242,6 @@
             opacity: 0.6;
         }
 
-        /* --- Deck Tree --- */
         .deck-tree {
             display: flex;
             flex-direction: column;
@@ -339,7 +329,7 @@
             display: none;
         }
 
-        /* --- Professional Card (full‑width, no side gaps) --- */
+        /* --- CARD – FULL WIDTH, FIXED HEIGHT, NO SHIFT --- */
         .practice-container {
             max-width: 100%;
         }
@@ -347,29 +337,29 @@
             perspective: 1200px;
             margin: 1.5rem 0;
             cursor: pointer;
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
         }
         .card-inner {
             position: relative;
             width: 100%;
             transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
-            /* height will be set by JavaScript to match content */
-            min-height: 260px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             transform-origin: center center;
+            /* Height will be set by JavaScript to the max of front/back */
+            min-height: 260px;
         }
         .card-inner.flipped {
             transform: rotateX(180deg);
         }
         .card-face {
             position: absolute;
-            width: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             backface-visibility: hidden;
             border-radius: 2rem;
             padding: 2.5rem 2.8rem;
@@ -384,16 +374,10 @@
             font-size: 1.3rem;
             line-height: 1.8;
             color: #f0f8ff;
-            min-height: 100%;
-            height: auto;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            transition: box-shadow 0.3s;
             text-align: center;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
+            overflow-y: auto;  /* fallback for very long text */
         }
         .card-face:hover {
             box-shadow: 0 16px 56px rgba(0,0,0,0.4), 0 0 50px rgba(0,212,176,0.08);
@@ -462,7 +446,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* --- Empty State --- */
         .empty-state {
             text-align: center;
             padding: 2.5rem 1rem;
@@ -477,7 +460,6 @@
             font-weight: 400;
         }
 
-        /* --- Toast --- */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -498,7 +480,6 @@
         }
         .toast.show { opacity: 1; }
 
-        /* --- Animations --- */
         @keyframes shake {
             0%,100%{transform:translateX(0)}
             20%{transform:translateX(-10px)}
@@ -525,7 +506,6 @@
             animation: confetti-fall 1s ease-out forwards;
         }
 
-        /* --- Responsive --- */
         @media (max-width: 700px) {
             .glass-panel { padding: 1rem; }
             .create-deck { flex-direction: column; align-items: stretch; }
@@ -1366,7 +1346,7 @@
             renderView();
         };
 
-        // ---------- PRACTICE (full‑width card with fixed height) ----------
+        // ---------- PRACTICE (FULL WIDTH, FIXED HEIGHT, NO SHIFT) ----------
         function renderPractice(app) {
             const deck = decks[currentDeckId];
             if (!deck) { currentView='list'; renderView(); return; }
@@ -1451,28 +1431,29 @@
                 </div>
             `;
 
-            // --- ADJUST CARD HEIGHT TO FIT CONTENT (prevents sideways movement) ---
-            function adjustCardHeight() {
+            // --- FIX: Lock the container height to the taller of the two faces ---
+            function lockCardHeight() {
                 const inner = document.getElementById('card-inner');
-                const front = inner?.querySelector('.card-face.front');
-                const back = inner?.querySelector('.card-face.back');
-                if (inner && front && back) {
-                    // Force both faces to have auto height so we can measure scrollHeight
-                    front.style.height = 'auto';
-                    back.style.height = 'auto';
-                    const frontHeight = front.scrollHeight;
-                    const backHeight = back.scrollHeight;
-                    const maxHeight = Math.max(frontHeight, backHeight, 260);
-                    inner.style.height = maxHeight + 'px';
-                    // Set faces to fill the container
-                    front.style.height = '100%';
-                    back.style.height = '100%';
-                }
+                if (!inner) return;
+                const front = inner.querySelector('.card-face.front');
+                const back = inner.querySelector('.card-face.back');
+                if (!front || !back) return;
+                // Temporarily set both to auto height to measure
+                front.style.height = 'auto';
+                back.style.height = 'auto';
+                const frontH = front.scrollHeight;
+                const backH = back.scrollHeight;
+                const maxH = Math.max(frontH, backH, 260);
+                // Set the container to that height
+                inner.style.height = maxH + 'px';
+                // Now set faces to fill that container
+                front.style.height = '100%';
+                back.style.height = '100%';
             }
 
             // Run after render and on resize
-            setTimeout(adjustCardHeight, 50);
-            window.addEventListener('resize', adjustCardHeight);
+            setTimeout(lockCardHeight, 20);
+            window.addEventListener('resize', lockCardHeight);
 
             const flipEl = document.getElementById('card-flip');
             const innerEl = document.getElementById('card-inner');
