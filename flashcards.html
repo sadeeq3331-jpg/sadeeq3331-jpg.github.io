@@ -12,12 +12,13 @@
         html, body {
             height: 100%;
             font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(145deg, #f0f9ff 0%, #e6f0fa 100%);
+            background: #0b1a2a;
             padding: 0;
             margin: 0;
+            color: #e0e8f0;
         }
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 1.5rem 1rem;
             min-height: 100vh;
@@ -25,30 +26,37 @@
             flex-direction: column;
         }
 
+        /* --- Glass with neon glow --- */
         .glass-panel {
-            background: rgba(255,255,255,0.75);
+            background: rgba(20, 40, 60, 0.45);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 2rem;
-            border: 1px solid rgba(255,255,255,0.5);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            box-shadow: 0 0 40px rgba(0, 255, 200, 0.08), inset 0 0 30px rgba(0, 255, 200, 0.02);
             padding: 2rem;
             margin-bottom: 1.5rem;
+            transition: box-shadow 0.3s;
+        }
+        .glass-panel:hover {
+            box-shadow: 0 0 60px rgba(0, 255, 200, 0.12), inset 0 0 30px rgba(0, 255, 200, 0.03);
         }
 
         .page-title {
-            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-size: clamp(2rem, 5vw, 3.2rem);
             font-weight: 700;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #00f0c0, #0080ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
             margin-bottom: 0.5rem;
         }
         .subtitle {
-            color: #2c3e66;
+            color: #8ab4d0;
             margin-bottom: 1.5rem;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
+            opacity: 0.8;
         }
 
         /* --- Create deck --- */
@@ -64,14 +72,19 @@
             min-width: 200px;
             padding: 0.75rem 1.2rem;
             border-radius: 3rem;
-            border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(255,255,255,0.9);
+            border: 1px solid rgba(0, 255, 200, 0.2);
+            background: rgba(255,255,255,0.05);
+            color: #e0e8f0;
             font-size: 1rem;
             outline: none;
+            transition: 0.3s;
         }
         .create-deck input:focus {
-            border-color: #2c7cb0;
-            box-shadow: 0 0 0 3px rgba(44,124,176,0.2);
+            border-color: #00f0c0;
+            box-shadow: 0 0 20px rgba(0, 255, 200, 0.15);
+        }
+        .create-deck input::placeholder {
+            color: #6a8aa0;
         }
 
         .btn {
@@ -83,30 +96,32 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: 0.2s;
-            background: white;
-            color: #1e3c72;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: all 0.25s;
+            background: rgba(255,255,255,0.06);
+            color: #e0e8f0;
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            backdrop-filter: blur(4px);
         }
         .btn-primary {
-            background: linear-gradient(135deg, #2c7cb0, #1f5a82);
+            background: linear-gradient(135deg, #00c8a0, #0070e0);
             color: white;
-            box-shadow: 0 8px 18px rgba(44,124,176,0.3);
+            border: none;
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(44,124,176,0.4); }
-        .btn-secondary { background: rgba(255,255,255,0.8); color: #1e3c72; }
-        .btn-secondary:hover { background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .btn-danger { background: #dc3545; color: white; }
-        .btn-danger:hover { background: #c82333; }
-        .btn-sm { padding: 0.4rem 1rem; font-size: 0.85rem; }
-        .btn-success { background: #28a745; color: white; }
-        .btn-success:hover { background: #218838; }
-        .btn-warning { background: #ffc107; color: #1e3c72; }
-        .btn-warning:hover { background: #e0a800; }
-        .btn-nexus { background: #6f42c1; color: white; }
-        .btn-nexus:hover { background: #5a32a3; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(0, 255, 200, 0.4); }
+        .btn-secondary { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.15); }
+        .btn-danger { background: rgba(255,60,60,0.2); border-color: rgba(255,60,60,0.3); color: #ff7a7a; }
+        .btn-danger:hover { background: rgba(255,60,60,0.35); }
+        .btn-sm { padding: 0.3rem 0.9rem; font-size: 0.8rem; }
+        .btn-success { background: rgba(0,220,120,0.2); border-color: rgba(0,220,120,0.3); color: #66eeaa; }
+        .btn-success:hover { background: rgba(0,220,120,0.35); }
+        .btn-warning { background: rgba(255,200,0,0.15); border-color: rgba(255,200,0,0.2); color: #f0d060; }
+        .btn-warning:hover { background: rgba(255,200,0,0.3); }
+        .btn-nexus { background: rgba(150,80,255,0.2); border-color: rgba(150,80,255,0.3); color: #c090ff; }
+        .btn-nexus:hover { background: rgba(150,80,255,0.35); }
 
-        /* --- Search bar --- */
+        /* --- Search --- */
         .search-bar {
             display: flex;
             gap: 0.5rem;
@@ -116,32 +131,34 @@
             flex: 1;
             padding: 0.6rem 1.2rem;
             border-radius: 3rem;
-            border: 1px solid rgba(0,0,0,0.08);
-            background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(0, 255, 200, 0.1);
+            background: rgba(255,255,255,0.04);
+            color: #e0e8f0;
             font-size: 0.95rem;
             outline: none;
+            transition: 0.3s;
         }
         .search-bar input:focus {
-            border-color: #2c7cb0;
-            box-shadow: 0 0 0 3px rgba(44,124,176,0.15);
+            border-color: #00f0c0;
+            box-shadow: 0 0 20px rgba(0, 255, 200, 0.1);
         }
 
-        /* --- Folder & Deck grid --- */
+        /* --- Folders & Decks --- */
         .folders-grid {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
         .folder-container {
-            background: rgba(255,255,255,0.5);
-            border-radius: 1.2rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 1.5rem;
             padding: 1rem;
-            border: 2px dashed rgba(44,124,176,0.15);
-            transition: border-color 0.2s;
+            border: 2px dashed rgba(0, 255, 200, 0.08);
+            transition: border-color 0.3s, background 0.3s;
         }
         .folder-container.drag-over {
-            border-color: #2c7cb0;
-            background: rgba(44,124,176,0.05);
+            border-color: #00f0c0;
+            background: rgba(0, 255, 200, 0.05);
         }
         .folder-header {
             display: flex;
@@ -149,23 +166,25 @@
             justify-content: space-between;
             padding: 0.2rem 0.5rem;
             margin-bottom: 0.8rem;
-            cursor: default;
         }
         .folder-header .folder-name {
             font-weight: 600;
-            font-size: 1.1rem;
-            color: #0a2942;
+            font-size: 1.2rem;
+            color: #b0e0f0;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-shadow: 0 0 20px rgba(0, 200, 255, 0.1);
         }
         .folder-header .folder-actions {
             display: flex;
             gap: 0.5rem;
         }
-        .folder-header .folder-actions .btn {
-            padding: 0.2rem 0.8rem;
-            font-size: 0.8rem;
+        .folder-empty {
+            color: #6a8aa0;
+            font-size: 0.9rem;
+            padding: 0.5rem 0.8rem;
+            font-style: italic;
         }
         .deck-grid {
             display: flex;
@@ -173,45 +192,40 @@
             gap: 0.8rem;
         }
         .deck-item {
-            background: white;
-            border-radius: 1rem;
+            background: rgba(255,255,255,0.04);
+            border-radius: 1.2rem;
             padding: 0.8rem 1.2rem;
             min-width: 180px;
             flex: 1 0 auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            border: 1px solid rgba(0,0,0,0.04);
+            border: 1px solid rgba(0, 255, 200, 0.06);
             cursor: grab;
-            transition: 0.15s;
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .deck-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(0, 255, 200, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         .deck-item.dragging {
-            opacity: 0.5;
+            opacity: 0.4;
+            transform: scale(0.95);
         }
         .deck-item .deck-name {
             font-weight: 600;
             font-size: 1rem;
-            color: #0a2942;
+            color: #d0e8f0;
         }
         .deck-item .deck-meta {
             font-size: 0.8rem;
-            color: #4a627a;
+            color: #7a9aaa;
         }
         .deck-item .deck-actions {
             display: flex;
             gap: 0.4rem;
             flex-wrap: wrap;
-            margin-top: 0.3rem;
-        }
-        .deck-item .deck-actions .btn {
-            padding: 0.2rem 0.8rem;
-            font-size: 0.75rem;
-        }
-        .empty-folder {
-            color: #8a9baa;
-            font-size: 0.9rem;
-            padding: 0.5rem 0;
+            margin-top: 0.4rem;
         }
 
         /* --- Practice --- */
@@ -223,18 +237,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 200px;
+            min-height: 220px;
         }
         .card-inner {
             position: relative;
             width: 100%;
-            max-width: 650px;
+            max-width: 700px;
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
+            min-height: 220px;
         }
         .card-inner.flipped { transform: rotateX(180deg); }
 
@@ -242,82 +256,95 @@
             position: absolute;
             width: 100%;
             backface-visibility: hidden;
-            border-radius: 1.5rem;
-            padding: 2rem 1.5rem;
-            background: white;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 2rem;
+            padding: 2.5rem 2rem;
+            background: rgba(10, 30, 50, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            box-shadow: 0 0 50px rgba(0, 255, 200, 0.06), inset 0 0 30px rgba(0, 255, 200, 0.02);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            color: #0a2942;
+            font-size: 1.3rem;
+            line-height: 1.7;
+            color: #e8f0f8;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             min-height: 180px;
-            height: auto !important; /* allow growth */
+            height: auto !important;  /* expand to fit content */
             word-wrap: break-word;
             overflow-wrap: break-word;
+            transition: box-shadow 0.3s;
+        }
+        .card-face:hover {
+            box-shadow: 0 0 70px rgba(0, 255, 200, 0.1);
         }
         .card-face.back {
             transform: rotateX(180deg);
-            background: #f0f7ff;
+            background: rgba(0, 40, 70, 0.6);
+            border-color: rgba(0, 150, 255, 0.2);
         }
         .card-face .card-label {
             position: absolute;
-            top: 0.8rem;
-            left: 1.2rem;
-            font-size: 0.75rem;
+            top: 1rem;
+            left: 1.5rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            color: #6b8ba0;
-            letter-spacing: 0.5px;
-        }
-        .card-face .card-text { 
-            margin-top: 0.5rem;
-            width: 100%;
-            max-height: 70vh;
-            overflow-y: auto; /* scroll if extremely long */
-        }
-        .card-face .click-hint {
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            color: #6b8ba0;
+            color: #5a8aaa;
+            letter-spacing: 1px;
             opacity: 0.7;
         }
-        .card-face .nexus-btn-area { margin-top: 1rem; }
+        .card-face .card-text {
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+        .card-face .click-hint {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #5a8aaa;
+            opacity: 0.6;
+        }
+        .card-face .nexus-btn-area {
+            margin-top: 1.2rem;
+        }
 
         .rating-buttons {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.8rem;
+            gap: 1rem;
             margin-top: 1.5rem;
         }
         .rating-btn {
-            padding: 0.6rem 1.6rem;
+            padding: 0.7rem 1.8rem;
             border: none;
-            border-radius: 2.5rem;
+            border-radius: 3rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            background: #e9ecef;
-            color: #1e3c72;
+            background: rgba(255,255,255,0.06);
+            color: #d0e0e8;
+            border: 1px solid rgba(0, 255, 200, 0.1);
+            backdrop-filter: blur(4px);
         }
         .rating-btn:hover { transform: scale(1.08); }
         .rating-btn:active { transform: scale(0.92); }
-        .rating-btn.again { background: #dc3545; color: white; }
-        .rating-btn.hard { background: #ffc107; color: #1e3c72; }
-        .rating-btn.good { background: #28a745; color: white; }
-        .rating-btn.easy { background: #17a2b8; color: white; }
+        .rating-btn.again { background: rgba(255,60,60,0.15); border-color: rgba(255,60,60,0.3); color: #ff7a7a; }
+        .rating-btn.again:hover { background: rgba(255,60,60,0.25); }
+        .rating-btn.hard { background: rgba(255,200,0,0.1); border-color: rgba(255,200,0,0.2); color: #f0d060; }
+        .rating-btn.hard:hover { background: rgba(255,200,0,0.2); }
+        .rating-btn.good { background: rgba(0,220,120,0.1); border-color: rgba(0,220,120,0.2); color: #66eeaa; }
+        .rating-btn.good:hover { background: rgba(0,220,120,0.2); }
+        .rating-btn.easy { background: rgba(0,150,255,0.1); border-color: rgba(0,150,255,0.2); color: #66bbff; }
+        .rating-btn.easy:hover { background: rgba(0,150,255,0.2); }
 
         .practice-stats {
-            font-size: 0.9rem;
-            color: #4a627a;
+            font-size: 0.95rem;
+            color: #8ab4d0;
             margin-bottom: 1rem;
         }
 
@@ -325,7 +352,7 @@
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
-            color: #4a627a;
+            color: #6a8aa0;
         }
         .empty-state i { font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; }
         .empty-state h3 { margin-bottom: 0.5rem; }
@@ -336,8 +363,9 @@
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%);
-            background: #1e3c72;
-            color: white;
+            background: rgba(0, 20, 40, 0.8);
+            backdrop-filter: blur(12px);
+            color: #e0e8f0;
             padding: 0.75rem 2rem;
             border-radius: 3rem;
             font-size: 0.9rem;
@@ -345,35 +373,36 @@
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            box-shadow: 0 0 40px rgba(0, 255, 200, 0.1);
         }
         .toast.show { opacity: 1; }
 
         /* --- Animations --- */
         @keyframes shake {
             0%,100%{transform:translateX(0)}
-            20%{transform:translateX(-10px)}
-            40%{transform:translateX(10px)}
-            60%{transform:translateX(-6px)}
-            80%{transform:translateX(6px)}
+            20%{transform:translateX(-12px)}
+            40%{transform:translateX(12px)}
+            60%{transform:translateX(-8px)}
+            80%{transform:translateX(8px)}
         }
         .shake { animation: shake 0.4s ease; }
         @keyframes pop {
             0%{transform:scale(0.5);opacity:0}
-            80%{transform:scale(1.1)}
+            80%{transform:scale(1.08)}
             100%{transform:scale(1);opacity:1}
         }
         .pop { animation: pop 0.4s ease; }
         @keyframes confetti-fall {
             0%{opacity:1;transform:translateY(0) rotate(0deg)}
-            100%{opacity:0;transform:translateY(100px) rotate(360deg)}
+            100%{opacity:0;transform:translateY(120px) rotate(360deg)}
         }
         .confetti-piece {
             position: fixed;
             font-size: 2rem;
             pointer-events: none;
             z-index: 1000;
-            animation: confetti-fall 1s ease-out forwards;
+            animation: confetti-fall 1.2s ease-out forwards;
         }
 
         /* --- Responsive --- */
@@ -385,7 +414,7 @@
             .folder-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
             .folder-header .folder-actions { justify-content: flex-start; }
             .rating-buttons .rating-btn { flex: 1; }
-            .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 150px; }
+            .card-face { font-size: 1.1rem; padding: 1.5rem; min-height: 150px; }
             .card-inner { min-height: 150px; }
         }
     </style>
@@ -401,8 +430,8 @@
     'use strict';
 
     // ---------- STATE ----------
-    let decks = {};           // deckId -> deck object
-    let folders = {};         // folderId -> { name, deckIds: [] }
+    let decks = {};
+    let folders = {};
     let currentView = 'list';
     let currentDeckId = null;
     let currentCardIndex = 0;
@@ -430,7 +459,7 @@
                 Object.keys(decks).forEach(id => {
                     if (!decks[id].cards) decks[id].cards = [];
                     if (!decks[id].topic) decks[id].topic = decks[id].name;
-                    if (!decks[id].folderId) decks[id].folderId = null; // will be set if in folder
+                    if (decks[id].folderId === undefined) decks[id].folderId = null;
                 });
             } else {
                 decks = {};
@@ -441,7 +470,6 @@
             const foldersData = localStorage.getItem(FOLDER_KEY);
             if (foldersData) {
                 folders = JSON.parse(foldersData);
-                // Ensure each folder has deckIds array
                 Object.keys(folders).forEach(id => {
                     if (!folders[id].deckIds) folders[id].deckIds = [];
                 });
@@ -455,30 +483,26 @@
             folders[fid].deckIds = folders[fid].deckIds.filter(did => decks[did]);
         });
 
-        // If no decks, create a sample deck and a sample folder
+        // If no decks, create sample
         if (Object.keys(decks).length === 0) {
             const sampleDeck = {
                 id: 'deck_sample',
                 name: 'Cardiology Basics',
                 topic: 'Cardiology',
                 created: Date.now(),
+                folderId: null,
                 cards: [
                     { id: 'c1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
                     { id: 'c2', front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
-                ],
-                folderId: null
+                ]
             };
             decks[sampleDeck.id] = sampleDeck;
-            // Create a folder and put the sample deck in it
+            // Create a folder
             const folderId = 'folder_' + Date.now();
-            folders[folderId] = {
-                name: 'Cardiology',
-                deckIds: [sampleDeck.id]
-            };
+            folders[folderId] = { name: 'Cardiology', deckIds: [sampleDeck.id] };
             decks[sampleDeck.id].folderId = folderId;
             saveData();
         } else {
-            // Ensure all decks have folderId, if not assigned, set to null
             Object.values(decks).forEach(d => { if (d.folderId === undefined) d.folderId = null; });
         }
     }
@@ -675,7 +699,6 @@
     // ---------- DELETE DECK ----------
     function deleteDeck(deckId) {
         if (!confirm('Delete this deck and all its flashcards?')) return;
-        // Remove from folder
         const deck = decks[deckId];
         if (deck && deck.folderId && folders[deck.folderId]) {
             folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
@@ -724,10 +747,11 @@
         folders[id] = { name: name.trim(), deckIds: [] };
         saveData();
         renderView();
+        showToast(`📁 Folder "${name.trim()}" created. Drag decks here.`);
     }
 
     function deleteFolder(folderId) {
-        if (!confirm(`Delete folder "${folders[folderId].name}" and move its decks to "Uncategorized"?`)) return;
+        if (!confirm(`Delete folder "${folders[folderId]?.name}" and move its decks to "Uncategorized"?`)) return;
         const folder = folders[folderId];
         if (folder) {
             folder.deckIds.forEach(did => {
@@ -768,36 +792,97 @@
         renderView();
     }
 
+    // ---------- MERGE DECKS (drag deck onto another deck) ----------
+    function mergeDecks(sourceDeckId, targetDeckId) {
+        if (sourceDeckId === targetDeckId) return;
+        const source = decks[sourceDeckId];
+        const target = decks[targetDeckId];
+        if (!source || !target) return;
+        if (!confirm(`Merge "${source.name}" into "${target.name}"? This will add all cards from the source deck to the target deck and then delete the source deck.`)) return;
+
+        // Add cards from source to target (avoid duplicates based on front text)
+        const existingFronts = new Set(target.cards.map(c => c.front.trim().toLowerCase()));
+        let added = 0;
+        source.cards.forEach(c => {
+            if (!existingFronts.has(c.front.trim().toLowerCase())) {
+                target.cards.push({
+                    id: 'card_'+targetDeckId+'_'+Date.now()+'_'+Math.random(),
+                    front: c.front,
+                    back: c.back,
+                    easeFactor: c.easeFactor || 2.5,
+                    interval: c.interval || 1,
+                    nextReview: Date.now(),
+                    reviewCount: 0
+                });
+                added++;
+            }
+        });
+        // Delete source deck
+        if (source.folderId && folders[source.folderId]) {
+            folders[source.folderId].deckIds = folders[source.folderId].deckIds.filter(id=>id!==sourceDeckId);
+        }
+        delete decks[sourceDeckId];
+        saveData();
+        showToast(`✅ Merged ${added} new cards into "${target.name}".`);
+        renderView();
+    }
+
     // ---------- DRAG & DROP ----------
     let draggedDeckId = null;
+    let dragTargetIsFolder = false;
     function handleDragStart(e, deckId) {
         draggedDeckId = deckId;
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', deckId);
         setTimeout(() => {
-            e.target.closest('.deck-item')?.classList.add('dragging');
+            const el = e.target.closest('.deck-item');
+            if (el) el.classList.add('dragging');
         }, 0);
     }
     function handleDragEnd(e) {
-        e.target.closest('.deck-item')?.classList.remove('dragging');
+        const el = e.target.closest('.deck-item');
+        if (el) el.classList.remove('dragging');
         document.querySelectorAll('.folder-container').forEach(el => el.classList.remove('drag-over'));
+        document.querySelectorAll('.deck-item').forEach(el => el.classList.remove('drag-over'));
+        dragTargetIsFolder = false;
     }
     function handleDragOver(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        e.currentTarget.classList.add('drag-over');
+        // If target is a folder container, highlight it
+        const folder = e.target.closest('.folder-container');
+        if (folder) {
+            folder.classList.add('drag-over');
+            dragTargetIsFolder = true;
+        } else {
+            // If target is a deck item, highlight it
+            const deckItem = e.target.closest('.deck-item');
+            if (deckItem) {
+                deckItem.classList.add('drag-over');
+                dragTargetIsFolder = false;
+            }
+        }
     }
     function handleDragLeave(e) {
-        e.currentTarget.classList.remove('drag-over');
+        const el = e.target.closest('.folder-container') || e.target.closest('.deck-item');
+        if (el) el.classList.remove('drag-over');
     }
-    function handleDrop(e, folderId) {
+    function handleDrop(e, targetId, type) {
         e.preventDefault();
-        e.currentTarget.classList.remove('drag-over');
-        const deckId = e.dataTransfer.getData('text/plain');
-        if (deckId && decks[deckId]) {
-            moveDeckToFolder(deckId, folderId);
-            showToast(`Moved "${decks[deckId].name}" to "${folders[folderId]?.name || 'Uncategorized'}"`);
+        e.stopPropagation();
+        document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
+        const sourceId = e.dataTransfer.getData('text/plain');
+        if (!sourceId || !decks[sourceId]) return;
+
+        if (type === 'folder') {
+            // Drop onto a folder
+            moveDeckToFolder(sourceId, targetId);
+            showToast(`Moved "${decks[sourceId]?.name}" to "${folders[targetId]?.name || 'Uncategorized'}"`);
+        } else if (type === 'deck') {
+            // Drop onto a deck → merge
+            mergeDecks(sourceId, targetId);
         }
+        draggedDeckId = null;
     }
 
     // ---------- ASK NEXUS ----------
@@ -846,7 +931,7 @@
             app.innerHTML = `
                 <div class="glass-panel">
                     <div style="text-align:center;padding:2rem;">
-                        <i class="fas fa-brain" style="font-size:2rem;opacity:0.6;display:block;margin-bottom:1rem;"></i>
+                        <i class="fas fa-brain" style="font-size:2rem;opacity:0.6;display:block;margin-bottom:1rem;color:#00f0c0;"></i>
                         Generating flashcards <span class="loading-dots">...</span>
                     </div>
                 </div>
@@ -876,7 +961,7 @@
                 <div class="folders-grid" id="folders-grid">
         `;
 
-        // Collect all decks (including those without folder)
+        // Collect all decks
         const allDeckIds = Object.keys(decks);
         const searchTerm = (document.getElementById('search-input')?.value || '').toLowerCase();
 
@@ -892,13 +977,16 @@
             });
         }
 
-        // Get folders that have at least one visible deck
-        const visibleFolderIds = Object.keys(folders).filter(fid => {
+        // Get all folders (including empty ones)
+        const folderIds = Object.keys(folders);
+        const visibleFolderIds = folderIds.filter(fid => {
+            // Show folder if it has any deck that passes filter, OR if it's empty (so user can drag decks into it)
             const folder = folders[fid];
-            return folder.deckIds.some(did => filteredDeckIds.includes(did));
+            const hasVisible = folder.deckIds.some(did => filteredDeckIds.includes(did));
+            // Always show folder if it's empty (so it's visible for dropping) or has visible decks
+            return folder.deckIds.length === 0 || hasVisible;
         });
 
-        // Render each folder
         if (visibleFolderIds.length === 0 && filteredDeckIds.length === 0) {
             html += `<div class="empty-state"><i class="fas fa-layer-group"></i><h3>No decks found</h3><p>Create a deck or adjust your search.</p></div>`;
         } else {
@@ -906,11 +994,10 @@
             visibleFolderIds.forEach(fid => {
                 const folder = folders[fid];
                 const deckIdsInFolder = folder.deckIds.filter(did => filteredDeckIds.includes(did));
-                if (deckIdsInFolder.length === 0) return;
                 html += `
                     <div class="folder-container" 
                          draggable="false"
-                         ondrop="window.handleDrop(event, '${fid}')" 
+                         ondrop="window.handleDrop(event, '${fid}', 'folder')" 
                          ondragover="window.handleDragOver(event)" 
                          ondragleave="window.handleDragLeave(event)">
                         <div class="folder-header">
@@ -921,6 +1008,7 @@
                             </div>
                         </div>
                         <div class="deck-grid">
+                            ${deckIdsInFolder.length === 0 ? '<div class="folder-empty">Drop decks here</div>' : ''}
                             ${deckIdsInFolder.map(did => renderDeckItem(did)).join('')}
                         </div>
                     </div>
@@ -936,7 +1024,7 @@
                 html += `
                     <div class="folder-container" 
                          draggable="false"
-                         ondrop="window.handleDrop(event, null)" 
+                         ondrop="window.handleDrop(event, null, 'folder')" 
                          ondragover="window.handleDragOver(event)" 
                          ondragleave="window.handleDragLeave(event)">
                         <div class="folder-header">
@@ -953,16 +1041,12 @@
         html += `</div></div>`;
         app.innerHTML = html;
 
-        // Attach event listeners for drag and drop (since we use inline, we need to ensure global functions)
-        // Also attach the generate button
         document.getElementById('generate-btn').addEventListener('click', ()=>{
             const topic = document.getElementById('topic-input').value.trim();
             if (topic) { generateDeck(topic, null); document.getElementById('topic-input').value=''; }
             else showToast('Please enter a topic.');
         });
         document.getElementById('topic-input').addEventListener('keypress', e=>{ if(e.key==='Enter') document.getElementById('generate-btn').click(); });
-
-        // For mobile: we might want a context menu to move deck to folder, but we'll keep it simple: we can add a dropdown later.
     }
 
     function renderDeckItem(deckId) {
@@ -971,7 +1055,12 @@
         const due = getDueCards(deck).length;
         const total = deck.cards.length;
         return `
-            <div class="deck-item" draggable="true" ondragstart="window.handleDragStart(event, '${deckId}')" ondragend="window.handleDragEnd(event)">
+            <div class="deck-item" draggable="true" 
+                 ondragstart="window.handleDragStart(event, '${deckId}')" 
+                 ondragend="window.handleDragEnd(event)"
+                 ondrop="window.handleDrop(event, '${deckId}', 'deck')"
+                 ondragover="window.handleDragOver(event)"
+                 ondragleave="window.handleDragLeave(event)">
                 <div class="deck-name">${escapeHtml(deck.name)}</div>
                 <div class="deck-meta">${total} cards · ${due} due</div>
                 <div class="deck-actions">
@@ -994,7 +1083,7 @@
                 app.innerHTML = `
                     <div class="glass-panel">
                         <div class="empty-state">
-                            <i class="fas fa-check-circle" style="color:#28a745;opacity:1;"></i>
+                            <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
                             <h3>All caught up!</h3>
                             <p>Want to learn more about "${escapeHtml(deck.name)}"?</p>
                             <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
@@ -1009,7 +1098,7 @@
                 app.innerHTML = `
                     <div class="glass-panel">
                         <div class="empty-state">
-                            <i class="fas fa-check-circle" style="color:#28a745;opacity:1;"></i>
+                            <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
                             <h3>All caught up!</h3>
                             <p>Come back later for spaced repetition.</p>
                             <button class="btn btn-primary" onclick="window.goToDeckList()">Back to Decks</button>
@@ -1036,7 +1125,7 @@
                     <button class="btn btn-secondary btn-sm" onclick="window.goToDeckList()"><i class="fas fa-arrow-left"></i> Decks</button>
                     <span class="practice-stats">${idx} / ${total} · ${progress}%</span>
                 </div>
-                <h2 style="font-size:1.3rem;font-weight:600;color:#0a2942;margin-bottom:0.2rem;">${escapeHtml(deck.name)}</h2>
+                <h2 style="font-size:1.4rem;font-weight:600;color:#b0e0f0;margin-bottom:0.2rem;">${escapeHtml(deck.name)}</h2>
                 <div class="card-flip" id="card-flip">
                     <div class="card-inner" id="card-inner">
                         <div class="card-face front">
@@ -1116,9 +1205,6 @@
         const deck = decks[deckId];
         if (!deck) { showToast('Deck not found.'); return; }
         const existingFronts = deck.cards.map(c=>c.front);
-        // We'll generate with same topic, but we need to add to existing deck.
-        // We'll re-use generateDeck but with a different flow; for simplicity, we'll use a separate function.
-        // For now, we'll just generate new cards and append.
         if (isGenerating) return;
         isGenerating = true;
         renderView();
@@ -1157,7 +1243,6 @@
             } catch(e) {
                 console.error(e);
                 showToast('Failed to add cards. Using fallback.');
-                // fallback
                 const fb = getFallbackCards(topic).slice(0,3);
                 const startIdx = deck.cards.length;
                 fb.forEach((c,i)=>{
@@ -1202,13 +1287,13 @@
     window.deleteFolder = deleteFolder;
     window.renameFolder = renameFolder;
     window.moveDeckToFolder = moveDeckToFolder;
+    window.mergeDecks = mergeDecks;
     window.handleDragStart = handleDragStart;
     window.handleDragEnd = handleDragEnd;
     window.handleDragOver = handleDragOver;
     window.handleDragLeave = handleDragLeave;
     window.handleDrop = handleDrop;
     window.updateSearch = function(value) {
-        // just re-render, the search input value is read in renderList
         renderView();
     };
 
