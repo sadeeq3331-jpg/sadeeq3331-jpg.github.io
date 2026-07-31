@@ -339,10 +339,9 @@
             display: none;
         }
 
-        /* --- Professional Card (new style) --- */
+        /* --- Professional Card (full‑width, no side gaps) --- */
         .practice-container {
-            max-width: 900px;
-            margin: 0 auto;
+            max-width: 100%;
         }
         .card-flip {
             perspective: 1200px;
@@ -352,6 +351,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100%;
         }
         .card-inner {
             position: relative;
@@ -362,6 +362,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transform-origin: center center;
         }
         .card-inner.flipped {
             transform: rotateX(180deg);
@@ -613,9 +614,7 @@
                 if (d.folderId === undefined) d.folderId = null;
                 d.children = d.children.filter(cid => decks[cid]);
                 if (d.parentId && !decks[d.parentId]) d.parentId = null;
-                // If a deck has a parent, it should not have a folder (we'll remove it from folder)
                 if (d.parentId && d.folderId) {
-                    // Remove from folder
                     if (folders[d.folderId]) {
                         folders[d.folderId].deckIds = folders[d.folderId].deckIds.filter(id => id !== d.id);
                     }
@@ -623,7 +622,6 @@
                 }
             });
 
-            // Ensure folder deckIds only contain top-level decks (parentId === null)
             Object.keys(folders).forEach(fid => {
                 folders[fid].deckIds = folders[fid].deckIds.filter(did => {
                     const d = decks[did];
@@ -960,7 +958,6 @@
         function moveDeckToFolder(deckId, folderId) {
             const deck = decks[deckId];
             if (!deck) return;
-            // If deck has a parent, we cannot move it to a folder (it must remain a child)
             if (deck.parentId) {
                 showToast('Cannot move a sub‑deck to a folder. Remove it from its parent first.');
                 return;
@@ -987,7 +984,6 @@
             const parent = decks[parentId];
             if (!child || !parent) return;
 
-            // Prevent cycles
             let isDescendant = false;
             let check = parent;
             while (check) {
@@ -999,16 +995,13 @@
                 return;
             }
 
-            // Remove child from its current parent
             if (child.parentId && decks[child.parentId]) {
                 decks[child.parentId].children = decks[child.parentId].children.filter(id => id !== childId);
             }
-            // Remove child from any folder (it will now only appear as child)
             if (child.folderId && folders[child.folderId]) {
                 folders[child.folderId].deckIds = folders[child.folderId].deckIds.filter(id => id !== childId);
                 child.folderId = null;
             }
-            // Set new parent
             child.parentId = parentId;
             if (!parent.children.includes(childId)) {
                 parent.children.push(childId);
@@ -1027,7 +1020,6 @@
                 oldParent.children = oldParent.children.filter(id => id !== deckId);
             }
             deck.parentId = null;
-            // If the deck had no folder, it will appear in "Uncategorized"
             saveData();
             renderView();
             showToast(`"${deck.name}" moved to root level.`);
@@ -1055,7 +1047,6 @@
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-            // auto-scroll
             const y = e.clientY;
             const threshold = 80;
             const container = document.querySelector('.container');
@@ -1243,7 +1234,6 @@
                 return d.children.some(cid => deckMatches(cid));
             }
 
-            // Only show top-level decks (parentId === null) in folders and uncategorized
             const topLevelDecks = Object.keys(decks).filter(id => decks[id].parentId === null);
 
             const folderIds = Object.keys(folders);
@@ -1372,7 +1362,7 @@
             renderView();
         };
 
-        // ---------- PRACTICE ----------
+        // ---------- PRACTICE (full‑width card) ----------
         function renderPractice(app) {
             const deck = decks[currentDeckId];
             if (!deck) { currentView='list'; renderView(); return; }
