@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* --- Reset & Variables --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --bg: #0d1f2c;
@@ -22,6 +21,8 @@
             --secondary: #3b82f6;
             --radius: 1.2rem;
             --shadow: 0 8px 32px rgba(0,0,0,0.2);
+            --card-bg: rgba(255,255,255,0.06);
+            --card-border: rgba(0, 212, 176, 0.15);
         }
         html, body {
             height: 100%;
@@ -186,7 +187,7 @@
             box-shadow: 0 0 0 3px var(--primary-glow);
         }
 
-        /* --- Folders & Tree (new clean style) --- */
+        /* --- Folders & Tree --- */
         .folders-grid {
             display: flex;
             flex-direction: column;
@@ -338,17 +339,16 @@
             display: none;
         }
 
-        /* --- Practice Card (new design) --- */
+        /* --- Professional Card (new style) --- */
         .practice-container {
-            text-align: center;
-            max-width: 700px;
+            max-width: 900px;
             margin: 0 auto;
         }
         .card-flip {
-            perspective: 900px;
+            perspective: 1200px;
             margin: 1.5rem 0;
             cursor: pointer;
-            min-height: 200px;
+            min-height: 260px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -356,10 +356,9 @@
         .card-inner {
             position: relative;
             width: 100%;
-            max-width: 650px;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
-            min-height: 200px;
+            min-height: 260px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -372,53 +371,55 @@
             width: 100%;
             backface-visibility: hidden;
             border-radius: 2rem;
-            padding: 2.2rem 2rem;
-            background: linear-gradient(145deg, rgba(20, 40, 60, 0.7), rgba(10, 25, 40, 0.8));
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 212, 176, 0.15);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 30px rgba(0,212,176,0.04);
+            padding: 2.5rem 2.8rem;
+            background: linear-gradient(145deg, rgba(20, 40, 60, 0.75), rgba(10, 25, 40, 0.85));
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.3), 0 0 40px rgba(0,212,176,0.04);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            line-height: 1.7;
+            font-size: 1.3rem;
+            line-height: 1.8;
             color: #f0f8ff;
-            min-height: 180px;
+            min-height: 240px;
             height: auto;
             word-wrap: break-word;
             overflow-wrap: break-word;
             transition: box-shadow 0.3s;
+            text-align: center;
         }
         .card-face:hover {
-            box-shadow: 0 16px 50px rgba(0,0,0,0.4), 0 0 40px rgba(0,212,176,0.06);
+            box-shadow: 0 16px 56px rgba(0,0,0,0.4), 0 0 50px rgba(0,212,176,0.08);
         }
         .card-face.back {
             transform: rotateX(180deg);
-            background: linear-gradient(145deg, rgba(0, 40, 70, 0.7), rgba(0, 20, 50, 0.8));
+            background: linear-gradient(145deg, rgba(0, 40, 70, 0.75), rgba(0, 20, 50, 0.85));
             border-color: rgba(59, 130, 246, 0.2);
         }
         .card-face .card-label {
             position: absolute;
-            top: 1rem;
-            left: 1.5rem;
+            top: 1.2rem;
+            left: 1.8rem;
             font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255,255,255,0.25);
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.2);
         }
         .card-face .card-text {
             margin-top: 0.5rem;
             width: 100%;
         }
         .card-face .click-hint {
-            margin-top: 1.5rem;
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.2);
+            margin-top: 1.8rem;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 0.5px;
         }
         .card-face .nexus-btn-area {
-            margin-top: 1.2rem;
+            margin-top: 1.5rem;
         }
 
         .rating-buttons {
@@ -429,7 +430,7 @@
             margin-top: 2rem;
         }
         .rating-btn {
-            padding: 0.6rem 1.6rem;
+            padding: 0.6rem 1.8rem;
             border: none;
             border-radius: 3rem;
             font-weight: 600;
@@ -529,13 +530,14 @@
             .folder-header { flex-direction: column; align-items: stretch; gap: 0.4rem; }
             .folder-header .folder-actions { justify-content: flex-start; }
             .rating-buttons .rating-btn { flex: 1; }
-            .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 140px; }
-            .card-inner { min-height: 140px; }
+            .card-face { font-size: 1.1rem; padding: 1.8rem 1.5rem; min-height: 180px; }
+            .card-inner { min-height: 180px; }
             .btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
         }
         @media (max-width: 480px) {
             .container { padding: 0.8rem 0.5rem; }
             .glass-panel { border-radius: 1rem; padding: 0.8rem; }
+            .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 150px; }
         }
     </style>
 </head>
@@ -582,6 +584,7 @@
                         if (!decks[id].topic) decks[id].topic = decks[id].name;
                         if (decks[id].parentId === undefined) decks[id].parentId = null;
                         if (decks[id].children === undefined) decks[id].children = [];
+                        if (decks[id].folderId === undefined) decks[id].folderId = null;
                     });
                 } else {
                     decks = {};
@@ -607,8 +610,25 @@
             Object.values(decks).forEach(d => {
                 if (!d.children) d.children = [];
                 if (d.parentId === undefined) d.parentId = null;
+                if (d.folderId === undefined) d.folderId = null;
                 d.children = d.children.filter(cid => decks[cid]);
                 if (d.parentId && !decks[d.parentId]) d.parentId = null;
+                // If a deck has a parent, it should not have a folder (we'll remove it from folder)
+                if (d.parentId && d.folderId) {
+                    // Remove from folder
+                    if (folders[d.folderId]) {
+                        folders[d.folderId].deckIds = folders[d.folderId].deckIds.filter(id => id !== d.id);
+                    }
+                    d.folderId = null;
+                }
+            });
+
+            // Ensure folder deckIds only contain top-level decks (parentId === null)
+            Object.keys(folders).forEach(fid => {
+                folders[fid].deckIds = folders[fid].deckIds.filter(did => {
+                    const d = decks[did];
+                    return d && d.parentId === null;
+                });
             });
 
             if (Object.keys(decks).length === 0) {
@@ -619,6 +639,7 @@
                     created: Date.now(),
                     parentId: null,
                     children: [],
+                    folderId: null,
                     cards: [
                         { id: 'c1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
                         { id: 'c2', front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
@@ -765,6 +786,7 @@
                     created: Date.now(),
                     parentId: parentId || null,
                     children: [],
+                    folderId: folderId || null,
                     cards: cards.map((c,i)=>({
                         id: 'card_'+deckId+'_'+i,
                         front: c.front,
@@ -802,6 +824,7 @@
                     created: Date.now(),
                     parentId: parentId || null,
                     children: [],
+                    folderId: folderId || null,
                     cards: fallbackCards.map((c,i)=>({
                         id: 'card_'+deckId+'_'+i,
                         front: c.front,
@@ -937,6 +960,11 @@
         function moveDeckToFolder(deckId, folderId) {
             const deck = decks[deckId];
             if (!deck) return;
+            // If deck has a parent, we cannot move it to a folder (it must remain a child)
+            if (deck.parentId) {
+                showToast('Cannot move a sub‑deck to a folder. Remove it from its parent first.');
+                return;
+            }
             if (deck.folderId && folders[deck.folderId]) {
                 folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
             }
@@ -959,6 +987,7 @@
             const parent = decks[parentId];
             if (!child || !parent) return;
 
+            // Prevent cycles
             let isDescendant = false;
             let check = parent;
             while (check) {
@@ -970,9 +999,16 @@
                 return;
             }
 
+            // Remove child from its current parent
             if (child.parentId && decks[child.parentId]) {
                 decks[child.parentId].children = decks[child.parentId].children.filter(id => id !== childId);
             }
+            // Remove child from any folder (it will now only appear as child)
+            if (child.folderId && folders[child.folderId]) {
+                folders[child.folderId].deckIds = folders[child.folderId].deckIds.filter(id => id !== childId);
+                child.folderId = null;
+            }
+            // Set new parent
             child.parentId = parentId;
             if (!parent.children.includes(childId)) {
                 parent.children.push(childId);
@@ -991,6 +1027,7 @@
                 oldParent.children = oldParent.children.filter(id => id !== deckId);
             }
             deck.parentId = null;
+            // If the deck had no folder, it will appear in "Uncategorized"
             saveData();
             renderView();
             showToast(`"${deck.name}" moved to root level.`);
@@ -1206,21 +1243,24 @@
                 return d.children.some(cid => deckMatches(cid));
             }
 
+            // Only show top-level decks (parentId === null) in folders and uncategorized
+            const topLevelDecks = Object.keys(decks).filter(id => decks[id].parentId === null);
+
             const folderIds = Object.keys(folders);
             const visibleFolderIds = folderIds.filter(fid => {
                 const folder = folders[fid];
-                const hasVisible = folder.deckIds.some(did => deckMatches(did));
+                const hasVisible = folder.deckIds.some(did => deckMatches(did) && decks[did]?.parentId === null);
                 return folder.deckIds.length === 0 || hasVisible;
             });
 
-            const uncategorizedIds = Object.keys(decks).filter(id => {
+            const uncategorizedIds = topLevelDecks.filter(id => {
                 const d = decks[id];
                 return !d.folderId && deckMatches(id);
             });
 
             visibleFolderIds.forEach(fid => {
                 const folder = folders[fid];
-                const deckIdsInFolder = folder.deckIds.filter(did => deckMatches(did));
+                const deckIdsInFolder = folder.deckIds.filter(did => deckMatches(did) && decks[did]?.parentId === null);
                 const isExpanded = expanded.folders[fid] !== false;
                 html += `
                     <div class="folder-container" 
@@ -1231,7 +1271,7 @@
                         <div class="folder-header" onclick="window.toggleFolder('${fid}')">
                             <span class="folder-name">
                                 <i class="fas ${isExpanded ? 'fa-folder-open' : 'fa-folder'}"></i> ${escapeHtml(folder.name)}
-                                <span style="font-size:0.8rem;color:var(--muted);margin-left:0.5rem;">${folder.deckIds.length}</span>
+                                <span style="font-size:0.8rem;color:var(--muted);margin-left:0.5rem;">${deckIdsInFolder.length}</span>
                             </span>
                             <div class="folder-actions" onclick="event.stopPropagation();">
                                 <button class="btn btn-secondary btn-sm" onclick="window.renameFolder('${fid}', prompt('New folder name:', '${escapeHtml(folder.name)}'))"><i class="fas fa-edit"></i></button>
