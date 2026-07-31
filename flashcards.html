@@ -8,18 +8,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* --- Reset & Base --- */
+        /* --- Reset & Variables --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0d1f2c;
+            --surface: rgba(255,255,255,0.04);
+            --glass: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.08);
+            --text: #e8f0f8;
+            --muted: #8ab4d0;
+            --primary: #00d4b0;
+            --primary-glow: rgba(0, 212, 176, 0.3);
+            --secondary: #3b82f6;
+            --radius: 1.2rem;
+            --shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
         html, body {
             height: 100%;
             font-family: 'Inter', system-ui, sans-serif;
-            background: #0b1a2a;
+            background: var(--bg);
+            color: var(--text);
             padding: 0;
             margin: 0;
-            color: #e0e8f0;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 1.5rem 1rem;
             min-height: 100vh;
@@ -27,36 +40,35 @@
             flex-direction: column;
         }
 
-        /* --- Glass Panel with Neon Glow --- */
+        /* --- Glass Panel --- */
         .glass-panel {
-            background: rgba(20, 40, 60, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 2rem;
-            border: 1px solid rgba(0, 255, 200, 0.15);
-            box-shadow: 0 0 40px rgba(0, 255, 200, 0.08), inset 0 0 30px rgba(0, 255, 200, 0.02);
-            padding: 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            padding: 1.8rem;
             margin-bottom: 1.5rem;
             transition: box-shadow 0.3s;
         }
         .glass-panel:hover {
-            box-shadow: 0 0 60px rgba(0, 255, 200, 0.12), inset 0 0 30px rgba(0, 255, 200, 0.03);
+            box-shadow: 0 8px 40px rgba(0, 212, 176, 0.06);
         }
 
         .page-title {
-            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-size: clamp(2rem, 5vw, 3rem);
             font-weight: 700;
-            background: linear-gradient(135deg, #00f0c0, #0080ff);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
         .subtitle {
-            color: #8ab4d0;
+            color: var(--muted);
             margin-bottom: 1.5rem;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             opacity: 0.8;
         }
 
@@ -71,25 +83,25 @@
         .create-deck input {
             flex: 1;
             min-width: 200px;
-            padding: 0.75rem 1.2rem;
+            padding: 0.7rem 1.2rem;
             border-radius: 3rem;
-            border: 1px solid rgba(0, 255, 200, 0.2);
-            background: rgba(255,255,255,0.05);
-            color: #e0e8f0;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.04);
+            color: var(--text);
             font-size: 1rem;
             outline: none;
             transition: 0.3s;
         }
         .create-deck input:focus {
-            border-color: #00f0c0;
-            box-shadow: 0 0 20px rgba(0, 255, 200, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
         }
         .create-deck input::placeholder {
-            color: #6a8aa0;
+            color: var(--muted);
         }
 
         .btn {
-            padding: 0.75rem 1.8rem;
+            padding: 0.7rem 1.6rem;
             border: none;
             border-radius: 3rem;
             font-weight: 600;
@@ -99,28 +111,58 @@
             gap: 0.5rem;
             transition: all 0.25s;
             background: rgba(255,255,255,0.06);
-            color: #e0e8f0;
-            border: 1px solid rgba(0, 255, 200, 0.15);
+            color: var(--text);
+            border: 1px solid var(--border);
             backdrop-filter: blur(4px);
         }
         .btn-primary {
-            background: linear-gradient(135deg, #00c8a0, #0070e0);
-            color: white;
+            background: linear-gradient(135deg, var(--primary), #00a88a);
+            color: #fff;
             border: none;
-            box-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
+            box-shadow: 0 0 30px var(--primary-glow);
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(0, 255, 200, 0.4); }
-        .btn-secondary { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.15); }
-        .btn-danger { background: rgba(255,60,60,0.2); border-color: rgba(255,60,60,0.3); color: #ff7a7a; }
-        .btn-danger:hover { background: rgba(255,60,60,0.35); }
-        .btn-sm { padding: 0.3rem 0.9rem; font-size: 0.8rem; }
-        .btn-success { background: rgba(0,220,120,0.2); border-color: rgba(0,220,120,0.3); color: #66eeaa; }
-        .btn-success:hover { background: rgba(0,220,120,0.35); }
-        .btn-warning { background: rgba(255,200,0,0.15); border-color: rgba(255,200,0,0.2); color: #f0d060; }
-        .btn-warning:hover { background: rgba(255,200,0,0.3); }
-        .btn-nexus { background: rgba(150,80,255,0.2); border-color: rgba(150,80,255,0.3); color: #c090ff; }
-        .btn-nexus:hover { background: rgba(150,80,255,0.35); }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px var(--primary-glow);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        .btn-danger {
+            background: rgba(255,70,70,0.15);
+            border-color: rgba(255,70,70,0.2);
+            color: #ff7a7a;
+        }
+        .btn-danger:hover {
+            background: rgba(255,70,70,0.25);
+        }
+        .btn-sm {
+            padding: 0.25rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 2rem;
+        }
+        .btn-success {
+            background: rgba(0,220,120,0.12);
+            border-color: rgba(0,220,120,0.2);
+            color: #66eeaa;
+        }
+        .btn-success:hover { background: rgba(0,220,120,0.2); }
+        .btn-warning {
+            background: rgba(255,200,0,0.1);
+            border-color: rgba(255,200,0,0.15);
+            color: #f0d060;
+        }
+        .btn-warning:hover { background: rgba(255,200,0,0.2); }
+        .btn-nexus {
+            background: rgba(150,80,255,0.12);
+            border-color: rgba(150,80,255,0.2);
+            color: #c090ff;
+        }
+        .btn-nexus:hover { background: rgba(150,80,255,0.2); }
 
         /* --- Search --- */
         .search-bar {
@@ -132,209 +174,229 @@
             flex: 1;
             padding: 0.6rem 1.2rem;
             border-radius: 3rem;
-            border: 1px solid rgba(0, 255, 200, 0.1);
-            background: rgba(255,255,255,0.04);
-            color: #e0e8f0;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+            color: var(--text);
             font-size: 0.95rem;
             outline: none;
             transition: 0.3s;
         }
         .search-bar input:focus {
-            border-color: #00f0c0;
-            box-shadow: 0 0 20px rgba(0, 255, 200, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
         }
 
-        /* --- Folders & Tree --- */
+        /* --- Folders & Tree (new clean style) --- */
         .folders-grid {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
         .folder-container {
-            background: rgba(255,255,255,0.03);
-            border-radius: 1.5rem;
-            padding: 1rem;
-            border: 2px dashed rgba(0, 255, 200, 0.08);
-            transition: border-color 0.3s, background 0.3s;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius);
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            transition: border-color 0.3s;
         }
         .folder-container.drag-over {
-            border-color: #00f0c0;
-            background: rgba(0, 255, 200, 0.05);
+            border-color: var(--primary);
+            background: rgba(0, 212, 176, 0.03);
         }
         .folder-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.2rem 0.5rem;
-            margin-bottom: 0.8rem;
+            padding: 0.2rem 0.2rem 0.6rem 0.2rem;
             cursor: pointer;
             user-select: none;
+            border-bottom: 1px solid transparent;
+        }
+        .folder-header:hover {
+            border-bottom-color: rgba(255,255,255,0.05);
         }
         .folder-header .folder-name {
             font-weight: 600;
-            font-size: 1.2rem;
-            color: #b0e0f0;
+            font-size: 1.1rem;
+            color: #c0dcec;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            text-shadow: 0 0 20px rgba(0, 200, 255, 0.1);
+        }
+        .folder-header .folder-name i {
+            color: var(--primary);
+            width: 1.4rem;
+            text-align: center;
         }
         .folder-header .folder-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
         .folder-body {
             display: none;
-            padding-left: 0.5rem;
-            border-left: 2px solid rgba(0, 255, 200, 0.05);
-            margin-top: 0.5rem;
+            padding-top: 0.6rem;
+            padding-left: 0.3rem;
+            border-left: 2px solid rgba(0, 212, 176, 0.08);
+            margin-left: 1.2rem;
         }
         .folder-body.open {
             display: block;
         }
         .folder-empty {
-            color: #6a8aa0;
+            color: var(--muted);
             font-size: 0.9rem;
-            padding: 0.5rem 0.8rem;
+            padding: 0.4rem 0;
             font-style: italic;
+            opacity: 0.6;
         }
+
+        /* --- Deck Tree --- */
         .deck-tree {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.3rem;
         }
-
-        /* --- Deck Item (with expand/collapse) --- */
         .deck-item {
-            background: rgba(255,255,255,0.04);
-            border-radius: 1.2rem;
-            padding: 0.8rem 1.2rem;
-            border: 1px solid rgba(0, 255, 200, 0.06);
-            transition: all 0.2s;
-            backdrop-filter: blur(4px);
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.8rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
             cursor: default;
+            gap: 0.5rem;
         }
         .deck-item:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(0, 255, 200, 0.15);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.05);
         }
         .deck-item.dragging {
             opacity: 0.4;
-            transform: scale(0.95);
+            transform: scale(0.96);
         }
         .deck-item.drag-over {
-            border-color: #00f0c0;
-            box-shadow: 0 0 30px rgba(0, 255, 200, 0.15);
+            border-color: var(--primary);
+            background: rgba(0, 212, 176, 0.04);
         }
         .deck-item .deck-left {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.6rem;
             flex: 1;
-            min-width: 150px;
+            min-width: 140px;
         }
         .deck-item .deck-toggle {
             cursor: pointer;
-            font-size: 0.9rem;
-            color: #6a8aa0;
+            font-size: 0.8rem;
+            color: var(--muted);
             transition: 0.2s;
-            width: 1.5rem;
+            width: 1.4rem;
             text-align: center;
         }
         .deck-item .deck-toggle:hover {
-            color: #00f0c0;
+            color: var(--primary);
+        }
+        .deck-item .deck-icon {
+            color: var(--primary);
+            opacity: 0.6;
+            font-size: 0.9rem;
         }
         .deck-item .deck-info {
             display: flex;
             flex-direction: column;
-            gap: 0.2rem;
+            gap: 0.05rem;
             flex: 1;
         }
         .deck-item .deck-name {
-            font-weight: 600;
-            font-size: 1rem;
-            color: #d0e8f0;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #dce8f0;
         }
         .deck-item .deck-meta {
-            font-size: 0.8rem;
-            color: #7a9aaa;
+            font-size: 0.75rem;
+            color: var(--muted);
+            opacity: 0.7;
         }
         .deck-item .deck-actions {
             display: flex;
-            gap: 0.4rem;
+            gap: 0.3rem;
             flex-wrap: wrap;
         }
         .deck-item .child-decks {
-            padding-left: 1.5rem;
-            border-left: 2px solid rgba(0, 255, 200, 0.05);
-            margin-top: 0.5rem;
+            padding-left: 1.6rem;
+            border-left: 2px solid rgba(0, 212, 176, 0.05);
+            margin-top: 0.3rem;
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.3rem;
         }
         .deck-item .child-decks.collapsed {
             display: none;
         }
 
-        /* --- Practice --- */
-        .practice-container { text-align: center; }
+        /* --- Practice Card (new design) --- */
+        .practice-container {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
         .card-flip {
-            perspective: 1000px;
-            margin: 1.5rem auto;
+            perspective: 900px;
+            margin: 1.5rem 0;
             cursor: pointer;
+            min-height: 200px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 200px;
-            width: 100%;
         }
         .card-inner {
             position: relative;
             width: 100%;
-            max-width: 750px;
+            max-width: 650px;
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
+            min-height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
         }
-        .card-inner.flipped { transform: rotateX(180deg); }
-
+        .card-inner.flipped {
+            transform: rotateX(180deg);
+        }
         .card-face {
             position: relative;
             width: 100%;
             backface-visibility: hidden;
             border-radius: 2rem;
-            padding: 2.5rem 2rem;
-            background: rgba(10, 30, 50, 0.7);
+            padding: 2.2rem 2rem;
+            background: linear-gradient(145deg, rgba(20, 40, 60, 0.7), rgba(10, 25, 40, 0.8));
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 255, 200, 0.15);
-            box-shadow: 0 0 50px rgba(0, 255, 200, 0.06), inset 0 0 30px rgba(0, 255, 200, 0.02);
+            border: 1px solid rgba(0, 212, 176, 0.15);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 30px rgba(0,212,176,0.04);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             line-height: 1.7;
-            color: #e8f0f8;
+            color: #f0f8ff;
             min-height: 180px;
             height: auto;
             word-wrap: break-word;
             overflow-wrap: break-word;
             transition: box-shadow 0.3s;
-            margin-bottom: 0;
+        }
+        .card-face:hover {
+            box-shadow: 0 16px 50px rgba(0,0,0,0.4), 0 0 40px rgba(0,212,176,0.06);
         }
         .card-face.back {
             transform: rotateX(180deg);
-            background: rgba(0, 40, 70, 0.6);
-            border-color: rgba(0, 150, 255, 0.2);
+            background: linear-gradient(145deg, rgba(0, 40, 70, 0.7), rgba(0, 20, 50, 0.8));
+            border-color: rgba(59, 130, 246, 0.2);
         }
         .card-face .card-label {
             position: absolute;
@@ -343,9 +405,8 @@
             font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            color: #5a8aaa;
             letter-spacing: 1px;
-            opacity: 0.7;
+            color: rgba(255,255,255,0.25);
         }
         .card-face .card-text {
             margin-top: 0.5rem;
@@ -353,9 +414,8 @@
         }
         .card-face .click-hint {
             margin-top: 1.5rem;
-            font-size: 0.8rem;
-            color: #5a8aaa;
-            opacity: 0.6;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.2);
         }
         .card-face .nexus-btn-area {
             margin-top: 1.2rem;
@@ -365,46 +425,51 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 1rem;
+            gap: 0.8rem;
             margin-top: 2rem;
         }
         .rating-btn {
-            padding: 0.7rem 1.8rem;
+            padding: 0.6rem 1.6rem;
             border: none;
             border-radius: 3rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            background: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
             color: #d0e0e8;
-            border: 1px solid rgba(0, 255, 200, 0.1);
-            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.06);
         }
-        .rating-btn:hover { transform: scale(1.08); }
-        .rating-btn:active { transform: scale(0.92); }
-        .rating-btn.again { background: rgba(255,60,60,0.15); border-color: rgba(255,60,60,0.3); color: #ff7a7a; }
-        .rating-btn.again:hover { background: rgba(255,60,60,0.25); }
-        .rating-btn.hard { background: rgba(255,200,0,0.1); border-color: rgba(255,200,0,0.2); color: #f0d060; }
-        .rating-btn.hard:hover { background: rgba(255,200,0,0.2); }
-        .rating-btn.good { background: rgba(0,220,120,0.1); border-color: rgba(0,220,120,0.2); color: #66eeaa; }
-        .rating-btn.good:hover { background: rgba(0,220,120,0.2); }
-        .rating-btn.easy { background: rgba(0,150,255,0.1); border-color: rgba(0,150,255,0.2); color: #66bbff; }
-        .rating-btn.easy:hover { background: rgba(0,150,255,0.2); }
+        .rating-btn:hover { transform: scale(1.06); }
+        .rating-btn:active { transform: scale(0.94); }
+        .rating-btn.again { background: rgba(255,60,60,0.12); border-color: rgba(255,60,60,0.2); color: #ff7a7a; }
+        .rating-btn.again:hover { background: rgba(255,60,60,0.2); }
+        .rating-btn.hard { background: rgba(255,200,0,0.08); border-color: rgba(255,200,0,0.15); color: #f0d060; }
+        .rating-btn.hard:hover { background: rgba(255,200,0,0.15); }
+        .rating-btn.good { background: rgba(0,220,120,0.08); border-color: rgba(0,220,120,0.15); color: #66eeaa; }
+        .rating-btn.good:hover { background: rgba(0,220,120,0.15); }
+        .rating-btn.easy { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.15); color: #6bb4ff; }
+        .rating-btn.easy:hover { background: rgba(59,130,246,0.15); }
 
         .practice-stats {
-            font-size: 0.95rem;
-            color: #8ab4d0;
-            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
         }
 
         /* --- Empty State --- */
         .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
-            color: #6a8aa0;
+            padding: 2.5rem 1rem;
+            color: var(--muted);
         }
-        .empty-state i { font-size: 3rem; opacity: 0.3; margin-bottom: 1rem; }
-        .empty-state h3 { margin-bottom: 0.5rem; }
+        .empty-state i {
+            font-size: 2.5rem;
+            opacity: 0.2;
+            margin-bottom: 0.8rem;
+        }
+        .empty-state h3 {
+            font-weight: 400;
+        }
 
         /* --- Toast --- */
         .toast {
@@ -415,57 +480,62 @@
             background: rgba(0, 20, 40, 0.8);
             backdrop-filter: blur(12px);
             color: #e0e8f0;
-            padding: 0.75rem 2rem;
+            padding: 0.6rem 1.8rem;
             border-radius: 3rem;
             font-size: 0.9rem;
             z-index: 999;
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
-            border: 1px solid rgba(0, 255, 200, 0.15);
-            box-shadow: 0 0 40px rgba(0, 255, 200, 0.1);
+            border: 1px solid rgba(0, 212, 176, 0.12);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
         }
         .toast.show { opacity: 1; }
 
         /* --- Animations --- */
         @keyframes shake {
             0%,100%{transform:translateX(0)}
-            20%{transform:translateX(-12px)}
-            40%{transform:translateX(12px)}
-            60%{transform:translateX(-8px)}
-            80%{transform:translateX(8px)}
+            20%{transform:translateX(-10px)}
+            40%{transform:translateX(10px)}
+            60%{transform:translateX(-6px)}
+            80%{transform:translateX(6px)}
         }
         .shake { animation: shake 0.4s ease; }
         @keyframes pop {
             0%{transform:scale(0.5);opacity:0}
-            80%{transform:scale(1.08)}
+            80%{transform:scale(1.06)}
             100%{transform:scale(1);opacity:1}
         }
         .pop { animation: pop 0.4s ease; }
         @keyframes confetti-fall {
             0%{opacity:1;transform:translateY(0) rotate(0deg)}
-            100%{opacity:0;transform:translateY(120px) rotate(360deg)}
+            100%{opacity:0;transform:translateY(100px) rotate(360deg)}
         }
         .confetti-piece {
             position: fixed;
-            font-size: 2rem;
+            font-size: 1.8rem;
             pointer-events: none;
             z-index: 1000;
-            animation: confetti-fall 1.2s ease-out forwards;
+            animation: confetti-fall 1s ease-out forwards;
         }
 
         /* --- Responsive --- */
         @media (max-width: 700px) {
-            .glass-panel { padding: 1.2rem; }
+            .glass-panel { padding: 1rem; }
             .create-deck { flex-direction: column; align-items: stretch; }
             .create-deck input { width: 100%; }
-            .deck-item { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-            .deck-item .deck-actions { justify-content: center; }
-            .folder-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            .deck-item { flex-direction: column; align-items: stretch; gap: 0.3rem; }
+            .deck-item .deck-actions { justify-content: flex-start; }
+            .folder-header { flex-direction: column; align-items: stretch; gap: 0.4rem; }
             .folder-header .folder-actions { justify-content: flex-start; }
             .rating-buttons .rating-btn { flex: 1; }
-            .card-face { font-size: 1.1rem; padding: 1.5rem; min-height: 150px; }
-            .card-inner { min-height: 150px; }
+            .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 140px; }
+            .card-inner { min-height: 140px; }
+            .btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 0.8rem 0.5rem; }
+            .glass-panel { border-radius: 1rem; padding: 0.8rem; }
         }
     </style>
 </head>
@@ -480,8 +550,8 @@
         'use strict';
 
         // ---------- STATE ----------
-        let decks = {};           // deckId -> deck object
-        let folders = {};         // folderId -> { name, deckIds: [] }
+        let decks = {};
+        let folders = {};
         let currentView = 'list';
         let currentDeckId = null;
         let currentCardIndex = 0;
@@ -490,12 +560,7 @@
         let isGenerating = false;
         const STORAGE_KEY = 'medlib_flashcards';
         const FOLDER_KEY = 'medlib_folders';
-
-        // Expanded state for folders and decks (in-memory only)
-        let expanded = {
-            folders: {}, // folderId: true/false
-            decks: {}    // deckId: true/false
-        };
+        let expanded = { folders: {}, decks: {} };
 
         // ---------- TOAST ----------
         function showToast(msg) {
@@ -535,22 +600,17 @@
                 }
             } catch (e) { folders = {}; }
 
-            // Clean up: remove deck references from folders that no longer exist
+            // Clean up
             Object.keys(folders).forEach(fid => {
                 folders[fid].deckIds = folders[fid].deckIds.filter(did => decks[did]);
             });
-
-            // Ensure each deck has children array and parentId
             Object.values(decks).forEach(d => {
                 if (!d.children) d.children = [];
                 if (d.parentId === undefined) d.parentId = null;
-                // clean children: remove any that don't exist
                 d.children = d.children.filter(cid => decks[cid]);
-                // if parentId points to non-existent, reset
                 if (d.parentId && !decks[d.parentId]) d.parentId = null;
             });
 
-            // If no decks, create a sample deck and a folder
             if (Object.keys(decks).length === 0) {
                 const sampleDeck = {
                     id: 'deck_sample',
@@ -567,12 +627,10 @@
                 decks[sampleDeck.id] = sampleDeck;
                 const folderId = 'folder_' + Date.now();
                 folders[folderId] = { name: 'Cardiology', deckIds: [sampleDeck.id] };
-                saveData();
-                // Expand this folder by default
                 expanded.folders[folderId] = true;
+                saveData();
             }
 
-            // Default: expand all folders and decks
             Object.keys(folders).forEach(fid => { if (expanded.folders[fid] === undefined) expanded.folders[fid] = true; });
             Object.keys(decks).forEach(did => { if (expanded.decks[did] === undefined) expanded.decks[did] = true; });
             saveData();
@@ -618,7 +676,7 @@
             }
         }
 
-        // ---------- AI MODEL SELECTION ----------
+        // ---------- AI ----------
         let cachedModelId = null;
         async function getBestModel() {
             if (cachedModelId) return cachedModelId;
@@ -643,7 +701,6 @@
             }
         }
 
-        // ---------- FALLBACK CARDS ----------
         function getFallbackCards(topic) {
             const lower = topic.toLowerCase();
             if (lower.includes('cardio')) {
@@ -727,7 +784,6 @@
                 if (folderId && folders[folderId]) {
                     folders[folderId].deckIds.push(deckId);
                 }
-                // Expand the new deck and its parent
                 expanded.decks[deckId] = true;
                 if (parentId) expanded.decks[parentId] = true;
                 saveData();
@@ -792,15 +848,12 @@
             const deleteRecursive = (id) => {
                 const d = decks[id];
                 if (!d) return;
-                // Remove from parent's children list
                 if (d.parentId && decks[d.parentId]) {
                     decks[d.parentId].children = decks[d.parentId].children.filter(cid => cid !== id);
                 }
-                // Remove from folder if any
                 if (d.folderId && folders[d.folderId]) {
                     folders[d.folderId].deckIds = folders[d.folderId].deckIds.filter(did => did !== id);
                 }
-                // Delete children first
                 d.children.forEach(cid => deleteRecursive(cid));
                 delete decks[id];
                 delete expanded.decks[id];
@@ -842,7 +895,7 @@
             saveData();
         }
 
-        // ---------- FOLDER OPERATIONS ----------
+        // ---------- FOLDERS ----------
         function createFolder(name) {
             if (!name || name.trim()==='') return;
             const id = 'folder_'+Date.now();
@@ -858,9 +911,7 @@
             const folder = folders[folderId];
             if (folder) {
                 folder.deckIds.forEach(did => {
-                    if (decks[did]) {
-                        decks[did].folderId = null;
-                    }
+                    if (decks[did]) decks[did].folderId = null;
                 });
                 delete folders[folderId];
                 delete expanded.folders[folderId];
@@ -886,11 +937,9 @@
         function moveDeckToFolder(deckId, folderId) {
             const deck = decks[deckId];
             if (!deck) return;
-            // Remove from old folder
             if (deck.folderId && folders[deck.folderId]) {
                 folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
             }
-            // Add to new folder (if not null)
             if (folderId && folders[folderId]) {
                 if (!folders[folderId].deckIds.includes(deckId)) {
                     folders[folderId].deckIds.push(deckId);
@@ -903,14 +952,13 @@
             renderView();
         }
 
-        // ---------- NEST DECK ----------
+        // ---------- NEST / UNNEST ----------
         function nestDeck(childId, parentId) {
             if (childId === parentId) return;
             const child = decks[childId];
             const parent = decks[parentId];
             if (!child || !parent) return;
 
-            // Check if child is already a descendant of parent to avoid cycles
             let isDescendant = false;
             let check = parent;
             while (check) {
@@ -922,23 +970,19 @@
                 return;
             }
 
-            // Remove child from old parent
             if (child.parentId && decks[child.parentId]) {
                 decks[child.parentId].children = decks[child.parentId].children.filter(id => id !== childId);
             }
-            // Set new parent
             child.parentId = parentId;
             if (!parent.children.includes(childId)) {
                 parent.children.push(childId);
             }
-            // Expand the parent
             expanded.decks[parentId] = true;
             saveData();
             renderView();
             showToast(`📚 "${child.name}" nested under "${parent.name}".`);
         }
 
-        // ---------- UNNEST (make root) ----------
         function unnestDeck(deckId) {
             const deck = decks[deckId];
             if (!deck || !deck.parentId) return;
@@ -952,7 +996,7 @@
             showToast(`"${deck.name}" moved to root level.`);
         }
 
-        // ---------- DRAG & DROP (with auto-scroll) ----------
+        // ---------- DRAG & DROP ----------
         let draggedDeckId = null;
 
         function handleDragStart(e, deckId) {
@@ -969,25 +1013,20 @@
             const el = e.target.closest('.deck-item');
             if (el) el.classList.remove('dragging');
             document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
-            clearInterval(window._autoScrollInterval);
         }
 
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
-            // Auto-scroll
+            // auto-scroll
             const y = e.clientY;
             const threshold = 80;
             const container = document.querySelector('.container');
             if (container) {
                 const rect = container.getBoundingClientRect();
-                if (y - rect.top < threshold) {
-                    window.scrollBy(0, -20);
-                } else if (rect.bottom - y < threshold) {
-                    window.scrollBy(0, 20);
-                }
+                if (y - rect.top < threshold) window.scrollBy(0, -20);
+                else if (rect.bottom - y < threshold) window.scrollBy(0, 20);
             }
-            // Highlight
             document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
             const folder = e.target.closest('.folder-container');
             const deckItem = e.target.closest('.deck-item');
@@ -1124,8 +1163,8 @@
             if (isGenerating) {
                 app.innerHTML = `
                     <div class="glass-panel">
-                        <div style="text-align:center;padding:2rem;">
-                            <i class="fas fa-brain" style="font-size:2rem;opacity:0.6;display:block;margin-bottom:1rem;color:#00f0c0;"></i>
+                        <div style="text-align:center;padding:1.5rem;">
+                            <i class="fas fa-brain" style="font-size:2rem;opacity:0.4;display:block;margin-bottom:0.8rem;color:var(--primary);"></i>
                             Generating flashcards <span class="loading-dots">...</span>
                         </div>
                     </div>
@@ -1137,7 +1176,7 @@
             else if (currentView === 'practice') renderPractice(app);
         }
 
-        // ---------- RENDER LIST (with recursive tree) ----------
+        // ---------- RENDER LIST ----------
         function renderList(app) {
             let html = `
                 <div class="glass-panel">
@@ -1167,7 +1206,6 @@
                 return d.children.some(cid => deckMatches(cid));
             }
 
-            // Get all folder IDs (including empty ones)
             const folderIds = Object.keys(folders);
             const visibleFolderIds = folderIds.filter(fid => {
                 const folder = folders[fid];
@@ -1175,13 +1213,11 @@
                 return folder.deckIds.length === 0 || hasVisible;
             });
 
-            // Uncategorized decks (not in any folder) that pass search
             const uncategorizedIds = Object.keys(decks).filter(id => {
                 const d = decks[id];
                 return !d.folderId && deckMatches(id);
             });
 
-            // Render folders
             visibleFolderIds.forEach(fid => {
                 const folder = folders[fid];
                 const deckIdsInFolder = folder.deckIds.filter(did => deckMatches(did));
@@ -1195,7 +1231,7 @@
                         <div class="folder-header" onclick="window.toggleFolder('${fid}')">
                             <span class="folder-name">
                                 <i class="fas ${isExpanded ? 'fa-folder-open' : 'fa-folder'}"></i> ${escapeHtml(folder.name)}
-                                <span style="font-size:0.8rem;color:#6a8aa0;margin-left:0.5rem;">${folder.deckIds.length}</span>
+                                <span style="font-size:0.8rem;color:var(--muted);margin-left:0.5rem;">${folder.deckIds.length}</span>
                             </span>
                             <div class="folder-actions" onclick="event.stopPropagation();">
                                 <button class="btn btn-secondary btn-sm" onclick="window.renameFolder('${fid}', prompt('New folder name:', '${escapeHtml(folder.name)}'))"><i class="fas fa-edit"></i></button>
@@ -1212,7 +1248,6 @@
                 `;
             });
 
-            // Uncategorized
             if (uncategorizedIds.length > 0) {
                 const isExpanded = expanded.folders['uncategorized'] !== false;
                 html += `
@@ -1224,7 +1259,7 @@
                         <div class="folder-header" onclick="window.toggleFolder('uncategorized')">
                             <span class="folder-name">
                                 <i class="fas ${isExpanded ? 'fa-folder-open' : 'fa-folder'}"></i> Uncategorized
-                                <span style="font-size:0.8rem;color:#6a8aa0;margin-left:0.5rem;">${uncategorizedIds.length}</span>
+                                <span style="font-size:0.8rem;color:var(--muted);margin-left:0.5rem;">${uncategorizedIds.length}</span>
                             </span>
                         </div>
                         <div class="folder-body ${isExpanded ? 'open' : ''}">
@@ -1273,17 +1308,18 @@
                      ondragover="window.handleDragOver(event)"
                      ondragleave="window.handleDragLeave(event)">
                     <div class="deck-left">
-                        ${hasChildren ? `<span class="deck-toggle" onclick="event.stopPropagation(); window.toggleDeck('${deckId}')"><i class="fas ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'}"></i></span>` : '<span style="width:1.5rem;"></span>'}
+                        ${hasChildren ? `<span class="deck-toggle" onclick="event.stopPropagation(); window.toggleDeck('${deckId}')"><i class="fas ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'}"></i></span>` : '<span style="width:1.4rem;"></span>'}
+                        <span class="deck-icon"><i class="fas fa-book"></i></span>
                         <div class="deck-info">
                             <div class="deck-name">${escapeHtml(deck.name)}</div>
                             <div class="deck-meta">${total} cards · ${due} due</div>
                         </div>
                     </div>
                     <div class="deck-actions">
-                        <button class="btn btn-primary btn-sm" onclick="window.startPractice('${deckId}')"><i class="fas fa-play"></i> Practice</button>
-                        <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${deckId}')"><i class="fas fa-plus"></i> More</button>
+                        <button class="btn btn-primary btn-sm" onclick="window.startPractice('${deckId}')"><i class="fas fa-play"></i></button>
+                        <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${deckId}')"><i class="fas fa-plus"></i></button>
                         ${deck.parentId ? `<button class="btn btn-secondary btn-sm" onclick="window.unnestDeck('${deckId}')"><i class="fas fa-level-up-alt"></i></button>` : ''}
-                        <button class="btn btn-secondary btn-sm" onclick="window.exportDeckHTML('${deckId}')"><i class="fas fa-print"></i> HTML</button>
+                        <button class="btn btn-secondary btn-sm" onclick="window.exportDeckHTML('${deckId}')"><i class="fas fa-print"></i></button>
                         <button class="btn btn-danger btn-sm" onclick="window.deleteDeck('${deckId}')"><i class="fas fa-trash"></i></button>
                     </div>
                     ${childHtml}
@@ -1291,7 +1327,6 @@
             `;
         }
 
-        // Toggle deck expansion
         window.toggleDeck = function(deckId) {
             expanded.decks[deckId] = !expanded.decks[deckId];
             renderView();
@@ -1306,28 +1341,24 @@
             if (available.length===0) {
                 if (deck.cards.length<15) {
                     app.innerHTML = `
-                        <div class="glass-panel">
-                            <div class="empty-state">
-                                <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
-                                <h3>All caught up!</h3>
-                                <p>Want to learn more about "${escapeHtml(deck.name)}"?</p>
-                                <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
-                                    <button class="btn btn-success" onclick="window.addMoreCards('${currentDeckId}')"><i class="fas fa-plus"></i> Add More Cards</button>
-                                    <button class="btn btn-secondary" onclick="window.goToDeckList()">Back to Decks</button>
-                                </div>
+                        <div class="glass-panel" style="text-align:center;padding:2rem;">
+                            <i class="fas fa-check-circle" style="color:#66eeaa;font-size:2.5rem;opacity:0.6;display:block;margin-bottom:0.8rem;"></i>
+                            <h3 style="font-weight:400;">All caught up!</h3>
+                            <p style="color:var(--muted);">Want to learn more about "${escapeHtml(deck.name)}"?</p>
+                            <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.2rem;">
+                                <button class="btn btn-success" onclick="window.addMoreCards('${currentDeckId}')"><i class="fas fa-plus"></i> Add More</button>
+                                <button class="btn btn-secondary" onclick="window.goToDeckList()">Back to Decks</button>
                             </div>
                         </div>
                     `;
                     return;
                 } else {
                     app.innerHTML = `
-                        <div class="glass-panel">
-                            <div class="empty-state">
-                                <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
-                                <h3>All caught up!</h3>
-                                <p>Come back later for spaced repetition.</p>
-                                <button class="btn btn-primary" onclick="window.goToDeckList()">Back to Decks</button>
-                            </div>
+                        <div class="glass-panel" style="text-align:center;padding:2rem;">
+                            <i class="fas fa-check-circle" style="color:#66eeaa;font-size:2.5rem;opacity:0.6;display:block;margin-bottom:0.8rem;"></i>
+                            <h3 style="font-weight:400;">All caught up!</h3>
+                            <p style="color:var(--muted);">Come back later for spaced repetition.</p>
+                            <button class="btn btn-primary" onclick="window.goToDeckList()">Back to Decks</button>
                         </div>
                     `;
                     return;
@@ -1350,7 +1381,7 @@
                         <button class="btn btn-secondary btn-sm" onclick="window.goToDeckList()"><i class="fas fa-arrow-left"></i> Decks</button>
                         <span class="practice-stats">${idx} / ${total} · ${progress}%</span>
                     </div>
-                    <h2 style="font-size:1.4rem;font-weight:600;color:#b0e0f0;margin-bottom:0.2rem;">${escapeHtml(deck.name)}</h2>
+                    <h2 style="font-size:1.3rem;font-weight:500;color:var(--muted);margin-bottom:0.2rem;">${escapeHtml(deck.name)}</h2>
                     <div class="card-flip" id="card-flip">
                         <div class="card-inner" id="card-inner">
                             <div class="card-face front">
