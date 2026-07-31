@@ -25,29 +25,6 @@
             flex-direction: column;
         }
 
-        /* --- Layout --- */
-        .app-layout {
-            display: flex;
-            gap: 1.5rem;
-            flex: 1;
-        }
-        .sidebar-filters {
-            width: 240px;
-            flex-shrink: 0;
-            background: rgba(255,255,255,0.6);
-            backdrop-filter: blur(12px);
-            border-radius: 1.5rem;
-            padding: 1.2rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-            border: 1px solid rgba(255,255,255,0.5);
-            max-height: calc(100vh - 6rem);
-            overflow-y: auto;
-        }
-        .main-content {
-            flex: 1;
-            min-width: 0;
-        }
-
         .glass-panel {
             background: rgba(255,255,255,0.75);
             backdrop-filter: blur(20px);
@@ -82,7 +59,9 @@
             align-items: center;
             margin-bottom: 1.5rem;
         }
-        .create-deck input, .create-deck select {
+        .create-deck input {
+            flex: 1;
+            min-width: 200px;
             padding: 0.75rem 1.2rem;
             border-radius: 3rem;
             border: 1px solid rgba(0,0,0,0.1);
@@ -90,14 +69,11 @@
             font-size: 1rem;
             outline: none;
         }
-        .create-deck input { flex: 1; min-width: 180px; }
-        .create-deck select { min-width: 130px; cursor: pointer; }
-        .create-deck input:focus, .create-deck select:focus {
+        .create-deck input:focus {
             border-color: #2c7cb0;
             box-shadow: 0 0 0 3px rgba(44,124,176,0.2);
         }
 
-        /* --- Buttons --- */
         .btn {
             padding: 0.75rem 1.8rem;
             border: none;
@@ -130,60 +106,6 @@
         .btn-nexus { background: #6f42c1; color: white; }
         .btn-nexus:hover { background: #5a32a3; }
 
-        /* --- Deck list --- */
-        .deck-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        .deck-item {
-            background: white;
-            border-radius: 1.2rem;
-            padding: 1rem 1.2rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            border: 1px solid rgba(0,0,0,0.04);
-        }
-        .deck-info { display: flex; flex-direction: column; gap: 0.2rem; }
-        .deck-name { font-weight: 600; font-size: 1.1rem; color: #0a2942; }
-        .deck-meta { font-size: 0.85rem; color: #4a627a; }
-        .deck-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-
-        /* --- Category tree --- */
-        .category-tree { margin-top: 1rem; }
-        .category-tree .cat-item {
-            padding: 0.4rem 0.6rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: 0.1s;
-        }
-        .category-tree .cat-item:hover { background: rgba(44,124,176,0.08); }
-        .category-tree .cat-item .sub-items {
-            margin-left: 1.5rem;
-            border-left: 2px solid rgba(0,0,0,0.06);
-            padding-left: 0.8rem;
-        }
-        .category-tree .cat-item .badge {
-            background: #2c7cb0;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            padding: 0 0.5rem;
-        }
-        .category-tree .cat-item .sub-items .sub-item {
-            padding: 0.2rem 0.3rem;
-            border-radius: 0.3rem;
-            font-size: 0.85rem;
-        }
-        .category-tree .cat-item .sub-items .sub-item:hover { background: rgba(44,124,176,0.06); }
-
         /* --- Search bar --- */
         .search-bar {
             display: flex;
@@ -204,28 +126,115 @@
             box-shadow: 0 0 0 3px rgba(44,124,176,0.15);
         }
 
+        /* --- Folder & Deck grid --- */
+        .folders-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .folder-container {
+            background: rgba(255,255,255,0.5);
+            border-radius: 1.2rem;
+            padding: 1rem;
+            border: 2px dashed rgba(44,124,176,0.15);
+            transition: border-color 0.2s;
+        }
+        .folder-container.drag-over {
+            border-color: #2c7cb0;
+            background: rgba(44,124,176,0.05);
+        }
+        .folder-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.2rem 0.5rem;
+            margin-bottom: 0.8rem;
+            cursor: default;
+        }
+        .folder-header .folder-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #0a2942;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .folder-header .folder-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .folder-header .folder-actions .btn {
+            padding: 0.2rem 0.8rem;
+            font-size: 0.8rem;
+        }
+        .deck-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .deck-item {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+            min-width: 180px;
+            flex: 1 0 auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.04);
+            cursor: grab;
+            transition: 0.15s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .deck-item.dragging {
+            opacity: 0.5;
+        }
+        .deck-item .deck-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0a2942;
+        }
+        .deck-item .deck-meta {
+            font-size: 0.8rem;
+            color: #4a627a;
+        }
+        .deck-item .deck-actions {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: 0.3rem;
+        }
+        .deck-item .deck-actions .btn {
+            padding: 0.2rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        .empty-folder {
+            color: #8a9baa;
+            font-size: 0.9rem;
+            padding: 0.5rem 0;
+        }
+
         /* --- Practice --- */
         .practice-container { text-align: center; }
         .card-flip {
             perspective: 1000px;
             margin: 1.5rem auto;
             cursor: pointer;
-            min-height: 240px;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 200px;
         }
         .card-inner {
             position: relative;
             width: 100%;
-            max-width: 600px;
-            min-height: 220px;
+            max-width: 650px;
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
-            /* Prevent vertical shift: fixed height or flex */
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 200px;
         }
         .card-inner.flipped { transform: rotateX(180deg); }
 
@@ -238,7 +247,6 @@
             background: white;
             box-shadow: 0 8px 24px rgba(0,0,0,0.08);
             border: 1px solid rgba(0,0,0,0.04);
-            min-height: 180px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -250,6 +258,10 @@
             left: 0;
             right: 0;
             bottom: 0;
+            min-height: 180px;
+            height: auto !important; /* allow growth */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         .card-face.back {
             transform: rotateX(180deg);
@@ -265,7 +277,12 @@
             color: #6b8ba0;
             letter-spacing: 0.5px;
         }
-        .card-face .card-text { margin-top: 0.5rem; }
+        .card-face .card-text { 
+            margin-top: 0.5rem;
+            width: 100%;
+            max-height: 70vh;
+            overflow-y: auto; /* scroll if extremely long */
+        }
         .card-face .click-hint {
             margin-top: 1rem;
             font-size: 0.8rem;
@@ -360,21 +377,13 @@
         }
 
         /* --- Responsive --- */
-        @media (max-width: 800px) {
-            .app-layout { flex-direction: column; }
-            .sidebar-filters {
-                width: 100%;
-                max-height: none;
-                padding: 1rem;
-            }
-            .create-deck { flex-direction: column; align-items: stretch; }
-            .create-deck input, .create-deck select { width: 100%; }
-        }
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
             .glass-panel { padding: 1.2rem; }
-            .deck-item { flex-direction: column; align-items: stretch; gap: 0.6rem; }
-            .deck-actions { justify-content: stretch; }
-            .deck-actions .btn { flex: 1; justify-content: center; }
+            .create-deck { flex-direction: column; align-items: stretch; }
+            .create-deck input { width: 100%; }
+            .deck-item { flex: 1 1 100%; }
+            .folder-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            .folder-header .folder-actions { justify-content: flex-start; }
             .rating-buttons .rating-btn { flex: 1; }
             .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 150px; }
             .card-inner { min-height: 150px; }
@@ -382,9 +391,7 @@
     </style>
 </head>
 <body>
-<div class="container" id="app">
-    <!-- Dynamic content rendered here -->
-</div>
+<div class="container" id="app"></div>
 <div id="toast" class="toast"></div>
 
 <script src="https://js.puter.com/v2/"></script>
@@ -394,18 +401,16 @@
     'use strict';
 
     // ---------- STATE ----------
-    let decks = {};
-    let currentView = 'list';      // 'list' | 'practice'
+    let decks = {};           // deckId -> deck object
+    let folders = {};         // folderId -> { name, deckIds: [] }
+    let currentView = 'list';
     let currentDeckId = null;
     let currentCardIndex = 0;
     let dueCards = [];
     let isFlipped = false;
     let isGenerating = false;
     const STORAGE_KEY = 'medlib_flashcards';
-
-    // Filters
-    let filterCategory = 'all';
-    let filterSearch = '';
+    const FOLDER_KEY = 'medlib_folders';
 
     // ---------- TOAST ----------
     function showToast(msg) {
@@ -417,43 +422,70 @@
     }
 
     // ---------- STORAGE ----------
-    function loadDecks() {
+    function loadData() {
         try {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (data) {
-                decks = JSON.parse(data);
+            const decksData = localStorage.getItem(STORAGE_KEY);
+            if (decksData) {
+                decks = JSON.parse(decksData);
                 Object.keys(decks).forEach(id => {
                     if (!decks[id].cards) decks[id].cards = [];
                     if (!decks[id].topic) decks[id].topic = decks[id].name;
-                    if (!decks[id].category) decks[id].category = 'Uncategorized';
-                    if (!decks[id].subcategory) decks[id].subcategory = '';
+                    if (!decks[id].folderId) decks[id].folderId = null; // will be set if in folder
                 });
             } else {
                 decks = {};
             }
         } catch (e) { decks = {}; }
 
-        // Add a sample deck if empty
+        try {
+            const foldersData = localStorage.getItem(FOLDER_KEY);
+            if (foldersData) {
+                folders = JSON.parse(foldersData);
+                // Ensure each folder has deckIds array
+                Object.keys(folders).forEach(id => {
+                    if (!folders[id].deckIds) folders[id].deckIds = [];
+                });
+            } else {
+                folders = {};
+            }
+        } catch (e) { folders = {}; }
+
+        // Clean up: remove deck references from folders that no longer exist
+        Object.keys(folders).forEach(fid => {
+            folders[fid].deckIds = folders[fid].deckIds.filter(did => decks[did]);
+        });
+
+        // If no decks, create a sample deck and a sample folder
         if (Object.keys(decks).length === 0) {
-            const sample = {
+            const sampleDeck = {
                 id: 'deck_sample',
                 name: 'Cardiology Basics',
                 topic: 'Cardiology',
-                category: 'Cardiology',
-                subcategory: 'Pathophysiology',
                 created: Date.now(),
                 cards: [
                     { id: 'c1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
-                    { id: 'c2', front: 'What is the mechanism of action of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
-                ]
+                    { id: 'c2', front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
+                ],
+                folderId: null
             };
-            decks[sample.id] = sample;
-            saveDecks();
+            decks[sampleDeck.id] = sampleDeck;
+            // Create a folder and put the sample deck in it
+            const folderId = 'folder_' + Date.now();
+            folders[folderId] = {
+                name: 'Cardiology',
+                deckIds: [sampleDeck.id]
+            };
+            decks[sampleDeck.id].folderId = folderId;
+            saveData();
+        } else {
+            // Ensure all decks have folderId, if not assigned, set to null
+            Object.values(decks).forEach(d => { if (d.folderId === undefined) d.folderId = null; });
         }
     }
 
-    function saveDecks() {
+    function saveData() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
+        localStorage.setItem(FOLDER_KEY, JSON.stringify(folders));
     }
 
     // ---------- SOUND EFFECTS ----------
@@ -522,7 +554,7 @@
         if (lower.includes('cardio')) {
             return [
                 { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)' },
-                { front: 'What is the mechanism of action of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.' },
+                { front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.' },
                 { front: 'What is the most common cause of heart failure?', back: 'Ischemic heart disease' },
                 { front: 'What is the hallmark ECG finding in pericarditis?', back: 'Diffuse ST-segment elevation' },
                 { front: 'What is the first-line medication for acute decompensated heart failure?', back: 'Loop diuretics' }
@@ -547,20 +579,18 @@
     }
 
     // ---------- GENERATE DECK ----------
-    async function generateDeck(topic, category='Uncategorized', subcategory='', deckId=null, existingFronts=[]) {
+    async function generateDeck(topic, folderId = null) {
         if (isGenerating) return;
         if (!topic || topic.trim().length<2) { showToast('Please enter a valid topic.'); return; }
         isGenerating = true;
         renderView();
 
-        const avoidText = existingFronts.length ? `\nAvoid these existing concepts: ${existingFronts.join(', ')}.` : '';
-        const prompt = `You are a medical educator. Generate ${existingFronts.length ? '5' : '8'} unique, high‑yield flashcards about the topic: "${topic.trim()}".
+        const prompt = `You are a medical educator. Generate 8 unique, high‑yield flashcards about the topic: "${topic.trim()}".
     Each flashcard must be distinct – cover different subtopics, mechanisms, drugs, or clinical pearls.
     Format the output as a JSON array of objects with fields:
       - "front": the question or prompt,
       - "back": the answer or explanation.
-    Do not include any extra text or markdown. Only the JSON array.
-    ${avoidText}`;
+    Do not include any extra text or markdown. Only the JSON array.`;
 
         try {
             const model = await getBestModel();
@@ -575,97 +605,60 @@
             if (!Array.isArray(cards) || cards.length===0) throw new Error('No cards generated');
             if (cards.length>10) cards=cards.slice(0,10);
 
-            const newCards = cards.filter(c=>c.front && !existingFronts.some(f=>f.toLowerCase()===c.front.toLowerCase()));
-            if (newCards.length===0) { showToast('No new unique cards could be generated.'); isGenerating=false; renderView(); return; }
-
-            let deck;
-            if (deckId) {
-                deck = decks[deckId];
-                const startIdx = deck.cards.length;
-                newCards.forEach((c,i)=>{
-                    deck.cards.push({
-                        id: 'card_'+deckId+'_'+(startIdx+i),
-                        front: c.front,
-                        back: c.back,
-                        easeFactor: 2.5,
-                        interval: 1,
-                        nextReview: Date.now(),
-                        reviewCount: 0
-                    });
-                });
-                saveDecks();
-                showToast(`✅ Added ${newCards.length} new cards to "${deck.name}"!`);
-            } else {
-                const newDeckId = 'deck_'+Date.now();
-                deck = {
-                    id: newDeckId,
-                    name: topic.trim(),
-                    topic: topic.trim(),
-                    category: category || 'Uncategorized',
-                    subcategory: subcategory || '',
-                    created: Date.now(),
-                    cards: newCards.map((c,i)=>({
-                        id: 'card_'+newDeckId+'_'+i,
-                        front: c.front,
-                        back: c.back,
-                        easeFactor: 2.5,
-                        interval: 1,
-                        nextReview: Date.now(),
-                        reviewCount: 0
-                    }))
-                };
-                decks[newDeckId] = deck;
-                saveDecks();
-                showToast(`✅ Generated ${newCards.length} flashcards for "${topic}"!`);
+            const deckId = 'deck_'+Date.now();
+            const deck = {
+                id: deckId,
+                name: topic.trim(),
+                topic: topic.trim(),
+                created: Date.now(),
+                folderId: folderId || null,
+                cards: cards.map((c,i)=>({
+                    id: 'card_'+deckId+'_'+i,
+                    front: c.front,
+                    back: c.back,
+                    easeFactor: 2.5,
+                    interval: 1,
+                    nextReview: Date.now(),
+                    reviewCount: 0
+                }))
+            };
+            decks[deckId] = deck;
+            if (folderId && folders[folderId]) {
+                folders[folderId].deckIds.push(deckId);
             }
+            saveData();
+            showToast(`✅ Generated ${cards.length} flashcards for "${topic}"!`);
             isGenerating = false;
-            startPractice(deck.id);
+            startPractice(deckId);
         } catch(e) {
             console.error('Generation error:', e);
             showToast('⚠️ AI generation failed. Using fallback cards.');
             const fallbackCards = getFallbackCards(topic);
-            let deck;
-            if (deckId) {
-                deck = decks[deckId];
-                const startIdx = deck.cards.length;
-                fallbackCards.forEach((c,i)=>{
-                    deck.cards.push({
-                        id: 'card_'+deckId+'_'+(startIdx+i),
-                        front: c.front,
-                        back: c.back,
-                        easeFactor: 2.5,
-                        interval: 1,
-                        nextReview: Date.now(),
-                        reviewCount: 0
-                    });
-                });
-                saveDecks();
-                showToast(`📚 Added ${fallbackCards.length} fallback cards to "${deck.name}".`);
-            } else {
-                const newDeckId = 'deck_fallback_'+Date.now();
-                deck = {
-                    id: newDeckId,
-                    name: topic.trim()+' (fallback)',
-                    topic: topic.trim(),
-                    category: category || 'Uncategorized',
-                    subcategory: subcategory || '',
-                    created: Date.now(),
-                    cards: fallbackCards.map((c,i)=>({
-                        id: 'card_'+newDeckId+'_'+i,
-                        front: c.front,
-                        back: c.back,
-                        easeFactor: 2.5,
-                        interval: 1,
-                        nextReview: Date.now(),
-                        reviewCount: 0
-                    }))
-                };
-                decks[newDeckId] = deck;
-                saveDecks();
-                showToast(`📚 Created fallback deck with ${fallbackCards.length} cards.`);
+            const deckId = 'deck_fallback_'+Date.now();
+            const deck = {
+                id: deckId,
+                name: topic.trim()+' (fallback)',
+                topic: topic.trim(),
+                created: Date.now(),
+                folderId: folderId || null,
+                cards: fallbackCards.map((c,i)=>({
+                    id: 'card_'+deckId+'_'+i,
+                    front: c.front,
+                    back: c.back,
+                    easeFactor: 2.5,
+                    interval: 1,
+                    nextReview: Date.now(),
+                    reviewCount: 0
+                }))
+            };
+            decks[deckId] = deck;
+            if (folderId && folders[folderId]) {
+                folders[folderId].deckIds.push(deckId);
             }
+            saveData();
+            showToast(`📚 Created fallback deck with ${fallbackCards.length} cards.`);
             isGenerating = false;
-            startPractice(deck.id);
+            startPractice(deckId);
         } finally {
             isGenerating = false;
         }
@@ -682,8 +675,13 @@
     // ---------- DELETE DECK ----------
     function deleteDeck(deckId) {
         if (!confirm('Delete this deck and all its flashcards?')) return;
+        // Remove from folder
+        const deck = decks[deckId];
+        if (deck && deck.folderId && folders[deck.folderId]) {
+            folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
+        }
         delete decks[deckId];
-        saveDecks();
+        saveData();
         if (currentDeckId === deckId) { currentDeckId = null; currentView = 'list'; }
         renderView();
     }
@@ -716,7 +714,90 @@
         card.easeFactor = ease;
         card.nextReview = Date.now() + (interval*86400000);
         card.reviewCount = (card.reviewCount||0)+1;
-        saveDecks();
+        saveData();
+    }
+
+    // ---------- FOLDER OPERATIONS ----------
+    function createFolder(name) {
+        if (!name || name.trim()==='') return;
+        const id = 'folder_'+Date.now();
+        folders[id] = { name: name.trim(), deckIds: [] };
+        saveData();
+        renderView();
+    }
+
+    function deleteFolder(folderId) {
+        if (!confirm(`Delete folder "${folders[folderId].name}" and move its decks to "Uncategorized"?`)) return;
+        const folder = folders[folderId];
+        if (folder) {
+            folder.deckIds.forEach(did => {
+                if (decks[did]) decks[did].folderId = null;
+            });
+            delete folders[folderId];
+            saveData();
+            renderView();
+        }
+    }
+
+    function renameFolder(folderId, newName) {
+        if (!newName || newName.trim()==='') return;
+        if (folders[folderId]) {
+            folders[folderId].name = newName.trim();
+            saveData();
+            renderView();
+        }
+    }
+
+    function moveDeckToFolder(deckId, folderId) {
+        const deck = decks[deckId];
+        if (!deck) return;
+        // Remove from old folder
+        if (deck.folderId && folders[deck.folderId]) {
+            folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
+        }
+        // Add to new folder (if not null)
+        if (folderId && folders[folderId]) {
+            if (!folders[folderId].deckIds.includes(deckId)) {
+                folders[folderId].deckIds.push(deckId);
+            }
+            deck.folderId = folderId;
+        } else {
+            deck.folderId = null;
+        }
+        saveData();
+        renderView();
+    }
+
+    // ---------- DRAG & DROP ----------
+    let draggedDeckId = null;
+    function handleDragStart(e, deckId) {
+        draggedDeckId = deckId;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', deckId);
+        setTimeout(() => {
+            e.target.closest('.deck-item')?.classList.add('dragging');
+        }, 0);
+    }
+    function handleDragEnd(e) {
+        e.target.closest('.deck-item')?.classList.remove('dragging');
+        document.querySelectorAll('.folder-container').forEach(el => el.classList.remove('drag-over'));
+    }
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        e.currentTarget.classList.add('drag-over');
+    }
+    function handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+    function handleDrop(e, folderId) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+        const deckId = e.dataTransfer.getData('text/plain');
+        if (deckId && decks[deckId]) {
+            moveDeckToFolder(deckId, folderId);
+            showToast(`Moved "${decks[deckId].name}" to "${folders[folderId]?.name || 'Uncategorized'}"`);
+        }
     }
 
     // ---------- ASK NEXUS ----------
@@ -737,50 +818,23 @@
         }
     }
 
-    // ---------- EXPORT ----------
-    function exportDeck(deckId, format='json') {
+    // ---------- EXPORT HTML ----------
+    function exportDeckHTML(deckId) {
         const deck = decks[deckId];
         if (!deck) { showToast('Deck not found.'); return; }
-
-        if (format === 'json') {
-            const data = JSON.stringify(deck, null, 2);
-            const blob = new Blob([data], {type:'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${deck.name.replace(/\s+/g,'_')}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Exported as JSON.');
-        } else if (format === 'csv') {
-            let csv = 'Front,Back,Interval,Ease,ReviewCount\n';
-            deck.cards.forEach(c => {
-                csv += `"${c.front}","${c.back}",${c.interval},${c.easeFactor},${c.reviewCount}\n`;
-            });
-            const blob = new Blob([csv], {type:'text/csv'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${deck.name.replace(/\s+/g,'_')}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Exported as CSV.');
-        } else if (format === 'html') {
-            // Printable HTML
-            let html = `<html><head><style>body{font-family:sans-serif;max-width:800px;margin:2rem auto;} .card{border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem;} .front{font-weight:bold;} .back{margin-top:0.5rem;color:#333;}</style></head><body><h1>${deck.name}</h1>`;
-            deck.cards.forEach(c => {
-                html += `<div class="card"><div class="front">${c.front}</div><div class="back">${c.back}</div></div>`;
-            });
-            html += '</body></html>';
-            const blob = new Blob([html], {type:'text/html'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${deck.name.replace(/\s+/g,'_')}.html`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Exported as HTML (printable).');
-        }
+        let html = `<html><head><style>body{font-family:sans-serif;max-width:800px;margin:2rem auto;} .card{border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem;} .front{font-weight:bold;} .back{margin-top:0.5rem;color:#333;} .deck-title{font-size:2rem;margin-bottom:1rem;}</style></head><body><h1 class="deck-title">${deck.name}</h1>`;
+        deck.cards.forEach(c => {
+            html += `<div class="card"><div class="front">${c.front}</div><div class="back">${c.back}</div></div>`;
+        });
+        html += '</body></html>';
+        const blob = new Blob([html], {type:'text/html'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${deck.name.replace(/\s+/g,'_')}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Exported as HTML (printable).');
     }
 
     // ---------- RENDER ----------
@@ -805,120 +859,129 @@
     }
 
     function renderList(app) {
-        // Build category tree
-        const categories = {};
-        Object.values(decks).forEach(deck => {
-            const cat = deck.category || 'Uncategorized';
-            const sub = deck.subcategory || '';
-            if (!categories[cat]) categories[cat] = {};
-            if (!categories[cat][sub]) categories[cat][sub] = [];
-            categories[cat][sub].push(deck);
+        // Build folder view
+        let html = `
+            <div class="glass-panel">
+                <h1 class="page-title"><i class="fas fa-brain"></i> Smart Flashcards</h1>
+                <p class="subtitle">AI‑powered flashcards with spaced repetition – create a deck, then drag it into a folder.</p>
+                <div class="create-deck">
+                    <input type="text" id="topic-input" placeholder="Enter topic (e.g., Cardiology)" />
+                    <button class="btn btn-primary" id="generate-btn"><i class="fas fa-magic"></i> Generate Deck</button>
+                    <button class="btn btn-secondary" onclick="window.createFolder(prompt('Folder name:'))"><i class="fas fa-folder-plus"></i> New Folder</button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="🔍 Search decks or cards..." oninput="window.updateSearch(this.value)" />
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('search-input').value='';window.updateSearch('');"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="folders-grid" id="folders-grid">
+        `;
+
+        // Collect all decks (including those without folder)
+        const allDeckIds = Object.keys(decks);
+        const searchTerm = (document.getElementById('search-input')?.value || '').toLowerCase();
+
+        // Filter decks by search
+        let filteredDeckIds = allDeckIds;
+        if (searchTerm) {
+            filteredDeckIds = allDeckIds.filter(id => {
+                const d = decks[id];
+                const match = d.name.toLowerCase().includes(searchTerm) ||
+                              d.topic.toLowerCase().includes(searchTerm) ||
+                              d.cards.some(c => c.front.toLowerCase().includes(searchTerm) || c.back.toLowerCase().includes(searchTerm));
+                return match;
+            });
+        }
+
+        // Get folders that have at least one visible deck
+        const visibleFolderIds = Object.keys(folders).filter(fid => {
+            const folder = folders[fid];
+            return folder.deckIds.some(did => filteredDeckIds.includes(did));
         });
 
-        // Filter by search
-        const searchTerm = filterSearch.toLowerCase();
-        let filteredDecks = [];
-        Object.values(decks).forEach(deck => {
-            if (filterCategory !== 'all' && deck.category !== filterCategory) return;
-            if (searchTerm) {
-                const match = deck.name.toLowerCase().includes(searchTerm) ||
-                              deck.topic.toLowerCase().includes(searchTerm) ||
-                              deck.cards.some(c => c.front.toLowerCase().includes(searchTerm) || c.back.toLowerCase().includes(searchTerm));
-                if (!match) return;
-            }
-            filteredDecks.push(deck);
-        });
-
-        let deckHtml = '';
-        if (filteredDecks.length === 0) {
-            deckHtml = `<div class="empty-state"><i class="fas fa-layer-group"></i><h3>No decks found</h3><p>Try adjusting your filters.</p></div>`;
+        // Render each folder
+        if (visibleFolderIds.length === 0 && filteredDeckIds.length === 0) {
+            html += `<div class="empty-state"><i class="fas fa-layer-group"></i><h3>No decks found</h3><p>Create a deck or adjust your search.</p></div>`;
         } else {
-            deckHtml = `<div class="deck-list">`;
-            filteredDecks.forEach(deck => {
-                const due = getDueCards(deck).length;
-                const total = deck.cards.length;
-                deckHtml += `
-                    <div class="deck-item">
-                        <div class="deck-info">
-                            <span class="deck-name">${escapeHtml(deck.name)}</span>
-                            <span class="deck-meta">${total} cards · ${due} due · ${deck.category}${deck.subcategory ? ' / '+deck.subcategory : ''}</span>
+            // Render folders
+            visibleFolderIds.forEach(fid => {
+                const folder = folders[fid];
+                const deckIdsInFolder = folder.deckIds.filter(did => filteredDeckIds.includes(did));
+                if (deckIdsInFolder.length === 0) return;
+                html += `
+                    <div class="folder-container" 
+                         draggable="false"
+                         ondrop="window.handleDrop(event, '${fid}')" 
+                         ondragover="window.handleDragOver(event)" 
+                         ondragleave="window.handleDragLeave(event)">
+                        <div class="folder-header">
+                            <span class="folder-name"><i class="fas fa-folder-open"></i> ${escapeHtml(folder.name)}</span>
+                            <div class="folder-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="window.renameFolder('${fid}', prompt('New folder name:', '${escapeHtml(folder.name)}'))"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="window.deleteFolder('${fid}')"><i class="fas fa-trash"></i></button>
+                            </div>
                         </div>
-                        <div class="deck-actions">
-                            <button class="btn btn-primary btn-sm" onclick="window.startPractice('${deck.id}')"><i class="fas fa-play"></i> Practice</button>
-                            <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${deck.id}')"><i class="fas fa-plus"></i> More</button>
-                            <button class="btn btn-secondary btn-sm" onclick="window.exportDeck('${deck.id}','json')"><i class="fas fa-file-code"></i> JSON</button>
-                            <button class="btn btn-secondary btn-sm" onclick="window.exportDeck('${deck.id}','csv')"><i class="fas fa-file-csv"></i> CSV</button>
-                            <button class="btn btn-secondary btn-sm" onclick="window.exportDeck('${deck.id}','html')"><i class="fas fa-print"></i> HTML</button>
-                            <button class="btn btn-danger btn-sm" onclick="window.deleteDeck('${deck.id}')"><i class="fas fa-trash"></i></button>
+                        <div class="deck-grid">
+                            ${deckIdsInFolder.map(did => renderDeckItem(did)).join('')}
                         </div>
                     </div>
                 `;
             });
-            deckHtml += `</div>`;
+
+            // Render "Uncategorized" decks (those without a folder or in a folder not visible)
+            const uncategorized = filteredDeckIds.filter(id => {
+                const d = decks[id];
+                return d.folderId === null || !folders[d.folderId];
+            });
+            if (uncategorized.length > 0) {
+                html += `
+                    <div class="folder-container" 
+                         draggable="false"
+                         ondrop="window.handleDrop(event, null)" 
+                         ondragover="window.handleDragOver(event)" 
+                         ondragleave="window.handleDragLeave(event)">
+                        <div class="folder-header">
+                            <span class="folder-name"><i class="fas fa-folder"></i> Uncategorized</span>
+                        </div>
+                        <div class="deck-grid">
+                            ${uncategorized.map(did => renderDeckItem(did)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
         }
 
-        // Build category tree for sidebar
-        let catHtml = `<div class="category-tree">`;
-        const sortedCats = Object.keys(categories).sort();
-        sortedCats.forEach(cat => {
-            const subs = categories[cat];
-            const count = Object.values(subs).flat().length;
-            catHtml += `<div class="cat-item" onclick="window.filterByCategory('${cat}')">
-                <i class="fas fa-folder"></i> ${escapeHtml(cat)} <span class="badge">${count}</span>
-                <div class="sub-items">`;
-            Object.keys(subs).sort().forEach(sub => {
-                if (!sub) return;
-                const subCount = subs[sub].length;
-                catHtml += `<div class="sub-item" onclick="event.stopPropagation(); window.filterByCategory('${cat}','${sub}')">
-                    <i class="fas fa-folder-open"></i> ${escapeHtml(sub)} <span class="badge">${subCount}</span>
-                </div>`;
-            });
-            catHtml += `</div></div>`;
-        });
-        catHtml += `</div>`;
+        html += `</div></div>`;
+        app.innerHTML = html;
 
-        app.innerHTML = `
-            <div class="app-layout">
-                <div class="sidebar-filters">
-                    <h4 style="margin-bottom:0.5rem;"><i class="fas fa-filter"></i> Filters</h4>
-                    <button class="btn btn-sm ${filterCategory==='all'?'btn-primary':'btn-secondary'}" style="width:100%;margin-bottom:0.5rem;" onclick="window.filterByCategory('all')">All Decks</button>
-                    ${catHtml}
-                    <hr style="margin:1rem 0;opacity:0.2;">
-                    <div style="font-size:0.85rem;color:#4a627a;">
-                        <i class="fas fa-info-circle"></i> Click a category to filter.
-                    </div>
-                </div>
-                <div class="main-content">
-                    <div class="glass-panel">
-                        <h1 class="page-title"><i class="fas fa-brain"></i> Smart Flashcards</h1>
-                        <p class="subtitle">AI‑powered flashcards with spaced repetition – add any medical topic.</p>
-                        <div class="create-deck">
-                            <input type="text" id="topic-input" placeholder="Topic (e.g., Cardiology)" />
-                            <input type="text" id="category-input" placeholder="Category (e.g., Physiology)" />
-                            <input type="text" id="subcategory-input" placeholder="Subcategory (e.g., Hemodynamics)" />
-                            <button class="btn btn-primary" id="generate-btn"><i class="fas fa-magic"></i> Generate</button>
-                        </div>
-                        <div class="search-bar">
-                            <input type="text" id="search-input" placeholder="🔍 Search decks or cards..." oninput="window.updateSearch(this.value)" />
-                            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('search-input').value='';window.updateSearch('');"><i class="fas fa-times"></i></button>
-                        </div>
-                        ${deckHtml}
-                    </div>
+        // Attach event listeners for drag and drop (since we use inline, we need to ensure global functions)
+        // Also attach the generate button
+        document.getElementById('generate-btn').addEventListener('click', ()=>{
+            const topic = document.getElementById('topic-input').value.trim();
+            if (topic) { generateDeck(topic, null); document.getElementById('topic-input').value=''; }
+            else showToast('Please enter a topic.');
+        });
+        document.getElementById('topic-input').addEventListener('keypress', e=>{ if(e.key==='Enter') document.getElementById('generate-btn').click(); });
+
+        // For mobile: we might want a context menu to move deck to folder, but we'll keep it simple: we can add a dropdown later.
+    }
+
+    function renderDeckItem(deckId) {
+        const deck = decks[deckId];
+        if (!deck) return '';
+        const due = getDueCards(deck).length;
+        const total = deck.cards.length;
+        return `
+            <div class="deck-item" draggable="true" ondragstart="window.handleDragStart(event, '${deckId}')" ondragend="window.handleDragEnd(event)">
+                <div class="deck-name">${escapeHtml(deck.name)}</div>
+                <div class="deck-meta">${total} cards · ${due} due</div>
+                <div class="deck-actions">
+                    <button class="btn btn-primary btn-sm" onclick="window.startPractice('${deckId}')"><i class="fas fa-play"></i> Practice</button>
+                    <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${deckId}')"><i class="fas fa-plus"></i> More</button>
+                    <button class="btn btn-secondary btn-sm" onclick="window.exportDeckHTML('${deckId}')"><i class="fas fa-print"></i> HTML</button>
+                    <button class="btn btn-danger btn-sm" onclick="window.deleteDeck('${deckId}')"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `;
-
-        document.getElementById('generate-btn').addEventListener('click', ()=>{
-            const topic = document.getElementById('topic-input').value.trim();
-            const category = document.getElementById('category-input').value.trim() || 'Uncategorized';
-            const subcategory = document.getElementById('subcategory-input').value.trim() || '';
-            if (topic) { generateDeck(topic, category, subcategory);
-                document.getElementById('topic-input').value='';
-                document.getElementById('category-input').value='';
-                document.getElementById('subcategory-input').value='';
-            } else showToast('Please enter a topic.');
-        });
-        document.getElementById('topic-input').addEventListener('keypress', e=>{ if(e.key==='Enter') document.getElementById('generate-btn').click(); });
     }
 
     function renderPractice(app) {
@@ -1053,27 +1116,67 @@
         const deck = decks[deckId];
         if (!deck) { showToast('Deck not found.'); return; }
         const existingFronts = deck.cards.map(c=>c.front);
-        generateDeck(deck.topic||deck.name, deck.category, deck.subcategory, deckId, existingFronts);
-    };
-
-    // ---------- FILTER & SEARCH ----------
-    window.filterByCategory = function(cat, subcat='') {
-        filterCategory = cat;
-        if (subcat) filterCategory = cat+'|'+subcat; // We'll handle exact match later
-        // For simplicity, we just set filterCategory to cat
-        // and we can refine later; for now, just filter by category.
-        // We'll store both: we can just use category filter.
-        // Actually we'll just set filterCategory = cat for simplicity.
-        // In renderList we check if deck.category === filterCategory
-        // We'll also check subcategory if provided.
-        // Let's implement a simple approach: we'll store filterCategory = cat and filterSubcategory = subcat.
-        window.filterSubcategory = subcat;
-        filterCategory = cat;
+        // We'll generate with same topic, but we need to add to existing deck.
+        // We'll re-use generateDeck but with a different flow; for simplicity, we'll use a separate function.
+        // For now, we'll just generate new cards and append.
+        if (isGenerating) return;
+        isGenerating = true;
         renderView();
-    };
-    window.updateSearch = function(value) {
-        filterSearch = value;
-        renderView();
+        const topic = deck.topic || deck.name;
+        const avoidText = `\nAvoid these existing concepts: ${existingFronts.join(', ')}.`;
+        const prompt = `You are a medical educator. Generate 5 unique, high‑yield flashcards about the topic: "${topic}".
+    Each flashcard must be distinct – cover different subtopics.
+    Format as JSON array: [{"front":"...","back":"..."}]
+    ${avoidText}`;
+        (async () => {
+            try {
+                const model = await getBestModel();
+                const raw = await puter.ai.chat(prompt, { model });
+                let text = raw.message?.content || raw.content || raw;
+                let jsonMatch = text.match(/\[[\s\S]*\]/);
+                if (jsonMatch) text = jsonMatch[0];
+                text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+                let cards = JSON.parse(text);
+                if (!Array.isArray(cards) || cards.length===0) throw new Error('No cards');
+                const startIdx = deck.cards.length;
+                cards.forEach((c,i)=>{
+                    deck.cards.push({
+                        id: 'card_'+deckId+'_'+(startIdx+i),
+                        front: c.front,
+                        back: c.back,
+                        easeFactor: 2.5,
+                        interval: 1,
+                        nextReview: Date.now(),
+                        reviewCount: 0
+                    });
+                });
+                saveData();
+                showToast(`✅ Added ${cards.length} new cards to "${deck.name}"!`);
+                isGenerating = false;
+                renderView();
+            } catch(e) {
+                console.error(e);
+                showToast('Failed to add cards. Using fallback.');
+                // fallback
+                const fb = getFallbackCards(topic).slice(0,3);
+                const startIdx = deck.cards.length;
+                fb.forEach((c,i)=>{
+                    deck.cards.push({
+                        id: 'card_'+deckId+'_'+(startIdx+i),
+                        front: c.front,
+                        back: c.back,
+                        easeFactor: 2.5,
+                        interval: 1,
+                        nextReview: Date.now(),
+                        reviewCount: 0
+                    });
+                });
+                saveData();
+                showToast(`Added ${fb.length} fallback cards.`);
+                isGenerating = false;
+                renderView();
+            }
+        })();
     };
 
     // ---------- HELPERS ----------
@@ -1094,13 +1197,23 @@
     window.generateDeck = generateDeck;
     window.addMoreCards = window.addMoreCards;
     window.askNexus = askNexus;
-    window.exportDeck = exportDeck;
-    window.filterByCategory = filterByCategory;
-    window.updateSearch = updateSearch;
-    window.filterSubcategory = '';
+    window.exportDeckHTML = exportDeckHTML;
+    window.createFolder = createFolder;
+    window.deleteFolder = deleteFolder;
+    window.renameFolder = renameFolder;
+    window.moveDeckToFolder = moveDeckToFolder;
+    window.handleDragStart = handleDragStart;
+    window.handleDragEnd = handleDragEnd;
+    window.handleDragOver = handleDragOver;
+    window.handleDragLeave = handleDragLeave;
+    window.handleDrop = handleDrop;
+    window.updateSearch = function(value) {
+        // just re-render, the search input value is read in renderList
+        renderView();
+    };
 
     // ---------- INIT ----------
-    loadDecks();
+    loadData();
     renderView();
 
 })();
