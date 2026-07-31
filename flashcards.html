@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        /* --- Reset & Base --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
             height: 100%;
@@ -26,7 +27,7 @@
             flex-direction: column;
         }
 
-        /* --- Glass with neon glow --- */
+        /* --- Glass Panel with Neon Glow --- */
         .glass-panel {
             background: rgba(20, 40, 60, 0.45);
             backdrop-filter: blur(20px);
@@ -59,7 +60,7 @@
             opacity: 0.8;
         }
 
-        /* --- Create deck --- */
+        /* --- Create Deck --- */
         .create-deck {
             display: flex;
             flex-wrap: wrap;
@@ -143,7 +144,7 @@
             box-shadow: 0 0 20px rgba(0, 255, 200, 0.1);
         }
 
-        /* --- Folders & Decks (tree structure) --- */
+        /* --- Folders & Tree --- */
         .folders-grid {
             display: flex;
             flex-direction: column;
@@ -167,6 +168,7 @@
             padding: 0.2rem 0.5rem;
             margin-bottom: 0.8rem;
             cursor: pointer;
+            user-select: none;
         }
         .folder-header .folder-name {
             font-weight: 600;
@@ -182,7 +184,7 @@
             gap: 0.5rem;
         }
         .folder-body {
-            display: none; /* hidden by default, shown when folder is expanded */
+            display: none;
             padding-left: 0.5rem;
             border-left: 2px solid rgba(0, 255, 200, 0.05);
             margin-top: 0.5rem;
@@ -201,23 +203,24 @@
             flex-direction: column;
             gap: 0.5rem;
         }
+
+        /* --- Deck Item (with expand/collapse) --- */
         .deck-item {
             background: rgba(255,255,255,0.04);
             border-radius: 1.2rem;
             padding: 0.8rem 1.2rem;
             border: 1px solid rgba(0, 255, 200, 0.06);
-            cursor: grab;
             transition: all 0.2s;
             backdrop-filter: blur(4px);
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
+            cursor: default;
         }
         .deck-item:hover {
             background: rgba(255,255,255,0.08);
             border-color: rgba(0, 255, 200, 0.15);
-            transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         .deck-item.dragging {
@@ -227,6 +230,24 @@
         .deck-item.drag-over {
             border-color: #00f0c0;
             box-shadow: 0 0 30px rgba(0, 255, 200, 0.15);
+        }
+        .deck-item .deck-left {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+            min-width: 150px;
+        }
+        .deck-item .deck-toggle {
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #6a8aa0;
+            transition: 0.2s;
+            width: 1.5rem;
+            text-align: center;
+        }
+        .deck-item .deck-toggle:hover {
+            color: #00f0c0;
         }
         .deck-item .deck-info {
             display: flex;
@@ -257,6 +278,9 @@
             flex-direction: column;
             gap: 0.4rem;
         }
+        .deck-item .child-decks.collapsed {
+            display: none;
+        }
 
         /* --- Practice --- */
         .practice-container { text-align: center; }
@@ -280,7 +304,6 @@
             align-items: center;
             justify-content: center;
             min-height: 200px;
-            /* auto height, will grow with content */
         }
         .card-inner.flipped { transform: rotateX(180deg); }
 
@@ -306,7 +329,7 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             transition: box-shadow 0.3s;
-            margin-bottom: 0; /* no extra space */
+            margin-bottom: 0;
         }
         .card-face.back {
             transform: rotateX(180deg);
@@ -343,7 +366,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 1rem;
-            margin-top: 2rem; /* increased to give space after card */
+            margin-top: 2rem;
         }
         .rating-btn {
             padding: 0.7rem 1.8rem;
@@ -374,7 +397,7 @@
             margin-bottom: 1rem;
         }
 
-        /* --- Empty state --- */
+        /* --- Empty State --- */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -453,960 +476,994 @@
 <script src="https://js.puter.com/v2/"></script>
 <script src="nexus.js"></script>
 <script>
-(function() {
-    'use strict';
+    (function() {
+        'use strict';
 
-    // ---------- STATE ----------
-    let decks = {};           // deckId -> deck object
-    let folders = {};         // folderId -> { name, deckIds: [] }
-    let currentView = 'list';
-    let currentDeckId = null;
-    let currentCardIndex = 0;
-    let dueCards = [];
-    let isFlipped = false;
-    let isGenerating = false;
-    const STORAGE_KEY = 'medlib_flashcards';
-    const FOLDER_KEY = 'medlib_folders';
+        // ---------- STATE ----------
+        let decks = {};           // deckId -> deck object
+        let folders = {};         // folderId -> { name, deckIds: [] }
+        let currentView = 'list';
+        let currentDeckId = null;
+        let currentCardIndex = 0;
+        let dueCards = [];
+        let isFlipped = false;
+        let isGenerating = false;
+        const STORAGE_KEY = 'medlib_flashcards';
+        const FOLDER_KEY = 'medlib_folders';
 
-    // Expanded state for folders (stored in memory, not localStorage)
-    let expandedFolders = {};
-
-    // ---------- TOAST ----------
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        clearTimeout(toast._hideTimer);
-        toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    // ---------- STORAGE ----------
-    function loadData() {
-        try {
-            const decksData = localStorage.getItem(STORAGE_KEY);
-            if (decksData) {
-                decks = JSON.parse(decksData);
-                Object.keys(decks).forEach(id => {
-                    if (!decks[id].cards) decks[id].cards = [];
-                    if (!decks[id].topic) decks[id].topic = decks[id].name;
-                    if (decks[id].parentId === undefined) decks[id].parentId = null;
-                    if (decks[id].children === undefined) decks[id].children = [];
-                });
-            } else {
-                decks = {};
-            }
-        } catch (e) { decks = {}; }
-
-        try {
-            const foldersData = localStorage.getItem(FOLDER_KEY);
-            if (foldersData) {
-                folders = JSON.parse(foldersData);
-                Object.keys(folders).forEach(id => {
-                    if (!folders[id].deckIds) folders[id].deckIds = [];
-                });
-            } else {
-                folders = {};
-            }
-        } catch (e) { folders = {}; }
-
-        // Clean up: remove deck references from folders that no longer exist
-        Object.keys(folders).forEach(fid => {
-            folders[fid].deckIds = folders[fid].deckIds.filter(did => decks[did]);
-        });
-
-        // Ensure each deck has children array and parentId
-        Object.values(decks).forEach(d => {
-            if (!d.children) d.children = [];
-            if (d.parentId === undefined) d.parentId = null;
-            // clean children: remove any that don't exist
-            d.children = d.children.filter(cid => decks[cid]);
-        });
-
-        // If no decks, create sample
-        if (Object.keys(decks).length === 0) {
-            const sampleDeck = {
-                id: 'deck_sample',
-                name: 'Cardiology Basics',
-                topic: 'Cardiology',
-                created: Date.now(),
-                parentId: null,
-                children: [],
-                cards: [
-                    { id: 'c1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
-                    { id: 'c2', front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
-                ]
-            };
-            decks[sampleDeck.id] = sampleDeck;
-            const folderId = 'folder_' + Date.now();
-            folders[folderId] = { name: 'Cardiology', deckIds: [sampleDeck.id] };
-            saveData();
-        } else {
-            Object.values(decks).forEach(d => { if (d.parentId === undefined) d.parentId = null; if (!d.children) d.children = []; });
-        }
-        // Expand all folders by default
-        Object.keys(folders).forEach(fid => { expandedFolders[fid] = true; });
-    }
-
-    function saveData() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
-        localStorage.setItem(FOLDER_KEY, JSON.stringify(folders));
-    }
-
-    // ---------- SOUND EFFECTS ----------
-    function playTone(freq, duration, type='sine') {
-        try {
-            const ctx = new(window.AudioContext||window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = type;
-            osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.15, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+duration);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime+duration);
-        } catch(e){}
-    }
-    function playSuccess(){ playTone(880,0.15); setTimeout(()=>playTone(1100,0.1),120); }
-    function playFail(){ playTone(300,0.3,'sawtooth'); }
-    function playFlip(){ playTone(600,0.05); }
-    function fireConfetti() {
-        const emojis = ['🎉','✨','⭐','🌟','🎊','💪','🏆'];
-        for(let i=0;i<12;i++){
-            setTimeout(()=>{
-                const el=document.createElement('div');
-                el.className='confetti-piece';
-                el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-                el.style.left=(Math.random()*80+10)+'%';
-                el.style.top=(Math.random()*40+30)+'%';
-                el.style.fontSize=(1.5+Math.random()*2)+'rem';
-                document.body.appendChild(el);
-                setTimeout(()=>el.remove(),1200);
-            }, i*80);
-        }
-    }
-
-    // ---------- AI MODEL SELECTION ----------
-    let cachedModelId = null;
-    async function getBestModel() {
-        if (cachedModelId) return cachedModelId;
-        try {
-            if (!window.puter?.ai) {
-                for (let i=0;i<5;i++){ await new Promise(r=>setTimeout(r,1000)); if(window.puter?.ai) break; }
-            }
-            if (!window.puter?.ai) throw new Error('Puter AI not loaded');
-            const models = await puter.ai.listModels();
-            const preferred = ['gpt-5.4-nano','google/gemini-3.1-flash-lite','google/gemini-2.5-flash-lite-001','google/gemini-2.0-flash-lite-001'];
-            for (const p of preferred) {
-                if (models.some(m=>m.id===p)) { cachedModelId=p; return cachedModelId; }
-            }
-            const gemini = models.find(m=>m.id.toLowerCase().includes('gemini'));
-            if (gemini) { cachedModelId=gemini.id; return cachedModelId; }
-            if (models.length) { cachedModelId=models[0].id; return cachedModelId; }
-            throw new Error('No chat models');
-        } catch(e) {
-            console.warn(e);
-            cachedModelId='gpt-5.4-nano';
-            return cachedModelId;
-        }
-    }
-
-    // ---------- FALLBACK CARDS ----------
-    function getFallbackCards(topic) {
-        const lower = topic.toLowerCase();
-        if (lower.includes('cardio')) {
-            return [
-                { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)' },
-                { front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.' },
-                { front: 'What is the most common cause of heart failure?', back: 'Ischemic heart disease' },
-                { front: 'What is the hallmark ECG finding in pericarditis?', back: 'Diffuse ST-segment elevation' },
-                { front: 'What is the first-line medication for acute decompensated heart failure?', back: 'Loop diuretics' }
-            ];
-        } else if (lower.includes('pharma')||lower.includes('drug')) {
-            return [
-                { front: 'Mechanism of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.' },
-                { front: 'Antidote for heparin overdose?', back: 'Protamine sulfate' },
-                { front: 'Mechanism of statins?', back: 'HMG-CoA reductase inhibitors.' },
-                { front: 'First-line treatment for hypertension in diabetics?', back: 'ACE inhibitors' },
-                { front: 'Mechanism of metformin?', back: 'Decreases hepatic glucose production and increases insulin sensitivity.' }
-            ];
-        } else {
-            return [
-                { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin' },
-                { front: 'What is the mechanism of beta-blockers?', back: 'Block beta-adrenergic receptors' },
-                { front: 'Most common cause of community-acquired pneumonia?', back: 'Streptococcus pneumoniae' },
-                { front: 'Hallmark of type 1 diabetes?', back: 'Autoimmune destruction of beta cells, absolute insulin deficiency.' },
-                { front: 'First-line treatment for acute anaphylaxis?', back: 'Epinephrine (IM)' }
-            ];
-        }
-    }
-
-    // ---------- GENERATE DECK ----------
-    async function generateDeck(topic, folderId = null, parentId = null) {
-        if (isGenerating) return;
-        if (!topic || topic.trim().length<2) { showToast('Please enter a valid topic.'); return; }
-        isGenerating = true;
-        renderView();
-
-        const prompt = `You are a medical educator. Generate 8 unique, high‑yield flashcards about the topic: "${topic.trim()}".
-    Each flashcard must be distinct – cover different subtopics, mechanisms, drugs, or clinical pearls.
-    Format the output as a JSON array of objects with fields:
-      - "front": the question or prompt,
-      - "back": the answer or explanation.
-    Do not include any extra text or markdown. Only the JSON array.`;
-
-        try {
-            const model = await getBestModel();
-            const timeoutPromise = new Promise((_,reject)=>setTimeout(()=>reject(new Error('AI request timed out')),30000));
-            const aiPromise = puter.ai.chat(prompt, { model });
-            const raw = await Promise.race([aiPromise, timeoutPromise]);
-            let text = raw.message?.content || raw.content || raw;
-            let jsonMatch = text.match(/\[[\s\S]*\]/);
-            if (jsonMatch) text = jsonMatch[0];
-            text = text.replace(/```json/g,'').replace(/```/g,'').trim();
-            let cards = JSON.parse(text);
-            if (!Array.isArray(cards) || cards.length===0) throw new Error('No cards generated');
-            if (cards.length>10) cards=cards.slice(0,10);
-
-            const deckId = 'deck_'+Date.now();
-            const deck = {
-                id: deckId,
-                name: topic.trim(),
-                topic: topic.trim(),
-                created: Date.now(),
-                parentId: parentId || null,
-                children: [],
-                cards: cards.map((c,i)=>({
-                    id: 'card_'+deckId+'_'+i,
-                    front: c.front,
-                    back: c.back,
-                    easeFactor: 2.5,
-                    interval: 1,
-                    nextReview: Date.now(),
-                    reviewCount: 0
-                }))
-            };
-            decks[deckId] = deck;
-            // Add to parent's children if parent exists
-            if (parentId && decks[parentId]) {
-                decks[parentId].children.push(deckId);
-            }
-            if (folderId && folders[folderId]) {
-                folders[folderId].deckIds.push(deckId);
-            }
-            saveData();
-            showToast(`✅ Generated ${cards.length} flashcards for "${topic}"!`);
-            isGenerating = false;
-            startPractice(deckId);
-        } catch(e) {
-            console.error('Generation error:', e);
-            showToast('⚠️ AI generation failed. Using fallback cards.');
-            const fallbackCards = getFallbackCards(topic);
-            const deckId = 'deck_fallback_'+Date.now();
-            const deck = {
-                id: deckId,
-                name: topic.trim()+' (fallback)',
-                topic: topic.trim(),
-                created: Date.now(),
-                parentId: parentId || null,
-                children: [],
-                cards: fallbackCards.map((c,i)=>({
-                    id: 'card_'+deckId+'_'+i,
-                    front: c.front,
-                    back: c.back,
-                    easeFactor: 2.5,
-                    interval: 1,
-                    nextReview: Date.now(),
-                    reviewCount: 0
-                }))
-            };
-            decks[deckId] = deck;
-            if (parentId && decks[parentId]) {
-                decks[parentId].children.push(deckId);
-            }
-            if (folderId && folders[folderId]) {
-                folders[folderId].deckIds.push(deckId);
-            }
-            saveData();
-            showToast(`📚 Created fallback deck with ${fallbackCards.length} cards.`);
-            isGenerating = false;
-            startPractice(deckId);
-        } finally {
-            isGenerating = false;
-        }
-    }
-
-    // ---------- START PRACTICE ----------
-    function startPractice(deckId) {
-        currentDeckId = deckId;
-        currentCardIndex = 0;
-        currentView = 'practice';
-        renderView();
-    }
-
-    // ---------- DELETE DECK (recursive) ----------
-    function deleteDeck(deckId) {
-        const deck = decks[deckId];
-        if (!deck) return;
-        if (!confirm(`Delete deck "${deck.name}" and all its sub-decks?`)) return;
-        // Recursively delete children
-        const deleteRecursive = (id) => {
-            const d = decks[id];
-            if (!d) return;
-            // Remove from parent's children list
-            if (d.parentId && decks[d.parentId]) {
-                decks[d.parentId].children = decks[d.parentId].children.filter(cid => cid !== id);
-            }
-            // Remove from folder if any
-            if (d.folderId && folders[d.folderId]) {
-                folders[d.folderId].deckIds = folders[d.folderId].deckIds.filter(did => did !== id);
-            }
-            // Delete children first
-            d.children.forEach(cid => deleteRecursive(cid));
-            delete decks[id];
+        // Expanded state for folders and decks (in-memory only)
+        let expanded = {
+            folders: {}, // folderId: true/false
+            decks: {}    // deckId: true/false
         };
-        deleteRecursive(deckId);
-        saveData();
-        if (currentDeckId === deckId) { currentDeckId = null; currentView = 'list'; }
-        renderView();
-    }
 
-    // ---------- SPACED REPETITION ----------
-    function getDueCards(deck) {
-        const now = Date.now();
-        return deck.cards.filter(c=>c.nextReview <= now);
-    }
-
-    function updateCard(cardId, rating, deckId) {
-        const deck = decks[deckId];
-        if (!deck) return;
-        const card = deck.cards.find(c=>c.id===cardId);
-        if (!card) return;
-
-        let interval = card.interval || 1;
-        let ease = card.easeFactor || 2.5;
-
-        switch(rating) {
-            case 'again': interval=0.02; ease=Math.max(1.3,ease-0.2); playFail(); break;
-            case 'hard': interval*=1.2; ease=Math.max(1.3,ease-0.15); playFail(); break;
-            case 'good': interval*=ease; ease+=0.1; playSuccess(); break;
-            case 'easy': interval*=ease*1.3; ease+=0.15; playSuccess(); fireConfetti(); break;
-        }
-        if (interval<0.01) interval=0.01;
-        if (interval>365) interval=365;
-
-        card.interval = interval;
-        card.easeFactor = ease;
-        card.nextReview = Date.now() + (interval*86400000);
-        card.reviewCount = (card.reviewCount||0)+1;
-        saveData();
-    }
-
-    // ---------- FOLDER OPERATIONS ----------
-    function createFolder(name) {
-        if (!name || name.trim()==='') return;
-        const id = 'folder_'+Date.now();
-        folders[id] = { name: name.trim(), deckIds: [] };
-        expandedFolders[id] = true;
-        saveData();
-        renderView();
-        showToast(`📁 Folder "${name.trim()}" created. Drag decks here.`);
-    }
-
-    function deleteFolder(folderId) {
-        if (!confirm(`Delete folder "${folders[folderId]?.name}" and move its decks to "Uncategorized"?`)) return;
-        const folder = folders[folderId];
-        if (folder) {
-            folder.deckIds.forEach(did => {
-                if (decks[did]) {
-                    decks[did].folderId = null;
-                    // Also reset parent? We'll leave parent as is.
-                }
-            });
-            delete folders[folderId];
-            delete expandedFolders[folderId];
-            saveData();
-            renderView();
-        }
-    }
-
-    function renameFolder(folderId, newName) {
-        if (!newName || newName.trim()==='') return;
-        if (folders[folderId]) {
-            folders[folderId].name = newName.trim();
-            saveData();
-            renderView();
-        }
-    }
-
-    function toggleFolder(folderId) {
-        expandedFolders[folderId] = !expandedFolders[folderId];
-        renderView();
-    }
-
-    function moveDeckToFolder(deckId, folderId) {
-        const deck = decks[deckId];
-        if (!deck) return;
-        // Remove from old folder
-        if (deck.folderId && folders[deck.folderId]) {
-            folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
-        }
-        // Add to new folder (if not null)
-        if (folderId && folders[folderId]) {
-            if (!folders[folderId].deckIds.includes(deckId)) {
-                folders[folderId].deckIds.push(deckId);
-            }
-            deck.folderId = folderId;
-        } else {
-            deck.folderId = null;
-        }
-        // Keep parent hierarchy intact; we only change folder.
-        saveData();
-        renderView();
-    }
-
-    // ---------- NEST DECK (drag deck onto another deck) ----------
-    function nestDeck(childId, parentId) {
-        if (childId === parentId) return;
-        const child = decks[childId];
-        const parent = decks[parentId];
-        if (!child || !parent) return;
-
-        // Check if child is already a descendant of parent to avoid cycles
-        let isDescendant = false;
-        let check = parent;
-        while (check) {
-            if (check.id === childId) { isDescendant = true; break; }
-            check = check.parentId ? decks[check.parentId] : null;
-        }
-        if (isDescendant) {
-            showToast('Cannot nest a deck inside its own descendant.');
-            return;
+        // ---------- TOAST ----------
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._hideTimer);
+            toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Remove child from old parent
-        if (child.parentId && decks[child.parentId]) {
-            decks[child.parentId].children = decks[child.parentId].children.filter(id => id !== childId);
-        }
-        // Remove child from any folder? We keep folder association, but we can also move folder? We'll keep.
-        // Set new parent
-        child.parentId = parentId;
-        if (!parent.children.includes(childId)) {
-            parent.children.push(childId);
-        }
-        // Also ensure the child is in the same folder as parent? We'll not change folder automatically.
-        saveData();
-        renderView();
-        showToast(`📚 "${child.name}" nested under "${parent.name}".`);
-    }
-
-    // ---------- DRAG & DROP (with auto-scroll) ----------
-    let draggedDeckId = null;
-    let dragTargetIsFolder = false;
-
-    function handleDragStart(e, deckId) {
-        draggedDeckId = deckId;
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', deckId);
-        setTimeout(() => {
-            const el = e.target.closest('.deck-item');
-            if (el) el.classList.add('dragging');
-        }, 0);
-    }
-
-    function handleDragEnd(e) {
-        const el = e.target.closest('.deck-item');
-        if (el) el.classList.remove('dragging');
-        document.querySelectorAll('.folder-container, .deck-item').forEach(el => {
-            el.classList.remove('drag-over');
-        });
-        dragTargetIsFolder = false;
-        // Reset auto-scroll
-        clearInterval(window._autoScrollInterval);
-    }
-
-    function handleDragOver(e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        // Auto-scroll when near edges
-        const y = e.clientY;
-        const threshold = 80;
-        const scrollSpeed = 20;
-        const container = document.querySelector('.container');
-        if (container) {
-            const rect = container.getBoundingClientRect();
-            if (y - rect.top < threshold) {
-                window.scrollBy(0, -scrollSpeed);
-            } else if (rect.bottom - y < threshold) {
-                window.scrollBy(0, scrollSpeed);
-            }
-        }
-        // Highlight target
-        const folder = e.target.closest('.folder-container');
-        const deckItem = e.target.closest('.deck-item');
-        document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
-        if (folder) {
-            folder.classList.add('drag-over');
-            dragTargetIsFolder = true;
-        } else if (deckItem) {
-            deckItem.classList.add('drag-over');
-            dragTargetIsFolder = false;
-        }
-    }
-
-    function handleDragLeave(e) {
-        const el = e.target.closest('.folder-container') || e.target.closest('.deck-item');
-        if (el) el.classList.remove('drag-over');
-    }
-
-    function handleDrop(e, targetId, type) {
-        e.preventDefault();
-        e.stopPropagation();
-        document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
-        const sourceId = e.dataTransfer.getData('text/plain');
-        if (!sourceId || !decks[sourceId]) {
-            draggedDeckId = null;
-            return;
-        }
-
-        if (type === 'folder') {
-            // Drop onto a folder → move deck to that folder (keep parent)
-            moveDeckToFolder(sourceId, targetId);
-            showToast(`Moved "${decks[sourceId]?.name}" to folder "${folders[targetId]?.name || 'Uncategorized'}"`);
-        } else if (type === 'deck') {
-            // Drop onto a deck → nest it (make it a child)
-            nestDeck(sourceId, targetId);
-        }
-        draggedDeckId = null;
-    }
-
-    // ---------- ASK NEXUS ----------
-    function askNexus(text) {
-        if (typeof window.sendMessage === 'function') {
-            let input = document.getElementById('nexus-input');
-            if (!input) {
-                const panel = document.querySelector('.nexus-panel');
-                if (panel) input = panel.querySelector('textarea');
-                if (!input) { showToast('Nexus not ready. Open Nexus first.'); return; }
-            }
-            input.value = `Explain more about: ${text}`;
-            const panel = document.querySelector('.nexus-panel');
-            if (panel && panel.style.display !== 'flex') panel.style.display = 'flex';
-            window.sendMessage(input.value);
-        } else {
-            showToast('Nexus AI not loaded. Please refresh.');
-        }
-    }
-
-    // ---------- EXPORT HTML ----------
-    function exportDeckHTML(deckId) {
-        const deck = decks[deckId];
-        if (!deck) { showToast('Deck not found.'); return; }
-        let html = `<html><head><style>body{font-family:sans-serif;max-width:800px;margin:2rem auto;} .card{border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem;} .front{font-weight:bold;} .back{margin-top:0.5rem;color:#333;} .deck-title{font-size:2rem;margin-bottom:1rem;}</style></head><body><h1 class="deck-title">${deck.name}</h1>`;
-        deck.cards.forEach(c => {
-            html += `<div class="card"><div class="front">${c.front}</div><div class="back">${c.back}</div></div>`;
-        });
-        html += '</body></html>';
-        const blob = new Blob([html], {type:'text/html'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${deck.name.replace(/\s+/g,'_')}.html`;
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('Exported as HTML (printable).');
-    }
-
-    // ---------- RENDER ----------
-    function renderView() {
-        const app = document.getElementById('app');
-        if (!app) return;
-
-        if (isGenerating) {
-            app.innerHTML = `
-                <div class="glass-panel">
-                    <div style="text-align:center;padding:2rem;">
-                        <i class="fas fa-brain" style="font-size:2rem;opacity:0.6;display:block;margin-bottom:1rem;color:#00f0c0;"></i>
-                        Generating flashcards <span class="loading-dots">...</span>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        if (currentView === 'list') renderList(app);
-        else if (currentView === 'practice') renderPractice(app);
-    }
-
-    function renderList(app) {
-        let html = `
-            <div class="glass-panel">
-                <h1 class="page-title"><i class="fas fa-brain"></i> Smart Flashcards</h1>
-                <p class="subtitle">AI‑powered flashcards with spaced repetition – create a deck, then drag it into a folder or onto another deck to nest it.</p>
-                <div class="create-deck">
-                    <input type="text" id="topic-input" placeholder="Enter topic (e.g., Cardiology)" />
-                    <button class="btn btn-primary" id="generate-btn"><i class="fas fa-magic"></i> Generate Deck</button>
-                    <button class="btn btn-secondary" onclick="window.createFolder(prompt('Folder name:'))"><i class="fas fa-folder-plus"></i> New Folder</button>
-                </div>
-                <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="🔍 Search decks or cards..." oninput="window.updateSearch(this.value)" />
-                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('search-input').value='';window.updateSearch('');"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="folders-grid" id="folders-grid">
-        `;
-
-        // Search term
-        const searchTerm = (document.getElementById('search-input')?.value || '').toLowerCase();
-
-        // Filter function for a deck (including its descendants)
-        function deckMatches(deckId) {
-            const d = decks[deckId];
-            if (!d) return false;
-            const match = d.name.toLowerCase().includes(searchTerm) ||
-                          d.topic.toLowerCase().includes(searchTerm) ||
-                          d.cards.some(c => c.front.toLowerCase().includes(searchTerm) || c.back.toLowerCase().includes(searchTerm));
-            if (match) return true;
-            // Check children
-            return d.children.some(cid => deckMatches(cid));
-        }
-
-        // Get all folder IDs (including empty ones)
-        const folderIds = Object.keys(folders);
-        // Filter folders: include if any deck in folder passes search, or if empty (so user can drop decks)
-        const visibleFolderIds = folderIds.filter(fid => {
-            const folder = folders[fid];
-            const hasVisible = folder.deckIds.some(did => deckMatches(did));
-            return folder.deckIds.length === 0 || hasVisible;
-        });
-
-        // Render uncategorized decks (those not in any folder) that pass search
-        const uncategorizedIds = Object.keys(decks).filter(id => {
-            const d = decks[id];
-            return !d.folderId && deckMatches(id);
-        });
-
-        // Render folders
-        visibleFolderIds.forEach(fid => {
-            const folder = folders[fid];
-            const deckIdsInFolder = folder.deckIds.filter(did => deckMatches(did));
-            const isExpanded = expandedFolders[fid] !== false; // default open
-            html += `
-                <div class="folder-container" 
-                     draggable="false"
-                     ondrop="window.handleDrop(event, '${fid}', 'folder')" 
-                     ondragover="window.handleDragOver(event)" 
-                     ondragleave="window.handleDragLeave(event)">
-                    <div class="folder-header" onclick="window.toggleFolder('${fid}')">
-                        <span class="folder-name"><i class="fas ${isExpanded ? 'fa-folder-open' : 'fa-folder'}"></i> ${escapeHtml(folder.name)}</span>
-                        <div class="folder-actions" onclick="event.stopPropagation();">
-                            <button class="btn btn-secondary btn-sm" onclick="window.renameFolder('${fid}', prompt('New folder name:', '${escapeHtml(folder.name)}'))"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger btn-sm" onclick="window.deleteFolder('${fid}')"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="folder-body ${isExpanded ? 'open' : ''}">
-                        ${deckIdsInFolder.length === 0 ? '<div class="folder-empty">Drop decks here</div>' : ''}
-                        <div class="deck-tree">
-                            ${deckIdsInFolder.map(did => renderDeckTree(did)).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        // Render "Uncategorized" folder (only if there are uncategorized decks)
-        if (uncategorizedIds.length > 0) {
-            html += `
-                <div class="folder-container" 
-                     draggable="false"
-                     ondrop="window.handleDrop(event, null, 'folder')" 
-                     ondragover="window.handleDragOver(event)" 
-                     ondragleave="window.handleDragLeave(event)">
-                    <div class="folder-header" onclick="window.toggleFolder('uncategorized')">
-                        <span class="folder-name"><i class="fas ${expandedFolders['uncategorized'] !== false ? 'fa-folder-open' : 'fa-folder'}"></i> Uncategorized</span>
-                    </div>
-                    <div class="folder-body ${expandedFolders['uncategorized'] !== false ? 'open' : ''}">
-                        <div class="deck-tree">
-                            ${uncategorizedIds.map(did => renderDeckTree(did)).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        if (visibleFolderIds.length === 0 && uncategorizedIds.length === 0) {
-            html += `<div class="empty-state"><i class="fas fa-layer-group"></i><h3>No decks found</h3><p>Create a deck or adjust your search.</p></div>`;
-        }
-
-        html += `</div></div>`;
-        app.innerHTML = html;
-
-        document.getElementById('generate-btn').addEventListener('click', ()=>{
-            const topic = document.getElementById('topic-input').value.trim();
-            if (topic) { generateDeck(topic, null, null); document.getElementById('topic-input').value=''; }
-            else showToast('Please enter a topic.');
-        });
-        document.getElementById('topic-input').addEventListener('keypress', e=>{ if(e.key==='Enter') document.getElementById('generate-btn').click(); });
-    }
-
-    // Recursive function to render a deck and its children
-    function renderDeckTree(deckId) {
-        const deck = decks[deckId];
-        if (!deck) return '';
-        const due = getDueCards(deck).length;
-        const total = deck.cards.length;
-        const childrenHtml = deck.children.map(cid => renderDeckTree(cid)).join('');
-
-        return `
-            <div class="deck-item" draggable="true" 
-                 ondragstart="window.handleDragStart(event, '${deckId}')" 
-                 ondragend="window.handleDragEnd(event)"
-                 ondrop="window.handleDrop(event, '${deckId}', 'deck')"
-                 ondragover="window.handleDragOver(event)"
-                 ondragleave="window.handleDragLeave(event)">
-                <div class="deck-info">
-                    <div class="deck-name">${escapeHtml(deck.name)}</div>
-                    <div class="deck-meta">${total} cards · ${due} due</div>
-                </div>
-                <div class="deck-actions">
-                    <button class="btn btn-primary btn-sm" onclick="window.startPractice('${deckId}')"><i class="fas fa-play"></i> Practice</button>
-                    <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${deckId}')"><i class="fas fa-plus"></i> More</button>
-                    <button class="btn btn-secondary btn-sm" onclick="window.exportDeckHTML('${deckId}')"><i class="fas fa-print"></i> HTML</button>
-                    <button class="btn btn-danger btn-sm" onclick="window.deleteDeck('${deckId}')"><i class="fas fa-trash"></i></button>
-                </div>
-                ${childrenHtml ? `<div class="child-decks">${childrenHtml}</div>` : ''}
-            </div>
-        `;
-    }
-
-    function renderPractice(app) {
-        const deck = decks[currentDeckId];
-        if (!deck) { currentView='list'; renderView(); return; }
-
-        let available = getDueCards(deck);
-        if (available.length===0) {
-            if (deck.cards.length<15) {
-                app.innerHTML = `
-                    <div class="glass-panel">
-                        <div class="empty-state">
-                            <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
-                            <h3>All caught up!</h3>
-                            <p>Want to learn more about "${escapeHtml(deck.name)}"?</p>
-                            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
-                                <button class="btn btn-success" onclick="window.addMoreCards('${currentDeckId}')"><i class="fas fa-plus"></i> Add More Cards</button>
-                                <button class="btn btn-secondary" onclick="window.goToDeckList()">Back to Decks</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                return;
-            } else {
-                app.innerHTML = `
-                    <div class="glass-panel">
-                        <div class="empty-state">
-                            <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
-                            <h3>All caught up!</h3>
-                            <p>Come back later for spaced repetition.</p>
-                            <button class="btn btn-primary" onclick="window.goToDeckList()">Back to Decks</button>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-        }
-
-        available.sort((a,b)=>a.nextReview-b.nextReview);
-        dueCards = available;
-        if (currentCardIndex>=dueCards.length) currentCardIndex=0;
-        const card = dueCards[currentCardIndex];
-        if (!card) { currentView='list'; renderView(); return; }
-
-        const total = dueCards.length;
-        const idx = currentCardIndex+1;
-        const progress = Math.round((currentCardIndex/total)*100);
-
-        app.innerHTML = `
-            <div class="glass-panel practice-container">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                    <button class="btn btn-secondary btn-sm" onclick="window.goToDeckList()"><i class="fas fa-arrow-left"></i> Decks</button>
-                    <span class="practice-stats">${idx} / ${total} · ${progress}%</span>
-                </div>
-                <h2 style="font-size:1.4rem;font-weight:600;color:#b0e0f0;margin-bottom:0.2rem;">${escapeHtml(deck.name)}</h2>
-                <div class="card-flip" id="card-flip">
-                    <div class="card-inner" id="card-inner">
-                        <div class="card-face front">
-                            <span class="card-label">Front</span>
-                            <div class="card-text">${escapeHtml(card.front)}</div>
-                            <div class="nexus-btn-area">
-                                <button class="btn btn-nexus btn-sm" onclick="event.stopPropagation(); window.askNexus('${escapeHtml(card.front)}')">
-                                    <i class="fas fa-robot"></i> Ask Nexus
-                                </button>
-                            </div>
-                            <div class="click-hint"><i class="fas fa-hand-pointer"></i> Tap to flip</div>
-                        </div>
-                        <div class="card-face back">
-                            <span class="card-label">Back</span>
-                            <div class="card-text">${escapeHtml(card.back)}</div>
-                            <div class="nexus-btn-area">
-                                <button class="btn btn-nexus btn-sm" onclick="event.stopPropagation(); window.askNexus('${escapeHtml(card.back)}')">
-                                    <i class="fas fa-robot"></i> Ask Nexus
-                                </button>
-                            </div>
-                            <div class="click-hint">Tap again to flip back</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="rating-area" style="display:none;">
-                    <div class="rating-buttons">
-                        <button class="rating-btn again" data-rating="again">🔄 Again</button>
-                        <button class="rating-btn hard" data-rating="hard">😓 Hard</button>
-                        <button class="rating-btn good" data-rating="good">👍 Good</button>
-                        <button class="rating-btn easy" data-rating="easy">🚀 Easy</button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        const flipEl = document.getElementById('card-flip');
-        const innerEl = document.getElementById('card-inner');
-        let flipped = false;
-        const ratingArea = document.getElementById('rating-area');
-
-        flipEl.addEventListener('click', (e) => {
-            if (e.target.closest('button')) return;
-            flipped = !flipped;
-            innerEl.classList.toggle('flipped', flipped);
-            if (flipped) {
-                playFlip();
-                ratingArea.style.display = 'block';
-            } else {
-                ratingArea.style.display = 'none';
-            }
-        });
-
-        document.querySelectorAll('.rating-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const rating = btn.dataset.rating;
-                if (rating === 'again') {
-                    innerEl.classList.add('shake');
-                    setTimeout(()=>innerEl.classList.remove('shake'),500);
-                } else if (rating === 'easy') {
-                    innerEl.classList.add('pop');
-                    setTimeout(()=>innerEl.classList.remove('pop'),500);
-                }
-                updateCard(card.id, rating, currentDeckId);
-                currentCardIndex++;
-                if (currentCardIndex>=dueCards.length) {
-                    renderView();
+        // ---------- STORAGE ----------
+        function loadData() {
+            try {
+                const decksData = localStorage.getItem(STORAGE_KEY);
+                if (decksData) {
+                    decks = JSON.parse(decksData);
+                    Object.keys(decks).forEach(id => {
+                        if (!decks[id].cards) decks[id].cards = [];
+                        if (!decks[id].topic) decks[id].topic = decks[id].name;
+                        if (decks[id].parentId === undefined) decks[id].parentId = null;
+                        if (decks[id].children === undefined) decks[id].children = [];
+                    });
                 } else {
-                    renderPractice(app);
+                    decks = {};
                 }
-            });
-        });
-    }
+            } catch (e) { decks = {}; }
 
-    // ---------- ADD MORE CARDS ----------
-    window.addMoreCards = function(deckId) {
-        const deck = decks[deckId];
-        if (!deck) { showToast('Deck not found.'); return; }
-        const existingFronts = deck.cards.map(c=>c.front);
-        if (isGenerating) return;
-        isGenerating = true;
-        renderView();
-        const topic = deck.topic || deck.name;
-        const avoidText = `\nAvoid these existing concepts: ${existingFronts.join(', ')}.`;
-        const prompt = `You are a medical educator. Generate 5 unique, high‑yield flashcards about the topic: "${topic}".
-    Each flashcard must be distinct – cover different subtopics.
-    Format as JSON array: [{"front":"...","back":"..."}]
-    ${avoidText}`;
-        (async () => {
+            try {
+                const foldersData = localStorage.getItem(FOLDER_KEY);
+                if (foldersData) {
+                    folders = JSON.parse(foldersData);
+                    Object.keys(folders).forEach(id => {
+                        if (!folders[id].deckIds) folders[id].deckIds = [];
+                    });
+                } else {
+                    folders = {};
+                }
+            } catch (e) { folders = {}; }
+
+            // Clean up: remove deck references from folders that no longer exist
+            Object.keys(folders).forEach(fid => {
+                folders[fid].deckIds = folders[fid].deckIds.filter(did => decks[did]);
+            });
+
+            // Ensure each deck has children array and parentId
+            Object.values(decks).forEach(d => {
+                if (!d.children) d.children = [];
+                if (d.parentId === undefined) d.parentId = null;
+                // clean children: remove any that don't exist
+                d.children = d.children.filter(cid => decks[cid]);
+                // if parentId points to non-existent, reset
+                if (d.parentId && !decks[d.parentId]) d.parentId = null;
+            });
+
+            // If no decks, create a sample deck and a folder
+            if (Object.keys(decks).length === 0) {
+                const sampleDeck = {
+                    id: 'deck_sample',
+                    name: 'Cardiology Basics',
+                    topic: 'Cardiology',
+                    created: Date.now(),
+                    parentId: null,
+                    children: [],
+                    cards: [
+                        { id: 'c1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
+                        { id: 'c2', front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
+                    ]
+                };
+                decks[sampleDeck.id] = sampleDeck;
+                const folderId = 'folder_' + Date.now();
+                folders[folderId] = { name: 'Cardiology', deckIds: [sampleDeck.id] };
+                saveData();
+                // Expand this folder by default
+                expanded.folders[folderId] = true;
+            }
+
+            // Default: expand all folders and decks
+            Object.keys(folders).forEach(fid => { if (expanded.folders[fid] === undefined) expanded.folders[fid] = true; });
+            Object.keys(decks).forEach(did => { if (expanded.decks[did] === undefined) expanded.decks[did] = true; });
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(decks));
+            localStorage.setItem(FOLDER_KEY, JSON.stringify(folders));
+        }
+
+        // ---------- SOUND EFFECTS ----------
+        function playTone(freq, duration, type='sine') {
+            try {
+                const ctx = new(window.AudioContext||window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime+duration);
+            } catch(e){}
+        }
+        function playSuccess(){ playTone(880,0.15); setTimeout(()=>playTone(1100,0.1),120); }
+        function playFail(){ playTone(300,0.3,'sawtooth'); }
+        function playFlip(){ playTone(600,0.05); }
+        function fireConfetti() {
+            const emojis = ['🎉','✨','⭐','🌟','🎊','💪','🏆'];
+            for(let i=0;i<12;i++){
+                setTimeout(()=>{
+                    const el=document.createElement('div');
+                    el.className='confetti-piece';
+                    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+                    el.style.left=(Math.random()*80+10)+'%';
+                    el.style.top=(Math.random()*40+30)+'%';
+                    el.style.fontSize=(1.5+Math.random()*2)+'rem';
+                    document.body.appendChild(el);
+                    setTimeout(()=>el.remove(),1200);
+                }, i*80);
+            }
+        }
+
+        // ---------- AI MODEL SELECTION ----------
+        let cachedModelId = null;
+        async function getBestModel() {
+            if (cachedModelId) return cachedModelId;
+            try {
+                if (!window.puter?.ai) {
+                    for (let i=0;i<5;i++){ await new Promise(r=>setTimeout(r,1000)); if(window.puter?.ai) break; }
+                }
+                if (!window.puter?.ai) throw new Error('Puter AI not loaded');
+                const models = await puter.ai.listModels();
+                const preferred = ['gpt-5.4-nano','google/gemini-3.1-flash-lite','google/gemini-2.5-flash-lite-001','google/gemini-2.0-flash-lite-001'];
+                for (const p of preferred) {
+                    if (models.some(m=>m.id===p)) { cachedModelId=p; return cachedModelId; }
+                }
+                const gemini = models.find(m=>m.id.toLowerCase().includes('gemini'));
+                if (gemini) { cachedModelId=gemini.id; return cachedModelId; }
+                if (models.length) { cachedModelId=models[0].id; return cachedModelId; }
+                throw new Error('No chat models');
+            } catch(e) {
+                console.warn(e);
+                cachedModelId='gpt-5.4-nano';
+                return cachedModelId;
+            }
+        }
+
+        // ---------- FALLBACK CARDS ----------
+        function getFallbackCards(topic) {
+            const lower = topic.toLowerCase();
+            if (lower.includes('cardio')) {
+                return [
+                    { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)' },
+                    { front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.' },
+                    { front: 'What is the most common cause of heart failure?', back: 'Ischemic heart disease' },
+                    { front: 'What is the hallmark ECG finding in pericarditis?', back: 'Diffuse ST-segment elevation' },
+                    { front: 'What is the first-line medication for acute decompensated heart failure?', back: 'Loop diuretics' }
+                ];
+            } else if (lower.includes('pharma')||lower.includes('drug')) {
+                return [
+                    { front: 'Mechanism of beta-blockers?', back: 'Block beta-adrenergic receptors, reducing heart rate and contractility.' },
+                    { front: 'Antidote for heparin overdose?', back: 'Protamine sulfate' },
+                    { front: 'Mechanism of statins?', back: 'HMG-CoA reductase inhibitors.' },
+                    { front: 'First-line treatment for hypertension in diabetics?', back: 'ACE inhibitors' },
+                    { front: 'Mechanism of metformin?', back: 'Decreases hepatic glucose production and increases insulin sensitivity.' }
+                ];
+            } else {
+                return [
+                    { front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin' },
+                    { front: 'What is the mechanism of beta-blockers?', back: 'Block beta-adrenergic receptors' },
+                    { front: 'Most common cause of community-acquired pneumonia?', back: 'Streptococcus pneumoniae' },
+                    { front: 'Hallmark of type 1 diabetes?', back: 'Autoimmune destruction of beta cells, absolute insulin deficiency.' },
+                    { front: 'First-line treatment for acute anaphylaxis?', back: 'Epinephrine (IM)' }
+                ];
+            }
+        }
+
+        // ---------- GENERATE DECK ----------
+        async function generateDeck(topic, folderId = null, parentId = null) {
+            if (isGenerating) return;
+            if (!topic || topic.trim().length<2) { showToast('Please enter a valid topic.'); return; }
+            isGenerating = true;
+            renderView();
+
+            const prompt = `You are a medical educator. Generate 8 unique, high‑yield flashcards about the topic: "${topic.trim()}".
+        Each flashcard must be distinct – cover different subtopics, mechanisms, drugs, or clinical pearls.
+        Format the output as a JSON array of objects with fields:
+          - "front": the question or prompt,
+          - "back": the answer or explanation.
+        Do not include any extra text or markdown. Only the JSON array.`;
+
             try {
                 const model = await getBestModel();
-                const raw = await puter.ai.chat(prompt, { model });
+                const timeoutPromise = new Promise((_,reject)=>setTimeout(()=>reject(new Error('AI request timed out')),30000));
+                const aiPromise = puter.ai.chat(prompt, { model });
+                const raw = await Promise.race([aiPromise, timeoutPromise]);
                 let text = raw.message?.content || raw.content || raw;
                 let jsonMatch = text.match(/\[[\s\S]*\]/);
                 if (jsonMatch) text = jsonMatch[0];
                 text = text.replace(/```json/g,'').replace(/```/g,'').trim();
                 let cards = JSON.parse(text);
-                if (!Array.isArray(cards) || cards.length===0) throw new Error('No cards');
-                const startIdx = deck.cards.length;
-                cards.forEach((c,i)=>{
-                    deck.cards.push({
-                        id: 'card_'+deckId+'_'+(startIdx+i),
+                if (!Array.isArray(cards) || cards.length===0) throw new Error('No cards generated');
+                if (cards.length>10) cards=cards.slice(0,10);
+
+                const deckId = 'deck_'+Date.now();
+                const deck = {
+                    id: deckId,
+                    name: topic.trim(),
+                    topic: topic.trim(),
+                    created: Date.now(),
+                    parentId: parentId || null,
+                    children: [],
+                    cards: cards.map((c,i)=>({
+                        id: 'card_'+deckId+'_'+i,
                         front: c.front,
                         back: c.back,
                         easeFactor: 2.5,
                         interval: 1,
                         nextReview: Date.now(),
                         reviewCount: 0
-                    });
-                });
+                    }))
+                };
+                decks[deckId] = deck;
+                if (parentId && decks[parentId]) {
+                    if (!decks[parentId].children.includes(deckId)) {
+                        decks[parentId].children.push(deckId);
+                    }
+                }
+                if (folderId && folders[folderId]) {
+                    folders[folderId].deckIds.push(deckId);
+                }
+                // Expand the new deck and its parent
+                expanded.decks[deckId] = true;
+                if (parentId) expanded.decks[parentId] = true;
                 saveData();
-                showToast(`✅ Added ${cards.length} new cards to "${deck.name}"!`);
+                showToast(`✅ Generated ${cards.length} flashcards for "${topic}"!`);
                 isGenerating = false;
-                renderView();
+                startPractice(deckId);
             } catch(e) {
-                console.error(e);
-                showToast('Failed to add cards. Using fallback.');
-                const fb = getFallbackCards(topic).slice(0,3);
-                const startIdx = deck.cards.length;
-                fb.forEach((c,i)=>{
-                    deck.cards.push({
-                        id: 'card_'+deckId+'_'+(startIdx+i),
+                console.error('Generation error:', e);
+                showToast('⚠️ AI generation failed. Using fallback cards.');
+                const fallbackCards = getFallbackCards(topic);
+                const deckId = 'deck_fallback_'+Date.now();
+                const deck = {
+                    id: deckId,
+                    name: topic.trim()+' (fallback)',
+                    topic: topic.trim(),
+                    created: Date.now(),
+                    parentId: parentId || null,
+                    children: [],
+                    cards: fallbackCards.map((c,i)=>({
+                        id: 'card_'+deckId+'_'+i,
                         front: c.front,
                         back: c.back,
                         easeFactor: 2.5,
                         interval: 1,
                         nextReview: Date.now(),
                         reviewCount: 0
-                    });
-                });
+                    }))
+                };
+                decks[deckId] = deck;
+                if (parentId && decks[parentId]) {
+                    if (!decks[parentId].children.includes(deckId)) {
+                        decks[parentId].children.push(deckId);
+                    }
+                }
+                if (folderId && folders[folderId]) {
+                    folders[folderId].deckIds.push(deckId);
+                }
+                expanded.decks[deckId] = true;
+                if (parentId) expanded.decks[parentId] = true;
                 saveData();
-                showToast(`Added ${fb.length} fallback cards.`);
+                showToast(`📚 Created fallback deck with ${fallbackCards.length} cards.`);
                 isGenerating = false;
+                startPractice(deckId);
+            } finally {
+                isGenerating = false;
+            }
+        }
+
+        // ---------- START PRACTICE ----------
+        function startPractice(deckId) {
+            currentDeckId = deckId;
+            currentCardIndex = 0;
+            currentView = 'practice';
+            renderView();
+        }
+
+        // ---------- DELETE DECK (recursive) ----------
+        function deleteDeck(deckId) {
+            const deck = decks[deckId];
+            if (!deck) return;
+            if (!confirm(`Delete deck "${deck.name}" and all its sub-decks?`)) return;
+            const deleteRecursive = (id) => {
+                const d = decks[id];
+                if (!d) return;
+                // Remove from parent's children list
+                if (d.parentId && decks[d.parentId]) {
+                    decks[d.parentId].children = decks[d.parentId].children.filter(cid => cid !== id);
+                }
+                // Remove from folder if any
+                if (d.folderId && folders[d.folderId]) {
+                    folders[d.folderId].deckIds = folders[d.folderId].deckIds.filter(did => did !== id);
+                }
+                // Delete children first
+                d.children.forEach(cid => deleteRecursive(cid));
+                delete decks[id];
+                delete expanded.decks[id];
+            };
+            deleteRecursive(deckId);
+            saveData();
+            if (currentDeckId === deckId) { currentDeckId = null; currentView = 'list'; }
+            renderView();
+        }
+
+        // ---------- SPACED REPETITION ----------
+        function getDueCards(deck) {
+            const now = Date.now();
+            return deck.cards.filter(c=>c.nextReview <= now);
+        }
+
+        function updateCard(cardId, rating, deckId) {
+            const deck = decks[deckId];
+            if (!deck) return;
+            const card = deck.cards.find(c=>c.id===cardId);
+            if (!card) return;
+
+            let interval = card.interval || 1;
+            let ease = card.easeFactor || 2.5;
+
+            switch(rating) {
+                case 'again': interval=0.02; ease=Math.max(1.3,ease-0.2); playFail(); break;
+                case 'hard': interval*=1.2; ease=Math.max(1.3,ease-0.15); playFail(); break;
+                case 'good': interval*=ease; ease+=0.1; playSuccess(); break;
+                case 'easy': interval*=ease*1.3; ease+=0.15; playSuccess(); fireConfetti(); break;
+            }
+            if (interval<0.01) interval=0.01;
+            if (interval>365) interval=365;
+
+            card.interval = interval;
+            card.easeFactor = ease;
+            card.nextReview = Date.now() + (interval*86400000);
+            card.reviewCount = (card.reviewCount||0)+1;
+            saveData();
+        }
+
+        // ---------- FOLDER OPERATIONS ----------
+        function createFolder(name) {
+            if (!name || name.trim()==='') return;
+            const id = 'folder_'+Date.now();
+            folders[id] = { name: name.trim(), deckIds: [] };
+            expanded.folders[id] = true;
+            saveData();
+            renderView();
+            showToast(`📁 Folder "${name.trim()}" created. Drag decks here.`);
+        }
+
+        function deleteFolder(folderId) {
+            if (!confirm(`Delete folder "${folders[folderId]?.name}" and move its decks to "Uncategorized"?`)) return;
+            const folder = folders[folderId];
+            if (folder) {
+                folder.deckIds.forEach(did => {
+                    if (decks[did]) {
+                        decks[did].folderId = null;
+                    }
+                });
+                delete folders[folderId];
+                delete expanded.folders[folderId];
+                saveData();
                 renderView();
             }
-        })();
-    };
+        }
 
-    // ---------- HELPERS ----------
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-    }
+        function renameFolder(folderId, newName) {
+            if (!newName || newName.trim()==='') return;
+            if (folders[folderId]) {
+                folders[folderId].name = newName.trim();
+                saveData();
+                renderView();
+            }
+        }
 
-    // ---------- GLOBAL EXPOSURES ----------
-    window.startPractice = startPractice;
-    window.goToDeckList = function() {
-        currentView='list';
-        currentDeckId=null;
-        currentCardIndex=0;
+        function toggleFolder(folderId) {
+            expanded.folders[folderId] = !expanded.folders[folderId];
+            renderView();
+        }
+
+        function moveDeckToFolder(deckId, folderId) {
+            const deck = decks[deckId];
+            if (!deck) return;
+            // Remove from old folder
+            if (deck.folderId && folders[deck.folderId]) {
+                folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
+            }
+            // Add to new folder (if not null)
+            if (folderId && folders[folderId]) {
+                if (!folders[folderId].deckIds.includes(deckId)) {
+                    folders[folderId].deckIds.push(deckId);
+                }
+                deck.folderId = folderId;
+            } else {
+                deck.folderId = null;
+            }
+            saveData();
+            renderView();
+        }
+
+        // ---------- NEST DECK ----------
+        function nestDeck(childId, parentId) {
+            if (childId === parentId) return;
+            const child = decks[childId];
+            const parent = decks[parentId];
+            if (!child || !parent) return;
+
+            // Check if child is already a descendant of parent to avoid cycles
+            let isDescendant = false;
+            let check = parent;
+            while (check) {
+                if (check.id === childId) { isDescendant = true; break; }
+                check = check.parentId ? decks[check.parentId] : null;
+            }
+            if (isDescendant) {
+                showToast('Cannot nest a deck inside its own descendant.');
+                return;
+            }
+
+            // Remove child from old parent
+            if (child.parentId && decks[child.parentId]) {
+                decks[child.parentId].children = decks[child.parentId].children.filter(id => id !== childId);
+            }
+            // Set new parent
+            child.parentId = parentId;
+            if (!parent.children.includes(childId)) {
+                parent.children.push(childId);
+            }
+            // Expand the parent
+            expanded.decks[parentId] = true;
+            saveData();
+            renderView();
+            showToast(`📚 "${child.name}" nested under "${parent.name}".`);
+        }
+
+        // ---------- UNNEST (make root) ----------
+        function unnestDeck(deckId) {
+            const deck = decks[deckId];
+            if (!deck || !deck.parentId) return;
+            const oldParent = decks[deck.parentId];
+            if (oldParent) {
+                oldParent.children = oldParent.children.filter(id => id !== deckId);
+            }
+            deck.parentId = null;
+            saveData();
+            renderView();
+            showToast(`"${deck.name}" moved to root level.`);
+        }
+
+        // ---------- DRAG & DROP (with auto-scroll) ----------
+        let draggedDeckId = null;
+
+        function handleDragStart(e, deckId) {
+            draggedDeckId = deckId;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', deckId);
+            setTimeout(() => {
+                const el = e.target.closest('.deck-item');
+                if (el) el.classList.add('dragging');
+            }, 0);
+        }
+
+        function handleDragEnd(e) {
+            const el = e.target.closest('.deck-item');
+            if (el) el.classList.remove('dragging');
+            document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
+            clearInterval(window._autoScrollInterval);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            // Auto-scroll
+            const y = e.clientY;
+            const threshold = 80;
+            const container = document.querySelector('.container');
+            if (container) {
+                const rect = container.getBoundingClientRect();
+                if (y - rect.top < threshold) {
+                    window.scrollBy(0, -20);
+                } else if (rect.bottom - y < threshold) {
+                    window.scrollBy(0, 20);
+                }
+            }
+            // Highlight
+            document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
+            const folder = e.target.closest('.folder-container');
+            const deckItem = e.target.closest('.deck-item');
+            if (folder) folder.classList.add('drag-over');
+            else if (deckItem) deckItem.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            const el = e.target.closest('.folder-container') || e.target.closest('.deck-item');
+            if (el) el.classList.remove('drag-over');
+        }
+
+        function handleDrop(e, targetId, type) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
+            const sourceId = e.dataTransfer.getData('text/plain');
+            if (!sourceId || !decks[sourceId]) return;
+
+            if (type === 'folder') {
+                moveDeckToFolder(sourceId, targetId);
+                showToast(`Moved "${decks[sourceId]?.name}" to folder "${folders[targetId]?.name || 'Uncategorized'}"`);
+            } else if (type === 'deck') {
+                nestDeck(sourceId, targetId);
+            }
+        }
+
+        // ---------- ASK NEXUS ----------
+        function askNexus(text) {
+            if (typeof window.sendMessage === 'function') {
+                let input = document.getElementById('nexus-input');
+                if (!input) {
+                    const panel = document.querySelector('.nexus-panel');
+                    if (panel) input = panel.querySelector('textarea');
+                    if (!input) { showToast('Nexus not ready. Open Nexus first.'); return; }
+                }
+                input.value = `Explain more about: ${text}`;
+                const panel = document.querySelector('.nexus-panel');
+                if (panel && panel.style.display !== 'flex') panel.style.display = 'flex';
+                window.sendMessage(input.value);
+            } else {
+                showToast('Nexus AI not loaded. Please refresh.');
+            }
+        }
+
+        // ---------- EXPORT HTML ----------
+        function exportDeckHTML(deckId) {
+            const deck = decks[deckId];
+            if (!deck) { showToast('Deck not found.'); return; }
+            let html = `<html><head><style>body{font-family:sans-serif;max-width:800px;margin:2rem auto;} .card{border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem;} .front{font-weight:bold;} .back{margin-top:0.5rem;color:#333;} .deck-title{font-size:2rem;margin-bottom:1rem;}</style></head><body><h1 class="deck-title">${deck.name}</h1>`;
+            deck.cards.forEach(c => {
+                html += `<div class="card"><div class="front">${c.front}</div><div class="back">${c.back}</div></div>`;
+            });
+            html += '</body></html>';
+            const blob = new Blob([html], {type:'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${deck.name.replace(/\s+/g,'_')}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Exported as HTML (printable).');
+        }
+
+        // ---------- ADD MORE CARDS ----------
+        window.addMoreCards = function(deckId) {
+            const deck = decks[deckId];
+            if (!deck) { showToast('Deck not found.'); return; }
+            const existingFronts = deck.cards.map(c=>c.front);
+            if (isGenerating) return;
+            isGenerating = true;
+            renderView();
+            const topic = deck.topic || deck.name;
+            const avoidText = `\nAvoid these existing concepts: ${existingFronts.join(', ')}.`;
+            const prompt = `You are a medical educator. Generate 5 unique, high‑yield flashcards about the topic: "${topic}".
+        Each flashcard must be distinct – cover different subtopics.
+        Format as JSON array: [{"front":"...","back":"..."}]
+        ${avoidText}`;
+            (async () => {
+                try {
+                    const model = await getBestModel();
+                    const raw = await puter.ai.chat(prompt, { model });
+                    let text = raw.message?.content || raw.content || raw;
+                    let jsonMatch = text.match(/\[[\s\S]*\]/);
+                    if (jsonMatch) text = jsonMatch[0];
+                    text = text.replace(/```json/g,'').replace(/```/g,'').trim();
+                    let cards = JSON.parse(text);
+                    if (!Array.isArray(cards) || cards.length===0) throw new Error('No cards');
+                    const startIdx = deck.cards.length;
+                    cards.forEach((c,i)=>{
+                        deck.cards.push({
+                            id: 'card_'+deckId+'_'+(startIdx+i),
+                            front: c.front,
+                            back: c.back,
+                            easeFactor: 2.5,
+                            interval: 1,
+                            nextReview: Date.now(),
+                            reviewCount: 0
+                        });
+                    });
+                    saveData();
+                    showToast(`✅ Added ${cards.length} new cards to "${deck.name}"!`);
+                    isGenerating = false;
+                    renderView();
+                } catch(e) {
+                    console.error(e);
+                    showToast('Failed to add cards. Using fallback.');
+                    const fb = getFallbackCards(topic).slice(0,3);
+                    const startIdx = deck.cards.length;
+                    fb.forEach((c,i)=>{
+                        deck.cards.push({
+                            id: 'card_'+deckId+'_'+(startIdx+i),
+                            front: c.front,
+                            back: c.back,
+                            easeFactor: 2.5,
+                            interval: 1,
+                            nextReview: Date.now(),
+                            reviewCount: 0
+                        });
+                    });
+                    saveData();
+                    showToast(`Added ${fb.length} fallback cards.`);
+                    isGenerating = false;
+                    renderView();
+                }
+            })();
+        };
+
+        // ---------- RENDER ----------
+        function renderView() {
+            const app = document.getElementById('app');
+            if (!app) return;
+
+            if (isGenerating) {
+                app.innerHTML = `
+                    <div class="glass-panel">
+                        <div style="text-align:center;padding:2rem;">
+                            <i class="fas fa-brain" style="font-size:2rem;opacity:0.6;display:block;margin-bottom:1rem;color:#00f0c0;"></i>
+                            Generating flashcards <span class="loading-dots">...</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentView === 'list') renderList(app);
+            else if (currentView === 'practice') renderPractice(app);
+        }
+
+        // ---------- RENDER LIST (with recursive tree) ----------
+        function renderList(app) {
+            let html = `
+                <div class="glass-panel">
+                    <h1 class="page-title"><i class="fas fa-brain"></i> Smart Flashcards</h1>
+                    <p class="subtitle">AI‑powered flashcards with spaced repetition – drag a deck onto another to nest it, or onto a folder to categorise.</p>
+                    <div class="create-deck">
+                        <input type="text" id="topic-input" placeholder="Enter topic (e.g., Cardiology)" />
+                        <button class="btn btn-primary" id="generate-btn"><i class="fas fa-magic"></i> Generate Deck</button>
+                        <button class="btn btn-secondary" onclick="window.createFolder(prompt('Folder name:'))"><i class="fas fa-folder-plus"></i> New Folder</button>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="search-input" placeholder="🔍 Search decks or cards..." oninput="window.updateSearch(this.value)" />
+                        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('search-input').value='';window.updateSearch('');"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="folders-grid" id="folders-grid">
+            `;
+
+            const searchTerm = (document.getElementById('search-input')?.value || '').toLowerCase();
+
+            function deckMatches(deckId) {
+                const d = decks[deckId];
+                if (!d) return false;
+                const match = d.name.toLowerCase().includes(searchTerm) ||
+                              d.topic.toLowerCase().includes(searchTerm) ||
+                              d.cards.some(c => c.front.toLowerCase().includes(searchTerm) || c.back.toLowerCase().includes(searchTerm));
+                if (match) return true;
+                return d.children.some(cid => deckMatches(cid));
+            }
+
+            // Get all folder IDs (including empty ones)
+            const folderIds = Object.keys(folders);
+            const visibleFolderIds = folderIds.filter(fid => {
+                const folder = folders[fid];
+                const hasVisible = folder.deckIds.some(did => deckMatches(did));
+                return folder.deckIds.length === 0 || hasVisible;
+            });
+
+            // Uncategorized decks (not in any folder) that pass search
+            const uncategorizedIds = Object.keys(decks).filter(id => {
+                const d = decks[id];
+                return !d.folderId && deckMatches(id);
+            });
+
+            // Render folders
+            visibleFolderIds.forEach(fid => {
+                const folder = folders[fid];
+                const deckIdsInFolder = folder.deckIds.filter(did => deckMatches(did));
+                const isExpanded = expanded.folders[fid] !== false;
+                html += `
+                    <div class="folder-container" 
+                         draggable="false"
+                         ondrop="window.handleDrop(event, '${fid}', 'folder')" 
+                         ondragover="window.handleDragOver(event)" 
+                         ondragleave="window.handleDragLeave(event)">
+                        <div class="folder-header" onclick="window.toggleFolder('${fid}')">
+                            <span class="folder-name">
+                                <i class="fas ${isExpanded ? 'fa-folder-open' : 'fa-folder'}"></i> ${escapeHtml(folder.name)}
+                                <span style="font-size:0.8rem;color:#6a8aa0;margin-left:0.5rem;">${folder.deckIds.length}</span>
+                            </span>
+                            <div class="folder-actions" onclick="event.stopPropagation();">
+                                <button class="btn btn-secondary btn-sm" onclick="window.renameFolder('${fid}', prompt('New folder name:', '${escapeHtml(folder.name)}'))"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="window.deleteFolder('${fid}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <div class="folder-body ${isExpanded ? 'open' : ''}">
+                            ${deckIdsInFolder.length === 0 ? '<div class="folder-empty">Drop decks here</div>' : ''}
+                            <div class="deck-tree">
+                                ${deckIdsInFolder.map(did => renderDeckTree(did)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Uncategorized
+            if (uncategorizedIds.length > 0) {
+                const isExpanded = expanded.folders['uncategorized'] !== false;
+                html += `
+                    <div class="folder-container" 
+                         draggable="false"
+                         ondrop="window.handleDrop(event, null, 'folder')" 
+                         ondragover="window.handleDragOver(event)" 
+                         ondragleave="window.handleDragLeave(event)">
+                        <div class="folder-header" onclick="window.toggleFolder('uncategorized')">
+                            <span class="folder-name">
+                                <i class="fas ${isExpanded ? 'fa-folder-open' : 'fa-folder'}"></i> Uncategorized
+                                <span style="font-size:0.8rem;color:#6a8aa0;margin-left:0.5rem;">${uncategorizedIds.length}</span>
+                            </span>
+                        </div>
+                        <div class="folder-body ${isExpanded ? 'open' : ''}">
+                            <div class="deck-tree">
+                                ${uncategorizedIds.map(did => renderDeckTree(did)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (visibleFolderIds.length === 0 && uncategorizedIds.length === 0) {
+                html += `<div class="empty-state"><i class="fas fa-layer-group"></i><h3>No decks found</h3><p>Create a deck or adjust your search.</p></div>`;
+            }
+
+            html += `</div></div>`;
+            app.innerHTML = html;
+
+            document.getElementById('generate-btn').addEventListener('click', ()=>{
+                const topic = document.getElementById('topic-input').value.trim();
+                if (topic) { generateDeck(topic, null, null); document.getElementById('topic-input').value=''; }
+                else showToast('Please enter a topic.');
+            });
+            document.getElementById('topic-input').addEventListener('keypress', e=>{ if(e.key==='Enter') document.getElementById('generate-btn').click(); });
+        }
+
+        // Recursive deck tree render
+        function renderDeckTree(deckId) {
+            const deck = decks[deckId];
+            if (!deck) return '';
+            const due = getDueCards(deck).length;
+            const total = deck.cards.length;
+            const hasChildren = deck.children.length > 0;
+            const isExpanded = expanded.decks[deckId] !== false;
+            const childHtml = hasChildren ? `
+                <div class="child-decks ${isExpanded ? '' : 'collapsed'}">
+                    ${deck.children.map(cid => renderDeckTree(cid)).join('')}
+                </div>
+            ` : '';
+
+            return `
+                <div class="deck-item" draggable="true" 
+                     ondragstart="window.handleDragStart(event, '${deckId}')" 
+                     ondragend="window.handleDragEnd(event)"
+                     ondrop="window.handleDrop(event, '${deckId}', 'deck')"
+                     ondragover="window.handleDragOver(event)"
+                     ondragleave="window.handleDragLeave(event)">
+                    <div class="deck-left">
+                        ${hasChildren ? `<span class="deck-toggle" onclick="event.stopPropagation(); window.toggleDeck('${deckId}')"><i class="fas ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'}"></i></span>` : '<span style="width:1.5rem;"></span>'}
+                        <div class="deck-info">
+                            <div class="deck-name">${escapeHtml(deck.name)}</div>
+                            <div class="deck-meta">${total} cards · ${due} due</div>
+                        </div>
+                    </div>
+                    <div class="deck-actions">
+                        <button class="btn btn-primary btn-sm" onclick="window.startPractice('${deckId}')"><i class="fas fa-play"></i> Practice</button>
+                        <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${deckId}')"><i class="fas fa-plus"></i> More</button>
+                        ${deck.parentId ? `<button class="btn btn-secondary btn-sm" onclick="window.unnestDeck('${deckId}')"><i class="fas fa-level-up-alt"></i></button>` : ''}
+                        <button class="btn btn-secondary btn-sm" onclick="window.exportDeckHTML('${deckId}')"><i class="fas fa-print"></i> HTML</button>
+                        <button class="btn btn-danger btn-sm" onclick="window.deleteDeck('${deckId}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                    ${childHtml}
+                </div>
+            `;
+        }
+
+        // Toggle deck expansion
+        window.toggleDeck = function(deckId) {
+            expanded.decks[deckId] = !expanded.decks[deckId];
+            renderView();
+        };
+
+        // ---------- PRACTICE ----------
+        function renderPractice(app) {
+            const deck = decks[currentDeckId];
+            if (!deck) { currentView='list'; renderView(); return; }
+
+            let available = getDueCards(deck);
+            if (available.length===0) {
+                if (deck.cards.length<15) {
+                    app.innerHTML = `
+                        <div class="glass-panel">
+                            <div class="empty-state">
+                                <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
+                                <h3>All caught up!</h3>
+                                <p>Want to learn more about "${escapeHtml(deck.name)}"?</p>
+                                <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
+                                    <button class="btn btn-success" onclick="window.addMoreCards('${currentDeckId}')"><i class="fas fa-plus"></i> Add More Cards</button>
+                                    <button class="btn btn-secondary" onclick="window.goToDeckList()">Back to Decks</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                } else {
+                    app.innerHTML = `
+                        <div class="glass-panel">
+                            <div class="empty-state">
+                                <i class="fas fa-check-circle" style="color:#66eeaa;opacity:1;"></i>
+                                <h3>All caught up!</h3>
+                                <p>Come back later for spaced repetition.</p>
+                                <button class="btn btn-primary" onclick="window.goToDeckList()">Back to Decks</button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+            }
+
+            available.sort((a,b)=>a.nextReview-b.nextReview);
+            dueCards = available;
+            if (currentCardIndex>=dueCards.length) currentCardIndex=0;
+            const card = dueCards[currentCardIndex];
+            if (!card) { currentView='list'; renderView(); return; }
+
+            const total = dueCards.length;
+            const idx = currentCardIndex+1;
+            const progress = Math.round((currentCardIndex/total)*100);
+
+            app.innerHTML = `
+                <div class="glass-panel practice-container">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                        <button class="btn btn-secondary btn-sm" onclick="window.goToDeckList()"><i class="fas fa-arrow-left"></i> Decks</button>
+                        <span class="practice-stats">${idx} / ${total} · ${progress}%</span>
+                    </div>
+                    <h2 style="font-size:1.4rem;font-weight:600;color:#b0e0f0;margin-bottom:0.2rem;">${escapeHtml(deck.name)}</h2>
+                    <div class="card-flip" id="card-flip">
+                        <div class="card-inner" id="card-inner">
+                            <div class="card-face front">
+                                <span class="card-label">Front</span>
+                                <div class="card-text">${escapeHtml(card.front)}</div>
+                                <div class="nexus-btn-area">
+                                    <button class="btn btn-nexus btn-sm" onclick="event.stopPropagation(); window.askNexus('${escapeHtml(card.front)}')">
+                                        <i class="fas fa-robot"></i> Ask Nexus
+                                    </button>
+                                </div>
+                                <div class="click-hint"><i class="fas fa-hand-pointer"></i> Tap to flip</div>
+                            </div>
+                            <div class="card-face back">
+                                <span class="card-label">Back</span>
+                                <div class="card-text">${escapeHtml(card.back)}</div>
+                                <div class="nexus-btn-area">
+                                    <button class="btn btn-nexus btn-sm" onclick="event.stopPropagation(); window.askNexus('${escapeHtml(card.back)}')">
+                                        <i class="fas fa-robot"></i> Ask Nexus
+                                    </button>
+                                </div>
+                                <div class="click-hint">Tap again to flip back</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="rating-area" style="display:none;">
+                        <div class="rating-buttons">
+                            <button class="rating-btn again" data-rating="again">🔄 Again</button>
+                            <button class="rating-btn hard" data-rating="hard">😓 Hard</button>
+                            <button class="rating-btn good" data-rating="good">👍 Good</button>
+                            <button class="rating-btn easy" data-rating="easy">🚀 Easy</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const flipEl = document.getElementById('card-flip');
+            const innerEl = document.getElementById('card-inner');
+            let flipped = false;
+            const ratingArea = document.getElementById('rating-area');
+
+            flipEl.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+                flipped = !flipped;
+                innerEl.classList.toggle('flipped', flipped);
+                if (flipped) {
+                    playFlip();
+                    ratingArea.style.display = 'block';
+                } else {
+                    ratingArea.style.display = 'none';
+                }
+            });
+
+            document.querySelectorAll('.rating-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const rating = btn.dataset.rating;
+                    if (rating === 'again') {
+                        innerEl.classList.add('shake');
+                        setTimeout(()=>innerEl.classList.remove('shake'),500);
+                    } else if (rating === 'easy') {
+                        innerEl.classList.add('pop');
+                        setTimeout(()=>innerEl.classList.remove('pop'),500);
+                    }
+                    updateCard(card.id, rating, currentDeckId);
+                    currentCardIndex++;
+                    if (currentCardIndex>=dueCards.length) {
+                        renderView();
+                    } else {
+                        renderPractice(app);
+                    }
+                });
+            });
+        }
+
+        // ---------- HELPERS ----------
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+        }
+
+        // ---------- GLOBAL EXPOSURES ----------
+        window.startPractice = startPractice;
+        window.goToDeckList = function() {
+            currentView='list';
+            currentDeckId=null;
+            currentCardIndex=0;
+            renderView();
+        };
+        window.deleteDeck = deleteDeck;
+        window.generateDeck = generateDeck;
+        window.addMoreCards = window.addMoreCards;
+        window.askNexus = askNexus;
+        window.exportDeckHTML = exportDeckHTML;
+        window.createFolder = createFolder;
+        window.deleteFolder = deleteFolder;
+        window.renameFolder = renameFolder;
+        window.toggleFolder = toggleFolder;
+        window.moveDeckToFolder = moveDeckToFolder;
+        window.nestDeck = nestDeck;
+        window.unnestDeck = unnestDeck;
+        window.handleDragStart = handleDragStart;
+        window.handleDragEnd = handleDragEnd;
+        window.handleDragOver = handleDragOver;
+        window.handleDragLeave = handleDragLeave;
+        window.handleDrop = handleDrop;
+        window.updateSearch = function() { renderView(); };
+        window.toggleDeck = window.toggleDeck;
+
+        // ---------- INIT ----------
+        loadData();
         renderView();
-    };
-    window.deleteDeck = deleteDeck;
-    window.generateDeck = generateDeck;
-    window.addMoreCards = window.addMoreCards;
-    window.askNexus = askNexus;
-    window.exportDeckHTML = exportDeckHTML;
-    window.createFolder = createFolder;
-    window.deleteFolder = deleteFolder;
-    window.renameFolder = renameFolder;
-    window.toggleFolder = toggleFolder;
-    window.moveDeckToFolder = moveDeckToFolder;
-    window.nestDeck = nestDeck;
-    window.handleDragStart = handleDragStart;
-    window.handleDragEnd = handleDragEnd;
-    window.handleDragOver = handleDragOver;
-    window.handleDragLeave = handleDragLeave;
-    window.handleDrop = handleDrop;
-    window.updateSearch = function() { renderView(); };
 
-    // ---------- INIT ----------
-    loadData();
-    renderView();
-
-})();
+    })();
 </script>
 </body>
 </html>
