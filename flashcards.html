@@ -143,7 +143,7 @@
             box-shadow: 0 0 20px rgba(0, 255, 200, 0.1);
         }
 
-        /* --- Folders & Decks --- */
+        /* --- Folders & Decks (tree structure) --- */
         .folders-grid {
             display: flex;
             flex-direction: column;
@@ -166,6 +166,7 @@
             justify-content: space-between;
             padding: 0.2rem 0.5rem;
             margin-bottom: 0.8rem;
+            cursor: pointer;
         }
         .folder-header .folder-name {
             font-weight: 600;
@@ -180,27 +181,38 @@
             display: flex;
             gap: 0.5rem;
         }
+        .folder-body {
+            display: none; /* hidden by default, shown when folder is expanded */
+            padding-left: 0.5rem;
+            border-left: 2px solid rgba(0, 255, 200, 0.05);
+            margin-top: 0.5rem;
+        }
+        .folder-body.open {
+            display: block;
+        }
         .folder-empty {
             color: #6a8aa0;
             font-size: 0.9rem;
             padding: 0.5rem 0.8rem;
             font-style: italic;
         }
-        .deck-grid {
+        .deck-tree {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
+            flex-direction: column;
+            gap: 0.5rem;
         }
         .deck-item {
             background: rgba(255,255,255,0.04);
             border-radius: 1.2rem;
             padding: 0.8rem 1.2rem;
-            min-width: 180px;
-            flex: 1 0 auto;
             border: 1px solid rgba(0, 255, 200, 0.06);
             cursor: grab;
             transition: all 0.2s;
             backdrop-filter: blur(4px);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
         }
         .deck-item:hover {
             background: rgba(255,255,255,0.08);
@@ -211,6 +223,16 @@
         .deck-item.dragging {
             opacity: 0.4;
             transform: scale(0.95);
+        }
+        .deck-item.drag-over {
+            border-color: #00f0c0;
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.15);
+        }
+        .deck-item .deck-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            flex: 1;
         }
         .deck-item .deck-name {
             font-weight: 600;
@@ -225,7 +247,15 @@
             display: flex;
             gap: 0.4rem;
             flex-wrap: wrap;
-            margin-top: 0.4rem;
+        }
+        .deck-item .child-decks {
+            padding-left: 1.5rem;
+            border-left: 2px solid rgba(0, 255, 200, 0.05);
+            margin-top: 0.5rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
         }
 
         /* --- Practice --- */
@@ -237,23 +267,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 220px;
+            min-height: 200px;
+            width: 100%;
         }
         .card-inner {
             position: relative;
             width: 100%;
-            max-width: 700px;
+            max-width: 750px;
             transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 220px;
+            min-height: 200px;
+            /* auto height, will grow with content */
         }
         .card-inner.flipped { transform: rotateX(180deg); }
 
         .card-face {
-            position: absolute;
+            position: relative;
             width: 100%;
             backface-visibility: hidden;
             border-radius: 2rem;
@@ -269,18 +301,12 @@
             font-size: 1.3rem;
             line-height: 1.7;
             color: #e8f0f8;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
             min-height: 180px;
-            height: auto !important;  /* expand to fit content */
+            height: auto;
             word-wrap: break-word;
             overflow-wrap: break-word;
             transition: box-shadow 0.3s;
-        }
-        .card-face:hover {
-            box-shadow: 0 0 70px rgba(0, 255, 200, 0.1);
+            margin-bottom: 0; /* no extra space */
         }
         .card-face.back {
             transform: rotateX(180deg);
@@ -317,7 +343,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin-top: 2rem; /* increased to give space after card */
         }
         .rating-btn {
             padding: 0.7rem 1.8rem;
@@ -410,7 +436,8 @@
             .glass-panel { padding: 1.2rem; }
             .create-deck { flex-direction: column; align-items: stretch; }
             .create-deck input { width: 100%; }
-            .deck-item { flex: 1 1 100%; }
+            .deck-item { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            .deck-item .deck-actions { justify-content: center; }
             .folder-header { flex-direction: column; align-items: stretch; gap: 0.5rem; }
             .folder-header .folder-actions { justify-content: flex-start; }
             .rating-buttons .rating-btn { flex: 1; }
@@ -430,8 +457,8 @@
     'use strict';
 
     // ---------- STATE ----------
-    let decks = {};
-    let folders = {};
+    let decks = {};           // deckId -> deck object
+    let folders = {};         // folderId -> { name, deckIds: [] }
     let currentView = 'list';
     let currentDeckId = null;
     let currentCardIndex = 0;
@@ -440,6 +467,9 @@
     let isGenerating = false;
     const STORAGE_KEY = 'medlib_flashcards';
     const FOLDER_KEY = 'medlib_folders';
+
+    // Expanded state for folders (stored in memory, not localStorage)
+    let expandedFolders = {};
 
     // ---------- TOAST ----------
     function showToast(msg) {
@@ -459,7 +489,8 @@
                 Object.keys(decks).forEach(id => {
                     if (!decks[id].cards) decks[id].cards = [];
                     if (!decks[id].topic) decks[id].topic = decks[id].name;
-                    if (decks[id].folderId === undefined) decks[id].folderId = null;
+                    if (decks[id].parentId === undefined) decks[id].parentId = null;
+                    if (decks[id].children === undefined) decks[id].children = [];
                 });
             } else {
                 decks = {};
@@ -483,6 +514,14 @@
             folders[fid].deckIds = folders[fid].deckIds.filter(did => decks[did]);
         });
 
+        // Ensure each deck has children array and parentId
+        Object.values(decks).forEach(d => {
+            if (!d.children) d.children = [];
+            if (d.parentId === undefined) d.parentId = null;
+            // clean children: remove any that don't exist
+            d.children = d.children.filter(cid => decks[cid]);
+        });
+
         // If no decks, create sample
         if (Object.keys(decks).length === 0) {
             const sampleDeck = {
@@ -490,21 +529,22 @@
                 name: 'Cardiology Basics',
                 topic: 'Cardiology',
                 created: Date.now(),
-                folderId: null,
+                parentId: null,
+                children: [],
                 cards: [
                     { id: 'c1', front: 'What is the first-line treatment for stable angina?', back: 'Nitroglycerin (sublingual)', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 },
                     { id: 'c2', front: 'What is the mechanism of ACE inhibitors?', back: 'Block conversion of angiotensin I to angiotensin II, reducing vasoconstriction and aldosterone.', easeFactor: 2.5, interval: 1, nextReview: Date.now(), reviewCount: 0 }
                 ]
             };
             decks[sampleDeck.id] = sampleDeck;
-            // Create a folder
             const folderId = 'folder_' + Date.now();
             folders[folderId] = { name: 'Cardiology', deckIds: [sampleDeck.id] };
-            decks[sampleDeck.id].folderId = folderId;
             saveData();
         } else {
-            Object.values(decks).forEach(d => { if (d.folderId === undefined) d.folderId = null; });
+            Object.values(decks).forEach(d => { if (d.parentId === undefined) d.parentId = null; if (!d.children) d.children = []; });
         }
+        // Expand all folders by default
+        Object.keys(folders).forEach(fid => { expandedFolders[fid] = true; });
     }
 
     function saveData() {
@@ -603,7 +643,7 @@
     }
 
     // ---------- GENERATE DECK ----------
-    async function generateDeck(topic, folderId = null) {
+    async function generateDeck(topic, folderId = null, parentId = null) {
         if (isGenerating) return;
         if (!topic || topic.trim().length<2) { showToast('Please enter a valid topic.'); return; }
         isGenerating = true;
@@ -635,7 +675,8 @@
                 name: topic.trim(),
                 topic: topic.trim(),
                 created: Date.now(),
-                folderId: folderId || null,
+                parentId: parentId || null,
+                children: [],
                 cards: cards.map((c,i)=>({
                     id: 'card_'+deckId+'_'+i,
                     front: c.front,
@@ -647,6 +688,10 @@
                 }))
             };
             decks[deckId] = deck;
+            // Add to parent's children if parent exists
+            if (parentId && decks[parentId]) {
+                decks[parentId].children.push(deckId);
+            }
             if (folderId && folders[folderId]) {
                 folders[folderId].deckIds.push(deckId);
             }
@@ -664,7 +709,8 @@
                 name: topic.trim()+' (fallback)',
                 topic: topic.trim(),
                 created: Date.now(),
-                folderId: folderId || null,
+                parentId: parentId || null,
+                children: [],
                 cards: fallbackCards.map((c,i)=>({
                     id: 'card_'+deckId+'_'+i,
                     front: c.front,
@@ -676,6 +722,9 @@
                 }))
             };
             decks[deckId] = deck;
+            if (parentId && decks[parentId]) {
+                decks[parentId].children.push(deckId);
+            }
             if (folderId && folders[folderId]) {
                 folders[folderId].deckIds.push(deckId);
             }
@@ -696,14 +745,28 @@
         renderView();
     }
 
-    // ---------- DELETE DECK ----------
+    // ---------- DELETE DECK (recursive) ----------
     function deleteDeck(deckId) {
-        if (!confirm('Delete this deck and all its flashcards?')) return;
         const deck = decks[deckId];
-        if (deck && deck.folderId && folders[deck.folderId]) {
-            folders[deck.folderId].deckIds = folders[deck.folderId].deckIds.filter(id=>id!==deckId);
-        }
-        delete decks[deckId];
+        if (!deck) return;
+        if (!confirm(`Delete deck "${deck.name}" and all its sub-decks?`)) return;
+        // Recursively delete children
+        const deleteRecursive = (id) => {
+            const d = decks[id];
+            if (!d) return;
+            // Remove from parent's children list
+            if (d.parentId && decks[d.parentId]) {
+                decks[d.parentId].children = decks[d.parentId].children.filter(cid => cid !== id);
+            }
+            // Remove from folder if any
+            if (d.folderId && folders[d.folderId]) {
+                folders[d.folderId].deckIds = folders[d.folderId].deckIds.filter(did => did !== id);
+            }
+            // Delete children first
+            d.children.forEach(cid => deleteRecursive(cid));
+            delete decks[id];
+        };
+        deleteRecursive(deckId);
         saveData();
         if (currentDeckId === deckId) { currentDeckId = null; currentView = 'list'; }
         renderView();
@@ -745,6 +808,7 @@
         if (!name || name.trim()==='') return;
         const id = 'folder_'+Date.now();
         folders[id] = { name: name.trim(), deckIds: [] };
+        expandedFolders[id] = true;
         saveData();
         renderView();
         showToast(`📁 Folder "${name.trim()}" created. Drag decks here.`);
@@ -755,9 +819,13 @@
         const folder = folders[folderId];
         if (folder) {
             folder.deckIds.forEach(did => {
-                if (decks[did]) decks[did].folderId = null;
+                if (decks[did]) {
+                    decks[did].folderId = null;
+                    // Also reset parent? We'll leave parent as is.
+                }
             });
             delete folders[folderId];
+            delete expandedFolders[folderId];
             saveData();
             renderView();
         }
@@ -770,6 +838,11 @@
             saveData();
             renderView();
         }
+    }
+
+    function toggleFolder(folderId) {
+        expandedFolders[folderId] = !expandedFolders[folderId];
+        renderView();
     }
 
     function moveDeckToFolder(deckId, folderId) {
@@ -788,48 +861,50 @@
         } else {
             deck.folderId = null;
         }
+        // Keep parent hierarchy intact; we only change folder.
         saveData();
         renderView();
     }
 
-    // ---------- MERGE DECKS (drag deck onto another deck) ----------
-    function mergeDecks(sourceDeckId, targetDeckId) {
-        if (sourceDeckId === targetDeckId) return;
-        const source = decks[sourceDeckId];
-        const target = decks[targetDeckId];
-        if (!source || !target) return;
-        if (!confirm(`Merge "${source.name}" into "${target.name}"? This will add all cards from the source deck to the target deck and then delete the source deck.`)) return;
+    // ---------- NEST DECK (drag deck onto another deck) ----------
+    function nestDeck(childId, parentId) {
+        if (childId === parentId) return;
+        const child = decks[childId];
+        const parent = decks[parentId];
+        if (!child || !parent) return;
 
-        // Add cards from source to target (avoid duplicates based on front text)
-        const existingFronts = new Set(target.cards.map(c => c.front.trim().toLowerCase()));
-        let added = 0;
-        source.cards.forEach(c => {
-            if (!existingFronts.has(c.front.trim().toLowerCase())) {
-                target.cards.push({
-                    id: 'card_'+targetDeckId+'_'+Date.now()+'_'+Math.random(),
-                    front: c.front,
-                    back: c.back,
-                    easeFactor: c.easeFactor || 2.5,
-                    interval: c.interval || 1,
-                    nextReview: Date.now(),
-                    reviewCount: 0
-                });
-                added++;
-            }
-        });
-        // Delete source deck
-        if (source.folderId && folders[source.folderId]) {
-            folders[source.folderId].deckIds = folders[source.folderId].deckIds.filter(id=>id!==sourceDeckId);
+        // Check if child is already a descendant of parent to avoid cycles
+        let isDescendant = false;
+        let check = parent;
+        while (check) {
+            if (check.id === childId) { isDescendant = true; break; }
+            check = check.parentId ? decks[check.parentId] : null;
         }
-        delete decks[sourceDeckId];
+        if (isDescendant) {
+            showToast('Cannot nest a deck inside its own descendant.');
+            return;
+        }
+
+        // Remove child from old parent
+        if (child.parentId && decks[child.parentId]) {
+            decks[child.parentId].children = decks[child.parentId].children.filter(id => id !== childId);
+        }
+        // Remove child from any folder? We keep folder association, but we can also move folder? We'll keep.
+        // Set new parent
+        child.parentId = parentId;
+        if (!parent.children.includes(childId)) {
+            parent.children.push(childId);
+        }
+        // Also ensure the child is in the same folder as parent? We'll not change folder automatically.
         saveData();
-        showToast(`✅ Merged ${added} new cards into "${target.name}".`);
         renderView();
+        showToast(`📚 "${child.name}" nested under "${parent.name}".`);
     }
 
-    // ---------- DRAG & DROP ----------
+    // ---------- DRAG & DROP (with auto-scroll) ----------
     let draggedDeckId = null;
     let dragTargetIsFolder = false;
+
     function handleDragStart(e, deckId) {
         draggedDeckId = deckId;
         e.dataTransfer.effectAllowed = 'move';
@@ -839,48 +914,69 @@
             if (el) el.classList.add('dragging');
         }, 0);
     }
+
     function handleDragEnd(e) {
         const el = e.target.closest('.deck-item');
         if (el) el.classList.remove('dragging');
-        document.querySelectorAll('.folder-container').forEach(el => el.classList.remove('drag-over'));
-        document.querySelectorAll('.deck-item').forEach(el => el.classList.remove('drag-over'));
+        document.querySelectorAll('.folder-container, .deck-item').forEach(el => {
+            el.classList.remove('drag-over');
+        });
         dragTargetIsFolder = false;
+        // Reset auto-scroll
+        clearInterval(window._autoScrollInterval);
     }
+
     function handleDragOver(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        // If target is a folder container, highlight it
+        // Auto-scroll when near edges
+        const y = e.clientY;
+        const threshold = 80;
+        const scrollSpeed = 20;
+        const container = document.querySelector('.container');
+        if (container) {
+            const rect = container.getBoundingClientRect();
+            if (y - rect.top < threshold) {
+                window.scrollBy(0, -scrollSpeed);
+            } else if (rect.bottom - y < threshold) {
+                window.scrollBy(0, scrollSpeed);
+            }
+        }
+        // Highlight target
         const folder = e.target.closest('.folder-container');
+        const deckItem = e.target.closest('.deck-item');
+        document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
         if (folder) {
             folder.classList.add('drag-over');
             dragTargetIsFolder = true;
-        } else {
-            // If target is a deck item, highlight it
-            const deckItem = e.target.closest('.deck-item');
-            if (deckItem) {
-                deckItem.classList.add('drag-over');
-                dragTargetIsFolder = false;
-            }
+        } else if (deckItem) {
+            deckItem.classList.add('drag-over');
+            dragTargetIsFolder = false;
         }
     }
+
     function handleDragLeave(e) {
         const el = e.target.closest('.folder-container') || e.target.closest('.deck-item');
         if (el) el.classList.remove('drag-over');
     }
+
     function handleDrop(e, targetId, type) {
         e.preventDefault();
         e.stopPropagation();
         document.querySelectorAll('.folder-container, .deck-item').forEach(el => el.classList.remove('drag-over'));
         const sourceId = e.dataTransfer.getData('text/plain');
-        if (!sourceId || !decks[sourceId]) return;
+        if (!sourceId || !decks[sourceId]) {
+            draggedDeckId = null;
+            return;
+        }
 
         if (type === 'folder') {
-            // Drop onto a folder
+            // Drop onto a folder → move deck to that folder (keep parent)
             moveDeckToFolder(sourceId, targetId);
-            showToast(`Moved "${decks[sourceId]?.name}" to "${folders[targetId]?.name || 'Uncategorized'}"`);
+            showToast(`Moved "${decks[sourceId]?.name}" to folder "${folders[targetId]?.name || 'Uncategorized'}"`);
         } else if (type === 'deck') {
-            // Drop onto a deck → merge
-            mergeDecks(sourceId, targetId);
+            // Drop onto a deck → nest it (make it a child)
+            nestDeck(sourceId, targetId);
         }
         draggedDeckId = null;
     }
@@ -944,11 +1040,10 @@
     }
 
     function renderList(app) {
-        // Build folder view
         let html = `
             <div class="glass-panel">
                 <h1 class="page-title"><i class="fas fa-brain"></i> Smart Flashcards</h1>
-                <p class="subtitle">AI‑powered flashcards with spaced repetition – create a deck, then drag it into a folder.</p>
+                <p class="subtitle">AI‑powered flashcards with spaced repetition – create a deck, then drag it into a folder or onto another deck to nest it.</p>
                 <div class="create-deck">
                     <input type="text" id="topic-input" placeholder="Enter topic (e.g., Cardiology)" />
                     <button class="btn btn-primary" id="generate-btn"><i class="fas fa-magic"></i> Generate Deck</button>
@@ -961,81 +1056,86 @@
                 <div class="folders-grid" id="folders-grid">
         `;
 
-        // Collect all decks
-        const allDeckIds = Object.keys(decks);
+        // Search term
         const searchTerm = (document.getElementById('search-input')?.value || '').toLowerCase();
 
-        // Filter decks by search
-        let filteredDeckIds = allDeckIds;
-        if (searchTerm) {
-            filteredDeckIds = allDeckIds.filter(id => {
-                const d = decks[id];
-                const match = d.name.toLowerCase().includes(searchTerm) ||
-                              d.topic.toLowerCase().includes(searchTerm) ||
-                              d.cards.some(c => c.front.toLowerCase().includes(searchTerm) || c.back.toLowerCase().includes(searchTerm));
-                return match;
-            });
+        // Filter function for a deck (including its descendants)
+        function deckMatches(deckId) {
+            const d = decks[deckId];
+            if (!d) return false;
+            const match = d.name.toLowerCase().includes(searchTerm) ||
+                          d.topic.toLowerCase().includes(searchTerm) ||
+                          d.cards.some(c => c.front.toLowerCase().includes(searchTerm) || c.back.toLowerCase().includes(searchTerm));
+            if (match) return true;
+            // Check children
+            return d.children.some(cid => deckMatches(cid));
         }
 
-        // Get all folders (including empty ones)
+        // Get all folder IDs (including empty ones)
         const folderIds = Object.keys(folders);
+        // Filter folders: include if any deck in folder passes search, or if empty (so user can drop decks)
         const visibleFolderIds = folderIds.filter(fid => {
-            // Show folder if it has any deck that passes filter, OR if it's empty (so user can drag decks into it)
             const folder = folders[fid];
-            const hasVisible = folder.deckIds.some(did => filteredDeckIds.includes(did));
-            // Always show folder if it's empty (so it's visible for dropping) or has visible decks
+            const hasVisible = folder.deckIds.some(did => deckMatches(did));
             return folder.deckIds.length === 0 || hasVisible;
         });
 
-        if (visibleFolderIds.length === 0 && filteredDeckIds.length === 0) {
-            html += `<div class="empty-state"><i class="fas fa-layer-group"></i><h3>No decks found</h3><p>Create a deck or adjust your search.</p></div>`;
-        } else {
-            // Render folders
-            visibleFolderIds.forEach(fid => {
-                const folder = folders[fid];
-                const deckIdsInFolder = folder.deckIds.filter(did => filteredDeckIds.includes(did));
-                html += `
-                    <div class="folder-container" 
-                         draggable="false"
-                         ondrop="window.handleDrop(event, '${fid}', 'folder')" 
-                         ondragover="window.handleDragOver(event)" 
-                         ondragleave="window.handleDragLeave(event)">
-                        <div class="folder-header">
-                            <span class="folder-name"><i class="fas fa-folder-open"></i> ${escapeHtml(folder.name)}</span>
-                            <div class="folder-actions">
-                                <button class="btn btn-secondary btn-sm" onclick="window.renameFolder('${fid}', prompt('New folder name:', '${escapeHtml(folder.name)}'))"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-danger btn-sm" onclick="window.deleteFolder('${fid}')"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                        <div class="deck-grid">
-                            ${deckIdsInFolder.length === 0 ? '<div class="folder-empty">Drop decks here</div>' : ''}
-                            ${deckIdsInFolder.map(did => renderDeckItem(did)).join('')}
-                        </div>
-                    </div>
-                `;
-            });
+        // Render uncategorized decks (those not in any folder) that pass search
+        const uncategorizedIds = Object.keys(decks).filter(id => {
+            const d = decks[id];
+            return !d.folderId && deckMatches(id);
+        });
 
-            // Render "Uncategorized" decks (those without a folder or in a folder not visible)
-            const uncategorized = filteredDeckIds.filter(id => {
-                const d = decks[id];
-                return d.folderId === null || !folders[d.folderId];
-            });
-            if (uncategorized.length > 0) {
-                html += `
-                    <div class="folder-container" 
-                         draggable="false"
-                         ondrop="window.handleDrop(event, null, 'folder')" 
-                         ondragover="window.handleDragOver(event)" 
-                         ondragleave="window.handleDragLeave(event)">
-                        <div class="folder-header">
-                            <span class="folder-name"><i class="fas fa-folder"></i> Uncategorized</span>
-                        </div>
-                        <div class="deck-grid">
-                            ${uncategorized.map(did => renderDeckItem(did)).join('')}
+        // Render folders
+        visibleFolderIds.forEach(fid => {
+            const folder = folders[fid];
+            const deckIdsInFolder = folder.deckIds.filter(did => deckMatches(did));
+            const isExpanded = expandedFolders[fid] !== false; // default open
+            html += `
+                <div class="folder-container" 
+                     draggable="false"
+                     ondrop="window.handleDrop(event, '${fid}', 'folder')" 
+                     ondragover="window.handleDragOver(event)" 
+                     ondragleave="window.handleDragLeave(event)">
+                    <div class="folder-header" onclick="window.toggleFolder('${fid}')">
+                        <span class="folder-name"><i class="fas ${isExpanded ? 'fa-folder-open' : 'fa-folder'}"></i> ${escapeHtml(folder.name)}</span>
+                        <div class="folder-actions" onclick="event.stopPropagation();">
+                            <button class="btn btn-secondary btn-sm" onclick="window.renameFolder('${fid}', prompt('New folder name:', '${escapeHtml(folder.name)}'))"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="window.deleteFolder('${fid}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
-                `;
-            }
+                    <div class="folder-body ${isExpanded ? 'open' : ''}">
+                        ${deckIdsInFolder.length === 0 ? '<div class="folder-empty">Drop decks here</div>' : ''}
+                        <div class="deck-tree">
+                            ${deckIdsInFolder.map(did => renderDeckTree(did)).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Render "Uncategorized" folder (only if there are uncategorized decks)
+        if (uncategorizedIds.length > 0) {
+            html += `
+                <div class="folder-container" 
+                     draggable="false"
+                     ondrop="window.handleDrop(event, null, 'folder')" 
+                     ondragover="window.handleDragOver(event)" 
+                     ondragleave="window.handleDragLeave(event)">
+                    <div class="folder-header" onclick="window.toggleFolder('uncategorized')">
+                        <span class="folder-name"><i class="fas ${expandedFolders['uncategorized'] !== false ? 'fa-folder-open' : 'fa-folder'}"></i> Uncategorized</span>
+                    </div>
+                    <div class="folder-body ${expandedFolders['uncategorized'] !== false ? 'open' : ''}">
+                        <div class="deck-tree">
+                            ${uncategorizedIds.map(did => renderDeckTree(did)).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        if (visibleFolderIds.length === 0 && uncategorizedIds.length === 0) {
+            html += `<div class="empty-state"><i class="fas fa-layer-group"></i><h3>No decks found</h3><p>Create a deck or adjust your search.</p></div>`;
         }
 
         html += `</div></div>`;
@@ -1043,17 +1143,20 @@
 
         document.getElementById('generate-btn').addEventListener('click', ()=>{
             const topic = document.getElementById('topic-input').value.trim();
-            if (topic) { generateDeck(topic, null); document.getElementById('topic-input').value=''; }
+            if (topic) { generateDeck(topic, null, null); document.getElementById('topic-input').value=''; }
             else showToast('Please enter a topic.');
         });
         document.getElementById('topic-input').addEventListener('keypress', e=>{ if(e.key==='Enter') document.getElementById('generate-btn').click(); });
     }
 
-    function renderDeckItem(deckId) {
+    // Recursive function to render a deck and its children
+    function renderDeckTree(deckId) {
         const deck = decks[deckId];
         if (!deck) return '';
         const due = getDueCards(deck).length;
         const total = deck.cards.length;
+        const childrenHtml = deck.children.map(cid => renderDeckTree(cid)).join('');
+
         return `
             <div class="deck-item" draggable="true" 
                  ondragstart="window.handleDragStart(event, '${deckId}')" 
@@ -1061,14 +1164,17 @@
                  ondrop="window.handleDrop(event, '${deckId}', 'deck')"
                  ondragover="window.handleDragOver(event)"
                  ondragleave="window.handleDragLeave(event)">
-                <div class="deck-name">${escapeHtml(deck.name)}</div>
-                <div class="deck-meta">${total} cards · ${due} due</div>
+                <div class="deck-info">
+                    <div class="deck-name">${escapeHtml(deck.name)}</div>
+                    <div class="deck-meta">${total} cards · ${due} due</div>
+                </div>
                 <div class="deck-actions">
                     <button class="btn btn-primary btn-sm" onclick="window.startPractice('${deckId}')"><i class="fas fa-play"></i> Practice</button>
                     <button class="btn btn-warning btn-sm" onclick="window.addMoreCards('${deckId}')"><i class="fas fa-plus"></i> More</button>
                     <button class="btn btn-secondary btn-sm" onclick="window.exportDeckHTML('${deckId}')"><i class="fas fa-print"></i> HTML</button>
                     <button class="btn btn-danger btn-sm" onclick="window.deleteDeck('${deckId}')"><i class="fas fa-trash"></i></button>
                 </div>
+                ${childrenHtml ? `<div class="child-decks">${childrenHtml}</div>` : ''}
             </div>
         `;
     }
@@ -1286,16 +1392,15 @@
     window.createFolder = createFolder;
     window.deleteFolder = deleteFolder;
     window.renameFolder = renameFolder;
+    window.toggleFolder = toggleFolder;
     window.moveDeckToFolder = moveDeckToFolder;
-    window.mergeDecks = mergeDecks;
+    window.nestDeck = nestDeck;
     window.handleDragStart = handleDragStart;
     window.handleDragEnd = handleDragEnd;
     window.handleDragOver = handleDragOver;
     window.handleDragLeave = handleDragLeave;
     window.handleDrop = handleDrop;
-    window.updateSearch = function(value) {
-        renderView();
-    };
+    window.updateSearch = function() { renderView(); };
 
     // ---------- INIT ----------
     loadData();
