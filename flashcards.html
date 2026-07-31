@@ -347,7 +347,6 @@
             perspective: 1200px;
             margin: 1.5rem 0;
             cursor: pointer;
-            min-height: 260px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -358,6 +357,7 @@
             width: 100%;
             transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
+            /* height will be set by JavaScript to match content */
             min-height: 260px;
             display: flex;
             align-items: center;
@@ -368,7 +368,7 @@
             transform: rotateX(180deg);
         }
         .card-face {
-            position: relative;
+            position: absolute;
             width: 100%;
             backface-visibility: hidden;
             border-radius: 2rem;
@@ -384,12 +384,16 @@
             font-size: 1.3rem;
             line-height: 1.8;
             color: #f0f8ff;
-            min-height: 240px;
+            min-height: 100%;
             height: auto;
             word-wrap: break-word;
             overflow-wrap: break-word;
             transition: box-shadow 0.3s;
             text-align: center;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
         }
         .card-face:hover {
             box-shadow: 0 16px 56px rgba(0,0,0,0.4), 0 0 50px rgba(0,212,176,0.08);
@@ -1362,7 +1366,7 @@
             renderView();
         };
 
-        // ---------- PRACTICE (full‑width card) ----------
+        // ---------- PRACTICE (full‑width card with fixed height) ----------
         function renderPractice(app) {
             const deck = decks[currentDeckId];
             if (!deck) { currentView='list'; renderView(); return; }
@@ -1446,6 +1450,29 @@
                     </div>
                 </div>
             `;
+
+            // --- ADJUST CARD HEIGHT TO FIT CONTENT (prevents sideways movement) ---
+            function adjustCardHeight() {
+                const inner = document.getElementById('card-inner');
+                const front = inner?.querySelector('.card-face.front');
+                const back = inner?.querySelector('.card-face.back');
+                if (inner && front && back) {
+                    // Force both faces to have auto height so we can measure scrollHeight
+                    front.style.height = 'auto';
+                    back.style.height = 'auto';
+                    const frontHeight = front.scrollHeight;
+                    const backHeight = back.scrollHeight;
+                    const maxHeight = Math.max(frontHeight, backHeight, 260);
+                    inner.style.height = maxHeight + 'px';
+                    // Set faces to fill the container
+                    front.style.height = '100%';
+                    back.style.height = '100%';
+                }
+            }
+
+            // Run after render and on resize
+            setTimeout(adjustCardHeight, 50);
+            window.addEventListener('resize', adjustCardHeight);
 
             const flipEl = document.getElementById('card-flip');
             const innerEl = document.getElementById('card-inner');
