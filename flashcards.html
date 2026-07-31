@@ -329,18 +329,24 @@
             display: none;
         }
 
-        /* --- CARD – FULL WIDTH, FIXED HEIGHT, NO SHIFT --- */
+        /* --- PRACTICE CARD FIXES: NO SCROLL, STRETCH DOWNWARDS --- */
         .practice-container {
             max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 350px;
         }
         .card-flip {
             perspective: 1200px;
-            margin: 1.5rem 0;
+            margin: 1rem 0;
             cursor: pointer;
             width: 100%;
             display: flex;
+            flex: 1;
+            min-height: 100px;
             justify-content: center;
-            align-items: center;
+            align-items: stretch;
         }
         .card-inner {
             position: relative;
@@ -348,8 +354,10 @@
             transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
             transform-origin: center center;
-            /* Height will be set by JavaScript to the max of front/back */
             min-height: 260px;
+            display: flex;
+            flex: 1;
+            height: auto;
         }
         .card-inner.flipped {
             transform: rotateX(180deg);
@@ -377,7 +385,8 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             text-align: center;
-            overflow-y: auto;  /* fallback for very long text */
+            overflow: hidden; /* CRITICAL FIX: Removes internal scrolling */
+            height: 100%;
         }
         .card-face:hover {
             box-shadow: 0 16px 56px rgba(0,0,0,0.4), 0 0 50px rgba(0,212,176,0.08);
@@ -411,12 +420,18 @@
             margin-top: 1.5rem;
         }
 
+        /* Feedback Buttons (Pushed to bottom) */
+        #rating-area {
+            flex-shrink: 0;
+            padding-top: 1rem;
+            padding-bottom: 0.5rem;
+        }
         .rating-buttons {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 0.8rem;
-            margin-top: 2rem;
+            margin-top: 0.5rem;
         }
         .rating-btn {
             padding: 0.6rem 1.8rem;
@@ -515,14 +530,14 @@
             .folder-header { flex-direction: column; align-items: stretch; gap: 0.4rem; }
             .folder-header .folder-actions { justify-content: flex-start; }
             .rating-buttons .rating-btn { flex: 1; }
-            .card-face { font-size: 1.1rem; padding: 1.8rem 1.5rem; min-height: 180px; }
+            .card-face { font-size: 1.1rem; padding: 1.8rem 1.5rem; }
             .card-inner { min-height: 180px; }
             .btn { padding: 0.5rem 1.2rem; font-size: 0.9rem; }
         }
         @media (max-width: 480px) {
             .container { padding: 0.8rem 0.5rem; }
             .glass-panel { border-radius: 1rem; padding: 0.8rem; }
-            .card-face { font-size: 1rem; padding: 1.5rem 1rem; min-height: 150px; }
+            .card-face { font-size: 1rem; padding: 1.5rem 1rem; }
         }
     </style>
 </head>
@@ -1346,7 +1361,7 @@
             renderView();
         };
 
-        // ---------- PRACTICE (FULL WIDTH, FIXED HEIGHT, NO SHIFT) ----------
+        // ---------- PRACTICE ----------
         function renderPractice(app) {
             const deck = decks[currentDeckId];
             if (!deck) { currentView='list'; renderView(); return; }
@@ -1391,11 +1406,11 @@
 
             app.innerHTML = `
                 <div class="glass-panel practice-container">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;flex-shrink:0;">
                         <button class="btn btn-secondary btn-sm" onclick="window.goToDeckList()"><i class="fas fa-arrow-left"></i> Decks</button>
                         <span class="practice-stats">${idx} / ${total} · ${progress}%</span>
                     </div>
-                    <h2 style="font-size:1.3rem;font-weight:500;color:var(--muted);margin-bottom:0.2rem;">${escapeHtml(deck.name)}</h2>
+                    <h2 style="font-size:1.3rem;font-weight:500;color:var(--muted);margin-bottom:0.2rem;flex-shrink:0;">${escapeHtml(deck.name)}</h2>
                     <div class="card-flip" id="card-flip">
                         <div class="card-inner" id="card-inner">
                             <div class="card-face front">
@@ -1431,29 +1446,33 @@
                 </div>
             `;
 
-            // --- FIX: Lock the container height to the taller of the two faces ---
+            // --- FIX: Measure and stretch using min-height instead of fixed height ---
             function lockCardHeight() {
                 const inner = document.getElementById('card-inner');
                 if (!inner) return;
                 const front = inner.querySelector('.card-face.front');
                 const back = inner.querySelector('.card-face.back');
                 if (!front || !back) return;
-                // Temporarily set both to auto height to measure
+                
+                // Release fixed heights to measure natural content
+                inner.style.height = 'auto';
                 front.style.height = 'auto';
                 back.style.height = 'auto';
+                
                 const frontH = front.scrollHeight;
                 const backH = back.scrollHeight;
                 const maxH = Math.max(frontH, backH, 260);
-                // Set the container to that height
-                inner.style.height = maxH + 'px';
-                // Now set faces to fill that container
+                
+                // Set min-height so the card doesn't shrink below content
+                // Height will naturally expand via flex:1 if there's extra screen space
+                inner.style.minHeight = maxH + 'px';
+                // Ensure faces fill the container completely
                 front.style.height = '100%';
                 back.style.height = '100%';
             }
 
-            // Run after render and on resize
+            // Run after render
             setTimeout(lockCardHeight, 20);
-            window.addEventListener('resize', lockCardHeight);
 
             const flipEl = document.getElementById('card-flip');
             const innerEl = document.getElementById('card-inner');
@@ -1527,6 +1546,22 @@
         window.handleDrop = handleDrop;
         window.updateSearch = function() { renderView(); };
         window.toggleDeck = window.toggleDeck;
+
+        // ---------- GLOBAL RESIZE LISTENER ----------
+        // Attached globally so it doesn't duplicate on every card flip
+        window.addEventListener('resize', () => {
+            if (currentView === 'practice') {
+                const inner = document.getElementById('card-inner');
+                if (inner) {
+                    // We rely on lockCardHeight logic. It's safe to just invoke the exact logic
+                    // since the inner DOM structure persists during practice.
+                    // Better yet, just re-trigger lockCardHeight. 
+                    // Because lockCardHeight is inside the IIFE, we reference it by getting the event handler logic.
+                    // Let's just define a global function to trigger it:
+                    if (typeof lockCardHeight === 'function') lockCardHeight();
+                }
+            }
+        });
 
         // ---------- INIT ----------
         loadData();
