@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous"></script>
+    <!-- Google AdSense (kept as-is) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9595657076711413" crossorigin="anonymous">
+    </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharmacology · Systemic Pharmacology (High-Yield)</title>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pharmacology · Systemic Pharmacology · Complete</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#f5f9ff; font-family:'Open Sans', sans-serif; }
-        
-        /* --- CSS Variables & Dark Mode --- */
+        /* ========== CSS Variables (Light & Dark) ========== */
         :root {
             --bg-body: #f5f9ff;
             --bg-card: #ffffff;
@@ -25,7 +25,7 @@
             --text-secondary: #34495e;
             --text-muted: #7f8c8d;
             --border-color: #eef6ff;
-            --shadow-color: rgba(10,41,66,0.08);
+            --shadow-color: rgba(10, 41, 66, 0.08);
             --accent-gold: #ffd966;
             --accent-blue: #2c7cb0;
             --accent-purple: #8e44ad;
@@ -46,7 +46,7 @@
             --text-secondary: #c0d0e0;
             --text-muted: #8a9aaa;
             --border-color: #2a3a4a;
-            --shadow-color: rgba(0,0,0,0.4);
+            --shadow-color: rgba(0, 0, 0, 0.4);
             --accent-gold: #e8c84a;
             --accent-blue: #4a9ed6;
             --accent-purple: #b07ad0;
@@ -54,753 +54,1966 @@
             --accent-orange: #e8a830;
         }
 
-        .top-bar {
-            background: var(--bg-topbar); color:white; padding:0.8rem 2rem;
-            display:flex; align-items:center; gap:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.15);
-            position:sticky; top:0; z-index:100; border-bottom:4px solid var(--accent-gold);
+        /* ========== Reset & Base ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .top-bar i { font-size:2rem; color:var(--accent-gold); }
-        .top-bar h1 { font-family:'Merriweather',serif; font-weight:700; font-size:1.8rem; }
-        .top-bar .author {
-            margin-left:auto; display:flex; align-items:center; gap:0.5rem;
-            background:rgba(255,255,255,0.1); padding:0.4rem 1.5rem; border-radius:40px;
-            font-weight:500; font-size:1rem;
-        }
-        .menu-toggle {
-            background:transparent; border:none; color:white; font-size:2rem; cursor:pointer;
-            display:flex; align-items:center; padding:0.2rem 0.5rem; border-radius:8px; transition:0.2s;
-        }
-        .menu-toggle:hover { background:rgba(255,255,255,0.2); }
-        .toc-sidebar {
-            position:fixed; top:5rem; left:-350px; width:320px; height:calc(100vh - 5rem);
-            background:var(--bg-sidebar); border-right:2px solid var(--border-color); overflow-y:auto; padding:1.5rem;
-            box-shadow:4px 0 20px -10px rgba(0,0,0,0.2); transition:left 0.3s ease; z-index:90;
-        }
-        .toc-sidebar.open { left:0; }
-        .toc-sidebar h2 {
-            font-size:1.3rem; font-weight:700; color:var(--text-primary); margin-bottom:1.5rem;
-            padding-left:0.8rem; border-left:6px solid var(--accent-gold); text-transform:uppercase;
-        }
-        .toc-section { margin-bottom:1.5rem; }
-        .toc-section h3 { font-size:1rem; font-weight:700; color:var(--accent-blue); margin-bottom:0.5rem; padding-left:0.5rem; }
-        .chapter-list { list-style:none; }
-        .chapter-item { margin-bottom:0.3rem; }
-        .chapter-item a {
-            display:flex; align-items:center; gap:10px; padding:0.6rem 0.8rem; text-decoration:none;
-            color:var(--text-secondary); font-weight:500; font-size:0.9rem; border-radius:30px 0 0 30px;
-            transition:0.15s; border-left:3px solid transparent; cursor:pointer;
-        }
-        .chapter-item a i { width:24px; font-size:1rem; color:var(--accent-blue); }
-        .chapter-item a:hover { background:var(--bg-body); border-left-color:var(--accent-gold); }
-        .reader-panel {
-            margin-left:0; padding:2rem 2.5rem; transition:margin-left 0.3s ease;
-            background:var(--bg-body); min-height:calc(100vh - 5rem);
-        }
-        .reader-panel.shifted { margin-left:320px; }
-        .chapter-content { max-width:1000px; margin:0 auto; }
-        .chapter-title {
-            font-family:'Merriweather',serif; font-size:2.5rem; font-weight:700; color:var(--text-primary);
-            margin-bottom:0.5rem; border-bottom:3px solid var(--accent-gold); padding-bottom:0.5rem;
-            display:flex; align-items:center; gap:1rem;
-        }
-        .chapter-title i { font-size:2.5rem; color:var(--accent-blue); }
-        .section-card {
-            background:var(--bg-card); border-radius:20px; padding:2rem; margin:2rem 0;
-            box-shadow:0 8px 20px -10px var(--shadow-color); border:1px solid var(--border-color);
-        }
-        .section-heading {
-            font-family:'Merriweather',serif; font-size:1.8rem; font-weight:700; color:var(--text-primary);
-            margin-bottom:1.5rem; border-left:6px solid var(--accent-gold); padding-left:20px;
-        }
-        .subsection-heading {
-            font-family:'Merriweather',serif; font-size:1.4rem; font-weight:600; color:var(--accent-blue);
-            margin:1.5rem 0 1rem 0;
-        }
-        .body-text {
-            font-family:'Open Sans',sans-serif; font-size:1.05rem; color:var(--text-secondary); line-height:1.7; margin-bottom:1.2rem;
-        }
-        .body-text strong { color:var(--text-primary); }
-        .definition-box {
-            background:#f0f9ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
-            border-left:6px solid var(--accent-blue);
-        }
-        .clinical-correlation {
-            background:#fff9e6; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
-            border-left:6px solid var(--accent-orange);
-        }
-        .memory-aid {
-            background:#e8f0e8; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
-            border-left:6px solid var(--accent-green);
-        }
-        .key-points {
-            background:#f8f4ff; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
-            border:2px dashed var(--accent-purple);
-        }
-        .key-points ul { list-style:none; }
-        .key-points li { margin-bottom:0.5rem; display:flex; align-items:center; gap:10px; }
-        .key-points li i { color:var(--accent-purple); }
-        .premium-table {
-            width:100%; border-collapse:collapse; background:var(--bg-card); border-radius:20px; overflow:hidden;
-            box-shadow:0 10px 30px -10px var(--shadow-color); margin:2rem 0;
-        }
-        .premium-table th { background:var(--text-primary); color:white; padding:1rem; text-align:left; }
-        .premium-table td { padding:1rem; border-bottom:1px solid var(--border-color); color:var(--text-secondary); }
-        .premium-table tr:last-child td { border-bottom:none; }
-        
-        /* --- New Contraindication Box --- */
-        .contraindication-box {
-            background: #fff5f5; border-radius:20px; padding:1.5rem; margin:1.5rem 0;
-            border-left:6px solid #e74c3c; 
-        }
-        .contraindication-box ul { list-style:none; padding-left:0; }
-        .contraindication-box li { margin-bottom:0.5rem; padding-left:1.5rem; position:relative; color:var(--text-secondary); }
-        .contraindication-box li::before { content:"✗"; position:absolute; left:0; color:#e74c3c; font-weight:700; }
 
-        .diagram-placeholder {
-            background:#f9fcff; border-radius:20px; padding:2rem; margin:2rem 0;
-            border:2px dashed #b9d5f0; text-align:center; color:var(--accent-blue);
+        html {
+            scroll-behavior: smooth;
         }
-        .diagram-placeholder i { font-size:3rem; margin-bottom:1rem; display:block; }
+
+        body {
+            background: var(--bg-body);
+            font-family: var(--font-sans);
+            color: var(--text-secondary);
+            transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+            padding-top: 70px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 10px;
+        }
+
+        /* ========== Top Bar ========== */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--bg-topbar);
+            color: #fff;
+            padding: 0.7rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+            border-bottom: 4px solid var(--accent-gold);
+            transition: background var(--transition-speed) ease;
+            height: 70px;
+        }
+
+        .top-bar .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .top-bar .brand i {
+            font-size: 1.8rem;
+            color: var(--accent-gold);
+        }
+
+        .top-bar .brand h1 {
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 1.4rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-bar .author {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .top-bar .controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .top-bar .controls button {
+            background: rgba(255, 255, 255, 0.12);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-bar .controls button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .top-bar .controls button.active {
+            background: var(--accent-gold);
+            color: #0a2942;
+        }
+
+        /* ========== Sidebar ========== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .sidebar-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .toc-sidebar {
+            position: fixed;
+            top: 70px;
+            left: -340px;
+            width: 320px;
+            height: calc(100vh - 70px);
+            background: var(--bg-sidebar);
+            border-right: 2px solid var(--border-color);
+            overflow-y: auto;
+            padding: 1.5rem 1.2rem;
+            box-shadow: 4px 0 24px -8px rgba(0, 0, 0, 0.2);
+            transition: left 0.35s cubic-bezier(0.22, 1, 0.36, 1), background var(--transition-speed) ease;
+            z-index: 999;
+        }
+
+        .toc-sidebar.open {
+            left: 0;
+        }
+
+        .toc-sidebar h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.2rem;
+            padding-left: 0.6rem;
+            border-left: 6px solid var(--accent-gold);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .toc-section {
+            margin-bottom: 1.2rem;
+        }
+
+        .toc-section h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 0.3rem;
+            padding-left: 0.4rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .chapter-list {
+            list-style: none;
+        }
+
+        .chapter-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.88rem;
+            border-radius: 12px;
+            transition: background 0.15s, color 0.15s, padding-left 0.15s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .chapter-item a i {
+            width: 22px;
+            font-size: 0.95rem;
+            color: var(--accent-blue);
+        }
+
+        .chapter-item a:hover {
+            background: var(--bg-body);
+            border-left-color: var(--accent-gold);
+            padding-left: 1rem;
+        }
+
+        .chapter-item a.active {
+            background: var(--bg-body);
+            border-left-color: var(--accent-blue);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* ========== Reader Panel ========== */
+        .reader-panel {
+            margin-left: 0;
+            padding: 1.5rem 1.5rem 3rem;
+            transition: margin-left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            max-width: 1100px;
+            margin-right: auto;
+        }
+
+        .reader-panel.shifted {
+            margin-left: 320px;
+        }
+
+        /* ========== Progress Bar ========== */
+        .reading-progress {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            z-index: 997;
+            background: var(--bg-body);
+            transition: background var(--transition-speed) ease;
+        }
+
+        .reading-progress .bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue));
+            transition: width 0.1s linear;
+        }
+
+        /* ========== Chapter Content ========== */
+        .chapter-content {
+            scroll-margin-top: 80px;
+            margin-bottom: 3rem;
+        }
+
+        .chapter-title {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent-gold);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: color var(--transition-speed) ease;
+        }
+
+        .chapter-title i {
+            font-size: 2rem;
+            color: var(--accent-blue);
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 16px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease, border-color var(--transition-speed) ease;
+        }
+
+        .section-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .section-card ul li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .section-card ul li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .section-card ul ul {
+            padding-left: 1.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .section-card ul ul li::before {
+            content: "◦";
+            color: var(--accent-gold);
+        }
+
+        /* ---------- Tables ---------- */
+        .interaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92rem;
+        }
+
+        .interaction-table th {
+            background: var(--accent-blue);
+            color: #fff;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .interaction-table td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .interaction-table tr:hover td {
+            background: var(--bg-body);
+        }
+
+        .dark-mode .interaction-table th {
+            background: #2a5a7a;
+        }
+
+        .memory-aid-box {
+            background: var(--bg-card);
+            border-left: 6px solid var(--accent-gold);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.8rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            transition: background var(--transition-speed) ease;
+        }
+
+        .memory-aid-box h4 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .memory-aid-box code {
+            background: var(--bg-body);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            color: var(--accent-purple);
+        }
+
+        /* ========== Editor's Note ========== */
+        .editors-note {
+            max-width: 1100px;
+            margin: 0 auto 1.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .editors-note .note-inner {
+            background: var(--bg-card);
+            border-left: 6px solid var(--accent-blue);
+            border-radius: var(--radius);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 12px var(--shadow-color);
+            transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+
+        .editors-note h2 {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            margin-top: 0;
+        }
+
+        .editors-note h3 {
+            color: var(--accent-blue);
+            font-size: 1.05rem;
+            margin: 1rem 0 0.3rem;
+        }
+
+        .editors-note ul {
+            margin-left: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== Footer ========== */
         .footer-note {
-            margin-top:4rem; font-style:italic; color:var(--text-muted); text-align:right;
-            border-top:1px solid var(--border-color); padding-top:1.5rem;
+            margin-top: 3rem;
+            font-style: italic;
+            color: var(--text-muted);
+            text-align: right;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.2rem;
+            font-size: 0.9rem;
         }
-        @media (max-width:1000px) {
-            .toc-sidebar { width:280px; }
-            .reader-panel.shifted { margin-left:280px; }
+
+        /* ========== Search Overlay ========== */
+        .search-overlay {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 1rem 2rem;
+            box-shadow: 0 6px 20px var(--shadow-color);
+            z-index: 996;
+            transform: translateY(-120%);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background var(--transition-speed) ease;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .search-overlay.open {
+            transform: translateY(0);
+        }
+
+        .search-overlay input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            font-size: 1.1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 40px;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s, background var(--transition-speed) ease;
+        }
+
+        .search-overlay input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .search-overlay .results {
+            margin-top: 0.8rem;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .search-overlay .result-item {
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-overlay .result-item:hover {
+            background: var(--bg-body);
+        }
+
+        .search-overlay .result-item strong {
+            color: var(--accent-gold);
+        }
+
+        .search-overlay .result-item .chapter-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+
+        .search-overlay .close-search {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.2rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* ========== Font Size Controls ========== */
+        .font-size-controls {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        .font-size-controls button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .font-size-controls button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .font-size-controls .size-label {
+            font-size: 0.8rem;
+            color: #ddd;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* ========== Responsive ========== */
+        @media (min-width: 1000px) {
+            .font-size-controls {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .toc-sidebar {
+                width: 290px;
+                left: -310px;
+            }
+            .reader-panel.shifted {
+                margin-left: 0;
+            }
+            .top-bar .brand h1 {
+                font-size: 1.1rem;
+            }
+            .top-bar .author {
+                display: none;
+            }
+            .chapter-title {
+                font-size: 1.6rem;
+            }
+            .section-card {
+                padding: 1.2rem 1.2rem;
+            }
+            .editors-note .note-inner {
+                padding: 1rem 1.2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-bar {
+                padding: 0.4rem 0.8rem;
+                gap: 0.5rem;
+            }
+            .top-bar .brand h1 {
+                font-size: 0.95rem;
+            }
+            .top-bar .brand i {
+                font-size: 1.4rem;
+            }
+            .top-bar .controls button {
+                width: 34px;
+                height: 34px;
+                font-size: 1rem;
+            }
+            .chapter-title {
+                font-size: 1.3rem;
+            }
+            .chapter-title i {
+                font-size: 1.5rem;
+            }
+            .section-card {
+                padding: 1rem;
+                border-radius: 14px;
+            }
+            .reader-panel {
+                padding: 1rem 0.8rem 2rem;
+            }
+            .editors-note {
+                padding: 0 0.8rem;
+            }
+            .editors-note .note-inner {
+                padding: 0.8rem 1rem;
+            }
+            .search-overlay {
+                padding: 0.8rem 1rem;
+            }
+            .search-overlay input {
+                font-size: 0.95rem;
+                padding: 0.6rem 1rem;
+            }
+            .toc-sidebar {
+                width: 270px;
+                left: -290px;
+                padding: 1rem;
+            }
+            body {
+                padding-top: 62px;
+            }
+            .top-bar {
+                height: 62px;
+            }
+            .toc-sidebar {
+                top: 62px;
+                height: calc(100vh - 62px);
+            }
+            .reading-progress {
+                top: 62px;
+            }
+            .search-overlay {
+                top: 62px;
+            }
+        }
+
+        /* ========== Print Styles ========== */
+        @media print {
+            .top-bar,
+            .toc-sidebar,
+            .sidebar-overlay,
+            .reading-progress,
+            .search-overlay,
+            .controls {
+                display: none !important;
+            }
+            body {
+                padding-top: 0 !important;
+                background: #fff !important;
+                color: #000 !important;
+            }
+            .reader-panel {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+            }
+            .section-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                background: #fff !important;
+                break-inside: avoid;
+            }
+            .chapter-title {
+                color: #000 !important;
+                border-bottom-color: #000 !important;
+            }
+            .editors-note .note-inner {
+                box-shadow: none !important;
+                border-left-color: #000 !important;
+                background: #f9f9f9 !important;
+            }
+            .interaction-table td,
+            .interaction-table th {
+                border: 1px solid #000 !important;
+            }
+        }
+
+        /* ========== Animations ========== */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chapter-content {
+            animation: fadeSlideUp 0.4s ease-out;
+        }
+
+        /* ========== Back to Top ========== */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-topbar);
+            color: #fff;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s, background var(--transition-speed) ease;
+            z-index: 995;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.08);
+        }
+
+        /* ========== Chapter Navigation ========== */
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .chapter-nav button {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .chapter-nav button:hover {
+            background: var(--bg-body);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .chapter-nav button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .chapter-nav .nav-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .dark-mode .top-bar .controls button.dark-toggle {
+            background: var(--accent-gold);
+            color: #0a2942;
+        }
+
+        /* ---------- extra style for memory aids ---------- */
+        .mnemonic {
+            background: var(--bg-body);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            display: inline-block;
+            margin: 0.2rem 0;
+        }
+        .mnemonic i {
+            color: var(--accent-gold);
+            margin-right: 0.4rem;
+        }
+        .drug-interaction-highlight {
+            background: rgba(255, 215, 0, 0.15);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-weight: 600;
         }
     </style>
-<!-- PopAds pop-under code -->
-<script type="text/javascript" data-cfasync="false">
-/*<![CDATA[/* */
-(function(){var n=window,l="b16361ca2a1a661bda6843ca4a40ef06",t=[["siteId",844+379*195+5212924],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],x=["d3d3LnhhZHNtYXJ0LmNvbS9oZy9YL2dyZXRpbmEubWluLmpz","ZDExZW5xMnJ5bXkweWwuY2xvdWRmcm9udC5uZXQveGF3cy1zZGsubWluLmpz"],w=-1,j,y,g=function(){clearTimeout(y);w++;if(x[w]&&!(1800619981000<(new Date).getTime()&&1<w)){j=n.document.createElement("script");j.type="text/javascript";j.async=!0;var k=n.document.getElementsByTagName("script")[0];j.src="https://"+atob(x[w]);j.crossOrigin="anonymous";j.onerror=g;j.onload=function(){clearTimeout(y);n[l.slice(0,16)+l.slice(0,16)]||g()};y=setTimeout(g,5E3);k.parentNode.insertBefore(j,k)}};if(!n[l]){try{Object.freeze(n[l]=t)}catch(e){}g()}})();
-/*]]>/* */
-</script>
 </head>
-<body>
-<!-- EDITORS_NOTE_START -->
-<div style="max-width: 1000px; margin: 0 auto 1.5rem auto; padding: 0 20px;">
-    <div style="background: #f9fcff; border-left: 6px solid #2c7cb0; border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-        <h2 style="color: #0a2942; margin-top: 0; font-size: 1.5rem;">📘 About This Resource: Pharmacology · Systemic Pharmacology</h2>
-        <p>This textbook was compiled by <strong>Abubakar Sadeeq</strong> to support medical students, residents, and healthcare professionals in mastering <strong>Medical Education</strong>. The content follows the standard US medical school curriculum and is aligned with high‑yield topics for USMLE Step 1 and Step 2 CK examinations.</p>
-        
-        <h3 style="color: #1b4c72; margin: 1rem 0 0.5rem;">🔬 Key Topics Covered</h3>
-        <p>Core concepts, clinical correlations, contraindications, and mnemonics essential for medical education.</p>
-        
-        <h3 style="color: #1b4c72; margin: 1rem 0 0.5rem;">📖 How to Use This Textbook</h3>
-        <ul style="margin-left: 1.5rem;">
-            <li>Use the interactive sidebar to navigate between chapters.</li>
-            <li>Click on any term to search within the book.</li>
-            <li>Toggle dark mode for comfortable reading at night.</li>
-            <li>Highlight any text and click <strong>"Ask Nexus"</strong> – our AI assistant will explain the concept further or pronounce difficult terms in US/UK English.</li>
-        </ul>
-        
-        <h3 style="color: #1b4c72; margin: 1rem 0 0.5rem;">🧠 Clinical Correlations & Contraindications</h3>
-        <p>Each chapter now integrates real‑world clinical scenarios, black box warnings, and absolute contraindications to help you bridge basic science with safe patient care.</p>
-        
-        <p style="margin-top: 1rem;"><strong>Start exploring now – and remember, all resources on MedLib are completely free.</strong></p>
-    </div>
-</div>
-<!-- EDITORS_NOTE_END -->
 
-    <div class="top-bar">
-        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-        <i class="fas fa-pills"></i>
-        <h1>Pharmacology · Systemic Pharmacology</h1>
-        <div class="author"><i class="fas fa-stethoscope"></i> Abubakar Sadeeq</div>
+<body>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="reading-progress" id="readingProgress" aria-hidden="true">
+        <div class="bar" id="progressBar"></div>
     </div>
-    <div class="toc-sidebar" id="sidebar">
+
+    <!-- ===== SEARCH OVERLAY ===== -->
+    <div class="search-overlay" id="searchOverlay" role="dialog" aria-label="Search">
+        <button class="close-search" id="closeSearch" aria-label="Close search">
+            <i class="fas fa-times"></i>
+        </button>
+        <input type="text" id="searchInput" placeholder="Search drugs, interactions, mnemonics…" autofocus />
+        <div class="results" id="searchResults"></div>
+    </div>
+
+    <!-- ===== SIDEBAR OVERLAY (mobile) ===== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ===== TOP BAR ===== -->
+    <header class="top-bar" role="banner">
+        <div class="brand">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle table of contents">
+                <i class="fas fa-bars"></i>
+            </button>
+            <i class="fas fa-pills"></i>
+            <h1>Pharmacology · Systemic</h1>
+        </div>
+
+        <div class="author">
+            <i class="fas fa-stethoscope"></i> Abubakar Sadeeq
+        </div>
+
+        <div class="controls">
+            <button id="searchToggle" aria-label="Search" title="Search">
+                <i class="fas fa-search"></i>
+            </button>
+            <button id="darkToggle" aria-label="Toggle dark mode" title="Dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="font-size-controls">
+                <button id="fontDecrease" aria-label="Decrease font size">A−</button>
+                <span class="size-label" id="fontSizeLabel">100</span>
+                <button id="fontIncrease" aria-label="Increase font size">A+</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== SIDEBAR ===== -->
+    <nav class="toc-sidebar" id="sidebar" role="navigation" aria-label="Table of Contents">
         <h2><i class="fas fa-list-ul"></i> Contents</h2>
+
         <div class="toc-section">
-            <h3>AUTONOMIC NERVOUS SYSTEM</h3>
+            <h3>Autonomic NS</h3>
             <ul class="chapter-list">
-                <li class="chapter-item"><a href="#cholinergic"><i class="fas fa-nerve"></i> 1. Cholinergic Agonists</a></li>
-                <li class="chapter-item"><a href="#anticholinergic"><i class="fas fa-nerve"></i> 2. Anticholinergic Drugs</a></li>
-                <li class="chapter-item"><a href="#adrenergic"><i class="fas fa-nerve"></i> 3. Adrenergic Agonists</a></li>
-                <li class="chapter-item"><a href="#alpha-blockers"><i class="fas fa-nerve"></i> 4. Alpha‑Adrenergic Antagonists</a></li>
-                <li class="chapter-item"><a href="#beta-blockers"><i class="fas fa-heart"></i> 5. Beta‑Adrenergic Antagonists</a></li>
+                <li class="chapter-item"><a href="#cholinergic" data-chapter="0"><i class="fas fa-nerve"></i> 1. Cholinergic Agonists</a></li>
+                <li class="chapter-item"><a href="#anticholinergic" data-chapter="1"><i class="fas fa-nerve"></i> 2. Anticholinergic Drugs</a></li>
+                <li class="chapter-item"><a href="#adrenergic" data-chapter="2"><i class="fas fa-nerve"></i> 3. Adrenergic Agonists</a></li>
+                <li class="chapter-item"><a href="#alpha-blockers" data-chapter="3"><i class="fas fa-nerve"></i> 4. Alpha‑Adrenergic Antagonists</a></li>
+                <li class="chapter-item"><a href="#beta-blockers" data-chapter="4"><i class="fas fa-heart"></i> 5. Beta‑Adrenergic Antagonists</a></li>
             </ul>
         </div>
+
         <div class="toc-section">
-            <h3>CARDIOVASCULAR</h3>
+            <h3>Cardiovascular</h3>
             <ul class="chapter-list">
-                <li class="chapter-item"><a href="#antiarrhythmics"><i class="fas fa-heartbeat"></i> 6. Antiarrhythmic Drugs</a></li>
-                <li class="chapter-item"><a href="#antihypertensives"><i class="fas fa-tachometer-alt"></i> 7. Antihypertensive Drugs</a></li>
-                <li class="chapter-item"><a href="#diuretics"><i class="fas fa-tint"></i> 8. Diuretics</a></li>
-                <li class="chapter-item"><a href="#anticoagulants"><i class="fas fa-blood"></i> 9. Anticoagulants & Antiplatelets</a></li>
-                <li class="chapter-item"><a href="#lipid-lowering"><i class="fas fa-heart"></i> 10. Lipid‑Lowering Agents</a></li>
+                <li class="chapter-item"><a href="#antiarrhythmics" data-chapter="5"><i class="fas fa-heartbeat"></i> 6. Antiarrhythmic Drugs</a></li>
+                <li class="chapter-item"><a href="#antihypertensives" data-chapter="6"><i class="fas fa-tachometer-alt"></i> 7. Antihypertensive Drugs</a></li>
+                <li class="chapter-item"><a href="#diuretics" data-chapter="7"><i class="fas fa-tint"></i> 8. Diuretics</a></li>
+                <li class="chapter-item"><a href="#anticoagulants" data-chapter="8"><i class="fas fa-blood"></i> 9. Anticoagulants &amp; Antiplatelets</a></li>
+                <li class="chapter-item"><a href="#lipid-lowering" data-chapter="9"><i class="fas fa-heart"></i> 10. Lipid‑Lowering Agents</a></li>
             </ul>
         </div>
+
         <div class="toc-section">
-            <h3>RESPIRATORY</h3>
+            <h3>Respiratory</h3>
             <ul class="chapter-list">
-                <li class="chapter-item"><a href="#asthma"><i class="fas fa-lungs"></i> 11. Drugs for Asthma & COPD</a></li>
+                <li class="chapter-item"><a href="#asthma" data-chapter="10"><i class="fas fa-lungs"></i> 11. Drugs for Asthma &amp; COPD</a></li>
             </ul>
         </div>
+
         <div class="toc-section">
-            <h3>GASTROINTESTINAL</h3>
+            <h3>Gastrointestinal</h3>
             <ul class="chapter-list">
-                <li class="chapter-item"><a href="#acid-peptic"><i class="fas fa-stomach"></i> 12. Drugs for Acid‑Peptic Disorders</a></li>
-                <li class="chapter-item"><a href="#antiemetics"><i class="fas fa-poop"></i> 13. Antiemetics</a></li>
+                <li class="chapter-item"><a href="#acid-peptic" data-chapter="11"><i class="fas fa-stomach"></i> 12. Drugs for Acid‑Peptic Disorders</a></li>
+                <li class="chapter-item"><a href="#antiemetics" data-chapter="12"><i class="fas fa-poop"></i> 13. Antiemetics</a></li>
             </ul>
         </div>
+
         <div class="toc-section">
-            <h3>ENDOCRINE</h3>
+            <h3>Endocrine</h3>
             <ul class="chapter-list">
-                <li class="chapter-item"><a href="#diabetes"><i class="fas fa-tint"></i> 14. Antidiabetic Drugs</a></li>
-                <li class="chapter-item"><a href="#thyroid"><i class="fas fa-hormone"></i> 15. Thyroid & Anti‑thyroid Drugs</a></li>
-                <li class="chapter-item"><a href="#steroids"><i class="fas fa-hormone"></i> 16. Corticosteroids</a></li>
-                <li class="chapter-item"><a href="#sex-hormones"><i class="fas fa-venus-mars"></i> 17. Sex Hormones & Contraceptives</a></li>
+                <li class="chapter-item"><a href="#diabetes" data-chapter="13"><i class="fas fa-tint"></i> 14. Antidiabetic Drugs</a></li>
+                <li class="chapter-item"><a href="#thyroid" data-chapter="14"><i class="fas fa-hormone"></i> 15. Thyroid &amp; Anti‑thyroid Drugs</a></li>
+                <li class="chapter-item"><a href="#steroids" data-chapter="15"><i class="fas fa-hormone"></i> 16. Corticosteroids</a></li>
+                <li class="chapter-item"><a href="#sex-hormones" data-chapter="16"><i class="fas fa-venus-mars"></i> 17. Sex Hormones &amp; Contraceptives</a></li>
             </ul>
         </div>
+
         <div class="toc-section">
             <h3>CNS</h3>
             <ul class="chapter-list">
-                <li class="chapter-item"><a href="#sedative-hypnotic"><i class="fas fa-bed"></i> 18. Sedative‑Hypnotics</a></li>
-                <li class="chapter-item"><a href="#antidepressants"><i class="fas fa-smile"></i> 19. Antidepressants</a></li>
-                <li class="chapter-item"><a href="#antipsychotics"><i class="fas fa-brain"></i> 20. Antipsychotics</a></li>
-                <li class="chapter-item"><a href="#antiepileptics"><i class="fas fa-bolt"></i> 21. Antiepileptic Drugs</a></li>
-                <li class="chapter-item"><a href="#parkinsons"><i class="fas fa-running"></i> 22. Drugs for Parkinson's</a></li>
+                <li class="chapter-item"><a href="#sedative-hypnotic" data-chapter="17"><i class="fas fa-bed"></i> 18. Sedative‑Hypnotics</a></li>
+                <li class="chapter-item"><a href="#antidepressants" data-chapter="18"><i class="fas fa-smile"></i> 19. Antidepressants</a></li>
+                <li class="chapter-item"><a href="#antipsychotics" data-chapter="19"><i class="fas fa-brain"></i> 20. Antipsychotics</a></li>
+                <li class="chapter-item"><a href="#antiepileptics" data-chapter="20"><i class="fas fa-bolt"></i> 21. Antiepileptic Drugs</a></li>
+                <li class="chapter-item"><a href="#parkinsons" data-chapter="21"><i class="fas fa-running"></i> 22. Drugs for Parkinson's</a></li>
             </ul>
         </div>
+
+        <div class="toc-section">
+            <h3>Anti‑infectives</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#antibiotics" data-chapter="22"><i class="fas fa-bacteria"></i> 23. Antibiotics</a></li>
+                <li class="chapter-item"><a href="#antimalarials" data-chapter="23"><i class="fas fa-mosquito"></i> 24. Antimalarial Drugs</a></li>
+                <li class="chapter-item"><a href="#antivirals" data-chapter="24"><i class="fas fa-virus"></i> 25. Antiviral Drugs</a></li>
+                <li class="chapter-item"><a href="#antifungals" data-chapter="25"><i class="fas fa-seedling"></i> 26. Antifungal Drugs</a></li>
+                <li class="chapter-item"><a href="#anthelmintics" data-chapter="26"><i class="fas fa-worm"></i> 27. Anthelmintics</a></li>
+            </ul>
+        </div>
+
+        <div class="toc-section">
+            <h3>Pain &amp; Inflammation</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#nsaids" data-chapter="27"><i class="fas fa-tablets"></i> 28. NSAIDs &amp; Acetaminophen</a></li>
+                <li class="chapter-item"><a href="#opioids" data-chapter="28"><i class="fas fa-syringe"></i> 29. Opioid Analgesics</a></li>
+                <li class="chapter-item"><a href="#local-anesthetics" data-chapter="29"><i class="fas fa-snowflake"></i> 30. Local Anesthetics</a></li>
+            </ul>
+        </div>
+
+        <div class="toc-section">
+            <h3>Immunology &amp; Misc</h3>
+            <ul class="chapter-list">
+                <li class="chapter-item"><a href="#immunosuppressants" data-chapter="30"><i class="fas fa-shield-alt"></i> 31. Immunosuppressants</a></li>
+                <li class="chapter-item"><a href="#drug-interactions" data-chapter="31"><i class="fas fa-exchange-alt"></i> 32. Drug Interaction Tables</a></li>
+                <li class="chapter-item"><a href="#memory-aids" data-chapter="32"><i class="fas fa-brain"></i> 33. Memory Aids &amp; Mnemonics</a></li>
+                <li class="chapter-item"><a href="#quick-reference" data-chapter="33"><i class="fas fa-list-ol"></i> 34. Quick Reference Tables</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ===== EDITOR'S NOTE ===== -->
+    <div class="editors-note">
+        <div class="note-inner">
+            <h2>📘 Comprehensive Pharmacology · Systemic Pharmacology</h2>
+            <p><strong>Abubakar Sadeeq</strong> — This expanded edition now includes <strong>34 chapters</strong>, covering all major drug classes, <strong>antimalarials</strong>, <strong>antivirals</strong>, <strong>antifungals</strong>, <strong>antibiotics</strong>, <strong>opioids</strong>, <strong>NSAIDs</strong>, <strong>immunosuppressants</strong>, and more. Also features <strong>drug interaction tables</strong> and a dedicated <strong>memory aids</strong> section with high‑yield mnemonics for exam prep.</p>
+            <p>🔍 Use <strong>Ctrl+K</strong> to search any drug, interaction, or mnemonic.</p>
+        </div>
     </div>
-    <div class="reader-panel" id="readerPanel">
-        <!-- ==================== AUTONOMIC NERVOUS SYSTEM ==================== -->
+
+    <!-- ===== READER PANEL ===== -->
+    <main class="reader-panel" id="readerPanel" role="main">
+
+        <!-- ===== CHAPTER 1: Cholinergic Agonists ===== -->
         <section id="cholinergic" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-nerve"></i> 1. Cholinergic Agonists</div>
             <div class="section-card">
-                <h4 class="subsection-heading">Classification & Key Drugs</h4>
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Drugs</th><th>Mechanism & Main Use</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Direct (Muscarinic)</strong></td><td>Bethanechol, Pilocarpine, Carbachol</td><td>Bind directly to muscarinic receptors. Uses: Urinary retention (Bethanechol), Glaucoma/Xerostomia (Pilocarpine).</td></tr>
-                        <tr><td><strong>Indirect (Reversible AChE Inhibitors)</strong></td><td>Neostigmine, Pyridostigmine, Physostigmine, Edrophonium</td><td>Block acetylcholinesterase. Uses: Myasthenia Gravis (Neostigmine/Pyridostigmine). Anticholinergic overdose (Physostigmine crosses BBB).</td></tr>
-                        <tr><td><strong>Indirect (Irreversible AChE Inhibitors)</strong></td><td>Organophosphates, Echothiophate</td><td>Permanent phosphorylation of AChE. Uses: Insecticides (toxicity), glaucoma (Echothiophate).</td></tr>
-                    </tbody>
-                </table>
-
-                <div class="memory-aid">
-                    <h4 style="color:#27ae60; margin:0 0 0.5rem;"><i class="fas fa-lightbulb"></i> Mnemonic: Cholinergic Toxidrome</h4>
-                    <p><strong>SLUDGE</strong> + <strong>BBB</strong> (Bronchorrhea, Bradycardia, Bronchospasm): <br>
-                    <em>S</em>alivation, <em>L</em>acrimation, <em>U</em>rination, <em>D</em>iaphoresis, <em>G</em>I cramps, <em>E</em>mesis.</p>
-                </div>
-
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Absolute Contraindications & Cautions</h4>
-                    <ul>
-                        <li><strong>Asthma</strong> – causes bronchospasm.</li>
-                        <li><strong>Peptic Ulcer Disease</strong> – increases gastric acid.</li>
-                        <li><strong>GI/GU Obstruction</strong> – perforation risk.</li>
-                        <li><strong>Bradycardia</strong> – additive effect with beta-blockers.</li>
-                    </ul>
-                </div>
-
-                <div class="clinical-correlation">
-                    <h4 style="color:#f39c12; margin:0 0 0.5rem;"><i class="fas fa-stethoscope"></i> Clinical Pearls</h4>
-                    <ul>
-                        <li><strong>Organophosphate Poisoning:</strong> Treat with <strong>Atropine</strong> (blocks muscarinic effects) + <strong>Pralidoxime</strong> (reactivates AChE if given early).</li>
-                        <li><strong>Myasthenia Gravis Diagnosis:</strong> <strong>Edrophonium</strong> (short-acting; rapid transient improvement).</li>
-                        <li><strong>Anticholinergic Overdose:</strong> <strong>Physostigmine</strong> is the ONLY reversible AChE inhibitor that crosses the BBB.</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Direct-Acting Muscarinic Agonists</strong>
+                        <ul>
+                            <li><strong>Bethanechol:</strong> Selective M₂/M₃ agonist. <em>Uses:</em> Post-op urinary retention, neurogenic bladder. <em>AE:</em> Salivation, sweating, GI cramping.</li>
+                            <li><strong>Pilocarpine:</strong> Non-selective muscarinic agonist. <em>Uses:</em> Glaucoma, xerostomia. <em>AE:</em> Blurred vision, brow ache.</li>
+                            <li><strong>Carbachol:</strong> Muscarinic + nicotinic agonist. <em>Uses:</em> Glaucoma (refractory).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Indirect-Acting (Anticholinesterases)</strong>
+                        <ul>
+                            <li><strong>Neostigmine:</strong> Reversible. <em>Uses:</em> Myasthenia, post-op ileus, reversal of NMBA.</li>
+                            <li><strong>Pyridostigmine:</strong> Long-acting. <em>Uses:</em> Chronic myasthenia.</li>
+                            <li><strong>Physostigmine:</strong> Crosses BBB. <em>Uses:</em> Anticholinergic overdose.</li>
+                            <li><strong>Edrophonium:</strong> Ultra-short. <em>Uses:</em> Diagnose myasthenia (Tensilon test).</li>
+                            <li><strong>Organophosphates:</strong> Irreversible. <em>Uses:</em> Insecticides. <em>Toxicity:</em> SLUDGE + nicotinic. <em>Antidote:</em> Atropine + pralidoxime.</li>
+                        </ul>
+                    </li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: SLUDGE</h4><p><span class="mnemonic"><i class="fas fa-check-circle"></i> Salivation, Lacrimation, Urination, Diaphoresis, GI motility, Emesis</span> — muscarinic excess.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 2: Anticholinergic Drugs ===== -->
         <section id="anticholinergic" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-nerve"></i> 2. Anticholinergic Drugs</div>
             <div class="section-card">
-                <h4 class="subsection-heading">Muscarinic Antagonists</h4>
-                <table class="premium-table">
-                    <thead><tr><th>Drug</th><th>Main Clinical Use</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Atropine</strong></td><td>Bradycardia, pre-anesthetic (decreases secretions).</td></tr>
-                        <tr><td><strong>Scopolamine</strong></td><td>Motion sickness (transdermal patch).</td></tr>
-                        <tr><td><strong>Ipratropium / Tiotropium</strong></td><td>COPD, Asthma (inhaled; minimal systemic effects).</td></tr>
-                        <tr><td><strong>Benztropine / Trihexyphenidyl</strong></td><td>Parkinson's tremor / Drug-induced EPS.</td></tr>
-                        <tr><td><strong>Darifenacin / Oxybutynin</strong></td><td>Overactive bladder (urge incontinence).</td></tr>
-                    </tbody>
-                </table>
-
-                <div class="memory-aid">
-                    <h4 style="color:#27ae60; margin:0 0 0.5rem;"><i class="fas fa-lightbulb"></i> Mnemonic: Anticholinergic Toxicity</h4>
-                    <p><strong>"Blind as a bat, dry as a bone, red as a beet, mad as a hatter, hot as a hare."</strong><br>
-                    (Mydriasis, dry mouth, flushing, delirium, hyperthermia).</p>
-                </div>
-
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>Closed-angle Glaucoma</strong> – increases intraocular pressure.</li>
-                        <li><strong>Benign Prostatic Hyperplasia (BPH)</strong> – urinary retention.</li>
-                        <li><strong>Severe Tachycardia</strong> or <strong>Obstructive GI disease</strong> (e.g., pyloric stenosis).</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Muscarinic Antagonists</strong>
+                        <ul>
+                            <li><strong>Atropine:</strong> Non-selective. <em>Uses:</em> Bradycardia, pre-anesthetic, organophosphate antidote.</li>
+                            <li><strong>Scopolamine:</strong> Crosses BBB. <em>Uses:</em> Motion sickness.</li>
+                            <li><strong>Ipratropium / Tiotropium:</strong> Quaternary → no CNS. <em>Uses:</em> COPD, asthma.</li>
+                            <li><strong>Darifenacin / Solifenacin:</strong> M₃-selective. <em>Uses:</em> Overactive bladder.</li>
+                        </ul>
+                    </li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Blind as a bat, dry as a bone, red as a beet, mad as a hatter, hot as a hare"</h4><p>Atropine toxicity: mydriasis, dry mouth, flushed skin, delirium, hyperthermia.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 3: Adrenergic Agonists ===== -->
         <section id="adrenergic" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-nerve"></i> 3. Adrenergic Agonists</div>
             <div class="section-card">
-                <h4 class="subsection-heading">Receptor Selectivity & Clinical Uses</h4>
-                <table class="premium-table">
-                    <thead><tr><th>Receptor</th><th>Drug Examples</th><th>Clinical Use</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>α1</strong></td><td>Phenylephrine, Midodrine</td><td>Nasal decongestant, Orthostatic hypotension.</td></tr>
-                        <tr><td><strong>α2</strong></td><td>Clonidine, Dexmedetomidine</td><td>Hypertension, Sedation (central sympatholytic).</td></tr>
-                        <tr><td><strong>β1</strong></td><td>Dobutamine</td><td>Heart failure (inotrope).</td></tr>
-                        <tr><td><strong>β2</strong></td><td>Albuterol, Terbutaline</td><td>Asthma (bronchodilation), Tocolytic (delays labor).</td></tr>
-                        <tr><td><strong>α1 + β1 + β2</strong></td><td>Epinephrine, Norepinephrine, Dopamine</td><td>Anaphylaxis, Cardiac arrest, Shock.</td></tr>
-                    </tbody>
-                </table>
-
-                <div class="clinical-correlation">
-                    <h4 style="color:#f39c12; margin:0 0 0.5rem;"><i class="fas fa-stethoscope"></i> Clinical Pearls</h4>
-                    <ul>
-                        <li><strong>Epinephrine</strong> is first-line for <strong>anaphylaxis</strong> (IM into anterolateral thigh).</li>
-                        <li><strong>Dopamine</strong> at low doses acts on D1 receptors causing renal vasodilation (historically "renal dose", though efficacy debated).</li>
-                    </ul>
-                </div>
-
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>Hypersensitivity</strong> to sulfites (often in epinephrine preparations).</li>
-                        <li><strong>Uncontrolled tachyarrhythmias</strong> or <strong>Ventricular fibrillation</strong> (except during CPR).</li>
-                        <li><strong>Digitalis toxicity</strong> (epinephrine can worsen arrhythmias).</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Alpha-1 Agonists:</strong> Phenylephrine, Midodrine.</li>
+                    <li><strong>Alpha-2 Agonists:</strong> Clonidine, Dexmedetomidine.</li>
+                    <li><strong>Beta-2 Agonists:</strong> Albuterol (SABA), Salmeterol (LABA), Terbutaline (tocolytic).</li>
+                    <li><strong>Non-Selective Beta:</strong> Isoproterenol.</li>
+                    <li><strong>Mixed α+β:</strong> Epinephrine (anaphylaxis), Norepinephrine (shock), Dopamine.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Epinephrine — the 4‑in‑1 drug"</h4><p>α₁ (vasoconstriction), α₂, β₁ (↑ HR), β₂ (bronchodilation). First-line for anaphylaxis.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 4: Alpha Blockers ===== -->
         <section id="alpha-blockers" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-nerve"></i> 4. Alpha‑Adrenergic Antagonists</div>
             <div class="section-card">
-                <h4 class="subsection-heading">Selective vs Non-Selective</h4>
-                <table class="premium-table">
-                    <thead><tr><th>Drug</th><th>Selectivity</th><th>Main Uses</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Phenoxybenzamine</strong></td><td>Non-selective (irreversible)</td><td>Pheochromocytoma (pre-operative).</td></tr>
-                        <tr><td><strong>Phentolamine</strong></td><td>Non-selective (reversible)</td><td>Hypertensive crisis (due to catecholamine excess).</td></tr>
-                        <tr><td><strong>Prazosin / Doxazosin</strong></td><td>Selective α1</td><td>Hypertension, BPH.</td></tr>
-                        <tr><td><strong>Tamsulosin</strong></td><td>Selective α1A (uroselective)</td><td>BPH only (minimal BP effect).</td></tr>
-                    </tbody>
-                </table>
-
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications & Cautions</h4>
-                    <ul>
-                        <li><strong>Orthostatic hypotension</strong> (especially first-dose syncope – warn patients to take at bedtime).</li>
-                        <li><strong>Severe cardiac failure</strong> or <strong>mi</strong>tral stenosis.</li>
-                        <li><strong>Concomitant use</strong> with PDE5 inhibitors (e.g., sildenafil) – severe hypotension risk.</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Non-Selective:</strong> Phenoxybenzamine (irreversible, pheochromocytoma), Phentolamine.</li>
+                    <li><strong>Selective α₁:</strong> Prazosin, Doxazosin, Terazosin (HTN, BPH), Tamsulosin (BPH only).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Tamsulosin — for the prostate"</h4><p>Selective α₁A → relaxes bladder neck. Less orthostatic hypotension.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 5: Beta Blockers ===== -->
         <section id="beta-blockers" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-heart"></i> 5. Beta‑Adrenergic Antagonists</div>
             <div class="section-card">
-                <h4 class="subsection-heading">Classification & Properties</h4>
-                <table class="premium-table">
-                    <thead><tr><th>Drug</th><th>Cardioselective (β1)</th><th>ISA</th><th>Alpha-blockade</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Propranolol, Nadolol, Timolol</strong></td><td>No (β1 + β2)</td><td>No</td><td>No</td></tr>
-                        <tr><td><strong>Metoprolol, Atenolol, Bisoprolol</strong></td><td>Yes</td><td>No</td><td>No</td></tr>
-                        <tr><td><strong>Pindolol, Acebutolol</strong></td><td>Yes (Pindolol non-select)</td><td>Yes (ISA)</td><td>No</td></tr>
-                        <tr><td><strong>Carvedilol, Labetalol</strong></td><td>No</td><td>No</td><td>Yes (α1)</td></tr>
-                    </tbody>
-                </table>
-                <p><strong>Uses:</strong> Hypertension, Angina, Heart Failure (Carvedilol/Bisoprolol), Arrhythmias, Migraine prophylaxis, Glaucoma (Timolol).</p>
-
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Absolute Contraindications</h4>
-                    <ul>
-                        <li><strong>Acute bronchial asthma</strong> (non-selective β-blockers block β2 bronchodilation).</li>
-                        <li><strong>Sinus bradycardia</strong> & <strong>Heart block</strong> (2nd/3rd degree).</li>
-                        <li><strong>Decompensated heart failure</strong> (acute).</li>
-                        <li><strong>Diabetes</strong> – non-selective β-blockers mask hypoglycemic symptoms (tachycardia).</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Non-Selective:</strong> Propranolol, Nadolol, Timolol.</li>
+                    <li><strong>Cardioselective (β₁):</strong> Metoprolol, Atenolol, Bisoprolol, Esmolol.</li>
+                    <li><strong>With ISA:</strong> Pindolol, Acebutolol.</li>
+                    <li><strong>With α-blockade:</strong> Carvedilol, Labetalol.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Beta‑blockers in heart failure"</h4><p><strong>Bisoprolol, Carvedilol, Metoprolol</strong> — the "3 B's" for HFrEF.</p></div></li>
+                </ul>
             </div>
         </section>
 
-        <!-- ==================== CARDIOVASCULAR ==================== -->
+        <!-- ===== CHAPTER 6: Antiarrhythmics ===== -->
         <section id="antiarrhythmics" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-heartbeat"></i> 6. Antiarrhythmic Drugs (Vaughan Williams)</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Mechanism</th><th>Examples</th><th>Key Notes / CI</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>I</strong></td><td>Na⁺ channel blockers</td><td>Ia: Quinidine, Procainamide<br>Ib: Lidocaine, Mexiletine<br>Ic: Flecainide, Propafenone</td><td>Ia: ↑ QT (Torsades risk). Ib: ↓ QT (use in acute MI). Ic: Strong blockade; avoid in structural heart disease (↑ mortality).</td></tr>
-                        <tr><td><strong>II</strong></td><td>β-blockers</td><td>Propranolol, Metoprolol</td><td>Decrease heart rate, contractility.</td></tr>
-                        <tr><td><strong>III</strong></td><td>K⁺ channel blockers</td><td>Amiodarone, Sotalol, Dofetilide</td><td>Prolong APD & QT. <strong>Amiodarone:</strong> Pulmonary fibrosis, thyroid dysfunction (iodine content).</td></tr>
-                        <tr><td><strong>IV</strong></td><td>Ca²⁺ channel blockers</td><td>Verapamil, Diltiazem</td><td>AV nodal blocking (supraventricular tachycardia).</td></tr>
-                        <tr><td><strong>Other</strong></td><td>Purinergic</td><td>Adenosine</td><td>AV nodal blocker (drug of choice for PSVT).</td></tr>
-                    </tbody>
-                </table>
+                <ul>
+                    <li><strong>Class I (Na⁺ blockers):</strong> Ia (Quinidine, Procainamide), Ib (Lidocaine, Mexiletine), Ic (Flecainide, Propafenone).</li>
+                    <li><strong>Class II (β-blockers):</strong> Propranolol, Metoprolol.</li>
+                    <li><strong>Class III (K⁺ blockers):</strong> Amiodarone, Sotalol, Dofetilide.</li>
+                    <li><strong>Class IV (Ca²⁺ blockers):</strong> Verapamil, Diltiazem.</li>
+                    <li><strong>Others:</strong> Adenosine, Digoxin.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "ABCD"</h4><p><strong>A</strong>miodarone (Class III) — pulmonary fibrosis, thyroid, corneal deposits.<br><strong>B</strong>eta-blockers (Class II) — rate control.<br><strong>C</strong>alcium blockers (Class IV) — AV node.<br><strong>D</strong>igoxin — + inotrope, vagotonic.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 7: Antihypertensives ===== -->
         <section id="antihypertensives" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-tachometer-alt"></i> 7. Antihypertensive Drugs</div>
             <div class="section-card">
-                <h4 class="subsection-heading">First-Line & Add-on Agents</h4>
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>MoA</th><th>Side Effects</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>ACE Inhibitors</strong></td><td>Captopril, Enalapril, Lisinopril</td><td>↓ Angiotensin II</td><td><strong>Dry cough, Angioedema, Hyperkalemia.</strong></td></tr>
-                        <tr><td><strong>ARBs</strong></td><td>Losartan, Valsartan</td><td>Block AT1 receptors</td><td>No cough (ACEi alternative).</td></tr>
-                        <tr><td><strong>CCBs (DHP)</strong></td><td>Amlodipine, Nifedipine</td><td>Vascular smooth muscle vasodilation</td><td>Peripheral edema, flushing.</td></tr>
-                        <tr><td><strong>CCBs (Non-DHP)</strong></td><td>Verapamil, Diltiazem</td><td>Negative chronotrope (heart rate)</td><td>Constipation, bradycardia.</td></tr>
-                        <tr><td><strong>Thiazides</strong></td><td>HCTZ, Chlorthalidone</td><td>Na⁺/Cl⁻ cotransporter inhibition</td><td>Hypokalemia, hypercalcemia.</td></tr>
-                    </tbody>
-                </table>
-
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>ACEi/ARBs:</strong> Pregnancy (teratogenic – Fetal renal agenesis), Bilateral renal artery stenosis (causes acute kidney injury).</li>
-                        <li><strong>Non-DHP CCBs:</strong> Avoid in heart failure with reduced EF (negative inotrope).</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>ACE inhibitors:</strong> Captopril, Enalapril, Lisinopril. <em>AE:</em> Cough, angioedema, hyperkalemia.</li>
+                    <li><strong>ARBs:</strong> Losartan, Valsartan. <em>No cough.</em></li>
+                    <li><strong>CCBs:</strong> DHP (Amlodipine) — vasodilation; Non-DHP (Verapamil) — negative chronotropy.</li>
+                    <li><strong>Thiazides:</strong> HCTZ, Chlorthalidone.</li>
+                    <li><strong>Beta-blockers.</strong></li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "ACE inhibitor cough"</h4><p>Bradykinin accumulation → dry cough. Switch to ARB if intolerant.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 8: Diuretics ===== -->
         <section id="diuretics" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-tint"></i> 8. Diuretics</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Site of Action</th><th>Adverse Effects</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Loop</strong></td><td>Furosemide, Bumetanide</td><td>Thick ascending limb (Na-K-2Cl)</td><td><strong>Ototoxicity</strong>, Hypokalemia, Hypocalcemia.</td></tr>
-                        <tr><td><strong>Thiazide</strong></td><td>HCTZ, Chlorthalidone</td><td>Distal convoluted tubule (Na-Cl)</td><td>Hypercalcemia, Hypokalemia, Hyperuricemia.</td></tr>
-                        <tr><td><strong>K⁺-Sparing</strong></td><td>Spironolactone, Eplerenone</td><td>Collecting duct (Aldosterone antagonist)</td><td><strong>Hyperkalemia</strong>, Gynecomastia (Spironolactone).</td></tr>
-                        <tr><td><strong>CA Inhibitor</strong></td><td>Acetazolamide</td><td>Proximal tubule</td><td>Metabolic acidosis, Kidney stones.</td></tr>
-                        <tr><td><strong>Osmotic</strong></td><td>Mannitol</td><td>Proximal tubule/Glomerulus</td><td>Acute heart failure/fluid overload.</td></tr>
-                    </tbody>
-                </table>
-                
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>Sulfa allergy:</strong> Contraindicated for loop and thiazide diuretics (cross-reactivity).</li>
-                        <li><strong>Hyperkalemia:</strong> Avoid K⁺-sparing diuretics.</li>
-                        <li><strong>Severe renal failure:</strong> Avoid K⁺-sparing and CA inhibitors.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section id="anticoagulants" class="chapter-content">
-            <div class="chapter-title"><i class="fas fa-blood"></i> 9. Anticoagulants & Antiplatelets</div>
-            <div class="section-card">
-                <h4 class="subsection-heading">Anticoagulants (Target Coagulation Cascade)</h4>
-                <table class="premium-table">
-                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Use</th><th>Reversal Agent</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Unfractionated Heparin</strong></td><td>Binds Antithrombin III → Inactivates IIa & Xa</td><td>Acute DVT/PE, ACS</td><td><strong>Protamine Sulfate</strong></td></tr>
-                        <tr><td><strong>LMWH (Enoxaparin)</strong></td><td>Inactivates Xa > IIa</td><td>Prophylaxis & treatment</td><td>Protamine (partial)</td></tr>
-                        <tr><td><strong>Warfarin</strong></td><td>Inhibits Vit. K-dependent factors (II, VII, IX, X)</td><td>Chronic Afib, Mechanical valves</td><td><strong>Vit. K + FFP</strong></td></tr>
-                        <tr><td><strong>DOACs</strong> (Dabigatran, Rivaroxaban, Apixaban)</td><td>Dabigatran: IIa inhib. Rivaroxaban/Apixaban: Xa inhib.</td><td>Afib, DVT/PE (preferred)</td><td>Idarucizumab (Dabigatran), Andexanet alfa (Xa inhib.)</td></tr>
-                    </tbody>
-                </table>
-
-                <h4 class="subsection-heading">Antiplatelet Agents</h4>
                 <ul>
-                    <li><strong>Aspirin:</strong> Irreversible COX-1 inhibitor. <em>Use:</em> Secondary MI/stroke. <em>CI:</em> Allergy, GI bleed, Reye's syndrome.</li>
-                    <li><strong>Clopidogrel / Prasugrel:</strong> P2Y12 (ADP) antagonist. <em>Use:</em> ACS, stent thrombosis.</li>
-                    <li><strong>Abciximab / Eptifibatide:</strong> GP IIb/IIIa inhibitors. <em>Use:</em> During PCI.</li>
+                    <li><strong>Loop:</strong> Furosemide, Bumetanide. <em>MOA:</em> Inhibit NKCC2 in thick ascending limb. <em>AE:</em> Hypokalemia, ototoxicity.</li>
+                    <li><strong>Thiazides:</strong> HCTZ, Chlorthalidone. <em>MOA:</em> Inhibit Na⁺-Cl⁻ cotransporter. <em>AE:</em> Hypercalcemia, hyperuricemia.</li>
+                    <li><strong>K⁺-sparing:</strong> Spironolactone (aldosterone antagonist), Amiloride.</li>
+                    <li><strong>CA inhibitors:</strong> Acetazolamide. <em>Uses:</em> Glaucoma, altitude sickness.</li>
+                    <li><strong>Osmotic:</strong> Mannitol. <em>Uses:</em> ↓ ICP, ↓ IOP.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Loops lose K⁺, Thiazides spare Ca²⁺"</h4><p>Loop → hypokalemia, hypocalcemia. Thiazide → hypercalcemia.</p></div></li>
                 </ul>
-
-                <div class="memory-aid">
-                    <h4 style="color:#27ae60; margin:0 0 0.5rem;"><i class="fas fa-lightbulb"></i> Mnemonic: Heparin vs Warfarin</h4>
-                    <p><strong>"H" for Heparin = Hospital</strong> (IV/SC, acute, Protamine)<br>
-                    <strong>"W" for Warfarin = Ward / Outpatient</strong> (Oral, chronic, Vit K).<br>
-                    Heparin requires <strong>aPTT</strong> monitoring; Warfarin requires <strong>PT/INR</strong>. Heparin is safe in pregnancy; Warfarin is <strong>TERATOGENIC</strong>.</p>
-                </div>
-
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>Heparin:</strong> Heparin-Induced Thrombocytopenia (HIT), active major bleeding.</li>
-                        <li><strong>Warfarin:</strong> <strong>Pregnancy</strong> (Category X), active bleeding, uncontrolled HTN.</li>
-                        <li><strong>DOACs:</strong> Prosthetic mechanical heart valves, severe renal impairment (Dabigatran).</li>
-                    </ul>
-                </div>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 9: Anticoagulants ===== -->
+        <section id="anticoagulants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-blood"></i> 9. Anticoagulants &amp; Antiplatelets</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Anticoagulants:</strong> Heparin (IV/SC) — monitor aPTT, reverse with protamine. LMWH (Enoxaparin) — monitor anti-Xa. Warfarin — monitor INR, reverse with vitamin K. DOACs (Dabigatran, Rivaroxaban, Apixaban).</li>
+                    <li><strong>Antiplatelets:</strong> Aspirin (COX-1), Clopidogrel (P2Y12), Abciximab (GP IIb/IIIa).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Heparin vs. Warfarin"</h4><p><strong>H</strong>eparin: <strong>H</strong>ospital (IV), <strong>H</strong>IT risk, <strong>H</strong>alf-life short, <strong>H</strong>eparin antidote = protamine.<br><strong>W</strong>arfarin: <strong>W</strong>ait 2–3 days for effect, <strong>W</strong>atch INR, <strong>W</strong>arfarin antidote = vitamin K.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 10: Lipid-Lowering ===== -->
         <section id="lipid-lowering" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-heart"></i> 10. Lipid‑Lowering Agents</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Adverse Effects</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Statins</strong></td><td>Atorvastatin, Simvastatin</td><td>HMG-CoA reductase inhibition</td><td>Myopathy, Hepatotoxicity, ↑ glucose.</td></tr>
-                        <tr><td><strong>Ezetimibe</strong></td><td>Ezetimibe</td><td>Inhibits cholesterol absorption</td><td>Well-tolerated.</td></tr>
-                        <tr><td><strong>PCSK9 Inhibitors</strong></td><td>Evolocumab, Alirocumab</td><td>Monoclonal antibodies</td><td>Injection site reactions.</td></tr>
-                        <tr><td><strong>Fibrates</strong></td><td>Fenofibrate, Gemfibrozil</td><td>PPAR-α agonists</td><td>Myositis, Gallstones.</td></tr>
-                        <tr><td><strong>Niacin</strong></td><td>Niacin</td><td>Reduces VLDL</td><td>Flushing, Hyperglycemia, Hepatotoxicity.</td></tr>
-                    </tbody>
-                </table>
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>Statins:</strong> Active liver disease, <strong>Pregnancy</strong> (Category X).</li>
-                        <li><strong>Fibrates:</strong> Severe hepatic/renal impairment, concurrent statin use (increases myopathy risk).</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Statins:</strong> Atorvastatin, Rosuvastatin. <em>MOA:</em> HMG-CoA reductase inhibition. <em>AE:</em> Myalgias, rhabdomyolysis.</li>
+                    <li><strong>Ezetimibe:</strong> ↓ cholesterol absorption.</li>
+                    <li><strong>PCSK9 inhibitors:</strong> Evolocumab, Alirocumab.</li>
+                    <li><strong>Fibrates:</strong> Fenofibrate — ↓ TG, ↑ HDL.</li>
+                    <li><strong>Niacin:</strong> ↓ VLDL, ↑ HDL. <em>AE:</em> Flushing (pretreat with aspirin).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Statins — myalgia and CK"</h4><p>If myalgias occur, check CK. Risk of rhabdomyolysis ↑ with fibrates (especially gemfibrozil).</p></div></li>
+                </ul>
             </div>
         </section>
 
-        <!-- ==================== RESPIRATORY ==================== -->
+        <!-- ===== CHAPTER 11: Asthma ===== -->
         <section id="asthma" class="chapter-content">
-            <div class="chapter-title"><i class="fas fa-lungs"></i> 11. Drugs for Asthma & COPD</div>
+            <div class="chapter-title"><i class="fas fa-lungs"></i> 11. Drugs for Asthma &amp; COPD</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Key Pearl</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>SABA</strong></td><td>Albuterol, Levalbuterol</td><td>β2 agonist (bronchodilation)</td><td>First-line for acute attacks.</td></tr>
-                        <tr><td><strong>LABA</strong></td><td>Salmeterol, Formoterol</td><td>β2 agonist (long-acting)</td><td><strong>NEVER</strong> use as monotherapy (↑ mortality).</td></tr>
-                        <tr><td><strong>Anticholinergics</strong></td><td>Ipratropium, Tiotropium</td><td>Muscarinic antagonist</td><td>First-line for COPD.</td></tr>
-                        <tr><td><strong>ICS</strong></td><td>Fluticasone, Budesonide</td><td>Anti-inflammatory</td><td>Used for persistent asthma.</td></tr>
-                        <tr><td><strong>Leukotriene Antagonists</strong></td><td>Montelukast</td><td>CysLT1 antagonist</td><td>Aspirin-exacerbated asthma.</td></tr>
-                    </tbody>
-                </table>
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>LABA monotherapy:</strong> Contraindicated in asthma without ICS (risk of severe exacerbations).</li>
-                        <li><strong>Montelukast:</strong> Avoid in acute bronchospasm (not a bronchodilator).</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Bronchodilators:</strong> SABA (Albuterol), LABA (Salmeterol), LAMA (Tiotropium).</li>
+                    <li><strong>Anti-inflammatory:</strong> ICS (Fluticasone), LTRA (Montelukast), Cromolyn, Omalizumab (anti-IgE).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Asthma step therapy"</h4><p>Step 1: SABA prn. Step 2: ICS. Step 3: ICS + LABA. Step 4: ICS + LABA + LAMA.</p></div></li>
+                </ul>
             </div>
         </section>
 
-        <!-- ==================== GASTROINTESTINAL ==================== -->
+        <!-- ===== CHAPTER 12: Acid-Peptic ===== -->
         <section id="acid-peptic" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-stomach"></i> 12. Drugs for Acid‑Peptic Disorders</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Side Effects</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>PPIs</strong></td><td>Omeprazole, Esomeprazole</td><td>Irreversible H⁺/K⁺ ATPase inhibition</td><td>Long-term: B12 deficiency, osteoporosis.</td></tr>
-                        <tr><td><strong>H2 Blockers</strong></td><td>Famotidine, Ranitidine</td><td>Competitive H2 antagonism</td><td>Well-tolerated.</td></tr>
-                        <tr><td><strong>Antacids</strong></td><td>Al(OH)₃, Mg(OH)₂</td><td>Neutralize gastric acid</td><td>Constipation (Al), Diarrhea (Mg).</td></tr>
-                        <tr><td><strong>Sucralfate</strong></td><td>Sucralfate</td><td>Coats ulcer bed</td><td>Constipation.</td></tr>
-                        <tr><td><strong>Misoprostol</strong></td><td>Misoprostol</td><td>Prostaglandin analog</td><td>Diarrhea, <strong>abortifacient</strong> (Pregnancy Category X).</td></tr>
-                    </tbody>
-                </table>
-                <div class="memory-aid">
-                    <h4 style="color:#27ae60; margin:0 0 0.5rem;"><i class="fas fa-lightbulb"></i> Clinical Pearl</h4>
-                    <p><strong>PPIs</strong> are superior to H2 blockers for healing ulcers and preventing NSAID-induced ulcers. <strong>Misoprostol</strong> is used to prevent NSAID ulcers but is contraindicated in women of childbearing age due to abortion risk.</p>
-                </div>
+                <ul>
+                    <li><strong>Antacids:</strong> Aluminum/Mg hydroxide.</li>
+                    <li><strong>H₂ blockers:</strong> Famotidine, Ranitidine (withdrawn).</li>
+                    <li><strong>PPIs:</strong> Omeprazole, Esomeprazole — inhibit H⁺/K⁺ ATPase.</li>
+                    <li><strong>Sucralfate:</strong> Coats ulcers.</li>
+                    <li><strong>Misoprostol:</strong> Prevents NSAID ulcers. <em>Contraindicated in pregnancy.</em></li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "PPI — take before meals"</h4><p>PPIs are most effective when taken 30–60 min before breakfast.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 13: Antiemetics ===== -->
         <section id="antiemetics" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-poop"></i> 13. Antiemetics</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>CI / Pearl</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>5-HT3 Antagonists</strong></td><td>Ondansetron, Granisetron</td><td>Block serotonin in GI tract</td><td><strong>QT prolongation</strong> (avoid in long QT).</td></tr>
-                        <tr><td><strong>Dopamine Antagonists</strong></td><td>Metoclopramide, Prochlorperazine</td><td>Block D2 in CTZ</td><td><strong>EPS</strong> (acute dystonia). Metoclopramide can cause tardive dyskinesia.</td></tr>
-                        <tr><td><strong>NK1 Antagonists</strong></td><td>Aprepitant</td><td>Block substance P</td><td>Used for chemotherapy-induced N/V.</td></tr>
-                        <tr><td><strong>Antihistamines</strong></td><td>Promethazine, Diphenhydramine</td><td>H1 blockade</td><td>Sedation.</td></tr>
-                    </tbody>
-                </table>
+                <ul>
+                    <li><strong>5-HT₃:</strong> Ondansetron, Granisetron — CINV.</li>
+                    <li><strong>Dopamine antagonists:</strong> Metoclopramide (EPS risk), Prochlorperazine.</li>
+                    <li><strong>NK₁:</strong> Aprepitant — delayed CINV.</li>
+                    <li><strong>Antihistamines:</strong> Promethazine — motion sickness.</li>
+                    <li><strong>Anticholinergics:</strong> Scopolamine — motion sickness.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "CINV triple therapy"</h4><p>5-HT₃ + Dexamethasone + NK₁ antagonist for highly emetogenic chemotherapy.</p></div></li>
+                </ul>
             </div>
         </section>
 
-        <!-- ==================== ENDOCRINE ==================== -->
+        <!-- ===== CHAPTER 14: Diabetes ===== -->
         <section id="diabetes" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-tint"></i> 14. Antidiabetic Drugs</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>Key Side Effect / CI</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Biguanides</strong></td><td>Metformin</td><td>↓ Hepatic gluconeogenesis</td><td><strong>Lactic acidosis</strong> (CI in renal failure).</td></tr>
-                        <tr><td><strong>Sulfonylureas</strong></td><td>Glipizide, Glyburide</td><td>↑ Insulin secretion</td><td><strong>Hypoglycemia</strong>, weight gain. (CI in elderly).</td></tr>
-                        <tr><td><strong>TZDs</strong></td><td>Pioglitazone</td><td>↑ Insulin sensitivity (PPAR-γ)</td><td>Fluid retention, weight gain, bladder cancer (Pioglitazone).</td></tr>
-                        <tr><td><strong>SGLT2 Inhibitors</strong></td><td>Empagliflozin, Canagliflozin</td><td>↓ Renal glucose reabsorption</td><td>UTIs, Euglycemic DKA (rare).<br> <strong>CI:</strong> End-stage renal disease.</td></tr>
-                        <tr><td><strong>GLP-1 Agonists</strong></td><td>Liraglutide, Semaglutide</td><td>↑ Insulin, ↓ Glucagon</td><td>Nausea, pancreatitis. <strong>CI:</strong> Personal/family history of medullary thyroid cancer.</td></tr>
-                        <tr><td><strong>Insulin</strong></td><td>Lispro, Aspart, Glargine</td><td>Replaces endogenous insulin</td><td><strong>Hypoglycemia</strong>.</td></tr>
-                    </tbody>
-                </table>
-                <div class="memory-aid">
-                    <h4 style="color:#27ae60; margin:0 0 0.5rem;"><i class="fas fa-lightbulb"></i> Mnemonic: Metformin</h4>
-                    <p><strong>"Metformin"</strong> → <strong>M</strong>etformin <strong>M</strong>akes you <strong>M</strong>ean (weight loss) and <strong>M</strong>easures your kidneys (CI in Cr > 1.5).</p>
-                </div>
+                <ul>
+                    <li><strong>Insulin:</strong> Rapid (Lispro), Short (Regular), Intermediate (NPH), Long (Glargine).</li>
+                    <li><strong>Biguanides:</strong> Metformin — first-line. <em>AE:</em> Lactic acidosis (rare).</li>
+                    <li><strong>Sulfonylureas:</strong> Glipizide — ↑ insulin. <em>AE:</em> Hypoglycemia.</li>
+                    <li><strong>TZDs:</strong> Pioglitazone — ↑ insulin sensitivity. <em>AE:</em> Fluid retention, fractures.</li>
+                    <li><strong>DPP-4 inhibitors:</strong> Sitagliptin.</li>
+                    <li><strong>GLP-1 agonists:</strong> Liraglutide, Semaglutide — weight loss, CV benefit.</li>
+                    <li><strong>SGLT2 inhibitors:</strong> Empagliflozin — glycosuria, CV/renal benefit.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Metformin — first-line"</h4><p>Metformin is first-line for type 2 diabetes unless contraindicated (eGFR &lt;30).</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 15: Thyroid ===== -->
         <section id="thyroid" class="chapter-content">
-            <div class="chapter-title"><i class="fas fa-hormone"></i> 15. Thyroid & Anti‑thyroid Drugs</div>
+            <div class="chapter-title"><i class="fas fa-hormone"></i> 15. Thyroid &amp; Anti‑thyroid Drugs</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Drug</th><th>Mechanism</th><th>Indication</th><th>CI / Pearl</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Levothyroxine (T4)</strong></td><td>Thyroid hormone replacement</td><td>Hypothyroidism</td><td>Narrow therapeutic index. <br><strong>CI:</strong> Recent MI, untreated adrenal insufficiency.</td></tr>
-                        <tr><td><strong>Methimazole</strong></td><td>Inhibits thyroid peroxidase</td><td>Hyperthyroidism</td><td><strong>Agranulocytosis</strong> (monitor WBC).</td></tr>
-                        <tr><td><strong>Propylthiouracil (PTU)</strong></td><td>Inhibits thyroid peroxidase + peripheral T4→T3</td><td>Hyperthyroidism (1st trimester)</td><td><strong>Hepatotoxicity</strong> (black box). Use in 1st trimester due to lower risk of birth defects.</td></tr>
-                        <tr><td><strong>Radioactive Iodine (131I)</strong></td><td>Destroys thyroid follicular cells</td><td>Graves' disease</td><td><strong>CI:</strong> <strong>Pregnancy</strong> (teratogenic).</td></tr>
-                    </tbody>
-                </table>
+                <ul>
+                    <li><strong>Replacement:</strong> Levothyroxine (T₄) — first-line.</li>
+                    <li><strong>Anti-thyroid:</strong> Methimazole (first-line for Graves'), PTU (thyroid storm, first trimester).</li>
+                    <li><strong>Radioiodine:</strong> ¹³¹I — definitive for Graves'.</li>
+                    <li><strong>Beta-blockers:</strong> Propranolol — controls symptoms.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Methimazole vs. PTU"</h4><p><strong>M</strong>ethimazole — once daily, less hepatotoxic. <strong>P</strong>TU — preferred in <strong>P</strong>regnancy (1st trimester) and <strong>P</strong>yroid storm.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 16: Corticosteroids ===== -->
         <section id="steroids" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-hormone"></i> 16. Corticosteroids</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Type</th><th>Examples</th><th>Uses</th><th>Adverse Effects</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Glucocorticoids</strong></td><td>Prednisone, Dexamethasone</td><td>Anti-inflammatory, Immunosuppressive</td><td>Hyperglycemia, Osteoporosis, Cushingoid, Adrenal suppression.</td></tr>
-                        <tr><td><strong>Mineralocorticoids</strong></td><td>Fludrocortisone</td><td>Addison's disease (adrenal insufficiency)</td><td>Hypertension, Hypokalemia.</td></tr>
-                    </tbody>
-                </table>
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>Active systemic infections</strong> (unless treated with antibiotics).</li>
-                        <li><strong>Uncontrolled diabetes</strong> and <strong>severe osteoporosis</strong> (relative CIs).</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>Glucocorticoids:</strong> Prednisone, Methylprednisolone, Dexamethasone. <em>Uses:</em> Anti-inflammatory, immunosuppressive.</li>
+                    <li><strong>Mineralocorticoid:</strong> Fludrocortisone — adrenal insufficiency.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Dexamethasone — no mineralocorticoid"</h4><p>Dexamethasone has zero mineralocorticoid activity — used in cerebral edema and COVID-19.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 17: Sex Hormones ===== -->
         <section id="sex-hormones" class="chapter-content">
-            <div class="chapter-title"><i class="fas fa-venus-mars"></i> 17. Sex Hormones & Contraceptives</div>
+            <div class="chapter-title"><i class="fas fa-venus-mars"></i> 17. Sex Hormones &amp; Contraceptives</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Drug</th><th>Indication</th><th>Mechanism</th><th>CI / Pearl</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Combined OCPs</strong></td><td>Contraception, HRT</td><td>Suppresses FSH/LH</td><td><strong>CI:</strong> Smoking >35 y/o, history of DVT/Breast cancer.</td></tr>
-                        <tr><td><strong>Progestin-only</strong></td><td>Contraception (lactation)</td><td>Thickens cervical mucus</td><td>Less thrombogenic.</td></tr>
-                        <tr><td><strong>Finasteride</strong></td><td>BPH, Male pattern baldness</td><td>5α-Reductase inhibitor</td><td><strong>CI:</strong> Women of childbearing age (teratogenic).</td></tr>
-                        <tr><td><strong>Testosterone</strong></td><td>Hypogonadism</td><td>Androgen replacement</td><td><strong>CI:</strong> Prostate cancer.</td></tr>
-                    </tbody>
-                </table>
+                <ul>
+                    <li><strong>Estrogens:</strong> Conjugated estrogens, Ethinyl estradiol.</li>
+                    <li><strong>Progestins:</strong> Progesterone, Levonorgestrel.</li>
+                    <li><strong>Combined OCs:</strong> Estrogen + progestin. <em>Contraindications:</em> Smoking &gt;35, DVT/PE.</li>
+                    <li><strong>Androgens:</strong> Testosterone.</li>
+                    <li><strong>Anti-androgens:</strong> Spironolactone, Finasteride (5α-reductase inhibitor).</li>
+                </ul>
             </div>
         </section>
 
-        <!-- ==================== CNS ==================== -->
+        <!-- ===== CHAPTER 18: Sedative-Hypnotics ===== -->
         <section id="sedative-hypnotic" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-bed"></i> 18. Sedative‑Hypnotics</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>CI / Reversal</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Benzodiazepines</strong></td><td>Diazepam, Lorazepam</td><td>Enhance GABAₐ (frequency)</td><td><strong>CI:</strong> Narrow-angle glaucoma, severe respiratory depression. <br><strong>Reversal:</strong> Flumazenil.</td></tr>
-                        <tr><td><strong>Z-Drugs</strong></td><td>Zolpidem, Eszopiclone</td><td>Selective GABAₐ α1</td><td>Use short-term only.</td></tr>
-                        <tr><td><strong>Barbiturates</strong></td><td>Phenobarbital</td><td>Enhance GABAₐ (duration)</td><td><strong>CI:</strong> Porphyria. High abuse potential.</td></tr>
-                    </tbody>
-                </table>
-                <div class="clinical-correlation">
-                    <p><strong>Pearl:</strong> <strong>Flumazenil</strong> reverses BZDs but is contraindicated in patients with BZD dependence (precipitates withdrawal) or tricyclic overdose.</p>
-                </div>
+                <ul>
+                    <li><strong>Benzodiazepines:</strong> Diazepam, Lorazepam, Alprazolam. <em>MOA:</em> ↑ GABAₐ frequency. <em>Antidote:</em> Flumazenil.</li>
+                    <li><strong>Z-drugs:</strong> Zolpidem, Eszopiclone.</li>
+                    <li><strong>Barbiturates:</strong> Phenobarbital. <em>AE:</em> Enzyme induction, porphyria.</li>
+                    <li><strong>Melatonin agonists:</strong> Ramelteon.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "BZD antidote — Flumazenil"</h4><p>Flumazenil is a competitive BZD antagonist. Use cautiously in BZD-dependent patients (seizure risk).</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 19: Antidepressants ===== -->
         <section id="antidepressants" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-smile"></i> 19. Antidepressants</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>MoA</th><th>CI / Side Effect</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>SSRIs</strong></td><td>Fluoxetine, Sertraline</td><td>Blocks 5-HT reuptake</td><td>First-line. <strong>CI:</strong> MAOIs (serotonin syndrome).</td></tr>
-                        <tr><td><strong>SNRIs</strong></td><td>Venlafaxine, Duloxetine</td><td>Blocks 5-HT & NE</td><td>↑ BP (Venlafaxine).</td></tr>
-                        <tr><td><strong>TCAs</strong></td><td>Amitriptyline, Nortriptyline</td><td>Blocks 5-HT & NE (also H1)</td><td><strong>CI:</strong> Cardiac arrhythmias (QT prolongation), Glaucoma.</td></tr>
-                        <tr><td><strong>MAOIs</strong></td><td>Phenelzine, Tranylcypromine</td><td>Inhibits MAO enzyme</td><td><strong>CI:</strong> Tyramine-rich foods (hypertensive crisis).</td></tr>
-                        <tr><td><strong>Atypicals</strong></td><td>Bupropion, Mirtazapine</td><td>NDRI, NaSSA</td><td>Bupropion: <strong>CI:</strong> Seizure disorder, anorexia. Mirtazapine: Sedation, weight gain.</td></tr>
-                    </tbody>
-                </table>
+                <ul>
+                    <li><strong>SSRIs:</strong> Fluoxetine, Sertraline — first-line.</li>
+                    <li><strong>SNRIs:</strong> Venlafaxine, Duloxetine.</li>
+                    <li><strong>TCAs:</strong> Amitriptyline — cardiotoxic in overdose.</li>
+                    <li><strong>MAOIs:</strong> Phenelzine — tyramine restrictions.</li>
+                    <li><strong>Atypicals:</strong> Bupropion (NDRI), Mirtazapine (NaSSA).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "SSRI side effects"</h4><p>Sexual dysfunction, GI upset, insomnia/sedation, serotonin syndrome (with MAOIs).</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 20: Antipsychotics ===== -->
         <section id="antipsychotics" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-brain"></i> 20. Antipsychotics</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Generation</th><th>Examples</th><th>Side Effects</th><th>CI / Pearl</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Typical (1st)</strong></td><td>Haloperidol, Chlorpromazine</td><td>EPS (dystonia, parkinsonism), Tardive dyskinesia</td><td><strong>CI:</strong> Parkinson's disease. <br>High potency (Haloperidol) = more EPS.</td></tr>
-                        <tr><td><strong>Atypical (2nd)</strong></td><td>Risperidone, Olanzapine, Quetiapine</td><td>Weight gain, Metabolic syndrome</td><td>Less EPS. <br><strong>Clozapine:</strong> Agranulocytosis (monitor WBC) – reserved for refractory.</td></tr>
-                    </tbody>
-                </table>
-                <div class="contraindication-box">
-                    <h4 style="color:#e74c3c; margin:0 0 0.5rem;"><i class="fas fa-ban"></i> Contraindications</h4>
-                    <ul>
-                        <li><strong>Parkinson's disease</strong> (avoid typical antipsychotics due to D2 blockade worsening symptoms).</li>
-                        <li><strong>Clozapine:</strong> Uncontrolled epilepsy, severe hepatic impairment, history of agranulocytosis.</li>
-                    </ul>
-                </div>
+                <ul>
+                    <li><strong>First-generation:</strong> Haloperidol (D₂ antagonist) — EPS, tardive dyskinesia.</li>
+                    <li><strong>Second-generation:</strong> Risperidone, Olanzapine, Quetiapine, Aripiprazole (partial agonist), Clozapine (refractory — agranulocytosis risk).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Clozapine — agranulocytosis"</h4><p>Clozapine requires WBC monitoring. Use only for treatment-resistant schizophrenia.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 21: Antiepileptics ===== -->
         <section id="antiepileptics" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-bolt"></i> 21. Antiepileptic Drugs</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Uses</th><th>CI / Pearl</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Na⁺ Blockers</strong></td><td>Phenytoin, Carbamazepine</td><td>Focal/Generalized tonic-clonic</td><td><strong>Phenytoin:</strong> Gingival hyperplasia, teratogenic, CYP inducer. <br><strong>CI:</strong> AV block, hypersensitivity.</td></tr>
-                        <tr><td><strong>GABA Enhancers</strong></td><td>Benzodiazepines, Tiagabine</td><td>Status epilepticus, partial seizures</td><td>Tolerance develops.</td></tr>
-                        <tr><td><strong>Ca²⁺ (T-type)</strong></td><td>Ethosuximide</td><td><strong>Absence seizures</strong></td><td>Drug of choice for absence.</td></tr>
-                        <tr><td><strong>Multiple/Other</strong></td><td>Valproate, Levetiracetam</td><td>Broad spectrum</td><td><strong>Valproate:</strong> Hepatotoxicity, teratogenic (neural tube defects). <br><strong>CI:</strong> Hepatic disease, pregnancy.</td></tr>
-                    </tbody>
-                </table>
-                <div class="memory-aid">
-                    <h4 style="color:#27ae60; margin:0 0 0.5rem;"><i class="fas fa-lightbulb"></i> Phenytoin Toxicity</h4>
-                    <p><strong>NAE</strong> → <strong>N</strong>ystagmus, <strong>A</strong>taxia, <strong>E</strong>ncephalopathy. (Occurs at toxic levels).</p>
-                </div>
+                <ul>
+                    <li><strong>Na⁺ blockers:</strong> Phenytoin, Carbamazepine, Lamotrigine.</li>
+                    <li><strong>GABA enhancers:</strong> BZDs, Barbiturates, Tiagabine.</li>
+                    <li><strong>T-type Ca²⁺ blockers:</strong> Ethosuximide — absence seizures.</li>
+                    <li><strong>Multi-mechanism:</strong> Valproate, Levetiracetam, Topiramate.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Phenytoin — zero-order kinetics"</h4><p>Small dose increases → large serum level changes. Therapeutic range: 10–20 μg/mL.</p></div></li>
+                </ul>
             </div>
         </section>
 
+        <!-- ===== CHAPTER 22: Parkinson's ===== -->
         <section id="parkinsons" class="chapter-content">
             <div class="chapter-title"><i class="fas fa-running"></i> 22. Drugs for Parkinson's Disease</div>
             <div class="section-card">
-                <table class="premium-table">
-                    <thead><tr><th>Class</th><th>Examples</th><th>Mechanism</th><th>CI / Pearl</th></tr></thead>
+                <ul>
+                    <li><strong>Levodopa + Carbidopa:</strong> Most effective. <em>AE:</em> Dyskinesias, on-off.</li>
+                    <li><strong>Dopamine agonists:</strong> Pramipexole, Ropinirole.</li>
+                    <li><strong>COMT inhibitors:</strong> Entacapone — reduces wearing-off.</li>
+                    <li><strong>MAO-B inhibitors:</strong> Selegiline, Rasagiline.</li>
+                    <li><strong>Anticholinergics:</strong> Benztropine — for tremor.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Parkinson's drugs"</h4><p><strong>L</strong>evodopa — most effective. <strong>D</strong>opamine agonists — younger patients. <strong>A</strong>mantadine — dyskinesias. <strong>C</strong>OMT inhibitors — wearing-off.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 23: Antibiotics ===== -->
+        <section id="antibiotics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-bacteria"></i> 23. Antibiotics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Penicillins:</strong>
+                        <ul>
+                            <li><strong>Natural:</strong> Penicillin G — gram+ cocci, syphilis. <em>AE:</em> Hypersensitivity, seizures (high dose).</li>
+                            <li><strong>Aminopenicillins:</strong> Ampicillin, Amoxicillin — enterococci, <em>H. influenzae</em>.</li>
+                            <li><strong>Penicillinase-resistant:</strong> Nafcillin, Oxacillin — <em>S. aureus</em> (MSSA).</li>
+                            <li><strong>Antipseudomonal:</strong> Piperacillin — with β-lactamase inhibitor (Tazobactam).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Cephalosporins:</strong>
+                        <ul>
+                            <li><strong>1st gen:</strong> Cefazolin, Cephalexin — skin/soft tissue.</li>
+                            <li><strong>2nd gen:</strong> Cefuroxime, Cefoxitin — <em>B. fragilis</em> (cefoxitin).</li>
+                            <li><strong>3rd gen:</strong> Ceftriaxone, Cefotaxime — meningitis, gonorrhea. <em>AE:</em> Biliary sludge.</li>
+                            <li><strong>4th gen:</strong> Cefepime — pseudomonas.</li>
+                            <li><strong>5th gen:</strong> Ceftaroline — MRSA.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Carbapenems:</strong> Meropenem, Imipenem (with cilastatin) — broad-spectrum. <em>AE:</em> Seizures (imipenem).</li>
+                    <li><strong>Monobactams:</strong> Aztreonam — only gram‑negative. Safe in penicillin allergy.</li>
+                    <li><strong>Macrolides:</strong> Erythromycin, Azithromycin, Clarithromycin — atypical pneumonia. <em>AE:</em> GI upset, QT prolongation.</li>
+                    <li><strong>Aminoglycosides:</strong> Gentamicin, Amikacin — gram‑negative. <em>AE:</em> Nephrotoxicity, ototoxicity.</li>
+                    <li><strong>Tetracyclines:</strong> Doxycycline, Minocycline — atypical, acne, Lyme disease. <em>Contraindications:</em> Pregnancy, children &lt;8 (teeth discoloration).</li>
+                    <li><strong>Fluoroquinolones:</strong> Ciprofloxacin, Levofloxacin, Moxifloxacin — UTI, respiratory. <em>AE:</em> Tendon rupture, QT prolongation, CNS effects.</li>
+                    <li><strong>Glycopeptides:</strong> Vancomycin — MRSA, <em>C. difficile</em> (oral). <em>AE:</em> Red man syndrome, nephrotoxicity.</li>
+                    <li><strong>Oxazolidinones:</strong> Linezolid — VRE, MRSA. <em>AE:</em> Myelosuppression, serotonin syndrome (with SSRIs).</li>
+                    <li><strong>Metronidazole:</strong> Anaerobes, <em>C. difficile</em> (oral). <em>AE:</em> Metallic taste, disulfiram-like reaction.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Antibiotic coverage"</h4><p><strong>Penicillins</strong> — gram+ cocci (except MRSA). <strong>Aminoglycosides</strong> — gram‑negatives. <strong>Vancomycin</strong> — MRSA. <strong>Metronidazole</strong> — anaerobes.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 24: Antimalarials ===== -->
+        <section id="antimalarials" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-mosquito"></i> 24. Antimalarial Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Chloroquine:</strong> <em>MOA:</em> Concentrates in parasite food vacuole → inhibits heme polymerization. <em>Uses:</em> <em>P. vivax</em>, <em>P. falciparum</em> (except resistant strains). <em>AE:</em> Pruritus, retinopathy (chronic use), QT prolongation.</li>
+                    <li><strong>Hydroxychloroquine:</strong> Less retinopathy. <em>Uses:</em> Malaria, SLE, rheumatoid arthritis.</li>
+                    <li><strong>Quinine / Quinidine:</strong> <em>Uses:</em> Severe <em>P. falciparum</em> (IV). <em>AE:</em> Cinchonism (tinnitus, headache, nausea), hypoglycemia, QT prolongation.</li>
+                    <li><strong>Mefloquine:</strong> <em>Uses:</em> Prophylaxis for chloroquine-resistant <em>P. falciparum</em>. <em>AE:</em> Neuropsychiatric (nightmares, psychosis, seizures).</li>
+                    <li><strong>Artemisinin derivatives:</strong> Artemether, Artesunate. <em>MOA:</em> Endoperoxide → free radicals. <em>Uses:</em> Severe malaria (first-line in many regions). <em>AE:</em> Neurotoxicity (rare), GI upset.</li>
+                    <li><strong>Atovaquone‑Proguanil (Malarone):</strong> <em>Uses:</em> Prophylaxis, treatment of <em>P. falciparum</em>. <em>AE:</em> GI upset, headache.</li>
+                    <li><strong>Primaquine:</strong> <em>MOA:</em> Kills hypnozoites (liver stage). <em>Uses:</em> Radical cure of <em>P. vivax</em> and <em>P. ovale</em>. <em>Contraindications:</em> G6PD deficiency (hemolysis).</li>
+                    <li><strong>Doxycycline:</strong> <em>Uses:</em> Prophylaxis (chloroquine-resistant areas). <em>AE:</em> Photosensitivity, GI upset.</li>
+                    <li><strong>Pyrimethamine‑Sulfadoxine (Fansidar):</strong> <em>MOA:</em> Inhibit folate synthesis. <em>Uses:</em> Intermittent preventive therapy in pregnancy. <em>AE:</em> Stevens-Johnson syndrome.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Antimalarial drugs"</h4><p><strong>C</strong>hloroquine — <strong>C</strong>olor (retinopathy). <strong>Q</strong>uinine — <strong>Q</strong>T prolongation, cinchonism. <strong>P</strong>rimaquine — <strong>P</strong>revent relapse (G6PD check). <strong>A</strong>rtemisinins — <strong>A</strong>ctive against severe malaria.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 25: Antivirals ===== -->
+        <section id="antivirals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-virus"></i> 25. Antiviral Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Anti‑Herpesviruses:</strong>
+                        <ul>
+                            <li><strong>Acyclovir, Valacyclovir:</strong> <em>MOA:</em> Inhibit HSV DNA polymerase. <em>Uses:</em> HSV, VZV. <em>AE:</em> Nephrotoxicity (IV), GI upset.</li>
+                            <li><strong>Foscarnet:</strong> <em>Uses:</em> Acyclovir-resistant HSV, CMV. <em>AE:</em> Nephrotoxicity, electrolyte imbalances.</li>
+                            <li><strong>Ganciclovir, Valganciclovir:</strong> <em>Uses:</em> CMV (retinitis, transplant). <em>AE:</em> Myelosuppression.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Anti‑Influenza:</strong>
+                        <ul>
+                            <li><strong>Oseltamivir, Zanamivir:</strong> Neuraminidase inhibitors. <em>Uses:</em> Influenza A &amp; B (within 48h of symptoms). <em>AE:</em> GI upset, bronchospasm (zanamivir).</li>
+                            <li><strong>Amantadine, Rimantadine:</strong> M2 ion channel blockers. <em>Uses:</em> Influenza A only (now limited due to resistance). <em>AE:</em> CNS effects, seizures.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Anti‑HIV (Antiretrovirals):</strong>
+                        <ul>
+                            <li><strong>NRTIs:</strong> Zidovudine, Tenofovir, Emtricitabine. <em>AE:</em> Bone marrow suppression (ZDV), nephrotoxicity (tenofovir).</li>
+                            <li><strong>NNRTIs:</strong> Efavirenz, Nevirapine. <em>AE:</em> Rash, hepatotoxicity, CNS effects (efavirenz).</li>
+                            <li><strong>Protease inhibitors:</strong> Ritonavir, Atazanavir. <em>AE:</em> GI upset, hyperlipidemia, insulin resistance.</li>
+                            <li><strong>Integrase inhibitors:</strong> Dolutegravir, Raltegravir. <em>AE:</em> Insomnia, headache.</li>
+                            <li><strong>CCR5 antagonist:</strong> Maraviroc. <em>Uses:</em> CCR5‑tropic HIV.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Anti‑Hepatitis:</strong>
+                        <ul>
+                            <li><strong>HCV:</strong> Sofosbuvir (NS5B inhibitor), Ledipasvir, Daclatasvir. <em>Uses:</em> Chronic HCV — curative.</li>
+                            <li><strong>HBV:</strong> Tenofovir, Entecavir. <em>Uses:</em> Chronic HBV suppression.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Anti‑SARS‑CoV‑2:</strong>
+                        <ul>
+                            <li><strong>Remdesivir:</strong> RNA polymerase inhibitor. <em>Uses:</em> COVID-19 (hospitalized).</li>
+                            <li><strong>Nirmatrelvir/Ritonavir (Paxlovid):</strong> Protease inhibitor. <em>Uses:</em> Mild-to-moderate COVID-19 (high-risk).</li>
+                            <li><strong>Molnupiravir:</strong> Mutagenic nucleoside. <em>Uses:</em> COVID-19 (alternative).</li>
+                        </ul>
+                    </li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Acyclovir — HSV/VZV"</h4><p>Acyclovir works on HSV and VZV. Valacyclovir is a prodrug with better oral bioavailability.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 26: Antifungals ===== -->
+        <section id="antifungals" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-seedling"></i> 26. Antifungal Drugs</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Polyenes:</strong>
+                        <ul>
+                            <li><strong>Amphotericin B:</strong> Binds ergosterol → pore formation. <em>Uses:</em> Systemic mycoses (candidiasis, aspergillosis). <em>AE:</em> Nephrotoxicity, infusion reactions (fever, chills), hypokalemia.</li>
+                            <li><strong>Nystatin:</strong> Topical/oral for candidiasis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Azoles:</strong>
+                        <ul>
+                            <li><strong>Fluconazole:</strong> <em>Uses:</em> Candidiasis, cryptococcal meningitis. <em>AE:</em> Hepatotoxicity, QT prolongation.</li>
+                            <li><strong>Itraconazole / Voriconazole:</strong> <em>Uses:</em> Aspergillosis (voriconazole first-line), histoplasmosis. <em>AE:</em> Hepatotoxicity, visual disturbances (voriconazole).</li>
+                            <li><strong>Ketoconazole:</strong> <em>Uses:</em> Topical for tinea, seborrheic dermatitis (systemic use limited due to hepatotoxicity).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Echinocandins:</strong> Caspofungin, Micafungin, Anidulafungin. <em>MOA:</em> Inhibit β‑glucan synthase. <em>Uses:</em> Invasive candidiasis, aspergillosis (salvage). <em>AE:</em> Rash, fever, GI upset.</li>
+                    <li><strong>Allylamines:</strong> Terbinafine. <em>MOA:</em> Inhibit squalene epoxidase. <em>Uses:</em> Dermatophytosis (tinea, onychomycosis). <em>AE:</em> GI upset, hepatotoxicity.</li>
+                    <li><strong>Pyrimidine analog:</strong> Flucytosine. <em>MOA:</em> Inhibits thymidylate synthase. <em>Uses:</em> Cryptococcal meningitis (with amphotericin). <em>AE:</em> Bone marrow suppression.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Azoles — hepatotoxicity"</h4><p>All azoles can cause liver injury. Voriconazole — visual disturbances. Fluconazole — QT prolongation.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 27: Anthelmintics ===== -->
+        <section id="anthelmintics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-worm"></i> 27. Anthelmintics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Albendazole / Mebendazole:</strong> <em>MOA:</em> Inhibit microtubule polymerization. <em>Uses:</em> Intestinal nematodes (roundworms, hookworms, whipworms), neurocysticercosis (albendazole). <em>AE:</em> GI upset, hepatotoxicity, bone marrow suppression.</li>
+                    <li><strong>Diethylcarbamazine (DEC):</strong> <em>Uses:</em> Filariasis (Wuchereria bancrofti, Brugia malayi). <em>AE:</em> Mazzotti reaction (fever, rash, lymphadenopathy) — due to dead microfilariae.</li>
+                    <li><strong>Ivermectin:</strong> <em>MOA:</em> Binds glutamate-gated Cl⁻ channels. <em>Uses:</em> Strongyloidiasis, onchocerciasis (river blindness), scabies, head lice. <em>AE:</em> Pruritus, rash, dizziness.</li>
+                    <li><strong>Praziquantel:</strong> <em>MOA:</em> Increases Ca²⁺ permeability → muscle spasm. <em>Uses:</em> Schistosomiasis, neurocysticercosis (with steroids), tapeworms. <em>AE:</em> Dizziness, abdominal pain.</li>
+                    <li><strong>Nicolasamide:</strong> <em>Uses:</em> Tapeworms (Taenia saginata, Diphyllobothrium).</li>
+                    <li><strong>Metronidazole:</strong> <em>Uses:</em> Giardiasis, amebiasis.</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Anthelmintics"</h4><p><strong>A</strong>lbendazole — <strong>A</strong>scaris, hookworm. <strong>I</strong>vermectin — <strong>I</strong>nfection (onchocerciasis). <strong>P</strong>raziquantel — <strong>P</strong>latyhelminthes (schistosomes, tapeworms).</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 28: NSAIDs ===== -->
+        <section id="nsaids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-tablets"></i> 28. NSAIDs &amp; Acetaminophen</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>NSAIDs:</strong>
+                        <ul>
+                            <li><strong>Non-selective COX inhibitors:</strong> Ibuprofen, Naproxen, Indomethacin, Ketorolac. <em>MOA:</em> Inhibit COX-1 &amp; COX-2 → ↓ prostaglandins. <em>Uses:</em> Pain, inflammation, fever, dysmenorrhea. <em>AE:</em> GI ulcers (COX-1), renal impairment, bleeding risk, cardiovascular events (COX-2).</li>
+                            <li><strong>Selective COX-2 inhibitors:</strong> Celecoxib. <em>Uses:</em> Arthritis (less GI toxicity). <em>AE:</em> ↑ CV risk (MI, stroke).</li>
+                            <li><strong>High‑risk patients:</strong> Avoid NSAIDs in peptic ulcer disease, CKD, heart failure, bleeding disorders.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Acetaminophen (Paracetamol):</strong>
+                        <ul>
+                            <li><em>MOA:</em> Central COX inhibition (weak peripheral). <em>Uses:</em> Pain, fever. <em>AE:</em> Hepatotoxicity (high doses — deplete glutathione). <em>Antidote:</em> N‑acetylcysteine.</li>
+                            <li><strong>Safe in pregnancy (category B), does not cause GI ulcers or bleeding.</strong></li>
+                        </ul>
+                    </li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "NSAID side effects"</h4><p><strong>G</strong>I bleeding, <strong>R</strong>enal impairment, <strong>C</strong>ardiovascular risk — the "G.R.C." triad.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 29: Opioids ===== -->
+        <section id="opioids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-syringe"></i> 29. Opioid Analgesics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Full Agonists (μ):</strong> Morphine, Fentanyl, Hydromorphone, Oxycodone, Methadone. <em>MOA:</em> Activate μ-opioid receptors → ↑ K⁺ efflux, ↓ Ca²⁺ influx → hyperpolarization. <em>Uses:</em> Moderate-severe pain. <em>AE:</em> Respiratory depression, constipation, nausea, tolerance, dependence, miosis.</li>
+                    <li><strong>Partial Agonists:</strong> Buprenorphine (μ partial, κ antagonist). <em>Uses:</em> Opioid use disorder, pain. <em>AE:</em> Less respiratory depression.</li>
+                    <li><strong>Mixed Agonist‑Antagonists:</strong> Nalbuphine (κ agonist, μ antagonist), Pentazocine. <em>Uses:</em> Pain (limited). <em>AE:</em> Psychotomimetic effects.</li>
+                    <li><strong>Antagonists:</strong> Naloxone, Naltrexone. <em>MOA:</em> Competitive μ antagonist. <em>Uses:</em> Opioid overdose (naloxone), alcohol use disorder (naltrexone).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Opioid triad"</h4><p>Miosis, respiratory depression, coma — classic opioid overdose. Antidote: <strong>Naloxone</strong>.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 30: Local Anesthetics ===== -->
+        <section id="local-anesthetics" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-snowflake"></i> 30. Local Anesthetics</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Esters:</strong> Procaine, Tetracaine, Benzocaine. <em>Metabolism:</em> Plasma cholinesterase. <em>AE:</em> Allergic reactions (metabolite PABA).</li>
+                    <li><strong>Amides:</strong> Lidocaine, Bupivacaine, Ropivacaine, Mepivacaine. <em>Metabolism:</em> Hepatic (CYP). <em>AE:</em> CNS toxicity (seizures), cardiotoxicity (bupivacaine).</li>
+                    <li><strong>MOA:</strong> Block voltage-gated Na⁺ channels → inhibit action potential conduction.</li>
+                    <li><strong>Addition of epinephrine:</strong> ↑ duration, ↓ systemic toxicity (except in end-artery areas — fingers, toes, penis).</li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Esters vs. Amides"</h4><p><strong>E</strong>sters = <strong>E</strong>xtra allergic (PABA). <strong>A</strong>mides = <strong>A</strong>bsorbed in liver, <strong>A</strong>llergies rare.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 31: Immunosuppressants ===== -->
+        <section id="immunosuppressants" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-shield-alt"></i> 31. Immunosuppressants</div>
+            <div class="section-card">
+                <ul>
+                    <li><strong>Calcineurin inhibitors:</strong> Cyclosporine, Tacrolimus. <em>MOA:</em> Inhibit calcineurin → ↓ IL‑2 production → ↓ T‑cell activation. <em>Uses:</em> Organ transplant rejection, autoimmune diseases. <em>AE:</em> Nephrotoxicity, hypertension, hyperkalemia, gingival hyperplasia (cyclosporine), diabetes (tacrolimus).</li>
+                    <li><strong>mTOR inhibitors:</strong> Sirolimus, Everolimus. <em>MOA:</em> Inhibit mTOR → ↓ T‑cell proliferation. <em>Uses:</em> Transplant rejection (with calcineurin inhibitors). <em>AE:</em> Hyperlipidemia, myelosuppression, pulmonary toxicity.</li>
+                    <li><strong>Antimetabolites:</strong>
+                        <ul>
+                            <li><strong>Mycophenolate mofetil:</strong> Inhibits IMPDH → ↓ guanine nucleotide synthesis → ↓ lymphocyte proliferation. <em>Uses:</em> Transplant rejection, autoimmune. <em>AE:</em> GI upset, myelosuppression, teratogenic.</li>
+                            <li><strong>Azathioprine:</strong> Purine analog. <em>Uses:</em> Transplant rejection, IBD, autoimmune. <em>AE:</em> Myelosuppression, hepatotoxicity, pancreatitis.</li>
+                            <li><strong>Methotrexate:</strong> Dihydrofolate reductase inhibitor. <em>Uses:</em> Rheumatoid arthritis, psoriasis, cancer. <em>AE:</em> Hepatotoxicity, myelosuppression, pneumonitis.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Glucocorticoids:</strong> Prednisone — broad anti-inflammatory.</li>
+                    <li><strong>Monoclonal antibodies:</strong>
+                        <ul>
+                            <li><strong>Basiliximab:</strong> Anti‑CD25 (IL‑2 receptor) — transplant.</li>
+                            <li><strong>Rituximab:</strong> Anti‑CD20 (B‑cell) — autoimmune, lymphoma.</li>
+                            <li><strong>Infliximab:</strong> Anti‑TNF‑α — IBD, RA, psoriasis.</li>
+                        </ul>
+                    </li>
+                    <li><div class="memory-aid-box"><h4>🧠 Mnemonic: "Tacrolimus vs. Cyclosporine"</h4><p><strong>T</strong>acrolimus: <strong>T</strong>remor, <strong>T</strong>ransplant, <strong>T</strong>oxicity (nephro, diabetes).<br><strong>C</strong>yclosporine: <strong>C</strong>yclosporine = <strong>C</strong>alcineurin inhibitor, <strong>C</strong>auses <strong>G</strong>ingival hyperplasia.</p></div></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 32: Drug Interaction Tables ===== -->
+        <section id="drug-interactions" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-exchange-alt"></i> 32. Drug Interaction Tables</div>
+
+            <div class="section-card">
+                <h4 style="margin-bottom:0.5rem;color:var(--text-primary);">🔬 CYP450 Enzyme Substrates, Inhibitors, and Inducers</h4>
+                <table class="interaction-table">
+                    <thead>
+                        <tr><th>Enzyme</th><th>Substrates (examples)</th><th>Inhibitors</th><th>Inducers</th></tr>
+                    </thead>
                     <tbody>
-                        <tr><td><strong>Levodopa + Carbidopa</strong></td><td>Sinemet</td><td>Dopamine precursor + DDC inhibitor</td><td>Gold standard for motor symptoms. <br><strong>CI:</strong> Narrow-angle glaucoma, MAOI use. Long-term: Dyskinesias.</td></tr>
-                        <tr><td><strong>Dopamine Agonists</strong></td><td>Pramipexole, Ropinirole</td><td>Direct D2 stimulation</td><td>Less dyskinesia than Levodopa. <br><strong>CI:</strong> Psychosis.</td></tr>
-                        <tr><td><strong>MAO-B Inhibitors</strong></td><td>Selegiline, Rasagiline</td><td>Blocks breakdown of dopamine</td><td>Used early. <br><strong>CI:</strong> Tyramine (hypertensive crisis).</td></tr>
-                        <tr><td><strong>COMT Inhibitors</strong></td><td>Entacapone, Tolcapone</td><td>Blocks peripheral metabolism of levodopa</td><td>Enhances levodopa effect. <br><strong>CI:</strong> Hepatic disease (Tolcapone).</td></tr>
-                        <tr><td><strong>Anticholinergics</strong></td><td>Benztropine</td><td>Muscarinic antagonist</td><td>Used for <strong>tremor</strong>. <br><strong>CI:</strong> Glaucoma, BPH.</td></tr>
+                        <tr><td><strong>CYP3A4</strong></td><td>Amiodarone, Atorvastatin, CCBs, Cyclosporine, Midazolam, Tacrolimus</td><td>Clarithromycin, Erythromycin, Fluconazole, Ketoconazole, Ritonavir, Verapamil, Grapefruit</td><td>Carbamazepine, Phenytoin, Phenobarbital, Rifampin, St. John's Wort</td></tr>
+                        <tr><td><strong>CYP2D6</strong></td><td>Codeine, Metoprolol, TCAs, Risperidone, Tramadol</td><td>Fluoxetine, Paroxetine, Quinidine, Terbinafine</td><td>—</td></tr>
+                        <tr><td><strong>CYP2C19</strong></td><td>Omeprazole, Clopidogrel, Phenytoin, Diazepam</td><td>Fluconazole, Omeprazole, Ticlopidine</td><td>Rifampin, Phenytoin</td></tr>
+                        <tr><td><strong>CYP2C9</strong></td><td>Warfarin, Phenytoin, Tolbutamide, Ibuprofen</td><td>Amiodarone, Fluconazole, Metronidazole</td><td>Rifampin, Phenytoin</td></tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.9rem;margin-top:0.3rem;"><em>💡 Remember: Inhibitors ↑ drug levels (toxicity risk), Inducers ↓ drug levels (therapeutic failure).</em></p>
+            </div>
+
+            <div class="section-card">
+                <h4 style="margin-bottom:0.5rem;color:var(--text-primary);">⚡ Major Drug‑Drug Interactions (High‑Yield)</h4>
+                <table class="interaction-table">
+                    <thead>
+                        <tr><th>Drug A</th><th>Drug B</th><th>Interaction</th><th>Clinical Significance</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Warfarin</td><td>NSAIDs, Aspirin</td><td>↑ Bleeding risk</td><td>Monitor INR, consider PPI for GI protection</td></tr>
+                        <tr><td>Warfarin</td><td>Amiodarone, Fluconazole, Metronidazole</td><td>↑ INR (inhibit CYP2C9)</td><td>Reduce warfarin dose, monitor INR</td></tr>
+                        <tr><td>Warfarin</td><td>Rifampin, Phenytoin, Carbamazepine</td><td>↓ INR (enzyme induction)</td><td>↑ warfarin dose, monitor INR</td></tr>
+                        <tr><td>SSRIs</td><td>MAOIs, SNRIs, TCAs, Tramadol, Linezolid</td><td>Serotonin syndrome</td><td>Avoid combination; if needed, monitor for agitation, hyperthermia, clonus</td></tr>
+                        <tr><td>Simvastatin/Atorvastatin</td><td>Fibrates (esp. gemfibrozil)</td><td>↑ risk of rhabdomyolysis</td><td>Use fenofibrate instead of gemfibrozil</td></tr>
+                        <tr><td>Digoxin</td><td>Verapamil, Amiodarone, Spironolactone</td><td>↑ digoxin levels</td><td>Monitor digoxin levels, reduce dose</td></tr>
+                        <tr><td>Lithium</td><td>NSAIDs, ACE inhibitors, Thiazides</td><td>↑ lithium levels → toxicity</td><td>Monitor lithium levels, adjust dose</td></tr>
+                        <tr><td>Carbamazepine</td><td>Oral contraceptives, Warfarin, Phenytoin</td><td>↑ metabolism (enzyme induction)</td><td>Use alternative contraception, adjust doses</td></tr>
+                        <tr><td>Clopidogrel</td><td>Omeprazole (CYP2C19 inhibition)</td><td>↓ clopidogrel activation → ↓ efficacy</td><td>Use pantoprazole instead (less CYP2C19 inhibition)</td></tr>
+                        <tr><td>Methotrexate</td><td>NSAIDs, Penicillins, Probenecid</td><td>↑ methotrexate toxicity</td><td>Monitor for myelosuppression, hepatotoxicity</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-card">
+                <h4 style="margin-bottom:0.5rem;color:var(--text-primary);">🍽️ Food‑Drug Interactions</h4>
+                <table class="interaction-table">
+                    <thead>
+                        <tr><th>Food</th><th>Drug(s) Affected</th><th>Interaction</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Grapefruit juice</td><td>Cyclosporine, Midazolam, Simvastatin, CCBs, Amiodarone</td><td>Inhibits CYP3A4 → ↑ drug levels → toxicity</td></tr>
+                        <tr><td>High-fat meal</td><td>Griseofulvin, Itraconazole, Vitamin K</td><td>↑ absorption (lipophilic drugs)</td></tr>
+                        <tr><td>Tyramine-rich foods (aged cheese, cured meats, red wine)</td><td>MAOIs (Phenelzine, Tranylcypromine)</td><td>Hypertensive crisis (↑ norepinephrine)</td></tr>
+                        <tr><td>Vitamin K-rich foods (green leafy vegetables)</td><td>Warfarin</td><td>Antagonizes warfarin effect → ↓ INR</td></tr>
+                        <tr><td>Dairy products (Ca²⁺)</td><td>Tetracyclines, Fluoroquinolones</td><td>↓ absorption (chelation with Ca²⁺)</td></tr>
+                        <tr><td>Alcohol</td><td>Metronidazole, Cephalosporins (cefotetan, cefoperazone), Sulfonylureas</td><td>Disulfiram-like reaction (flushing, nausea, tachycardia)</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <div class="footer-note"><i class="fas fa-feather"></i> Comprehensive Pharmacology · Systemic Pharmacology (High-Yield Edition) · Abubakar Sadeeq</div>
-    </div>
+        <!-- ===== CHAPTER 33: Memory Aids & Mnemonics ===== -->
+        <section id="memory-aids" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-brain"></i> 33. Memory Aids &amp; Mnemonics</div>
 
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">🧠 Autonomic Nervous System</h4>
+                <ul>
+                    <li><strong>SLUDGE</strong> — Salivation, Lacrimation, Urination, Diaphoresis, GI motility, Emesis (muscarinic excess).</li>
+                    <li><strong>Atropine toxicity:</strong> "Blind as a bat, dry as a bone, red as a beet, mad as a hatter, hot as a hare."</li>
+                    <li><strong>β‑blockers in heart failure:</strong> Bisoprolol, Carvedilol, Metoprolol — the "3 B's".</li>
+                    <li><strong>Alpha‑1 blockers:</strong> "Prazosin, Doxazosin, Terazosin" — first-dose syncope (give at bedtime).</li>
+                </ul>
+            </div>
+
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">🧠 Cardiovascular</h4>
+                <ul>
+                    <li><strong>Antiarrhythmic "ABCD":</strong> A = Amiodarone (Class III), B = Beta-blockers, C = Calcium blockers, D = Digoxin.</li>
+                    <li><strong>Diuretics:</strong> "Loops lose K⁺, Thiazides spare Ca²⁺."</li>
+                    <li><strong>ACE inhibitor cough:</strong> Bradykinin accumulation. Switch to ARB.</li>
+                    <li><strong>Heparin vs. Warfarin:</strong> Heparin = Hospital (IV), HIT, short half-life. Warfarin = Wait (2‑3 days), Watch INR.</li>
+                </ul>
+            </div>
+
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">🧠 Anti‑infectives</h4>
+                <ul>
+                    <li><strong>Antibiotic coverage:</strong> Penicillins = gram+ cocci (except MRSA). Aminoglycosides = gram‑negatives. Vancomycin = MRSA. Metronidazole = anaerobes.</li>
+                    <li><strong>Cephalosporin generations:</strong> 1st = skin, 2nd = anaerobes (cefoxitin), 3rd = meningitis (ceftriaxone), 4th = pseudomonas (cefepime), 5th = MRSA (ceftaroline).</li>
+                    <li><strong>Antimalarial mnemonics:</strong> Chloroquine = retinopathy. Quinine = cinchonism. Primaquine = G6PD check. Artemisinin = severe malaria.</li>
+                    <li><strong>Azoles:</strong> All cause hepatotoxicity. Voriconazole = visual disturbances. Fluconazole = QT prolongation.</li>
+                </ul>
+            </div>
+
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">🧠 CNS &amp; Pain</h4>
+                <ul>
+                    <li><strong>Opioid overdose triad:</strong> Miosis, respiratory depression, coma. Antidote: Naloxone.</li>
+                    <li><strong>Local anesthetics:</strong> Esters = allergic (PABA). Amides = hepatic metabolism, fewer allergies.</li>
+                    <li><strong>SSRI side effects:</strong> Sexual dysfunction, GI upset, insomnia/sedation, serotonin syndrome (with MAOIs).</li>
+                    <li><strong>Clozapine:</strong> Agranulocytosis — requires WBC monitoring. Reserved for refractory schizophrenia.</li>
+                </ul>
+            </div>
+
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">🧠 Endocrine &amp; Immuno</h4>
+                <ul>
+                    <li><strong>Methimazole vs. PTU:</strong> Methimazole = once daily, less hepatotoxic. PTU = pregnancy (1st trimester) and thyroid storm.</li>
+                    <li><strong>Dexamethasone:</strong> No mineralocorticoid activity — used in cerebral edema and COVID-19.</li>
+                    <li><strong>Corticosteroid tapering:</strong> Never stop abruptly — adrenal crisis risk.</li>
+                    <li><strong>Calcineurin inhibitors:</strong> Cyclosporine = gingival hyperplasia. Tacrolimus = diabetes, tremor.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER 34: Quick Reference Tables ===== -->
+        <section id="quick-reference" class="chapter-content">
+            <div class="chapter-title"><i class="fas fa-list-ol"></i> 34. Quick Reference Tables</div>
+
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">📋 Common Drug Antidotes</h4>
+                <table class="interaction-table">
+                    <thead><tr><th>Drug/Toxin</th><th>Antidote</th></tr></thead>
+                    <tbody>
+                        <tr><td>Acetaminophen</td><td>N‑acetylcysteine</td></tr>
+                        <tr><td>Benzodiazepines</td><td>Flumazenil</td></tr>
+                        <tr><td>Opioids</td><td>Naloxone</td></tr>
+                        <tr><td>Heparin</td><td>Protamine sulfate</td></tr>
+                        <tr><td>Warfarin</td><td>Vitamin K, FFP, PCC</td></tr>
+                        <tr><td>Organophosphates</td><td>Atropine + Pralidoxime</td></tr>
+                        <tr><td>Digoxin</td><td>Digoxin immune Fab (Digibind)</td></tr>
+                        <tr><td>Iron</td><td>Deferoxamine</td></tr>
+                        <tr><td>Methanol / Ethylene glycol</td><td>Fomepizole, Ethanol</td></tr>
+                        <tr><td>Nitroprusside (cyanide)</td><td>Sodium thiosulfate, Hydroxocobalamin</td></tr>
+                        <tr><td>Local anesthetics (systemic toxicity)</td><td>Intralipid (lipid emulsion)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">📋 Drug-Induced QT Prolongation</h4>
+                <table class="interaction-table">
+                    <thead><tr><th>Class</th><th>Examples</th></tr></thead>
+                    <tbody>
+                        <tr><td>Antiarrhythmics</td><td>Amiodarone, Sotalol, Dofetilide, Procainamide, Quinidine</td></tr>
+                        <tr><td>Antibiotics</td><td>Fluoroquinolones (Ciprofloxacin, Levofloxacin), Macrolides (Erythromycin, Azithromycin), Trimethoprim‑Sulfamethoxazole</td></tr>
+                        <tr><td>Antifungals</td><td>Fluconazole, Itraconazole, Ketoconazole</td></tr>
+                        <tr><td>Antipsychotics</td><td>Haloperidol, Thioridazine, Quetiapine, Risperidone</td></tr>
+                        <tr><td>Antidepressants</td><td>TCAs (Amitriptyline), Citalopram, Escitalopram</td></tr>
+                        <tr><td>Opioids</td><td>Methadone</td></tr>
+                        <tr><td>Others</td><td>Hydroxychloroquine, Chloroquine, Ondansetron</td></tr>
+                    </tbody>
+                </table>
+                <p style="font-size:0.9rem;margin-top:0.3rem;"><em>⚠️ Risk factors: Hypokalemia, hypomagnesemia, bradycardia, concurrent use of multiple QT‑prolonging drugs.</em></p>
+            </div>
+
+            <div class="section-card">
+                <h4 style="color:var(--text-primary);">📋 Drug‑Induced Nephrotoxicity</h4>
+                <table class="interaction-table">
+                    <thead><tr><th>Drug Class</th><th>Examples</th><th>Mechanism</th></tr></thead>
+                    <tbody>
+                        <tr><td>Aminoglycosides</td><td>Gentamicin, Amikacin</td><td>Proximal tubule injury (accumulates in lysosomes)</td></tr>
+                        <tr><td>NSAIDs</td><td>Ibuprofen, Naproxen, Ketorolac</td><td>↓ prostaglandins → ↓ renal blood flow (afferent arteriole constriction)</td></tr>
+                        <tr><td>ACE inhibitors / ARBs</td><td>Captopril, Losartan</td><td>↓ efferent arteriolar tone → ↓ GFR (especially in bilateral renal artery stenosis)</td></tr>
+                        <tr><td>Vancomycin</td><td>Vancomycin</td><td>Acute tubular necrosis (cumulative dose)</td></tr>
+                        <tr><td>Amphotericin B</td><td>Amphotericin B</td><td>Renal vasoconstriction, tubular injury, hypokalemia</td></tr>
+                        <tr><td>Cyclosporine / Tacrolimus</td><td>Cyclosporine, Tacrolimus</td><td>Afferent arteriole vasoconstriction, chronic interstitial fibrosis</td></tr>
+                        <tr><td>Contrast media (IV)</td><td>Iodinated contrast</td><td>Acute tubular necrosis (osmotic injury, vasoconstriction)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===== CHAPTER NAVIGATION ===== -->
+        <div class="chapter-nav">
+            <button id="prevChapter" disabled>
+                <i class="fas fa-chevron-left"></i>
+                <span><span class="nav-label">Previous</span><br />&nbsp;</span>
+            </button>
+            <button id="nextChapter">
+                <span><span class="nav-label">Next</span><br />&nbsp;</span>
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="footer-note">
+            <i class="fas fa-feather"></i> Comprehensive Pharmacology · 34 Chapters · Abubakar Sadeeq
+        </div>
+    </main>
+
+    <!-- ===== BACK TO TOP ===== -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ============================================================ -->
+    <!-- ===== JAVASCRIPT ===== -->
     <script>
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const readerPanel = document.getElementById('readerPanel');
+        (function() {
+            'use strict';
 
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            readerPanel.classList.toggle('shifted');
-        });
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const menuToggle = document.getElementById('menuToggle');
+            const readerPanel = document.getElementById('readerPanel');
+            const darkToggle = document.getElementById('darkToggle');
+            const searchToggle = document.getElementById('searchToggle');
+            const searchOverlay = document.getElementById('searchOverlay');
+            const closeSearch = document.getElementById('closeSearch');
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const progressBar = document.getElementById('progressBar');
+            const backToTop = document.getElementById('backToTop');
+            const fontDecrease = document.getElementById('fontDecrease');
+            const fontIncrease = document.getElementById('fontIncrease');
+            const fontSizeLabel = document.getElementById('fontSizeLabel');
+            const prevBtn = document.getElementById('prevChapter');
+            const nextBtn = document.getElementById('nextChapter');
 
-        document.querySelectorAll('.chapter-item a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                const targetEl = document.getElementById(targetId);
-                if (targetEl) {
-                    targetEl.scrollIntoView({ behavior: 'smooth' });
+            const chapterLinks = document.querySelectorAll('.chapter-item a');
+            const chapterSections = document.querySelectorAll('.chapter-content');
+
+            let currentChapterIndex = 0;
+            let fontSize = 100;
+            let isDark = false;
+
+            function loadPrefs() {
+                try {
+                    const saved = localStorage.getItem('pharm_prefs');
+                    if (saved) {
+                        const prefs = JSON.parse(saved);
+                        if (prefs.dark !== undefined) isDark = prefs.dark;
+                        if (prefs.fontSize !== undefined) fontSize = prefs.fontSize;
+                        if (prefs.chapter !== undefined) currentChapterIndex = prefs.chapter;
+                    }
+                } catch (_) {}
+            }
+
+            function savePrefs() {
+                try {
+                    localStorage.setItem('pharm_prefs', JSON.stringify({
+                        dark: isDark,
+                        fontSize: fontSize,
+                        chapter: currentChapterIndex
+                    }));
+                } catch (_) {}
+            }
+
+            function applyDark(dark) {
+                isDark = dark;
+                document.body.classList.toggle('dark-mode', dark);
+                darkToggle.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+                darkToggle.classList.toggle('active', dark);
+                savePrefs();
+            }
+
+            darkToggle.addEventListener('click', () => applyDark(!isDark));
+
+            function applyFontSize(size) {
+                fontSize = Math.min(150, Math.max(70, size));
+                document.documentElement.style.fontSize = fontSize + '%';
+                fontSizeLabel.textContent = Math.round(fontSize);
+                savePrefs();
+            }
+
+            fontDecrease.addEventListener('click', () => applyFontSize(fontSize - 5));
+            fontIncrease.addEventListener('click', () => applyFontSize(fontSize + 5));
+
+            function toggleSidebar(open) {
+                const isOpen = sidebar.classList.toggle('open', open);
+                sidebarOverlay.classList.toggle('open', isOpen);
+                readerPanel.classList.toggle('shifted', isOpen && window.innerWidth >= 1000);
+            }
+
+            menuToggle.addEventListener('click', () => toggleSidebar(!sidebar.classList.contains('open')));
+            sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
+
+            chapterLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    if (href) {
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth' });
+                            chapterLinks.forEach(l => l.classList.remove('active'));
+                            link.classList.add('active');
+                            const idx = parseInt(link.dataset.chapter, 10);
+                            if (!isNaN(idx)) {
+                                currentChapterIndex = idx;
+                                savePrefs();
+                                updateNavButtons();
+                            }
+                        }
+                    }
+                    if (window.innerWidth < 1000) toggleSidebar(false);
+                });
+            });
+
+            function openSearch() {
+                searchOverlay.classList.add('open');
+                setTimeout(() => searchInput.focus(), 150);
+            }
+
+            function closeSearchFn() {
+                searchOverlay.classList.remove('open');
+                searchInput.value = '';
+                searchResults.innerHTML = '';
+            }
+
+            searchToggle.addEventListener('click', openSearch);
+            closeSearch.addEventListener('click', closeSearchFn);
+
+            searchInput.addEventListener('input', function() {
+                const q = this.value.toLowerCase().trim();
+                if (!q) { searchResults.innerHTML = ''; return; }
+                let results = [];
+                chapterSections.forEach((section, idx) => {
+                    const titleEl = section.querySelector('.chapter-title');
+                    const title = titleEl ? titleEl.textContent.trim() : 'Chapter ' + (idx + 1);
+                    const text = section.textContent;
+                    const lines = text.split('\n').filter(line => line.trim().length > 20);
+                    lines.forEach(line => {
+                        const lower = line.toLowerCase();
+                        if (lower.includes(q)) {
+                            let match = line.trim();
+                            if (match.length > 100) match = match.slice(0, 100) + '…';
+                            results.push({ chapter: title, text: match, index: idx, href: section.id });
+                        }
+                    });
+                });
+                const seen = new Set();
+                results = results.filter(r => {
+                    const key = r.href + '|' + r.text;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
+                results = results.slice(0, 30);
+                if (results.length === 0) {
+                    searchResults.innerHTML = '<div class="result-item" style="color:var(--text-muted);">No results found.</div>';
+                } else {
+                    let html = '';
+                    results.forEach(r => {
+                        const hl = r.text.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'),
+                            '<strong>$1</strong>');
+                        html += `<div class="result-item" data-href="#${r.href}" data-index="${r.index}">
+                                    <span>${hl}</span>
+                                    <span class="chapter-label">— ${r.chapter}</span>
+                                </div>`;
+                    });
+                    searchResults.innerHTML = html;
+                    searchResults.querySelectorAll('.result-item').forEach(el => {
+                        el.addEventListener('click', function() {
+                            const href = this.dataset.href;
+                            if (href) {
+                                const target = document.querySelector(href);
+                                if (target) {
+                                    target.scrollIntoView({ behavior: 'smooth' });
+                                    const idx = parseInt(this.dataset.index, 10);
+                                    if (!isNaN(idx)) {
+                                        currentChapterIndex = idx;
+                                        updateActiveLink();
+                                        updateNavButtons();
+                                        savePrefs();
+                                    }
+                                }
+                            }
+                            closeSearchFn();
+                            if (window.innerWidth < 1000) toggleSidebar(false);
+                        });
+                    });
                 }
-                if (window.innerWidth < 1000) {
-                    sidebar.classList.remove('open');
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault();
+                    openSearch(); }
+                if (e.key === 'Escape') { if (searchOverlay.classList.contains('open')) closeSearchFn(); }
+            });
+
+            function updateProgress() {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const pct = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+                progressBar.style.width = pct + '%';
+                backToTop.classList.toggle('visible', scrollTop > 400);
+            }
+
+            window.addEventListener('scroll', updateProgress, { passive: true });
+            backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+            function updateActiveLink() {
+                chapterLinks.forEach(link => {
+                    link.classList.remove('active');
+                    const idx = parseInt(link.dataset.chapter, 10);
+                    if (idx === currentChapterIndex) link.classList.add('active');
+                });
+            }
+
+            function updateNavButtons() {
+                prevBtn.disabled = currentChapterIndex === 0;
+                nextBtn.disabled = currentChapterIndex === chapterSections.length - 1;
+                const prevLabel = prevBtn.querySelector('span');
+                const nextLabel = nextBtn.querySelector('span');
+                if (currentChapterIndex > 0) {
+                    const prevSection = chapterSections[currentChapterIndex - 1];
+                    const title = prevSection.querySelector('.chapter-title');
+                    prevLabel.innerHTML =
+                        `<span class="nav-label">Previous</span><br />${title ? title.textContent.trim().replace(/^\d+\.\s*/, '') : ''}`;
+                } else {
+                    prevLabel.innerHTML = `<span class="nav-label">Previous</span><br />&nbsp;`;
+                }
+                if (currentChapterIndex < chapterSections.length - 1) {
+                    const nextSection = chapterSections[currentChapterIndex + 1];
+                    const title = nextSection.querySelector('.chapter-title');
+                    nextLabel.innerHTML =
+                        `<span class="nav-label">Next</span><br />${title ? title.textContent.trim().replace(/^\d+\.\s*/, '') : ''}`;
+                } else {
+                    nextLabel.innerHTML = `<span class="nav-label">Next</span><br />&nbsp;`;
+                }
+            }
+
+            function goToChapter(index) {
+                if (index < 0 || index >= chapterSections.length) return;
+                currentChapterIndex = index;
+                const section = chapterSections[index];
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+                updateActiveLink();
+                updateNavButtons();
+                savePrefs();
+                if (window.innerWidth < 1000) toggleSidebar(false);
+            }
+
+            prevBtn.addEventListener('click', () => goToChapter(currentChapterIndex - 1));
+            nextBtn.addEventListener('click', () => goToChapter(currentChapterIndex + 1));
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const section = entry.target;
+                        const all = document.querySelectorAll('.chapter-content');
+                        let idx = Array.from(all).indexOf(section);
+                        if (idx !== -1) {
+                            currentChapterIndex = idx;
+                            updateActiveLink();
+                            updateNavButtons();
+                            savePrefs();
+                        }
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            chapterSections.forEach(section => observer.observe(section));
+
+            loadPrefs();
+            applyDark(isDark);
+            applyFontSize(fontSize);
+            if (currentChapterIndex >= chapterSections.length) currentChapterIndex = 0;
+            goToChapter(currentChapterIndex);
+            updateProgress();
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1000 && sidebar.classList.contains('open')) {
+                    readerPanel.classList.add('shifted');
+                } else {
                     readerPanel.classList.remove('shifted');
                 }
             });
-        });
+
+            console.log('📘 Pharmacology Complete Edition — 34 chapters, interactions, memory aids.');
+            console.log('🔍 Press Ctrl+K to search. 🌙 Toggle dark mode. A± to resize.');
+        })();
     </script>
 </body>
 </html>
